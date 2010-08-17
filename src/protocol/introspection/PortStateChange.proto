@@ -1,0 +1,10 @@
+package rsb.protocol.introspection;
+
+message PortStateChange {
+    optional string version = 1 [default = "1.0"];
+    required string type = 2;
+    required string action = 3;
+    required string hostname = 4;
+    optional string message = 5;  
+    optional string comment = 6;
+}
