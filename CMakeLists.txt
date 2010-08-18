@@ -66,15 +66,19 @@ FIND_PACKAGE(BoostUUID REQUIRED)
 
 PKG_CHECK_MODULES(LIBS REQUIRED liblog4cxx)
 
-INCLUDE_DIRECTORIES(src ${LIBS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS})
+FIND_PACKAGE(Threads REQUIRED)
+MESSAGE(STATUS "Threading library: ${CMAKE_THREAD_LIBS_INIT}")
+
+FIND_PACKAGE(Protobuf REQUIRED)
+
+FIND_PACKAGE(Spread REQUIRED)
+
+INCLUDE_DIRECTORIES(src ${LIBS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${SPREAD_INCLUDE_DIRS})
 LINK_DIRECTORIES(${LIBS_LIBRARY_DIRS})
 
 # --- source code ---
 
 ADD_SUBDIRECTORY(3rdparty)
-
-
-#SET(REQUIRED_PKGCONFIGS BpdcNet1.0 Training1.0 KinematicLearning1.0 MathData1.0 MathDataXml1.0 LWRControl TimedLWRControl)
 
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 
@@ -183,7 +187,7 @@ SET(HEADERS src/RSBVersion.h
 ENABLE_TESTING()
 
 ADD_LIBRARY(${LIBNAME} SHARED ${SOURCES})
-TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} -lspread -lprotobuf)
+TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES})
 
 
 add_executable (${BINNAME1} apps/monitor/RSBMonitor.cpp
@@ -203,20 +207,20 @@ add_executable (${EX2} examples/consumer/consumer.cpp)
 add_executable (${EX3} examples/informer/informer.cpp)
 add_executable (${EX4} examples/listener/listener.cpp)
 
-target_link_libraries(${BINNAME1} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME1} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME2} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME3} -lpthread -ldl ${LIBNAME})
-#target_link_libraries(${TESTNAME4} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME5} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME6} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME7} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME8} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME9} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${EX1} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${EX2} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${EX3} -lpthread -ldl ${LIBNAME})
-target_link_libraries(${EX4} -lpthread -ldl ${LIBNAME})
+target_link_libraries(${BINNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+#target_link_libraries(${TESTNAME4} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME5} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME6} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME7} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME8} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME9} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${EX1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${EX2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${EX3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${EX4} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 
 # executable
 INSTALL(TARGETS ${BINNAME1} DESTINATION "${BINDIR}/")
