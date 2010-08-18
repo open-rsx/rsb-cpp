@@ -1,34 +1,75 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
 SET(PROJECTNAME RSB)
 PROJECT(${PROJECTNAME})
-ENABLE_TESTING()
 
-# compiler definitions
-add_definitions( -Wall )
+# --- cmake settings ---
 
-MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
-MARK_AS_ADVANCED(EXECUTABLE_OUTPUT_PATH)
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH)
-MARK_AS_ADVANCED(CMAKE_BUILD_TYPE)
-INCLUDE(FindPkgConfig)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(CMAKE_VERBOSE_MAKEFILE on)
-#SET(PKG_CONF_NAME LWRLearning.pc)
+
+SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
+
+SET(PROJECT_CMAKE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+SET(CMAKE_MODULE_PATH ${PROJECT_CMAKE_PATH} ${CMAKE_MODULE_PATH})
 
 IF(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-      FORCE)
-ENDIF(NOT CMAKE_BUILD_TYPE)
+    SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+        FORCE)
+ENDIF()
+
+INCLUDE(FindPkgConfig)
+INCLUDE(CheckCXXCompilerFlag)
+
+# --- global compiler flags ---
+
+CHECK_CXX_COMPILER_FLAG(-pipe CHECK_CXX_FLAG_pipe)
+IF(CHECK_CXX_FLAG_pipe)
+    ADD_DEFINITIONS(-pipe)
+ENDIF()
+CHECK_CXX_COMPILER_FLAG(-Wall CHECK_CXX_FLAG_Wall)
+IF(CHECK_CXX_FLAG_Wall)
+    ADD_DEFINITIONS(-Wall)
+ENDIF()
+CHECK_CXX_COMPILER_FLAG(-Wextra CHECK_CXX_FLAG_Wextra)
+IF(CHECK_CXX_FLAG_Wextra)
+    ADD_DEFINITIONS(-Wextra)
+ENDIF()
+CHECK_CXX_COMPILER_FLAG(-fdiagnostics-show-option CHECK_CXX_FLAG_DIAGNOSTICS)
+IF(CHECK_CXX_FLAG_DIAGNOSTICS)
+    ADD_DEFINITIONS(-fdiagnostics-show-option)
+ENDIF()
+
+IF(WIN32)
+    ADD_DEFINITIONS(-D_USE_MATH_DEFINES)
+ENDIF()
+
+# --- user options ---
 
 OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
+
+# --- project settings ---
 
 SET(GTEST_DIR ${CMAKE_SOURCE_DIR}/3rdparty/gtest-1.5.0)
 SET(GTEST_INCLUDE_DIR ${GTEST_DIR}/include)
 SET(GMOCK_DIR ${CMAKE_SOURCE_DIR}/3rdparty/gmock-1.5.0)
 SET(GMOCK_INCLUDE_DIR ${GMOCK_DIR}/include)
 SET(GMOCK_LIBRARY_NAME "gmock")
+
+# --- dependency handling ---
+
+# TODO: add a find macro for boost uuid
+
+SET(Boost_USE_MULTITHREADED ON)
+FIND_PACKAGE(Boost 1.34.1 COMPONENTS thread REQUIRED)
+FIND_PACKAGE(BoostUUID REQUIRED)
+
+PKG_CHECK_MODULES(LIBS REQUIRED liblog4cxx)
+
+INCLUDE_DIRECTORIES(src ${LIBS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS})
+LINK_DIRECTORIES(${LIBS_LIBRARY_DIRS})
+
+# --- source code ---
 
 ADD_SUBDIRECTORY(3rdparty)
 
@@ -58,10 +99,6 @@ SET(TESTNAME8 rsb_test_taskexec)
 SET(TESTNAME9 rsb_test_ep)
 
 #PKG_CHECK_MODULES(LIBRARIES REQUIRED ${REQUIRED_PKGCONFIGS})
-
-set(Boost_USE_MULTITHREADED ON)
-
-find_package( Boost COMPONENTS thread )
 
 SET(SOURCES src/RSBException.cpp 
 		    src/RSBVersion.cpp
@@ -143,10 +180,10 @@ SET(HEADERS src/RSBVersion.h
 #FILE(WRITE ${LIBDIR}/pkgconfig/${PKG_CONF_NAME} ${PKG_OUT})
 #MESSAGE("-- Package config file generated and installed")
 
-LINK_DIRECTORIES(${LIBRARIES_LIBRARY_DIRS} /vol/rsb/lib)
+ENABLE_TESTING()
+
 ADD_LIBRARY(${LIBNAME} SHARED ${SOURCES})
-TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBRARIES_LIBRARIES} ${Boost_LIBRARIES} -lspread -llog4cxx -lprotobuf)
-INCLUDE_DIRECTORIES(src ${LIBRARIES_INCLUDE_DIRS} /vol/rsb/include ${Boost_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} -lspread -lprotobuf)
 
 
 add_executable (${BINNAME1} apps/monitor/RSBMonitor.cpp
