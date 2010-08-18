@@ -39,20 +39,18 @@ void Subscription::appendAction(Action a) {
 }
 
 bool Subscription::match(RSBEventPtr e) {
-	bool match = true;
 	try {
 		// call actions
 		for (FilterChain::iterator f = filters->begin(); f!= filters->end(); ++f) {
 			if (!(*f)->match(e)) {
-				match = false;
-				continue;
+				return false;
 			}
 		}
 
 	} catch (...) {
 		throw "unknown error during event matching";
 	}
-	return match;
+	return true;
 }
 
 }
