@@ -59,6 +59,7 @@ Router::~Router() {
 
 void Router::publish(RSBEventPtr e) {
 	LOG4CXX_DEBUG(logger, "Router::publish(RSBEvent) publishing new event: " << e);
+	op->push(e);
 }
 
 void Router::notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a) {
