@@ -73,7 +73,8 @@ FIND_PACKAGE(RSBProtocol REQUIRED)
 
 FIND_PACKAGE(Spread REQUIRED)
 
-INCLUDE_DIRECTORIES(src ${LIBS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${SPREAD_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(SYSTEM ${LIBS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${SPREAD_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(BEFORE src)
 LINK_DIRECTORIES(${LIBS_LIBRARY_DIRS})
 
 # --- generate protocol buffers ---
@@ -172,6 +173,7 @@ SET(SOURCES src/RSBException.cpp
             src/transport/inprocess/StatusTask.cpp
             src/transport/inprocess/InProcessPort.cpp
             src/transport/spread/SpreadGroup.cpp
+            src/transport/spread/MembershipManager.cpp
             src/transport/spread/SpreadPort.cpp
             src/transport/spread/SpreadMessage.cpp
             src/transport/spread/SpreadConnection.cpp
@@ -211,6 +213,7 @@ SET(HEADERS src/RSBVersion.h
             src/transport/AbstractConverter.h
             src/transport/QueueAndDispatchTask.h
             src/transport/spread/SpreadGroup.h
+            src/transport/spread/MembershipManager.h
             src/transport/spread/SpreadPort.h
             src/transport/spread/SpreadMessage.h
             src/transport/spread/SpreadConnection.h
