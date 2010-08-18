@@ -20,7 +20,7 @@
 #ifndef PORTSTATECHANGE_H_
 #define PORTSTATECHANGE_H_
 
-#include "../protocol/introspection/PortStateChange.pb.h"
+#include "introspection/PortStateChange.pb.h"
 
 #include <boost/shared_ptr.hpp>
 

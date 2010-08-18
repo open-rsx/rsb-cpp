@@ -9,7 +9,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 
-SET(PROJECT_CMAKE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+SET(PROJECT_CMAKE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_INSTALL_PREFIX}/share/cmake/Modules)
 SET(CMAKE_MODULE_PATH ${PROJECT_CMAKE_PATH} ${CMAKE_MODULE_PATH})
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -58,8 +58,6 @@ SET(GMOCK_LIBRARY_NAME "gmock")
 
 # --- dependency handling ---
 
-# TODO: add a find macro for boost uuid
-
 SET(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.34.1 COMPONENTS thread REQUIRED)
 FIND_PACKAGE(BoostUUID REQUIRED)
@@ -71,10 +69,57 @@ MESSAGE(STATUS "Threading library: ${CMAKE_THREAD_LIBS_INIT}")
 
 FIND_PACKAGE(Protobuf REQUIRED)
 
+FIND_PACKAGE(RSBProtocol REQUIRED)
+
 FIND_PACKAGE(Spread REQUIRED)
 
 INCLUDE_DIRECTORIES(src ${LIBS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${SPREAD_INCLUDE_DIRS})
 LINK_DIRECTORIES(${LIBS_LIBRARY_DIRS})
+
+# --- generate protocol buffers ---
+
+# the generator function provided by FindProtobuf does not handle project-external proto_path's
+# this version fixes the problem and also a subfolder problem, see:
+# http://public.kitware.com/Bug/view.php?id=10997
+# http://public.kitware.com/Bug/view.php?id=11148
+function(RSBPROTOBUF_GENERATE_CPP SRCS HDRS)
+  if(NOT ARGN)
+    message(SEND_ERROR "Error: PROTOBUF_GENERATE_CPP() called without any proto files")
+    return()
+  endif(NOT ARGN)
+
+  set(${SRCS})
+  set(${HDRS})
+  foreach(FIL ${ARGN})
+    get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
+    get_filename_component(FIL_WE ${FIL} NAME_WE)
+    get_filename_component(FIL_EXT ${FIL} NAME)
+    
+    STRING(REPLACE ${RSBPROTO_ROOT} "" WO_PREFIX ${FIL})
+    STRING(REPLACE ${FIL_EXT} "" REL_PATH ${WO_PREFIX})
+
+    # Attention: REL_PATH always begins and terminates with /, do not add extra slashes. This confuses the cmake dependency calculation
+    list(APPEND ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.cc")
+    list(APPEND ${HDRS} "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.h")
+
+    add_custom_command(
+      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.cc"
+             "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.h"
+      COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE}
+      # TODO this is the bad hack... the root is hard-coded
+      ARGS --cpp_out  ${CMAKE_CURRENT_BINARY_DIR} --proto_path ${RSBPROTO_ROOT} ${ABS_FIL}
+      DEPENDS ${ABS_FIL}
+      COMMENT "Running C++ protocol buffer compiler on ${FIL}"
+      VERBATIM )
+  endforeach()
+
+  set_source_files_properties(${${SRCS}} ${${HDRS}} PROPERTIES GENERATED TRUE)
+  set(${SRCS} ${${SRCS}} PARENT_SCOPE)
+  set(${HDRS} ${${HDRS}} PARENT_SCOPE)
+endfunction()
+
+RSBPROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS ${RSBPROTO_FILES})
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 # --- source code ---
 
@@ -102,81 +147,77 @@ SET(TESTNAME7 rsb_test_statustask)
 SET(TESTNAME8 rsb_test_taskexec)
 SET(TESTNAME9 rsb_test_ep)
 
-#PKG_CHECK_MODULES(LIBRARIES REQUIRED ${REQUIRED_PKGCONFIGS})
-
 SET(SOURCES src/RSBException.cpp 
-		    src/RSBVersion.cpp
-		    src/util/UUID.cpp
-		    src/util/Configuration.cpp
-		    src/util/Timer.cpp
-		    src/util/Task.cpp
-		    src/util/PeriodicTask.cpp
-		    src/util/TaskExecutor.cpp
-		    src/RSBEvent.cpp
-		    src/Subscription.cpp
-		    src/MatchAndExecute.cpp
-		    src/EventProcessor.cpp
-		    src/filter/AbstractFilter.cpp
-		    src/filter/ScopeFilter.cpp
-		    src/filter/FilterObservable.cpp
-		    src/filter/FilterObserver.cpp		   
-		    src/protocol/Attachment.pb.cc
-		    src/protocol/Notification.pb.cc
-		    src/protocol/ProtocolException.cpp				   
-		    src/protocol/introspection/PortStateChange.pb.cc
-		    src/transport/Port.cpp
-		    src/transport/Router.cpp
-		    src/transport/AbstractConverter.cpp
-		    src/transport/TransportFactory.cpp
-		    src/transport/QueueAndDispatchTask.cpp		        
-		    src/transport/inprocess/StatusTask.cpp
-		    src/transport/inprocess/InProcessPort.cpp
-		    src/transport/spread/SpreadGroup.cpp
-		    src/transport/spread/SpreadPort.cpp
-		    src/transport/spread/SpreadMessage.cpp
-		    src/transport/spread/SpreadConnection.cpp
-		    src/transport/spread/ReceiverTask.cpp
-		    src/introspection/IntrospectionConverter.cpp
-		    test/InformerTask.cpp
-		    test/BTL2StringConverter.cpp)
+            src/RSBVersion.cpp
+            src/util/UUID.cpp
+            src/util/Configuration.cpp
+            src/util/Timer.cpp
+            src/util/Task.cpp
+            src/util/PeriodicTask.cpp
+            src/util/TaskExecutor.cpp
+            src/RSBEvent.cpp
+            src/Subscription.cpp
+            src/MatchAndExecute.cpp
+            src/EventProcessor.cpp
+            src/filter/AbstractFilter.cpp
+            src/filter/ScopeFilter.cpp
+            src/filter/FilterObservable.cpp
+            src/filter/FilterObserver.cpp
+            src/protocol/ProtocolException.cpp
+            src/transport/Port.cpp
+            src/transport/Router.cpp
+            src/transport/AbstractConverter.cpp
+            src/transport/TransportFactory.cpp
+            src/transport/QueueAndDispatchTask.cpp
+            src/transport/inprocess/StatusTask.cpp
+            src/transport/inprocess/InProcessPort.cpp
+            src/transport/spread/SpreadGroup.cpp
+            src/transport/spread/SpreadPort.cpp
+            src/transport/spread/SpreadMessage.cpp
+            src/transport/spread/SpreadConnection.cpp
+            src/transport/spread/ReceiverTask.cpp
+            src/introspection/IntrospectionConverter.cpp
+            test/InformerTask.cpp
+            test/BTL2StringConverter.cpp
+            ${PROTO_SOURCES})
 
 SET(HEADERS src/RSBVersion.h
             src/RSBException.h 
-		    src/CommException.h
-		    src/util/UUID.h		    
-		    src/util/Configuration.h
-		    src/util/ConfigException.h
-		    src/util/Timer.h
-		    src/util/Task.h
-		    src/util/PeriodicTask.h
-		    src/util/TaskExecutor.h
-		    src/RSBEvent.h
-		    src/Action.h
-		    src/Subscription.h
-		    src/MatchAndExecute.h
-		    src/EventProcessor.h
-		    src/filter/FilterActionTypes.h
-		    src/filter/AbstractFilter.h
-		    src/filter/ScopeFilter.h	
-		    src/filter/FilterObservable.h
-		    src/filter/FilterObserver.h		   		    	    
-		    src/protocol/ProtocolException.h			    
-		    src/transport/Port.h
-		    src/transport/Router.h
-		    src/transport/inprocess/StatusTask.h
-		    src/transport/inprocess/InProcessPort.h
-		    src/transport/TransportFactory.h
-		    src/transport/AbstractConverter.h
-		    src/transport/QueueAndDispatchTask.h
-		    src/transport/spread/Notification.h		    
-		    src/transport/spread/SpreadGroup.h
-		    src/transport/spread/SpreadPort.h
-		    src/transport/spread/SpreadMessage.h		    
-		    src/transport/spread/SpreadConnection.h
-		    src/transport/spread/ReceiverTask.h
-		    src/introspection/PortStateChange.h
-		    src/introspection/IntrospectionConverter.h
-		    test/BTL2StringConverter.cpp)
+            src/CommException.h
+            src/util/UUID.h
+            src/util/Configuration.h
+            src/util/ConfigException.h
+            src/util/Timer.h
+            src/util/Task.h
+            src/util/PeriodicTask.h
+            src/util/TaskExecutor.h
+            src/RSBEvent.h
+            src/Action.h
+            src/Subscription.h
+            src/MatchAndExecute.h
+            src/EventProcessor.h
+            src/filter/FilterActionTypes.h
+            src/filter/AbstractFilter.h
+            src/filter/ScopeFilter.h
+            src/filter/FilterObservable.h
+            src/filter/FilterObserver.h
+            src/protocol/ProtocolException.h
+            src/transport/Port.h
+            src/transport/Router.h
+            src/transport/inprocess/StatusTask.h
+            src/transport/inprocess/InProcessPort.h
+            src/transport/TransportFactory.h
+            src/transport/AbstractConverter.h
+            src/transport/QueueAndDispatchTask.h
+            src/transport/spread/Notification.h
+            src/transport/spread/SpreadGroup.h
+            src/transport/spread/SpreadPort.h
+            src/transport/spread/SpreadMessage.
+            src/transport/spread/SpreadConnection.h
+            src/transport/spread/ReceiverTask.h
+            src/introspection/PortStateChange.h
+            src/introspection/IntrospectionConverter.h
+            ${PROTO_HEADERS})
 
 # Build package config file
 #FILE(READ "pkgconfig.in" PKG_IN)
@@ -191,7 +232,7 @@ TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_L
 
 
 add_executable (${BINNAME1} apps/monitor/RSBMonitor.cpp
-			    apps/monitor/mongoose.c)
+                apps/monitor/mongoose.c)
 add_executable (${TESTNAME1} test/PBufTest.cpp)
 add_executable (${TESTNAME2} test/ConverterTest.cpp)
 add_executable (${TESTNAME3} test/SubscriptionTest.cpp)
