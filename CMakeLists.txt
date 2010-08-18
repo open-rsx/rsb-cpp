@@ -201,6 +201,7 @@ SET(HEADERS src/RSBVersion.h
             src/filter/ScopeFilter.h
             src/filter/FilterObservable.h
             src/filter/FilterObserver.h
+            src/protocol/Notification.h
             src/protocol/ProtocolException.h
             src/transport/Port.h
             src/transport/Router.h
@@ -209,10 +210,9 @@ SET(HEADERS src/RSBVersion.h
             src/transport/TransportFactory.h
             src/transport/AbstractConverter.h
             src/transport/QueueAndDispatchTask.h
-            src/transport/spread/Notification.h
             src/transport/spread/SpreadGroup.h
             src/transport/spread/SpreadPort.h
-            src/transport/spread/SpreadMessage.
+            src/transport/spread/SpreadMessage.h
             src/transport/spread/SpreadConnection.h
             src/transport/spread/ReceiverTask.h
             src/introspection/PortStateChange.h
