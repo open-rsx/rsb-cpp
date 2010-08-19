@@ -43,7 +43,7 @@ public:
 	void activate();
 	void deactivate();
 
-	void addObserver(rsb::Action a);
+	void setObserver(rsb::Action a);
 	void removeObserver(rsb::Action a);
 
 	void notify(rsb::filter::ScopeFilter* f, rsb::filter::FilterAction::Types at);

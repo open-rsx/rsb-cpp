@@ -67,7 +67,7 @@ void SpreadPort::activate() {
 }
 
 // TODO think about extracting qad functions into QADPort?!?
-void SpreadPort::addObserver(Action a) {
+void SpreadPort::setObserver(Action a) {
 	qad->setObserver(a);
 }
 

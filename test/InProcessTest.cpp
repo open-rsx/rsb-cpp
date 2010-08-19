@@ -45,7 +45,7 @@ int main(void) {
 
 	// domain objects
 	boost::shared_ptr<InformerTask> source(new InformerTask(p));
-	p->addObserver(boost::bind(&InformerTask::handler,source.get(),_1));
+	p->setObserver(boost::bind(&InformerTask::handler,source.get(),_1));
 
 	// activate port and schedule informer
 	p->activate();
