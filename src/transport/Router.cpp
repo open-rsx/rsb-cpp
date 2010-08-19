@@ -34,7 +34,9 @@ namespace rsb {
 
 namespace transport {
 
-Router::Router(TransportFactory::PortTypes inType, TransportFactory::PortTypes outType) : logger(Logger::getLogger("rsb.transport.Router")) {
+Router::Router(TransportFactory::PortTypes inType,
+		TransportFactory::PortTypes outType) :
+	logger(Logger::getLogger("rsb.transport.Router")) {
 	ip = TransportFactory::createPort(inType);
 	op = TransportFactory::createPort(outType);
 	ep = EventProcessorPtr(new EventProcessor());
@@ -48,13 +50,14 @@ void Router::activate() {
 	op->activate();
 }
 
-void Router::deactivate(){
+void Router::deactivate() {
 	shutdown = true;
 	// TODO
 }
 
 Router::~Router() {
-	if (!shutdown) deactivate();
+	if (!shutdown)
+		deactivate();
 }
 
 void Router::publish(RSBEventPtr e) {
@@ -62,26 +65,26 @@ void Router::publish(RSBEventPtr e) {
 	op->push(e);
 }
 
-void Router::notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a) {
-	for(rsb::FilterChain::iterator list_iter = s->getFilters()->begin();
-	    list_iter != s->getFilters()->end(); list_iter++)
-	{
+void Router::notifyPorts(rsb::SubscriptionPtr s,
+		rsb::filter::FilterAction::Types a) {
+	FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(ip);
+	for (rsb::FilterChain::iterator list_iter = s->getFilters()->begin(); list_iter
+			!= s->getFilters()->end(); list_iter++) {
 		// TODO check whether we want to do this also for out ports
 		// TODO generally use rsb::filters::Observable implementation here!
-		FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(ip);
-		(*list_iter)->notifyObserver(fo,a);
+		(*list_iter)->notifyObserver(fo, a);
 	}
 }
 
 void Router::subscribe(rsb::SubscriptionPtr s) {
 	// notify ports about new subscription
-	notifyPorts(s,rsb::filter::FilterAction::ADD);
+	notifyPorts(s, rsb::filter::FilterAction::ADD);
 	ep->subscribe(s);
 }
 
 void Router::unsubscribe(rsb::SubscriptionPtr s) {
 	// notify ports about removal of subscription
-	notifyPorts(s,rsb::filter::FilterAction::REMOVE);
+	notifyPorts(s, rsb::filter::FilterAction::REMOVE);
 	ep->unsubscribe(s);
 }
 
