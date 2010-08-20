@@ -51,7 +51,7 @@ public:
 
 	// Observer may implement complex event matching
 	// or be just directly the user-level event handlers
-	virtual void addObserver(rsb::Action a);
+	virtual void setObserver(rsb::Action a);
 	virtual void removeObserver(rsb::Action a);
 
 protected:

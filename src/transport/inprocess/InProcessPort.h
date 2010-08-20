@@ -44,7 +44,7 @@ public:
 
 	// Observer may implement complex event matching
 	// or be just directly the user-level event handlers
-	void addObserver(rsb::Action a);
+	void setObserver(rsb::Action a);
 	void removeObserver(rsb::Action a);
 
 private:

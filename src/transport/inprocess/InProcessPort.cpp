@@ -96,7 +96,7 @@ void InProcessPort::push(RSBEventPtr e) {
 	qad->addElement(e);
 }
 
-void InProcessPort::addObserver(Action a) {
+void InProcessPort::setObserver(Action a) {
 	qad->setObserver(a);
 }
 
