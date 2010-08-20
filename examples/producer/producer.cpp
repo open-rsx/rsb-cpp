@@ -34,8 +34,10 @@ int main(int argc, char** argv) {
 //    SpreadGroupPtr sg_que = con->join("query");
 
     SpreadMessage msg("Hello World!");
-    msg.addGroup("rsb://example/informer");
-    msg.addGroup("fortestingonly");
+    msg.addGroup("insert");
+    msg.addGroup("remove");
+    msg.addGroup("update");
+    msg.addGroup("query");
 //    msg->addGroup("udpate");
 //    msg->addGroup("query");
 
