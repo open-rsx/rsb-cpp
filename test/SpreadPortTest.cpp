@@ -27,7 +27,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
-#include <log4cxx/basicconfigurator.h>
+#include <log4cxx/propertyconfigurator.h>
 #include <iostream>
 
 #include <gtest/gtest.h>
@@ -96,7 +96,22 @@ TEST(SpreadPortTest, testRoundtrip)
 }
 
 int main(int argc, char* argv[]) {
-	log4cxx::BasicConfigurator::configure();
+    std::ostringstream confpath;
+    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
+
+    if (log4cxxPropsEnv != NULL) {
+
+        confpath << log4cxxPropsEnv;
+        cout << "Trying log4cxx configuration from file " << confpath.str()
+                << endl;
+
+        try {
+            log4cxx::PropertyConfigurator::configure(confpath.str());
+        } catch (const std::exception& e) {
+            cout << "Trying log4cxx configuration from file " << confpath.str()
+                    << " failed. Using BasicConfigurator." << endl;
+        }
+    }
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 
