@@ -37,15 +37,17 @@ namespace transport {
 Router::Router(TransportFactory::PortTypes inType, TransportFactory::PortTypes outType) : logger(Logger::getLogger("rsb.transport.Router")) {
 	ip = TransportFactory::createPort(inType);
 	op = TransportFactory::createPort(outType);
-	ep = EventProcessorPtr(new EventProcessor());
-	// add event processor as observer to input port(s)
-	ip->setObserver(boost::bind(&EventProcessor::process, ep.get(), _1));
+	if (ip) {
+		ep = EventProcessorPtr(new EventProcessor());
+		// add event processor as observer to input port(s)
+		ip->setObserver(boost::bind(&EventProcessor::process, ep.get(), _1));
+	}
 	shutdown = false;
 }
 
 void Router::activate() {
-	ip->activate();
-	op->activate();
+	if (ip) ip->activate();
+	if (op) op->activate();
 }
 
 void Router::deactivate(){

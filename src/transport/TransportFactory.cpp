@@ -54,6 +54,10 @@ PortPtr TransportFactory::createPort(PortTypes type) {
 			LOG4CXX_INFO(logger, "TransportFactory instantiating new SpreadPort");
 			p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort());
 			break;
+		case NONE:
+			LOG4CXX_INFO(logger, "TransportFactory not instantiating any Port implementation");
+			p = PortPtr();
+			break;
 		default:
 			LOG4CXX_WARN(logger, "TransportType not supported by this TransportFactory implementation");
 			break;

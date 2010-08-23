@@ -19,6 +19,7 @@
 
 #include "Port.h"
 #include "../introspection/IntrospectionConverter.h"
+#include "../transport/converter/StringConverter.h"
 
 namespace rsb {
 
@@ -29,6 +30,9 @@ Port::Port() {
 	(*converters)["portstatechange"] = boost::static_pointer_cast<void>(
 			rsb::introspection::IntrospectionConverterPtr(
 					new rsb::introspection::IntrospectionConverter));
+	(*converters)["string"] = boost::static_pointer_cast<void>(
+				rsb::transport::StringConverterPtr(
+						new rsb::transport::StringConverter));
 }
 
 Port::~Port() {

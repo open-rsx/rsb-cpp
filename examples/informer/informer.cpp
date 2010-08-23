@@ -1,43 +1,67 @@
-/*
- * producer.cpp
+/* ============================================================
  *
- *  Created on: 28.07.2010
- *      Author: swrede
- */
+ * This file is a part of the RSB project
+ *
+ * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ *
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation;
+ * either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * ============================================================ */
 
 #include <stdlib.h>
 #include <iostream>
 #include <log4cxx/logger.h>
-#include <log4cxx/basicconfigurator.h>
+#include <log4cxx/propertyconfigurator.h>
 #include <math.h>
 
-#include "RSBEvent.h"
-#include "transport/TransportFactory.h"
-#include "transport/Port.h"
-#include "transport/spread/SpreadConnection.h"
-#include "transport/spread/SpreadMessage.h"
+#include "Publisher.h"
 #include "util/Timer.h"
 
 using namespace std;
 using namespace log4cxx;
 using namespace rsb;
-using namespace rsb::transport;
 using namespace rsb::util;
 
-int main(int argc, char** argv) {
+int main(void) {
 
-    BasicConfigurator::configure();
+    std::ostringstream confpath;
+    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
+
+//    if (log4cxxPropsEnv != NULL) {
+//
+//        confpath << log4cxxPropsEnv;
+//        cout << "Trying log4cxx configuration from file " << confpath.str()
+//                << endl;
+//
+//        try {
+//            log4cxx::PropertyConfigurator::configure(confpath.str());
+//        } catch (const std::exception& e) {
+//            cout << "Trying log4cxx configuration from file " << confpath.str()
+//                    << " failed. Using BasicConfigurator." << endl;
+//        }
+//    }
+
     LoggerPtr l = Logger::getLogger("informer");
 
-    PortPtr p = TransportFactory::createPort(TransportFactory::SPREAD);
+    boost::shared_ptr<Publisher < string > > informer(new Publisher<string>("rsb://example/informer","string"));
+    typedef boost::shared_ptr<string> StringPtr;
 
-    RSBEventPtr e(new RSBEvent("rsb://example/informer",boost::static_pointer_cast<void>(boost::shared_ptr<string>(new string("Hello!"))), "Hello World!"));
+    StringPtr s(new string("blub"));
 
     TimerPtr t(new Timer("prototype"));
     t->start();
 
     for (int j = 0; j < 1200; j++) {
-            p->push(e);
+            informer->publish(s);
     }
 
     t->stop();

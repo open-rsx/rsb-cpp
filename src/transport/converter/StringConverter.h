@@ -17,34 +17,33 @@
  *
  * ============================================================ */
 
-#ifndef TRANSPORTFACTORY_H_
-#define TRANSPORTFACTORY_H_
+#ifndef STRINGCONVERTER_H_
+#define STRINGCONVERTER_H_
 
-#include "Port.h"
-#include "spread/SpreadPort.h"
-#include "inprocess/InProcessPort.h"
+#include "../AbstractConverter.h"
+
+#include <string>
+#include <boost/shared_ptr.hpp>
 
 namespace rsb {
 
 namespace transport {
 
-class TransportFactory {
+// converts any string into any string serializing content to a string...
+class StringConverter: public rsb::transport::AbstractConverter<std::string> {
 public:
-	enum PortTypes {
-		LOCAL,
-		SPREAD,
-		NONE
-	};
+	StringConverter();
+	virtual ~StringConverter();
 
-	TransportFactory();
-	virtual ~TransportFactory();
-
-	// TODO distinguish between in and out ports?
-	static PortPtr createPort(PortTypes type);
+	void serialize(std::string type, boost::shared_ptr<void> data, std::string &m);
+	boost::shared_ptr<void> deserialize(std::string type, const std::string &d);
 };
 
-}
+typedef boost::shared_ptr<StringConverter> StringConverterPtr;
+
 
 }
 
-#endif /* TRANSPORTFACTORY_H_ */
+}
+
+#endif /* STRINGCONVERTER_H_ */

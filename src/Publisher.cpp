@@ -17,34 +17,13 @@
  *
  * ============================================================ */
 
-#ifndef TRANSPORTFACTORY_H_
-#define TRANSPORTFACTORY_H_
+#include "Publisher.h"
 
-#include "Port.h"
-#include "spread/SpreadPort.h"
-#include "inprocess/InProcessPort.h"
+using namespace log4cxx;
+using namespace rsb::transport;
 
 namespace rsb {
 
-namespace transport {
-
-class TransportFactory {
-public:
-	enum PortTypes {
-		LOCAL,
-		SPREAD,
-		NONE
-	};
-
-	TransportFactory();
-	virtual ~TransportFactory();
-
-	// TODO distinguish between in and out ports?
-	static PortPtr createPort(PortTypes type);
-};
+// header only implementation
 
 }
-
-}
-
-#endif /* TRANSPORTFACTORY_H_ */

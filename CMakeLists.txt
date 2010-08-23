@@ -148,6 +148,7 @@ SET(TESTNAME9 rsb_test_ep)
 
 SET(SOURCES src/RSBException.cpp 
             src/RSBVersion.cpp
+            src/Publisher.cpp
             src/util/UUID.cpp
             src/util/Configuration.cpp
             src/util/Timer.cpp
@@ -168,6 +169,7 @@ SET(SOURCES src/RSBException.cpp
             src/transport/AbstractConverter.cpp
             src/transport/TransportFactory.cpp
             src/transport/QueueAndDispatchTask.cpp
+            src/transport/converter/StringConverter.cpp
             src/transport/inprocess/StatusTask.cpp
             src/transport/inprocess/InProcessPort.cpp
             src/transport/spread/SpreadGroup.cpp
@@ -205,6 +207,7 @@ SET(HEADERS src/RSBVersion.h
             src/protocol/ProtocolException.h
             src/transport/Port.h
             src/transport/Router.h
+            src/transport/converter/StringConverter.h
             src/transport/inprocess/StatusTask.h
             src/transport/inprocess/InProcessPort.h
             src/transport/TransportFactory.h

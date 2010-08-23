@@ -17,34 +17,43 @@
  *
  * ============================================================ */
 
-#ifndef TRANSPORTFACTORY_H_
-#define TRANSPORTFACTORY_H_
+#include "StringConverter.h"
 
-#include "Port.h"
-#include "spread/SpreadPort.h"
-#include "inprocess/InProcessPort.h"
+using namespace std;
 
 namespace rsb {
 
 namespace transport {
 
-class TransportFactory {
-public:
-	enum PortTypes {
-		LOCAL,
-		SPREAD,
-		NONE
-	};
+StringConverter::StringConverter() {
+	// TODO Auto-generated constructor stub
 
-	TransportFactory();
-	virtual ~TransportFactory();
+}
 
-	// TODO distinguish between in and out ports?
-	static PortPtr createPort(PortTypes type);
+StringConverter::~StringConverter() {
+	// TODO Auto-generated destructor stub
+}
+
+void StringConverter::serialize(std::string type, boost::shared_ptr<void> data, string &m) {
+	if (type=="string") {
+		boost::shared_ptr<string> s = boost::static_pointer_cast<string>(data);
+		// essentially return the contained string to the serialization medium
+		m = *s;
+	}
+}
+
+
+boost::shared_ptr<void> StringConverter::deserialize(std::string type, const string &d) {
+	boost::shared_ptr<void> p;
+	if (type=="portstatechange") {
+		boost::shared_ptr<string> s(new string(d));
+		p = boost::static_pointer_cast<void>(s);
+	} else {
+		throw("No such type registered at TypeFactory!");
+	}
+	return p;
 };
 
 }
 
 }
-
-#endif /* TRANSPORTFACTORY_H_ */
