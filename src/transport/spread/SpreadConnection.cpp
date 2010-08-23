@@ -139,33 +139,7 @@ bool SpreadConnection::isActive() {
 	return connected;
 }
 
-SpreadGroupPtr SpreadConnection::join(std::string name) {
-	if (isActive()) {
-		// TODO evaluate error codes
-		SP_join(con, name.c_str());
-		logger->debug("joined spread group with name: " + name);
-		return SpreadGroupPtr(new SpreadGroup(name));
-	} else {
-		// TODO throw exeception, refactor to state pattern as for xcf4j
-		throw string("not active");
-	}
-}
 
-bool SpreadConnection::leave(SpreadGroupPtr sg) {
-	return leave(sg->getName());
-}
-
-bool SpreadConnection::leave(const std::string& sg) {
-	if (isActive()) {
-		// TODO evaluate error codes and membership message
-		SP_leave(con, sg.c_str());
-		logger->debug("left spread group with name: " + sg);
-		return true;
-	} else {
-		// TODO throw exeception, refactor to state pattern as for xcf4j
-		return false;
-	}
-}
 
 void SpreadConnection::receive(SpreadMessagePtr sm) {
 	// read from Spread multicast group

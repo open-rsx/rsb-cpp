@@ -25,6 +25,7 @@
 #include "../../util/TaskExecutor.h"
 #include "../QueueAndDispatchTask.h"
 #include "ReceiverTask.h"
+#include "MembershipManager.h"
 #include "SpreadConnection.h"
 
 #include <log4cxx/logger.h>
@@ -62,6 +63,8 @@ private:
     rsb::util::TaskPtr recTask;
 	rsb::util::TaskPtr qadTask;
 //	rsb::util::TaskPtr staTask;
+
+	MembershipManagerPtr memberships;
 };
 
 }

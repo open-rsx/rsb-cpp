@@ -20,8 +20,11 @@
 #ifndef SPREADGROUP_H_
 #define SPREADGROUP_H_
 
+#include "SpreadConnection.h"
+
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <log4cxx/logger.h>
 
 namespace rsb {
 
@@ -34,8 +37,14 @@ public:
 
 	std::string getName() const;
 	// MembershipList getMembers();
+
+	virtual void join(SpreadConnectionPtr con);
+	virtual void leave(SpreadConnectionPtr con);
+
 private:
 	std::string name;
+	log4cxx::LoggerPtr logger;
+	SpreadConnectionPtr con;
 };
 
 typedef boost::shared_ptr<SpreadGroup> SpreadGroupPtr;

@@ -173,7 +173,7 @@ SET(SOURCES src/RSBException.cpp
             src/transport/inprocess/StatusTask.cpp
             src/transport/inprocess/InProcessPort.cpp
             src/transport/spread/SpreadGroup.cpp
-            #src/transport/spread/MembershipManager.cpp
+            src/transport/spread/MembershipManager.cpp
             src/transport/spread/SpreadPort.cpp
             src/transport/spread/SpreadMessage.cpp
             src/transport/spread/SpreadConnection.cpp
@@ -213,7 +213,7 @@ SET(HEADERS src/RSBVersion.h
             src/transport/AbstractConverter.h
             src/transport/QueueAndDispatchTask.h
             src/transport/spread/SpreadGroup.h
-            #src/transport/spread/MembershipManager.h
+            src/transport/spread/MembershipManager.h
             src/transport/spread/SpreadPort.h
             src/transport/spread/SpreadMessage.h
             src/transport/spread/SpreadConnection.h

@@ -54,7 +54,7 @@ SpreadPort::SpreadPort() : logger(log4cxx::Logger::getLogger("rsb.spread.SpreadP
 	//st = boost::shared_ptr<StatusTask>(new StatusTask(this));
 	qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr > >(new QueueAndDispatchTask<RSBEventPtr>());
 	rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(con,converters,qad));
-
+	memberships = MembershipManagerPtr(new MembershipManager());
 }
 
 void SpreadPort::activate() {
@@ -81,6 +81,7 @@ void SpreadPort::deactivate() {
 	rec->cancel();
 	// killing spread connection, exception thrown to rec thread which
 	// should be handled specifically as the cancel flag was set
+	// memberships->leaveAll();
 	con->deactivate();
 	LOG4CXX_DEBUG(logger, "deactivate() stopping qad task object");
 	qad->cancel();
@@ -106,11 +107,11 @@ void SpreadPort::notify(rsb::filter::ScopeFilter* f, rsb::filter::FilterAction::
 	switch (at) {
 		case rsb::filter::FilterAction::ADD:
 			LOG4CXX_INFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to join Spread group");
-			con->join(f->getURI());
+			memberships->join(f->getURI(),con);
 			break;
 		case rsb::filter::FilterAction::REMOVE:
 			LOG4CXX_INFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to leave Spread group");
-			con->leave(f->getURI());
+			memberships->leave(f->getURI(),con);
 			break;
 		default:
 			LOG4CXX_WARN(logger, "ScopeFilter Action not supported by this Port implementation");

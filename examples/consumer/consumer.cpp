@@ -14,6 +14,7 @@
 #include <math.h>
 
 #include "transport/spread/SpreadConnection.h"
+#include "transport/spread/SpreadGroup.h"
 #include "transport/spread/SpreadMessage.h"
 #include "util/Timer.h"
 
@@ -24,7 +25,7 @@ using namespace rsb::util;
 
 void printGroups(std::string s) { cout << s << endl; }
 
-int main(int argc, char** argv) {
+int main(void) {
 
     BasicConfigurator::configure();
     LoggerPtr l = Logger::getLogger("receiver");
@@ -33,12 +34,17 @@ int main(int argc, char** argv) {
     SpreadConnectionPtr con(new SpreadConnection("receiver"));
     con->activate();
 
-    SpreadGroupPtr sg_ins = con->join("insert");
-    SpreadGroupPtr sg_rem = con->join("remove");
-    SpreadGroupPtr sg_upd = con->join("update");
-    SpreadGroupPtr sg_que = con->join("query");
+    SpreadGroupPtr sg_ins(new SpreadGroup("insert"));
+    SpreadGroupPtr sg_rem(new SpreadGroup("remove"));
+    SpreadGroupPtr sg_upd(new SpreadGroup("update"));
+    SpreadGroupPtr sg_que(new SpreadGroup("query"));
 
-    TimerPtr t(new Timer("protopype"));
+    sg_ins->join(con);
+    sg_rem->join(con);
+    sg_upd->join(con);
+    sg_que->join(con);
+
+    TimerPtr t(new Timer("prototype"));
 
     SpreadMessagePtr msg(new SpreadMessage());
     bool counting = false;

@@ -23,7 +23,6 @@
 #include <boost/shared_ptr.hpp>
 #include <sp.h>
 
-#include "SpreadGroup.h"
 #include "SpreadMessage.h"
 
 namespace rsb {
@@ -47,16 +46,16 @@ public:
 	bool send(const SpreadMessage& msg);
 	void receive(SpreadMessagePtr sm);
 
-	// group membership management
-	SpreadGroupPtr join(std::string name);
-	bool leave(SpreadGroupPtr group);
-	bool leave(const std::string& sg);
-
 	// is connected to spread daemon
 	bool isActive();
 
 	// return number of message sent
 	unsigned long getMsgCount();
+
+	// return mailbox for other low-level functions
+	mailbox* getMailbox() {
+		return &con;
+	}
 
 protected:
 
