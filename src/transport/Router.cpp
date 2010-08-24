@@ -79,12 +79,14 @@ void Router::notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Type
 void Router::subscribe(rsb::SubscriptionPtr s) {
 	// notify ports about new subscription
 	notifyPorts(s,rsb::filter::FilterAction::ADD);
+	// TODO missing check if there really is an inport and ep
 	ep->subscribe(s);
 }
 
 void Router::unsubscribe(rsb::SubscriptionPtr s) {
 	// notify ports about removal of subscription
 	notifyPorts(s,rsb::filter::FilterAction::REMOVE);
+	// TODO missing check if there really is an inport and ep
 	ep->unsubscribe(s);
 }
 
