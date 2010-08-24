@@ -65,7 +65,8 @@ void Router::publish(RSBEventPtr e) {
 }
 
 void Router::notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a) {
-		FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(ip);
+	// TODO missing check if there really is an inport
+	FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(ip);
 	for(rsb::FilterChain::iterator list_iter = s->getFilters()->begin();
 	    list_iter != s->getFilters()->end(); list_iter++)
 	{
