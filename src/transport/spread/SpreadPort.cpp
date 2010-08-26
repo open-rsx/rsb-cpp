@@ -23,8 +23,6 @@
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
 
-
-//#include <uuid/uuid.h>
 #include <iostream>
 #include <string.h>
 
@@ -155,9 +153,9 @@ void SpreadPort::push(RSBEventPtr e) {
 //        }
     	// TODO implement queing or throw messages away?
     	// TODO maybe return exception with msg that was not sent
-    	logger->warn("Spread Connection inactive -> could not send message");
+    	LOG4CXX_WARN(logger, "Spread Connection inactive -> could not send message");
     } else {
-    	logger->info("event sent to spread");
+    	LOG4CXX_DEBUG(logger, "event sent to spread");
     }
 }
 

@@ -33,10 +33,6 @@ using namespace std;
 using namespace log4cxx;
 using namespace rsb::util;
 
-namespace {
-LoggerPtr logger(Logger::getLogger("rsb.spread"));
-}
-
 namespace rsb {
 
 namespace spread {
@@ -46,12 +42,11 @@ namespace spread {
 
 // TODO make port a numerical attribute
 SpreadConnection::SpreadConnection(const string& id, const string& h,
-		const string& p) :
+		const string& p) : logger(Logger::getLogger("rsb.spread.SpreadConnection")),
 	connected(false), host(h), port(p), conId(id), msgCount(0) {
-	//logstream l_debug(log,Level::getDebug());
 	spreadhost = port + "@" + host;
-	cout << "instantiated spread connection with id " << conId
-			<< " to spread daemon at " << spreadhost << endl;
+	LOG4CXX_DEBUG(logger, "instantiated spread connection with id " << conId
+			<< " to spread daemon at " << spreadhost);
 }
 
 SpreadConnection::SpreadConnection(const string& id) :
@@ -59,70 +54,63 @@ SpreadConnection::SpreadConnection(const string& id) :
 	host = Configuration::getInstance()->getProperty("Spread.Host");
 	port = Configuration::getInstance()->getProperty("Spread.Port");
 	spreadhost = port + "@" + host;
-	cout << "instantiated spread connection with id " << conId
-			<< " to spread daemon at " << spreadhost << endl;
+	LOG4CXX_DEBUG(logger, "instantiated spread connection with id " << conId
+			<< " to spread daemon at " << spreadhost);
 }
 
 SpreadConnection::~SpreadConnection() {
 	// this does not work with XcfAppender...
-	// log->debug("SpreadConnection: destructor called");
+	LOG4CXX_DEBUG(logger, "destroying SpreadConnection object with id ");
 }
 
 void SpreadConnection::activate() {
-	//logstream l_debug(log,Level::getDebug());
 	// spread init and group join - not threadsafe
 	if (!connected) {
-		cout << "connecting to spread daemon at " << spreadhost << endl;
+		LOG4CXX_DEBUG(logger,"connecting to spread daemon at " << spreadhost);
 		// TODO store connection ID
 		int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con, spreadpg);
 		if (ret != ACCEPT_SESSION) {
 			switch (ret) {
 			case ILLEGAL_SPREAD:
 				// TODO throw initialization exception
-				logger->fatal(
-						"spread connect error: connection to spread daemon failed, check port and hostname");
+				LOG4CXX_FATAL(logger, "spread connect error: connection to spread daemon at " << spreadhost << " failed, check port and hostname");
 				break;
 			case COULD_NOT_CONNECT:
 				// TODO throw initialization exception
-				logger->fatal(
-						"spread connect error: connection to spread daemon failed due to socket errors");
+				LOG4CXX_FATAL(logger,"spread connect error: connection to spread daemon failed due to socket errors");
 				break;
 			case CONNECTION_CLOSED:
-				// CHECK throw initialze exception?
-				logger->fatal(
-						"spread connect error: communication errors occurred during setup of connection");
+				// CHECK throw initialize exception?
+				LOG4CXX_FATAL(logger, "spread connect error: communication errors occurred during setup of connection");
 				throw CommException(
 						"spread connect error: communication errors occurred during setup of connection");
 			case REJECT_VERSION:
 				// TODO throw initialization exception
-				logger->fatal(
-						"spread connect error: daemon or library version mismatch");
+				LOG4CXX_FATAL(logger, "spread connect error: daemon or library version mismatch");
 				break;
 			case REJECT_NO_NAME:
 				// TODO throw initialization exception
-				logger->error(
-						"spread connect error: protocol error during setup");
+				LOG4CXX_FATAL(logger, "spread connect error: protocol error during setup");
 				break;
 			case REJECT_ILLEGAL_NAME:
 				// TODO throw initialization exception
-				logger->error(
-						"spread connect error: name provided violated requirement, length or illegal character");
+				LOG4CXX_FATAL(logger, "spread connect error: name provided violated requirement, length or illegal character");
 				break;
 			case REJECT_NOT_UNIQUE:
 				// TODO throw name exists exception
-				logger->error(
-						"spread connect error: name provided is not unique on this daemon");
+				LOG4CXX_FATAL(logger, "spread connect error: name provided is not unique on this daemon");
 				break;
 			default:
-				logger->warn("unknown spread connect error");
+				LOG4CXX_FATAL(logger,"unknown spread connect error");
 			}
 			// TODO throw exception
 			SP_error(ret);
 			throw CommException("Error during connection to spread daemon");
 		} else {
-			cout << "success, private group id is " << spreadpg << endl;
+			// TODO return private group id as result of this function
+			LOG4CXX_DEBUG(logger, "success, private group id is " << spreadpg);
 		}
-		logger->info("connected to spread daemon");
+		LOG4CXX_INFO(logger, "connected to spread daemon");
 
 		connected = true;
 	}
@@ -131,6 +119,7 @@ void SpreadConnection::activate() {
 void SpreadConnection::deactivate() {
 	if (isActive()) {
 		SP_disconnect(con);
+		LOG4CXX_DEBUG(logger, "Spread connection disconnected, id " << conId << " private group " << spreadpg)
 		connected = false;
 	}
 }
@@ -155,36 +144,29 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 			&num_groups, ret_groups, &mess_type, &dummy_endian_mismatch,
 			SPREAD_MAX_MESSLEN, buf);
 	if (ret >= 0) {
-		//SpreadMessagePtr sm;
 		if (Is_regular_mess(service_type)) {
-			logger->info("new spread message instantiated");
-			//sm = SpreadMessagePtr(new SpreadMessage(SpreadMessage::REGULAR));
+			LOG4CXX_INFO(logger, "regular spread message received");
 			sm->setType(SpreadMessage::REGULAR);
 			sm->setData(string(buf, ret));
 			if (num_groups < 0) {
-				//logstream l_warn(log,Level::getWarn());
 				// TODO check whether we shall implement a best effort strategy here
-				cout
-						<< "error during message receival, group array too large, requested size "
-						<< " configured size " << SPREAD_MAX_GROUPS << endl;
+				LOG4CXX_WARN(logger, "error during message receival, group array too large, requested size "
+						<< " configured size " << SPREAD_MAX_GROUPS);
 			}
 			for (int i = 0; i < num_groups; i++) {
 				if (ret_groups[i] != NULL) {
 					string group = string(ret_groups[i]);
-					logger->debug(
-							"received message, adressed at group with name "
-									+ group);
+					LOG4CXX_DEBUG(logger, "received message, adressed at group with name " << group);
 					sm->addGroup(group);
 				}
 			}
 		} else if (Is_membership_mess(service_type)) {
-			logger->debug("received spread membership message type");
+			LOG4CXX_INFO(logger, "received spread membership message type");
 			sm = SpreadMessagePtr(new SpreadMessage(SpreadMessage::MEMBERSHIP));
 		} else {
-			logger->warn("received unknown spread message type");
+			LOG4CXX_WARN(logger, "received unknown spread message type");
 		}
-		logger->debug("before returning spread message with content: " + sm->getDataAsString());
-		//return sm;
+		LOG4CXX_DEBUG(logger, "before returning spread message with content: " + sm->getDataAsString());
 	} else {
 		string err;
 		switch (ret) {
@@ -205,7 +187,6 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 		default:
 			err = "unknown spread receive error";
 		}
-		// cout << "ERROR: " << err << endl;
 		throw CommException("Spread communication error. Reason: " + err);
 	}
 	if (!Is_regular_mess(service_type)) {
@@ -220,7 +201,7 @@ bool SpreadConnection::send(const SpreadMessage& msg) {
 	// TODO add mutex, enque or send directly?
 	int groupCount = msg.getGroupCount();
 	if (groupCount == 0) {
-		throw string("group information missing in message");
+		throw CommException("group information missing in message");
 	}
 	if (isActive()) {
 		// TODO add error handling
@@ -228,7 +209,7 @@ bool SpreadConnection::send(const SpreadMessage& msg) {
 		if (groupCount == 1) {
 			// use SP_multicast
 			string group = *msg.getGroupsBegin();
-			logger->debug("sending message to group with name " + group);
+			LOG4CXX_DEBUG(logger, "sending message to group with name " << group);
 			ret = SP_multicast(con, RELIABLE_MESS, group.c_str(), 0,
 					msg.getSize(), msg.getData());
 			msgCount++;
@@ -253,13 +234,14 @@ bool SpreadConnection::send(const SpreadMessage& msg) {
 		} else {
 			switch (ret) {
 			case ILLEGAL_SESSION:
-				cerr << "Send: Illegal Session! " << endl;
+				// TODO throw exception
+				LOG4CXX_WARN(logger, "Send: Illegal Session! ");
 				break;
 			case ILLEGAL_MESSAGE:
-				cerr << "Send: Illegal Message! " << endl;
+				LOG4CXX_WARN(logger, "Send: Illegal Message! ");
 				break;
 			case CONNECTION_CLOSED:
-				cerr << "Send: Connection Closed! " << endl;
+				LOG4CXX_WARN(logger, "Send: Connection Closed! ");
 				break;
 			}
 			return false;

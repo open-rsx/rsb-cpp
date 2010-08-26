@@ -50,7 +50,7 @@ SpreadMessage::SpreadMessage(const char* buf) {
 ;
 
 SpreadMessage::~SpreadMessage() {
-	logger->trace("spread message destructor called");
+	LOG4CXX_TRACE(logger, "spread message destructor called");
 }
 ;
 
