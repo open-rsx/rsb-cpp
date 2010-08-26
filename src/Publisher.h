@@ -33,6 +33,9 @@ namespace rsb {
 template<class T>
 class Publisher {
 public:
+	typedef boost::shared_ptr<Publisher <T> > Ptr;
+	typedef boost::shared_ptr<T> DataPtr;
+
 	Publisher(std::string uri, std::string type) :
 		logger(log4cxx::Logger::getLogger("rsb.Publisher")), uri(uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
@@ -116,8 +119,6 @@ private:
 	rsb::transport::RouterPtr router;
 
 };
-
-typedef boost::shared_ptr<Publisher <void> > PublisherPtr;
 
 }
 

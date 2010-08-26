@@ -19,10 +19,6 @@
 
 #include "SpreadConnection.h"
 
-#include <log4cxx/logger.h>
-//#include <log4cxx/stream.h>
-#include <log4cxx/level.h>
-//#include <uuid/uuid.h>
 #include <iostream>
 #include <string.h>
 
@@ -49,7 +45,7 @@ SpreadConnection::SpreadConnection(const string& id, const string& h,
 			<< " to spread daemon at " << spreadhost);
 }
 
-SpreadConnection::SpreadConnection(const string& id) :
+SpreadConnection::SpreadConnection(const string& id) : logger(Logger::getLogger("rsb.spread.SpreadConnection")),
 	connected(false), conId(id), msgCount(0) {
 	host = Configuration::getInstance()->getProperty("Spread.Host");
 	port = Configuration::getInstance()->getProperty("Spread.Port");
@@ -60,7 +56,7 @@ SpreadConnection::SpreadConnection(const string& id) :
 
 SpreadConnection::~SpreadConnection() {
 	// this does not work with XcfAppender...
-	LOG4CXX_DEBUG(logger, "destroying SpreadConnection object with id ");
+	LOG4CXX_DEBUG(logger, "destroying SpreadConnection object");
 }
 
 void SpreadConnection::activate() {

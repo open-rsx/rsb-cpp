@@ -36,26 +36,24 @@ int main(void) {
     std::ostringstream confpath;
     char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
 
-//    if (log4cxxPropsEnv != NULL) {
-//
-//        confpath << log4cxxPropsEnv;
-//        cout << "Trying log4cxx configuration from file " << confpath.str()
-//                << endl;
-//
-//        try {
-//            log4cxx::PropertyConfigurator::configure(confpath.str());
-//        } catch (const std::exception& e) {
-//            cout << "Trying log4cxx configuration from file " << confpath.str()
-//                    << " failed. Using BasicConfigurator." << endl;
-//        }
-//    }
+    if (log4cxxPropsEnv != NULL) {
+
+        confpath << log4cxxPropsEnv;
+        cout << "Trying log4cxx configuration from file " << confpath.str()
+                << endl;
+
+        try {
+            log4cxx::PropertyConfigurator::configure(confpath.str());
+        } catch (const std::exception& e) {
+            cout << "Trying log4cxx configuration from file " << confpath.str()
+                    << " failed. Using BasicConfigurator." << endl;
+        }
+    }
 
     LoggerPtr l = Logger::getLogger("informer");
 
-    boost::shared_ptr<Publisher < string > > informer(new Publisher<string>("rsb://example/informer","string"));
-    typedef boost::shared_ptr<string> StringPtr;
-
-    StringPtr s(new string("blub"));
+    Publisher<string>::Ptr informer(new Publisher<string>("rsb://example/informer","string"));
+    Publisher<string>::DataPtr s(new string("blub"));
 
     TimerPtr t(new Timer("prototype"));
     t->start();
