@@ -149,6 +149,7 @@ SET(TESTNAME9 rsb_test_ep)
 SET(SOURCES src/RSBException.cpp 
             src/RSBVersion.cpp
             src/Publisher.cpp
+            src/Subscriber.cpp
             src/util/UUID.cpp
             src/util/Configuration.cpp
             src/util/Timer.cpp
@@ -194,7 +195,10 @@ SET(HEADERS src/RSBVersion.h
             src/util/PeriodicTask.h
             src/util/TaskExecutor.h
             src/RSBEvent.h
+            src/Publisher.h
+            src/Subscriber.h
             src/Action.h
+            src/Handler.h
             src/Subscription.h
             src/MatchAndExecute.h
             src/EventProcessor.h

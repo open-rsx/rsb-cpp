@@ -17,43 +17,17 @@
  *
  * ============================================================ */
 
-#include "StringConverter.h"
-
-using namespace std;
+#include "EventHandler.h"
 
 namespace rsb {
 
-namespace transport {
-
-StringConverter::StringConverter() {
+EventHandler::EventHandler() {
 	// TODO Auto-generated constructor stub
 
 }
 
-StringConverter::~StringConverter() {
+EventHandler::~EventHandler() {
 	// TODO Auto-generated destructor stub
-}
-
-void StringConverter::serialize(std::string type, boost::shared_ptr<void> data, string &m) {
-	if (type=="string") {
-		boost::shared_ptr<string> s = boost::static_pointer_cast<string>(data);
-		// essentially return the contained string to the serialization medium
-		m = *s;
-	}
-}
-
-
-boost::shared_ptr<void> StringConverter::deserialize(std::string type, const string &d) {
-	boost::shared_ptr<void> p;
-	if (type=="string") {
-		boost::shared_ptr<string> s(new string(d));
-		p = boost::static_pointer_cast<void>(s);
-	} else {
-		throw("No such type registered at TypeFactory!");
-	}
-	return p;
-};
-
 }
 
 }

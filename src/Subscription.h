@@ -21,6 +21,7 @@
 #define SUBSCRIPTION_H_
 
 #include "RSBEvent.h"
+#include "Handler.h"
 #include "filter/AbstractFilter.h"
 
 #include <list>
@@ -47,6 +48,7 @@ public:
 	virtual bool match(RSBEventPtr e);
 
 	virtual void appendAction(Action a);
+	virtual void appendHandler(HandlerPtr h);
 
 	Actions::iterator getActions() {
 		return actions->begin();

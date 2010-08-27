@@ -18,6 +18,7 @@
  * ============================================================ */
 
 #include "Subscription.h"
+#include <boost/bind.hpp>
 
 namespace rsb {
 
@@ -32,6 +33,11 @@ Subscription::~Subscription() {
 
 void Subscription::appendFilter(rsb::filter::AbstractFilterPtr p) {
 	filters->push_back(p);
+}
+
+void Subscription::appendHandler(HandlerPtr h) {
+	rsb::Action a = boost::bind(&Handler::internal_notify,h.get(),_1);
+	appendAction(a);
 }
 
 void Subscription::appendAction(Action a) {
