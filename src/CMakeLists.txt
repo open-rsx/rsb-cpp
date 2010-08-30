@@ -82,7 +82,13 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/introspection/IntrospectionConverter.h)
 
 ADD_LIBRARY(${LIBNAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
-TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES})
+TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES}
+        /vol/nao/releases/cuttingedge/lib/naoqi/libalbase.so
+        /vol/nao/releases/cuttingedge/lib/liblibvision.a
+        /vol/nao/releases/cuttingedge/lib/libcv.so
+        /vol/nao/releases/cuttingedge/lib/libhighgui.so 
+        /vol/nao/releases/cuttingedge/lib/libcxcore.so
+)
 INSTALL(TARGETS ${LIBNAME}
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib)
