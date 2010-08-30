@@ -127,7 +127,10 @@ function(RSBPROTOBUF_GENERATE_CPP SRCS HDRS)
 endfunction()
 
 RSBPROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS ${RSBPROTO_FILES})
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR} 
+                /vol/nao/releases/cuttingedge/include/alvision 
+                /vol/nao/releases/cuttingedge/include/altools 
+                /vol/nao/releases/cuttingedge/include/alcore)
 
 # --- source code ---
 
@@ -143,6 +146,7 @@ SET(LIBNAME RSBCore)
 SET(BINNAME1 rsb_monitor)
 SET(EX1 rsb_informer)
 SET(EX2 rsb_listener)
+SET(EX3 rsb_videosubscriber)
 SET(TESTNAME1 rsb_test_pbuf)
 SET(TESTNAME2 rsb_test_converter)
 SET(TESTNAME3 rsb_test_subscription)
@@ -176,6 +180,8 @@ add_executable (${TESTNAME9} test/EventProcessorTest.cpp)
 
 add_executable (${EX1} examples/informer/informer.cpp)
 add_executable (${EX2} examples/listener/listener.cpp)
+add_executable (${EX3} examples/VideoSender/VideoSubscriber.cpp)
+
 
 target_link_libraries(${BINNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 target_link_libraries(${TESTNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
@@ -189,6 +195,7 @@ target_link_libraries(${TESTNAME8} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 target_link_libraries(${TESTNAME9} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 target_link_libraries(${EX1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 target_link_libraries(${EX2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${EX3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 
 # --- install ---
 INSTALL(TARGETS ${BINNAME1} ${EX1} ${EX2}
