@@ -4,8 +4,8 @@
 #include <exception>
 #include <boost/shared_ptr.hpp>
 
-#include "protocol/Notification.h"
-#include "RSBEvent.h"
+#include "rsb/protocol/Notification.h"
+#include "rsb/RSBEvent.h"
 
 using namespace std;
 using namespace rsb;

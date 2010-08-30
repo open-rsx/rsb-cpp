@@ -18,7 +18,7 @@
  * ============================================================ */
 
 #include "InformerTask.h"
-#include "introspection/PortStateChange.h"
+#include "rsb/introspection/PortStateChange.h"
 
 using namespace std;
 using namespace rsb;

@@ -8,7 +8,7 @@
 #ifndef BTL2STRINGCONVERTER_H_
 #define BTL2STRINGCONVERTER_H_
 
-#include "transport/AbstractConverter.h"
+#include "rsb/transport/AbstractConverter.h"
 
 #include <boost/shared_ptr.hpp>
 #include <string>

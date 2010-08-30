@@ -36,7 +36,7 @@
  *
  * ============================================================ */
 
-#include "transport/spread/MembershipManager.h"
+#include "rsb/transport/spread/MembershipManager.h"
 
 #include <iostream>
 #include <gtest/gtest.h>

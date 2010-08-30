@@ -17,10 +17,10 @@
  *
  * ============================================================ */
 
-#include "Subscription.h"
-#include "RSBEvent.h"
-#include "filter/AbstractFilter.h"
-#include "filter/ScopeFilter.h"
+#include "rsb/Subscription.h"
+#include "rsb/RSBEvent.h"
+#include "rsb/filter/AbstractFilter.h"
+#include "rsb/filter/ScopeFilter.h"
 
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>

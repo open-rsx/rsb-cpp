@@ -17,15 +17,15 @@
  *
  * ============================================================ */
 
-#include "transport/Router.h"
-#include "util/Task.h"
-#include "util/PeriodicTask.h"
-#include "transport/Port.h"
-#include "transport/spread/SpreadPort.h"
+#include "rsb/transport/Router.h"
+#include "rsb/util/Task.h"
+#include "rsb/util/PeriodicTask.h"
+#include "rsb/transport/Port.h"
+#include "rsb/transport/spread/SpreadPort.h"
 #include "InformerTask.h"
-#include "Subscription.h"
-#include "filter/AbstractFilter.h"
-#include "filter/ScopeFilter.h"
+#include "rsb/Subscription.h"
+#include "rsb/filter/AbstractFilter.h"
+#include "rsb/filter/ScopeFilter.h"
 
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>

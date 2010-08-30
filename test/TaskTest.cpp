@@ -17,8 +17,8 @@
  *
  * ============================================================ */
 
-#include "util/Task.h"
-#include "util/PeriodicTask.h"
+#include "rsb/util/Task.h"
+#include "rsb/util/PeriodicTask.h"
 #include <boost/bind.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>

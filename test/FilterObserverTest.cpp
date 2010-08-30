@@ -17,11 +17,11 @@
  *
  * ============================================================ */
 
-#include "filter/AbstractFilter.h"
-#include "filter/ScopeFilter.h"
-#include "filter/FilterObserver.h"
-#include "filter/FilterObservable.h"
-#include "filter/FilterActionTypes.h"
+#include "rsb/filter/AbstractFilter.h"
+#include "rsb/filter/ScopeFilter.h"
+#include "rsb/filter/FilterObserver.h"
+#include "rsb/filter/FilterObservable.h"
+#include "rsb/filter/FilterActionTypes.h"
 
 #include <iostream>
 

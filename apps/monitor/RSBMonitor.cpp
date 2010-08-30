@@ -45,7 +45,7 @@
 #include <string.h>
 
 #include "mongoose.h"
-#include "RSBVersion.h"
+#include <rsb/RSBVersion.h>
 
 /*
  * This callback function is attached to the "/" and "/abc.html" URIs,

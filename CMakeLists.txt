@@ -153,87 +153,6 @@ SET(TESTNAME7 rsb_test_statustask)
 SET(TESTNAME8 rsb_test_taskexec)
 SET(TESTNAME9 rsb_test_ep)
 
-SET(SOURCES src/RSBException.cpp 
-            src/RSBVersion.cpp
-            src/Publisher.cpp
-            src/Subscriber.cpp
-            src/util/UUID.cpp
-            src/util/Configuration.cpp
-            src/util/Timer.cpp
-            src/util/Task.cpp
-            src/util/PeriodicTask.cpp
-            src/util/TaskExecutor.cpp
-            src/RSBEvent.cpp
-            src/Subscription.cpp
-            src/MatchAndExecute.cpp
-            src/EventProcessor.cpp
-            src/filter/AbstractFilter.cpp
-            src/filter/ScopeFilter.cpp
-            src/filter/FilterObservable.cpp
-            src/filter/FilterObserver.cpp
-            src/protocol/ProtocolException.cpp
-            src/transport/Port.cpp
-            src/transport/Router.cpp
-            src/transport/AbstractConverter.cpp
-            src/transport/TransportFactory.cpp
-            src/transport/QueueAndDispatchTask.cpp
-            src/transport/converter/StringConverter.cpp
-            src/transport/inprocess/StatusTask.cpp
-            src/transport/inprocess/InProcessPort.cpp
-            src/transport/spread/SpreadGroup.cpp
-            src/transport/spread/MembershipManager.cpp
-            src/transport/spread/SpreadPort.cpp
-            src/transport/spread/SpreadMessage.cpp
-            src/transport/spread/SpreadConnection.cpp
-            src/transport/spread/ReceiverTask.cpp
-            src/introspection/IntrospectionConverter.cpp
-            test/InformerTask.cpp
-            test/BTL2StringConverter.cpp
-            ${PROTO_SOURCES})
-
-SET(HEADERS src/RSBVersion.h
-            src/RSBException.h 
-            src/CommException.h
-            src/util/UUID.h
-            src/util/Configuration.h
-            src/util/ConfigException.h
-            src/util/Timer.h
-            src/util/Task.h
-            src/util/PeriodicTask.h
-            src/util/TaskExecutor.h
-            src/RSBEvent.h
-            src/Publisher.h
-            src/Subscriber.h
-            src/Action.h
-            src/Handler.h
-            src/Subscription.h
-            src/MatchAndExecute.h
-            src/EventProcessor.h
-            src/filter/FilterActionTypes.h
-            src/filter/AbstractFilter.h
-            src/filter/ScopeFilter.h
-            src/filter/FilterObservable.h
-            src/filter/FilterObserver.h
-            src/protocol/Notification.h
-            src/protocol/ProtocolException.h
-            src/transport/Port.h
-            src/transport/Router.h
-            src/transport/converter/StringConverter.h
-            src/transport/inprocess/StatusTask.h
-            src/transport/inprocess/InProcessPort.h
-            src/transport/TransportFactory.h
-            src/transport/AbstractConverter.h
-            src/transport/QueueAndDispatchTask.h
-            src/transport/spread/SpreadGroup.h
-            src/transport/spread/MembershipManager.h
-            src/transport/spread/SpreadPort.h
-            src/transport/spread/SpreadMessage.h
-            src/transport/spread/SpreadConnection.h
-            src/transport/spread/ReceiverTask.h
-            src/introspection/PortStateChange.h
-            src/introspection/IntrospectionConverter.h
-            ${PROTO_HEADERS})
-
 # Build package config file
 #FILE(READ "pkgconfig.in" PKG_IN)
 #STRING(REGEX REPLACE "@prefix@" ${CMAKE_INSTALL_PREFIX} PKG_OUT ${PKG_IN})
@@ -241,10 +160,7 @@ SET(HEADERS src/RSBVersion.h
 #MESSAGE("-- Package config file generated and installed")
 
 ENABLE_TESTING()
-
-ADD_LIBRARY(${LIBNAME} SHARED ${SOURCES})
-TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES})
-
+ADD_SUBDIRECTORY(src)
 
 add_executable (${BINNAME1} apps/monitor/RSBMonitor.cpp
                 apps/monitor/mongoose.c)
@@ -275,7 +191,7 @@ target_link_libraries(${EX1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 target_link_libraries(${EX2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
 
 # --- install ---
-INSTALL(TARGETS ${BINNAME1} ${LIBNAME} ${EX1} ${EX2}
+INSTALL(TARGETS ${BINNAME1} ${EX1} ${EX2}
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib)
 INSTALL_FILES_RECURSIVE(include HEADERS)

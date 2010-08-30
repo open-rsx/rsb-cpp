@@ -17,11 +17,11 @@
  *
  * ============================================================ */
 
-#include "util/Task.h"
-#include "util/TaskExecutor.h"
+#include "rsb/util/Task.h"
+#include "rsb/util/TaskExecutor.h"
 
-#include "RSBEvent.h"
-#include "transport/QueueAndDispatchTask.h"
+#include "rsb/RSBEvent.h"
+#include "rsb/transport/QueueAndDispatchTask.h"
 #include "BTL2StringConverter.h"
 
 #include <boost/shared_ptr.hpp>

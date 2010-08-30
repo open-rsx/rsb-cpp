@@ -17,10 +17,10 @@
  *
  * ============================================================ */
 
-#include "util/TaskExecutor.h"
+#include "rsb/util/TaskExecutor.h"
 
-#include "util/Task.h"
-#include "util/PeriodicTask.h"
+#include "rsb/util/Task.h"
+#include "rsb/util/PeriodicTask.h"
 #include <boost/bind.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>

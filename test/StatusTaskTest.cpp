@@ -17,9 +17,9 @@
  *
  * ============================================================ */
 
-#include "util/Task.h"
-#include "util/PeriodicTask.h"
-#include "transport/inprocess/InProcessPort.h"
+#include "rsb/util/Task.h"
+#include "rsb/util/PeriodicTask.h"
+#include "rsb/transport/inprocess/InProcessPort.h"
 
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>

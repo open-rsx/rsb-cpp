@@ -20,8 +20,8 @@
 #ifndef INFORMERTASK_H_
 #define INFORMERTASK_H_
 
-#include "transport/Port.h"
-#include "util/Task.h"
+#include "rsb/transport/Port.h"
+#include "rsb/util/Task.h"
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>

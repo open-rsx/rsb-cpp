@@ -23,8 +23,8 @@
 #include <log4cxx/propertyconfigurator.h>
 #include <math.h>
 
-#include "Publisher.h"
-#include "util/Timer.h"
+#include <rsb/Publisher.h>
+#include <rsb/util/Timer.h>
 
 using namespace std;
 using namespace log4cxx;

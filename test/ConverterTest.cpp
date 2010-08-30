@@ -11,7 +11,7 @@
 #include <exception>
 #include <boost/shared_ptr.hpp>
 
-#include "transport/AbstractConverter.h"
+#include "rsb/transport/AbstractConverter.h"
 #include "BTL2StringConverter.h"
 
 using namespace std;

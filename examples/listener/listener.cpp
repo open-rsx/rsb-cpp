@@ -14,11 +14,11 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>
 
-#include "Subscriber.h"
-#include "Subscription.h"
-#include "Handler.h"
-#include "filter/ScopeFilter.h"
-#include "util/Timer.h"
+#include <rsb/Subscriber.h>
+#include <rsb/Subscription.h>
+#include <rsb/Handler.h>
+#include <rsb/filter/ScopeFilter.h>
+#include <rsb/util/Timer.h>
 
 using namespace std;
 using namespace log4cxx;
