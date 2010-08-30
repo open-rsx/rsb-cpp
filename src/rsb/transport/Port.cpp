@@ -20,6 +20,7 @@
 #include "Port.h"
 #include "../introspection/IntrospectionConverter.h"
 #include "../transport/converter/StringConverter.h"
+#include "../transport/converter/ALImageConverter.h"
 
 namespace rsb {
 
@@ -33,6 +34,9 @@ Port::Port() {
 	(*converters)["string"] = boost::static_pointer_cast<void>(
 				rsb::transport::StringConverterPtr(
 						new rsb::transport::StringConverter));
+	(*converters)["ALImage"] = boost::static_pointer_cast<void>(
+					rsb::transport::ALImageConverterPtr(
+							new rsb::transport::ALImageConverter));
 }
 
 Port::~Port() {

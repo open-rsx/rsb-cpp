@@ -31,11 +31,13 @@ public:
 	MyDataHandler() {};
 
 	void notify(boost::shared_ptr<ALImage> e) {
+		cout << "image received!" << endl;
 		IplImage *image = cvCreateImage(cvSize(160, 120), 8, 3);
 		image->imageData = (char*) e->getData();
 
-		cvShowImage("naocam", image);
-		cvWaitKey(1);
+//		cvShowImage("naocam", image);
+//		cvWaitKey(2);
+		cout << "handler finished!" << endl;
 	}
 };
 
@@ -57,7 +59,10 @@ int main(void) {
 	s->addSubscription(sub);
 
 
-	cvWaitKey(0);
+	boost::recursive_mutex m;
+	boost::condition cond;
+	boost::recursive_mutex::scoped_lock lock(m);
+	cond.wait(lock);
 
     return (EXIT_SUCCESS);
 }

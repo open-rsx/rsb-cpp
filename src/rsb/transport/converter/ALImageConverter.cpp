@@ -36,9 +36,16 @@ ALImageConverter::~ALImageConverter() {
 }
 
 void ALImageConverter::serialize(const std::string &type, boost::shared_ptr<void> data, string &m) {
+	cout << "ALImageConverter::serialize: " << type << endl;
 	if (type=="ALImage") {
+		cout << "ALImageConverter::serializing ALImage" << endl;
 		boost::shared_ptr<ALImage> image = boost::static_pointer_cast<ALImage>(data);
+		cout << "ALImageConverter::serialize after cast" << endl;
+		cout << "ALImage allocated size:" << image->getAllocatedSize() << endl;
+		cout << "ALImage size:" << image->getSize() << endl;
+		cout << "ALImage allocated sizeof:" << sizeof(image->getData()) << endl;
 		m.assign((char *) image->getData(),image->getSize());
+		cout << "ALImageConverter::serialize after assign" << endl;
 	}
 }
 
@@ -46,9 +53,13 @@ void ALImageConverter::serialize(const std::string &type, boost::shared_ptr<void
 boost::shared_ptr<void> ALImageConverter::deserialize(const std::string &type, const std::string &d) {
 	boost::shared_ptr<void> p;
 	if (type=="ALImage") {
-		ALImage *image = new ALImage(kQQVGA, kRGBColorSpace, false);
+		ALImage *image = new ALImage(kQQVGA, kRGBColorSpace, true);
 
 		image->setData((unsigned char*) d.c_str());
+		cout << "ALImageConverter::deserialize after c_str()" << endl;
+		cout << "ALImage allocated size:" << image->getAllocatedSize() << endl;
+		cout << "ALImage size:" << image->getSize() << endl;
+		cout << "ALImage allocated sizeof:" << sizeof(image->getData()) << endl;
 
 		boost::shared_ptr<ALImage> s(image);
 		p = boost::static_pointer_cast<void>(s);
