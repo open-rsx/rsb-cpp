@@ -38,7 +38,7 @@ IntrospectionConverter::~IntrospectionConverter() {
 	// TODO Auto-generated destructor stub
 }
 
-void IntrospectionConverter::serialize(std::string type, boost::shared_ptr<void> data, string &m) {
+void IntrospectionConverter::serialize(const std::string &type, boost::shared_ptr<void> data, string &m) {
 	if (type=="portstatechange") {
 		PortStateChangePtr psc = boost::static_pointer_cast<PortStateChange>(data);
 		// extremely simple here as so far directly the pbuf objects are used as domain objects
@@ -49,7 +49,7 @@ void IntrospectionConverter::serialize(std::string type, boost::shared_ptr<void>
 }
 
 
-boost::shared_ptr<void> IntrospectionConverter::deserialize(std::string type, const string &d) {
+boost::shared_ptr<void> IntrospectionConverter::deserialize(const std::string &type, const string &d) {
 	boost::shared_ptr<void> p;
 	if (type=="portstatechange") {
 		PortStateChangePtr psc(new PortStateChange());

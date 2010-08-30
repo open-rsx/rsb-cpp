@@ -33,8 +33,8 @@ public:
 	IntrospectionConverter();
 	virtual ~IntrospectionConverter();
 
-	void serialize(std::string type, boost::shared_ptr<void> data, std::string &m);
-	boost::shared_ptr<void> deserialize(std::string type, const std::string &d);
+	void serialize(const std::string &type, boost::shared_ptr<void> data, std::string &m);
+	boost::shared_ptr<void> deserialize(const std::string &type, const std::string &d);
 };
 
 typedef boost::shared_ptr<IntrospectionConverter> IntrospectionConverterPtr;
