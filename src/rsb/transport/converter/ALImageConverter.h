@@ -17,33 +17,35 @@
  *
  * ============================================================ */
 
-#ifndef STRINGCONVERTER_H_
-#define STRINGCONVERTER_H_
+#ifndef ALImageConverter_H_
+#define ALImageConverter_H_
 
 #include "../AbstractConverter.h"
 
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <alvisiondefinitions.h>
+#include <alimage.h>
 
 namespace rsb {
 
 namespace transport {
 
 // converts any string into any string serializing content to a string...
-class StringConverter: public rsb::transport::AbstractConverter<std::string> {
+class ALImageConverter: public rsb::transport::AbstractConverter<std::string> {
 public:
-	StringConverter();
-	virtual ~StringConverter();
+	ALImageConverter();
+	virtual ~ALImageConverter();
 
 	void serialize(const std::string &type, boost::shared_ptr<void> data, std::string &m);
 	boost::shared_ptr<void> deserialize(const std::string &type, const std::string &d);
 };
 
-typedef boost::shared_ptr<StringConverter> StringConverterPtr;
+typedef boost::shared_ptr<ALImageConverter> ALImageConverterPtr;
 
 
 }
 
 }
 
-#endif /* STRINGCONVERTER_H_ */
+#endif /* ALImageConverter_H_ */

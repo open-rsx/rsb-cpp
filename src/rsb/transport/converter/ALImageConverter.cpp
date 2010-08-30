@@ -17,37 +17,42 @@
  *
  * ============================================================ */
 
-#include "StringConverter.h"
+#include "ALImageConverter.h"
 
 using namespace std;
+using namespace AL;
 
 namespace rsb {
 
 namespace transport {
 
-StringConverter::StringConverter() {
+ALImageConverter::ALImageConverter() {
 	// TODO Auto-generated constructor stub
 
 }
 
-StringConverter::~StringConverter() {
+ALImageConverter::~ALImageConverter() {
 	// TODO Auto-generated destructor stub
 }
 
-void StringConverter::serialize(const std::string &type, boost::shared_ptr<void> data, string &m) {
-	if (type=="string") {
-		boost::shared_ptr<string> s = boost::static_pointer_cast<string>(data);
-		// essentially return the contained string to the serialization medium
-		m = *s;
+void ALImageConverter::serialize(const std::string &type, boost::shared_ptr<void> data, string &m) {
+	if (type=="ALImage") {
+		boost::shared_ptr<ALImage> image = boost::static_pointer_cast<ALImage>(data);
+		m.assign((char *) image->getData(),image->getSize());
 	}
 }
 
 
-boost::shared_ptr<void> StringConverter::deserialize(const std::string &type, const string &d) {
+boost::shared_ptr<void> ALImageConverter::deserialize(const std::string &type, const std::string &d) {
 	boost::shared_ptr<void> p;
-	if (type=="string") {
-		boost::shared_ptr<string> s(new string(d));
+	if (type=="ALImage") {
+		ALImage *image = new ALImage(kQQVGA, kRGBColorSpace, false);
+
+		image->setData((unsigned char*) d.c_str());
+
+		boost::shared_ptr<ALImage> s(image);
 		p = boost::static_pointer_cast<void>(s);
+
 	} else {
 		throw("No such type registered at TypeFactory!");
 	}

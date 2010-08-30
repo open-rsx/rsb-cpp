@@ -22,7 +22,7 @@ BTL2StringConverter::~BTL2StringConverter() {
 	// TODO Auto-generated destructor stub
 }
 
-void BTL2StringConverter::serialize(std::string type, boost::shared_ptr<void> data, string &m) {
+void BTL2StringConverter::serialize(const std::string &type, boost::shared_ptr<void> data, string &m) {
 	if (type=="person") {
 		PersonPtr p = boost::static_pointer_cast<Person>(data);
 		m = p->toXML();
@@ -30,7 +30,7 @@ void BTL2StringConverter::serialize(std::string type, boost::shared_ptr<void> da
 }
 
 
-boost::shared_ptr<void> BTL2StringConverter::deserialize(std::string type, const string &d) {
+boost::shared_ptr<void> BTL2StringConverter::deserialize(const std::string &type, const string &d) {
 	boost::shared_ptr<void> p;
 	cout << "Content of d " << d << endl;
 	if (type=="person" && d=="<person/>") {

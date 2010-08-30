@@ -34,8 +34,8 @@ public:
 	AbstractConverter() {};
 	virtual ~AbstractConverter() {};
 
-	virtual void serialize(std::string type, boost::shared_ptr<void> d, T &m) = 0;
-	virtual boost::shared_ptr<void> deserialize(std::string type, const T &m) = 0;
+	virtual void serialize(const std::string &type, boost::shared_ptr<void> d, T &m) = 0;
+	virtual boost::shared_ptr<void> deserialize(const std::string &type, const T &m) = 0;
 };
 
 }
