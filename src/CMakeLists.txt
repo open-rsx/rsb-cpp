@@ -23,9 +23,10 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/transport/Port.cpp
             rsb/transport/Router.cpp
             rsb/transport/AbstractConverter.cpp
+            rsb/transport/converter/StringConverter.cpp
+            rsb/transport/converter/ALImageConverter.cpp            
             rsb/transport/TransportFactory.cpp
             rsb/transport/QueueAndDispatchTask.cpp
-            rsb/transport/converter/StringConverter.cpp
             rsb/transport/inprocess/StatusTask.cpp
             rsb/transport/inprocess/InProcessPort.cpp
             rsb/transport/spread/SpreadGroup.cpp
@@ -66,11 +67,12 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/protocol/ProtocolException.h
             rsb/transport/Port.h
             rsb/transport/Router.h
+            rsb/transport/AbstractConverter.h
             rsb/transport/converter/StringConverter.h
+            rsb/transport/converter/ALImageConverter.h
             rsb/transport/inprocess/StatusTask.h
             rsb/transport/inprocess/InProcessPort.h
-            rsb/transport/TransportFactory.h
-            rsb/transport/AbstractConverter.h
+            rsb/transport/TransportFactory.h            
             rsb/transport/QueueAndDispatchTask.h
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/MembershipManager.h

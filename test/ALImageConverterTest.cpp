@@ -11,8 +11,8 @@
 #include <exception>
 #include <boost/shared_ptr.hpp>
 
-#include "transport/AbstractConverter.h"
-#include "../src/transport/converter/ALImageConverter.h"
+#include <rsb/transport/AbstractConverter.h>
+#include <rsb/transport/converter/ALImageConverter.h>
 
 #include <opencv/highgui.h>
 
