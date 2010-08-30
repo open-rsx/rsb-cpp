@@ -26,7 +26,7 @@
 #include "transport/Port.h"
 
 #include <string>
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {
@@ -37,7 +37,7 @@ namespace rsb {
 class Subscriber {
 public:
 	Subscriber(std::string uri) :
-		logger(log4cxx::Logger::getLogger("rsb.Subscriber")), uri(uri), passive(false) {
+		logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri), passive(false) {
 		// TODO evaluate configuration
 		router = transport::RouterPtr(new transport::Router(transport::TransportFactory::SPREAD,
 				transport::TransportFactory::NONE));
@@ -45,7 +45,7 @@ public:
 	}
 
 	Subscriber(transport::TransportFactory::PortTypes in, std::string uri) :
-		logger(log4cxx::Logger::getLogger("rsb.Subscriber")), uri(uri), passive(false) {
+		logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri), passive(false) {
 		// TODO evaluate configuration
 		router = transport::RouterPtr(new transport::Router(in, transport::TransportFactory::NONE));
 		activate();
@@ -83,7 +83,7 @@ protected:
 	Subscriber() { /* forbidden */ };
 
 private:
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	std::string uri;
 	volatile bool passive;
 	rsb::transport::RouterPtr router;

@@ -21,10 +21,7 @@
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
 
-#include <log4cxx/logger.h>
-//#include <log4cxx/stream.h>
-#include <log4cxx/level.h>
-//#include <uuid/uuid.h>
+#include <rsc/logging/Logger.h>
 #include <iostream>
 #include <string.h>
 
@@ -33,7 +30,7 @@
 #include <boost/bind.hpp>
 
 using namespace std;
-using namespace log4cxx;
+using namespace rsc::logging;
 using namespace rsb;
 using namespace rsb::util;
 using namespace rsb::transport;

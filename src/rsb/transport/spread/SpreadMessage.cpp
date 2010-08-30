@@ -19,12 +19,10 @@
 
 #include "SpreadMessage.h"
 
-#include <log4cxx/logger.h>
-#include <log4cxx/stream.h>
-#include <log4cxx/level.h>
+#include <rsc/logging/Logger.h>
 
 using namespace std;
-using namespace log4cxx;
+using namespace rsc::logging;
 
 namespace {
 LoggerPtr logger(Logger::getLogger("rsb.spread.SpreadMessage"));
@@ -50,7 +48,7 @@ SpreadMessage::SpreadMessage(const char* buf) {
 ;
 
 SpreadMessage::~SpreadMessage() {
-	LOG4CXX_TRACE(logger, "spread message destructor called");
+	RSBTRACE(logger, "spread message destructor called");
 }
 ;
 

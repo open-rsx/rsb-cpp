@@ -22,7 +22,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <sp.h>
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 #include "SpreadMessage.h"
 
@@ -63,7 +63,7 @@ protected:
 private:
 	std::string generateId(const std::string& prefix);
 
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	bool connected; // flag to indicate whether we are connected to spread
 	mailbox con; // Handle to the returned spread connection
 	std::string host; // host

@@ -25,7 +25,7 @@
 #include "../QueueAndDispatchTask.h"
 #include "../Port.h"
 
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 namespace rsb {
 
@@ -45,7 +45,7 @@ public:
 	}
 
 private:
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	volatile bool cancelRequested;
 	SpreadConnectionPtr con;
 	rsb::transport::ConverterMapPtr converters;

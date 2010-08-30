@@ -25,7 +25,7 @@
 #include "transport/Port.h"
 
 #include <string>
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {
@@ -37,7 +37,7 @@ public:
 	typedef boost::shared_ptr<T> DataPtr;
 
 	Publisher(std::string uri, std::string type) :
-		logger(log4cxx::Logger::getLogger("rsb.Publisher")), uri(uri), passive(false), defaultType(type) {
+		logger(rsc::logging::Logger::getLogger("rsb.Publisher")), uri(uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
 		router = transport::RouterPtr(new transport::Router(transport::TransportFactory::NONE,
 				transport::TransportFactory::SPREAD));
@@ -45,7 +45,7 @@ public:
 	}
 
 	Publisher(transport::TransportFactory::PortTypes out, std::string uri, std::string type) :
-		logger(log4cxx::Logger::getLogger("rsb.Publisher")), uri(uri), passive(false), defaultType(type) {
+		logger(rsc::logging::Logger::getLogger("rsb.Publisher")), uri(uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
 		router = transport::RouterPtr(new transport::Router(transport::TransportFactory::NONE, out));
 		activate();
@@ -112,7 +112,7 @@ protected:
 	}
 
 private:
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	std::string uri;
 	volatile bool passive;
 	std::string defaultType;

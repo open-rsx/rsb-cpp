@@ -25,7 +25,7 @@
 #include "../EventProcessor.h"
 #include "../Subscription.h"
 
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {
@@ -65,7 +65,7 @@ protected:
     void notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a);
 
 private:
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	PortPtr ip, op;
 	// ep for observation model
 	rsb::internal::EventProcessorPtr ep;

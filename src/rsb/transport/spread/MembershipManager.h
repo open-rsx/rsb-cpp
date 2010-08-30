@@ -23,7 +23,7 @@
 #include <map>
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 #ifndef MEMBERSHIPMAP_H_
 #define MEMBERSHIPMAP_H_
@@ -66,7 +66,7 @@ public:
 	void leave(std::string group, SpreadConnectionPtr s);
 
 private:
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	boost::shared_ptr< GroupMap > groups;
 };
 

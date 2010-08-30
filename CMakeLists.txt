@@ -69,65 +69,22 @@ SET(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE(Boost 1.34.1 COMPONENTS thread REQUIRED)
 FIND_PACKAGE(BoostUUID REQUIRED)
 
-PKG_CHECK_MODULES(LIBS REQUIRED liblog4cxx)
-
 FIND_PACKAGE(Threads REQUIRED)
 MESSAGE(STATUS "Threading library: ${CMAKE_THREAD_LIBS_INIT}")
 
 FIND_PACKAGE(Protobuf REQUIRED)
 
+PKG_CHECK_MODULES(RSC REQUIRED rsc)
 FIND_PACKAGE(RSBProtocol REQUIRED)
 
 FIND_PACKAGE(Spread REQUIRED)
 
-INCLUDE_DIRECTORIES(SYSTEM ${LIBS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${SPREAD_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(SYSTEM ${LIBS_INCLUDE_DIRS} ${RSC_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${BOOSTUUID_INCLUDE_DIRS} ${PROTOBUF_INCLUDE_DIRS} ${SPREAD_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(BEFORE src)
-LINK_DIRECTORIES(${LIBS_LIBRARY_DIRS})
+LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
-# --- generate protocol buffers ---
-
-# the generator function provided by FindProtobuf does not handle project-external proto_path's
-# this version fixes the problem and also a subfolder problem, see:
-# http://public.kitware.com/Bug/view.php?id=10997
-# http://public.kitware.com/Bug/view.php?id=11148
-function(RSBPROTOBUF_GENERATE_CPP SRCS HDRS)
-  if(NOT ARGN)
-    message(SEND_ERROR "Error: PROTOBUF_GENERATE_CPP() called without any proto files")
-    return()
-  endif(NOT ARGN)
-
-  set(${SRCS})
-  set(${HDRS})
-  foreach(FIL ${ARGN})
-    get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
-    get_filename_component(FIL_WE ${FIL} NAME_WE)
-    get_filename_component(FIL_EXT ${FIL} NAME)
-    
-    STRING(REPLACE ${RSBPROTO_ROOT} "" WO_PREFIX ${FIL})
-    STRING(REPLACE ${FIL_EXT} "" REL_PATH ${WO_PREFIX})
-
-    # Attention: REL_PATH always begins and terminates with /, do not add extra slashes. This confuses the cmake dependency calculation
-    list(APPEND ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.cc")
-    list(APPEND ${HDRS} "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.h")
-
-    add_custom_command(
-      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.cc"
-             "${CMAKE_CURRENT_BINARY_DIR}${REL_PATH}${FIL_WE}.pb.h"
-      COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE}
-      # TODO this is the bad hack... the root is hard-coded
-      ARGS --cpp_out  ${CMAKE_CURRENT_BINARY_DIR} --proto_path ${RSBPROTO_ROOT} ${ABS_FIL}
-      DEPENDS ${ABS_FIL}
-      COMMENT "Running C++ protocol buffer compiler on ${FIL}"
-      VERBATIM )
-  endforeach()
-
-  set_source_files_properties(${${SRCS}} ${${HDRS}} PROPERTIES GENERATED TRUE)
-  set(${SRCS} ${${SRCS}} PARENT_SCOPE)
-  set(${HDRS} ${${HDRS}} PARENT_SCOPE)
-endfunction()
-
-RSBPROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS ${RSBPROTO_FILES})
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR} 
+# TODO check while /src is needed here
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/src 
                 /vol/nao/releases/cuttingedge/include/alvision 
                 /vol/nao/releases/cuttingedge/include/altools 
                 /vol/nao/releases/cuttingedge/include/alcore)

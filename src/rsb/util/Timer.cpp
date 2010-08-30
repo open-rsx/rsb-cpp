@@ -10,14 +10,14 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <iostream>
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 using namespace std;
 
-using namespace log4cxx;
+using namespace rsc::logging;
 
 namespace {
-log4cxx::LoggerPtr log(Logger::getLogger("Timer"));
+rsc::logging::LoggerPtr log(Logger::getLogger("Timer"));
 }
 
 namespace rsb {

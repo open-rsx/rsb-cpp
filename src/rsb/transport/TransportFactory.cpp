@@ -19,9 +19,9 @@
 
 #include "TransportFactory.h"
 
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
-using namespace log4cxx;
+using namespace rsc::logging;
 
 namespace {
 	LoggerPtr logger(Logger::getLogger("rsb.transport.TransportFactory"));
@@ -47,19 +47,19 @@ PortPtr TransportFactory::createPort(PortTypes type) {
 //		r->addConverter("uchar.person",ac);
 	switch (type) {
 		case LOCAL:
-			LOG4CXX_INFO(logger, "TransportFactory instantiating new InProcessPort");
+			RSBINFO(logger, "TransportFactory instantiating new InProcessPort");
 			p = boost::shared_ptr<Port>(new rsb::inprocess::InProcessPort());
 			break;
 		case SPREAD:
-			LOG4CXX_INFO(logger, "TransportFactory instantiating new SpreadPort");
+			RSBINFO(logger, "TransportFactory instantiating new SpreadPort");
 			p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort());
 			break;
 		case NONE:
-			LOG4CXX_INFO(logger, "TransportFactory not instantiating any Port implementation");
+			RSBINFO(logger, "TransportFactory not instantiating any Port implementation");
 			p = PortPtr();
 			break;
 		default:
-			LOG4CXX_WARN(logger, "TransportType not supported by this TransportFactory implementation");
+			RSBWARN(logger, "TransportType not supported by this TransportFactory implementation");
 			break;
 	}
 //		p.setTypeConverters(r);

@@ -19,7 +19,7 @@
 
 #include "Publisher.h"
 
-using namespace log4cxx;
+using namespace rsc::logging;
 using namespace rsb::transport;
 
 namespace rsb {

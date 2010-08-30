@@ -28,17 +28,17 @@ using namespace std;
 using namespace rsb;
 using namespace rsb::protocol;
 using namespace rsb::transport;
-using namespace log4cxx;
+using namespace rsc::logging;
 
 namespace rsb {
 
 namespace spread {
 
-ReceiverTask::ReceiverTask(SpreadConnectionPtr s, ConverterMapPtr c, QADPtr q) : logger(log4cxx::Logger::getLogger("rsb.spread.ReceiverTask")), cancelRequested(false), con(s), converters(c), qad(q) {
+ReceiverTask::ReceiverTask(SpreadConnectionPtr s, ConverterMapPtr c, QADPtr q) : logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")), cancelRequested(false), con(s), converters(c), qad(q) {
 	// Verify that the version of the library that we linked against is
 	// compatible with the version of the headers we compiled against.
-	//LOG4CXX_INFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
-	LOG4CXX_TRACE(logger, "ReceiverTask::RecieverTask, SpreadConnection: " << con);
+	//RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
+	RSBTRACE(logger, "ReceiverTask::RecieverTask, SpreadConnection: " << con);
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
 
 }
@@ -53,7 +53,7 @@ void ReceiverTask::execute(rsb::util::Task<void>* t) {
 	try {
 		SpreadMessagePtr sm(new SpreadMessage(SpreadMessage::REGULAR));
 		con->receive(sm);
-		LOG4CXX_DEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << sm);
+		RSBDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << sm);
 		// TODO think about how to deal with non-data messages, e.g., membership
 		if (SpreadMessage::REGULAR == sm->getType()) {
 			if (!sm || !n) {

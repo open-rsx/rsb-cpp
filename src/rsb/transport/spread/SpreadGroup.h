@@ -24,7 +24,7 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 namespace rsb {
 
@@ -43,7 +43,7 @@ public:
 
 private:
 	std::string name;
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	SpreadConnectionPtr con;
 };
 

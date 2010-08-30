@@ -19,12 +19,10 @@
 
 #include "Router.h"
 
-#include <log4cxx/logger.h>
-#include <log4cxx/stream.h>
-#include <log4cxx/level.h>
+#include <rsc/logging/Logger.h>
 
 using namespace std;
-using namespace log4cxx;
+using namespace rsc::logging;
 using namespace rsb;
 using namespace rsb::filter;
 using namespace rsb::internal;
@@ -60,7 +58,7 @@ Router::~Router() {
 }
 
 void Router::publish(RSBEventPtr e) {
-	LOG4CXX_DEBUG(logger, "Router::publish(RSBEvent) publishing new event: " << e);
+	RSBDEBUG(logger, "Router::publish(RSBEvent) publishing new event: " << e);
 	op->push(e);
 }
 

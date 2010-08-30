@@ -31,20 +31,20 @@ namespace util {
 template < class R >
 class PeriodicTask : public Task<R> {
 public:
-	PeriodicTask(boost::function<R(Task<R>*)> delegate, int ms) : Task<R>(delegate), cycleTime(ms), logger(log4cxx::Logger::getLogger("rsb.util.task")) {};
+	PeriodicTask(boost::function<R(Task<R>*)> delegate, int ms) : Task<R>(delegate), cycleTime(ms), logger(rsc::logging::Logger::getLogger("rsb.util.task")) {};
 	virtual ~PeriodicTask() {
-		LOG4CXX_TRACE(logger, "~PeriodicTask() entered");
+		RSBTRACE(logger, "~PeriodicTask() entered");
 	//	if (!cancelRequest) cancel();
 	};
 
 	virtual void cancel() {
-		LOG4CXX_TRACE(logger, "PeriodicTask::cancel() entered");
+		RSBTRACE(logger, "PeriodicTask::cancel() entered");
 		Task<R>::cancel();
 	}
 
 protected:
 	virtual bool continueExec() {
-		LOG4CXX_TRACE(logger, "~PeriodicTask()::continueExec() entered");
+		RSBTRACE(logger, "~PeriodicTask()::continueExec() entered");
 		// wait, give others a chance
 		bool cont = false;
 		if (cycleTime != 0) {
@@ -53,28 +53,28 @@ protected:
 			time.nsec += cycleTime * 1000000;
 			// TODO provide option to interrupt in cancel using boost::this_thread
 			try {
-				LOG4CXX_TRACE(logger, "PeriodicTask()::continueExec() before thread sleep, sleeping " << cycleTime << " ms");
+				RSBTRACE(logger, "PeriodicTask()::continueExec() before thread sleep, sleeping " << cycleTime << " ms");
 				boost::thread::sleep(time);
 			//	thread->sleep(time);
 			} catch (boost::thread_interrupted e) {
-				LOG4CXX_WARN(logger, "PeriodicTask()::continueExec() catched boost::thread_interrupted exception");
+				RSBWARN(logger, "PeriodicTask()::continueExec() catched boost::thread_interrupted exception");
 			}
-			LOG4CXX_TRACE(logger, "PeriodicTask()::continueExec() thread woke up");
+			RSBTRACE(logger, "PeriodicTask()::continueExec() thread woke up");
 		}
-		LOG4CXX_TRACE(logger, "PeriodicTask()::continueExec() before lock");
+		RSBTRACE(logger, "PeriodicTask()::continueExec() before lock");
 		//boost::recursive_mutex::scoped_lock lock(Task<R>::m);
 		if (!this->cancelRequest) {
 			cont = true;
 		} else {
-			LOG4CXX_TRACE(logger, "PeriodicTask()::continueExec() cancel requested");
+			RSBTRACE(logger, "PeriodicTask()::continueExec() cancel requested");
 		}
-		LOG4CXX_TRACE(logger, "PeriodicTask()::continueExec() finished");
+		RSBTRACE(logger, "PeriodicTask()::continueExec() finished");
 		return cont;
 	}
 
 private:
 	int cycleTime;
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 
 };
 

@@ -28,7 +28,7 @@
 #include "MembershipManager.h"
 #include "SpreadConnection.h"
 
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 namespace rsb {
 
@@ -50,7 +50,7 @@ public:
 	void notify(rsb::filter::ScopeFilter* f, rsb::filter::FilterAction::Types at);
 
 private:
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 
 	volatile bool shutdown;
 	SpreadConnectionPtr con;

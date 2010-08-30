@@ -19,36 +19,36 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include <log4cxx/logger.h>
-#include <log4cxx/propertyconfigurator.h>
+#include <rsc/logging/Logger.h>
+//#include <rsc/logging/propertyconfigurator.h>
 #include <math.h>
 
 #include <rsb/Publisher.h>
 #include <rsb/util/Timer.h>
 
 using namespace std;
-using namespace log4cxx;
+using namespace rsc::logging;
 using namespace rsb;
 using namespace rsb::util;
 
 int main(void) {
 
-    std::ostringstream confpath;
-    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
-
-    if (log4cxxPropsEnv != NULL) {
-
-        confpath << log4cxxPropsEnv;
-        cout << "Trying log4cxx configuration from file " << confpath.str()
-                << endl;
-
-        try {
-            log4cxx::PropertyConfigurator::configure(confpath.str());
-        } catch (const std::exception& e) {
-            cout << "Trying log4cxx configuration from file " << confpath.str()
-                    << " failed. Using BasicConfigurator." << endl;
-        }
-    }
+//    std::ostringstream confpath;
+//    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
+//
+//    if (log4cxxPropsEnv != NULL) {
+//
+//        confpath << log4cxxPropsEnv;
+//        cout << "Trying log4cxx configuration from file " << confpath.str()
+//                << endl;
+//
+//        try {
+//            log4cxx::PropertyConfigurator::configure(confpath.str());
+//        } catch (const std::exception& e) {
+//            cout << "Trying log4cxx configuration from file " << confpath.str()
+//                    << " failed. Using BasicConfigurator." << endl;
+//        }
+//    }
 
     LoggerPtr l = Logger::getLogger("informer");
 

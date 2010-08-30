@@ -19,10 +19,10 @@
 
 #include "SpreadGroup.h"
 
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 using namespace std;
-using namespace log4cxx;
+using namespace rsc::logging;
 
 namespace rsb {
 
@@ -30,11 +30,11 @@ namespace spread {
 
 SpreadGroup::SpreadGroup(const string& n) :
 	name(n), logger(Logger::getLogger("rsb.spread.SpreadGroup")) {
-	LOG4CXX_DEBUG(logger, "new spread group object, group name: " << n);
+	RSBDEBUG(logger, "new spread group object, group name: " << n);
 }
 
 SpreadGroup::~SpreadGroup() {
-	LOG4CXX_DEBUG(logger, "destructor called for group object: " << name);
+	RSBDEBUG(logger, "destructor called for group object: " << name);
 }
 
 string SpreadGroup::getName() const {
@@ -47,7 +47,7 @@ void SpreadGroup::join(SpreadConnectionPtr con) {
 
 	// TODO evaluate error codes
 	SP_join(*con->getMailbox(), name.c_str());
-	LOG4CXX_DEBUG(logger, "joined spread group with name: " << name);
+	RSBDEBUG(logger, "joined spread group with name: " << name);
 }
 
 void SpreadGroup::leave(SpreadConnectionPtr con) {
@@ -56,7 +56,7 @@ void SpreadGroup::leave(SpreadConnectionPtr con) {
 
 	// TODO evaluate error codes and membership message
 	SP_leave(*con->getMailbox(), name.c_str());
-	LOG4CXX_DEBUG(logger, "left spread group with name: " << name);
+	RSBDEBUG(logger, "left spread group with name: " << name);
 }
 
 }

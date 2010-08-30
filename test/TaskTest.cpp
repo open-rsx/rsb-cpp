@@ -26,7 +26,7 @@
 #include <iostream>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <log4cxx/basicconfigurator.h>
+//#include <rsc/logging/basicconfigurator.h>
 
 using namespace std;
 using namespace rsb::util;
@@ -96,7 +96,7 @@ TEST(TaskTest, testExecution) {
 }
 
 int main(int argc, char* argv[]) {
-	log4cxx::BasicConfigurator::configure();
+	//log4cxx::BasicConfigurator::configure();
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 

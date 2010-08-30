@@ -28,13 +28,11 @@
 #include <boost/thread.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/recursive_mutex.hpp>
-#include <log4cxx/logger.h>
+#include <rsc/logging/Logger.h>
 
 namespace rsb {
 
 namespace util {
-
-// TODO add log.hpp to this project or something similar to replace log4cxx on demand
 
 template < class R >
 class Task;
@@ -49,7 +47,7 @@ typedef boost::function<void()> Callback;
 template < class R >
 class Task {
 public:
-	Task(boost::function<R(Task<R>*)> delegate) : logger(log4cxx::Logger::getLogger("rsb.util.Task")) {
+	Task(boost::function<R(Task<R>*)> delegate) : logger(rsc::logging::Logger::getLogger("rsb.util.Task")) {
 		d = delegate;
 		cancelRequest = false;
 		cancelled = false;
@@ -65,7 +63,7 @@ public:
 	}
 
 	void run() {
-		LOG4CXX_TRACE(logger, "run() entered"); // << *id);
+		RSBTRACE(logger, "run() entered"); // << *id);
 		// TODO Think about returning an iterator to the results of execute here!
 		do {
 			// TODO add exception handling
@@ -77,10 +75,10 @@ public:
 			// call post hook
 			if (post)
 				post();
-			LOG4CXX_TRACE(logger, "run cycle done");
+			RSBTRACE(logger, "run cycle done");
 		} while (continueExec());
 		boost::recursive_mutex::scoped_lock lock(m);
-		LOG4CXX_INFO(logger, "run() finished");
+		RSBINFO(logger, "run() finished");
 		cancelled = true;
 		this->c.notify_all();
 	}
@@ -102,7 +100,7 @@ public:
 	}
 
 	virtual void cancel() {
-		LOG4CXX_TRACE(logger, "Task::cancel() entered");
+		RSBTRACE(logger, "Task::cancel() entered");
 //		// protect setting and comparison of cancel boolean, see execute()
 //		boost::recursive_mutex::scoped_lock lock(m);
 		cancelRequest = true;
@@ -116,13 +114,13 @@ public:
 	}
 
 	virtual void waitDone() {
-		LOG4CXX_DEBUG(logger, "waitDone() entered");
+		RSBDEBUG(logger, "waitDone() entered");
 		boost::recursive_mutex::scoped_lock lock(m);
-		LOG4CXX_DEBUG(logger, "waitDone() after lock, before wait");
+		RSBDEBUG(logger, "waitDone() after lock, before wait");
 		while (!cancelled) {
 			this->c.wait(lock);
 		}
-		LOG4CXX_DEBUG(logger, "waitDone() finished");
+		RSBDEBUG(logger, "waitDone() finished");
 	}
 
 
@@ -143,7 +141,7 @@ protected:
 	void afterCycle() {
 		// calculate processing time for last cycle, last n cycle, variance...
 		// TODO change to logging
-		LOG4CXX_INFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
+		RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
 	}
 
 	virtual bool continueExec() {
@@ -154,7 +152,7 @@ protected:
 	volatile bool cancelled;
 
 private:
-	log4cxx::LoggerPtr logger;
+	rsc::logging::LoggerPtr logger;
 	double timestamp;
 	TimerPtr timer;
 	Callback pre;
