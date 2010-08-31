@@ -128,7 +128,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/introspection/IntrospectionConverter.h)
 
 ADD_LIBRARY(${LIBNAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
-TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES} ${RSC_LIBRARIES}
+TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES} ${RSC_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}
         /vol/nao/releases/cuttingedge/lib/naoqi/libalbase.so
         /vol/nao/releases/cuttingedge/lib/liblibvision.a
         /vol/nao/releases/cuttingedge/lib/libcv.so

@@ -35,8 +35,8 @@ public:
 		IplImage *image = cvCreateImage(cvSize(160, 120), 8, 3);
 		image->imageData = (char*) e->getData();
 
-//		cvShowImage("naocam", image);
-//		cvWaitKey(2);
+		cvShowImage("naocam", image);
+		cvWaitKey(2);
 		cout << "handler finished!" << endl;
 	}
 };
