@@ -47,19 +47,19 @@ PortPtr TransportFactory::createPort(PortTypes type) {
 //		r->addConverter("uchar.person",ac);
 	switch (type) {
 		case LOCAL:
-			RSBINFO(logger, "TransportFactory instantiating new InProcessPort");
+			RSCINFO(logger, "TransportFactory instantiating new InProcessPort");
 			p = boost::shared_ptr<Port>(new rsb::inprocess::InProcessPort());
 			break;
 		case SPREAD:
-			RSBINFO(logger, "TransportFactory instantiating new SpreadPort");
+			RSCINFO(logger, "TransportFactory instantiating new SpreadPort");
 			p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort());
 			break;
 		case NONE:
-			RSBINFO(logger, "TransportFactory not instantiating any Port implementation");
+			RSCINFO(logger, "TransportFactory not instantiating any Port implementation");
 			p = PortPtr();
 			break;
 		default:
-			RSBWARN(logger, "TransportType not supported by this TransportFactory implementation");
+			RSCWARN(logger, "TransportType not supported by this TransportFactory implementation");
 			break;
 	}
 //		p.setTypeConverters(r);

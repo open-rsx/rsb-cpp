@@ -48,7 +48,7 @@ SpreadMessage::SpreadMessage(const char* buf) {
 ;
 
 SpreadMessage::~SpreadMessage() {
-	RSBTRACE(logger, "spread message destructor called");
+	RSCTRACE(logger, "spread message destructor called");
 }
 ;
 

@@ -63,7 +63,7 @@ public:
 	}
 
 	void run() {
-		RSBTRACE(logger, "run() entered"); // << *id);
+		RSCTRACE(logger, "run() entered"); // << *id);
 		// TODO Think about returning an iterator to the results of execute here!
 		do {
 			// TODO add exception handling
@@ -75,10 +75,10 @@ public:
 			// call post hook
 			if (post)
 				post();
-			RSBTRACE(logger, "run cycle done");
+			RSCTRACE(logger, "run cycle done");
 		} while (continueExec());
 		boost::recursive_mutex::scoped_lock lock(m);
-		RSBINFO(logger, "run() finished");
+		RSCINFO(logger, "run() finished");
 		cancelled = true;
 		this->c.notify_all();
 	}
@@ -100,7 +100,7 @@ public:
 	}
 
 	virtual void cancel() {
-		RSBTRACE(logger, "Task::cancel() entered");
+		RSCTRACE(logger, "Task::cancel() entered");
 //		// protect setting and comparison of cancel boolean, see execute()
 //		boost::recursive_mutex::scoped_lock lock(m);
 		cancelRequest = true;
@@ -114,13 +114,13 @@ public:
 	}
 
 	virtual void waitDone() {
-		RSBDEBUG(logger, "waitDone() entered");
+		RSCDEBUG(logger, "waitDone() entered");
 		boost::recursive_mutex::scoped_lock lock(m);
-		RSBDEBUG(logger, "waitDone() after lock, before wait");
+		RSCDEBUG(logger, "waitDone() after lock, before wait");
 		while (!cancelled) {
 			this->c.wait(lock);
 		}
-		RSBDEBUG(logger, "waitDone() finished");
+		RSCDEBUG(logger, "waitDone() finished");
 	}
 
 
@@ -141,7 +141,7 @@ protected:
 	void afterCycle() {
 		// calculate processing time for last cycle, last n cycle, variance...
 		// TODO change to logging
-		RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
+		RSCINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
 	}
 
 	virtual bool continueExec() {

@@ -289,13 +289,13 @@ ConfigurationPtr Configuration::getInstance() {
 	boost::mutex::scoped_lock scoped_lock(initMtx);
 
 	if (propertiesInitialized == false) {
-		RSBDEBUG(logger,"creating single Configuration instance");
+		RSCDEBUG(logger,"creating single Configuration instance");
 		openWinsockDll();
 		// create single instance
 		propertiesSingleton = ConfigurationPtr(new Configuration());
-		RSBDEBUG(logger,"now parsing configuration");
+		RSCDEBUG(logger,"now parsing configuration");
 		propertiesSingleton->loadSettings();
-		RSBDEBUG(logger,"property singleton constructed");
+		RSCDEBUG(logger,"property singleton constructed");
 		propertiesInitialized = true;
 		return propertiesSingleton;
 	} else {
@@ -310,7 +310,7 @@ string Configuration::getProperty(const string& key) {
 	if (p != properties.end()) {
 		return p->second;
 	} else {
-		RSBWARN(logger, "property not found with key: " + key);
+		RSCWARN(logger, "property not found with key: " + key);
 		throw ConfigException(string("Can't find property with key: ")
 				+ string(key));
 	}
@@ -324,14 +324,14 @@ int Configuration::getPropertyAsInt(const string& key) {
 	if (p != properties.end()) {
 		istringstream v(p->second);
 		if (!(v >> value) || !v.eof()) {
-			RSBWARN(logger, "could not conert property with key " + key
+			RSCWARN(logger, "could not conert property with key " + key
 					+ " to int type");
 			throw ConfigException(string(
 					"Can't convert property to integer value with key: ")
 					+ string(key));
 		}
 	} else {
-		RSBWARN(logger, "property not found with key: " + key);
+		RSCWARN(logger, "property not found with key: " + key);
 		throw ConfigException(string("Can't find property with key: ")
 				+ string(key));
 	}
@@ -351,7 +351,7 @@ void Configuration::setProperty(const string& key, const string& value) {
 	}
 
 	if (!valid) {
-		RSBWARN(logger, "property not found with key: " + key);
+		RSCWARN(logger, "property not found with key: " + key);
 		throw ConfigException("Property " + key + " doesn't exist.");
 	}
 
@@ -385,7 +385,7 @@ void Configuration::setProperty(const string& key, const string& value) {
 
 void Configuration::loadSettings() {
 	// read settings
-	RSBDEBUG(logger,"reading user defined settings");
+	RSCDEBUG(logger,"reading user defined settings");
 	string home = getHomeDir();
 	// TODO how to handle additional user defined loggers?
 	// first, parse user's home folder .xcfrc file
@@ -401,7 +401,7 @@ void Configuration::load(const string& file) {
 		ifstream in(file.c_str());
 		if (!in.is_open()) {
 			// Ignored. No config file present at given location.
-			RSBDEBUG(logger,"no .xcfrc found at location: " + file);
+			RSCDEBUG(logger,"no .xcfrc found at location: " + file);
 		} else {
 			// parse contents
 			char line[1024];
@@ -410,12 +410,12 @@ void Configuration::load(const string& file) {
 			}
 		}
 	} catch (const std::exception& ex) {
-		RSBERROR(logger,
+		RSCERROR(logger,
 				"catched standard exception during parsing of file at location: "
 						+ file);
-		RSBERROR(logger,"catched exception message is: " + string(ex.what()));
+		RSCERROR(logger,"catched exception message is: " + string(ex.what()));
 	} catch (...) {
-		RSBERROR(logger,
+		RSCERROR(logger,
 				"catched unknown exception during parsing of config file in home folder");
 	}
 }
@@ -431,7 +431,7 @@ void Configuration::loadEnv() {
 				parseLine( convertFromEnviron(environ[i]));
 			}
 		} catch (...) {
-			RSBERROR(logger,
+			RSCERROR(logger,
 					"catched unknown exception during parsing of environment variables");
 		}
 	}
@@ -481,7 +481,7 @@ void Configuration::parseLine(const std::string& line) {
 		setProperty(key, value);
 	} catch (const ConfigException &ex) {
 		// warn but ignore invalid property
-		RSBWARN(logger, "Exception catched during parsing of XCF config: " + string(
+		RSCWARN(logger, "Exception catched during parsing of XCF config: " + string(
 				ex.what()));
 	}
 }

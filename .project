@@ -3,6 +3,7 @@
 	<name>RSB</name>
 	<comment></comment>
 	<projects>
+		<project>RSC</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

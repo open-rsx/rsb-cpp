@@ -30,11 +30,11 @@ namespace spread {
 
 SpreadGroup::SpreadGroup(const string& n) :
 	name(n), logger(Logger::getLogger("rsb.spread.SpreadGroup")) {
-	RSBDEBUG(logger, "new spread group object, group name: " << n);
+	RSCDEBUG(logger, "new spread group object, group name: " << n);
 }
 
 SpreadGroup::~SpreadGroup() {
-	RSBDEBUG(logger, "destructor called for group object: " << name);
+	RSCDEBUG(logger, "destructor called for group object: " << name);
 }
 
 string SpreadGroup::getName() const {
@@ -47,7 +47,7 @@ void SpreadGroup::join(SpreadConnectionPtr con) {
 
 	// TODO evaluate error codes
 	SP_join(*con->getMailbox(), name.c_str());
-	RSBDEBUG(logger, "joined spread group with name: " << name);
+	RSCDEBUG(logger, "joined spread group with name: " << name);
 }
 
 void SpreadGroup::leave(SpreadConnectionPtr con) {
@@ -56,7 +56,7 @@ void SpreadGroup::leave(SpreadConnectionPtr con) {
 
 	// TODO evaluate error codes and membership message
 	SP_leave(*con->getMailbox(), name.c_str());
-	RSBDEBUG(logger, "left spread group with name: " << name);
+	RSCDEBUG(logger, "left spread group with name: " << name);
 }
 
 }

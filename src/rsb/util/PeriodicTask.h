@@ -33,18 +33,18 @@ class PeriodicTask : public Task<R> {
 public:
 	PeriodicTask(boost::function<R(Task<R>*)> delegate, int ms) : Task<R>(delegate), cycleTime(ms), logger(rsc::logging::Logger::getLogger("rsb.util.task")) {};
 	virtual ~PeriodicTask() {
-		RSBTRACE(logger, "~PeriodicTask() entered");
+		RSCTRACE(logger, "~PeriodicTask() entered");
 	//	if (!cancelRequest) cancel();
 	};
 
 	virtual void cancel() {
-		RSBTRACE(logger, "PeriodicTask::cancel() entered");
+		RSCTRACE(logger, "PeriodicTask::cancel() entered");
 		Task<R>::cancel();
 	}
 
 protected:
 	virtual bool continueExec() {
-		RSBTRACE(logger, "~PeriodicTask()::continueExec() entered");
+		RSCTRACE(logger, "~PeriodicTask()::continueExec() entered");
 		// wait, give others a chance
 		bool cont = false;
 		if (cycleTime != 0) {
@@ -53,22 +53,22 @@ protected:
 			time.nsec += cycleTime * 1000000;
 			// TODO provide option to interrupt in cancel using boost::this_thread
 			try {
-				RSBTRACE(logger, "PeriodicTask()::continueExec() before thread sleep, sleeping " << cycleTime << " ms");
+				RSCTRACE(logger, "PeriodicTask()::continueExec() before thread sleep, sleeping " << cycleTime << " ms");
 				boost::thread::sleep(time);
 			//	thread->sleep(time);
 			} catch (boost::thread_interrupted e) {
-				RSBWARN(logger, "PeriodicTask()::continueExec() catched boost::thread_interrupted exception");
+				RSCWARN(logger, "PeriodicTask()::continueExec() catched boost::thread_interrupted exception");
 			}
-			RSBTRACE(logger, "PeriodicTask()::continueExec() thread woke up");
+			RSCTRACE(logger, "PeriodicTask()::continueExec() thread woke up");
 		}
-		RSBTRACE(logger, "PeriodicTask()::continueExec() before lock");
+		RSCTRACE(logger, "PeriodicTask()::continueExec() before lock");
 		//boost::recursive_mutex::scoped_lock lock(Task<R>::m);
 		if (!this->cancelRequest) {
 			cont = true;
 		} else {
-			RSBTRACE(logger, "PeriodicTask()::continueExec() cancel requested");
+			RSCTRACE(logger, "PeriodicTask()::continueExec() cancel requested");
 		}
-		RSBTRACE(logger, "PeriodicTask()::continueExec() finished");
+		RSCTRACE(logger, "PeriodicTask()::continueExec() finished");
 		return cont;
 	}
 

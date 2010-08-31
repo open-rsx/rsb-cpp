@@ -41,7 +41,7 @@ namespace rsb {
 namespace spread {
 
 SpreadPort::SpreadPort() : logger(rsc::logging::Logger::getLogger("rsb.spread.SpreadPort")) {
-	RSBDEBUG(logger, "SpreadPort() entered, port id: " << id.getIdAsString());
+	RSCDEBUG(logger, "SpreadPort() entered, port id: " << id.getIdAsString());
 	shutdown = false;
 	exec = TaskExecutorVoidPtr(new TaskExecutor<void>());
 	// TODO ConnectionPool for SpreadConnections?!?
@@ -75,23 +75,23 @@ void SpreadPort::removeObserver(Action a) {
 
 void SpreadPort::deactivate() {
 	shutdown = true;
-	RSBDEBUG(logger, "deactivate() entered"); // << *id);
+	RSCDEBUG(logger, "deactivate() entered"); // << *id);
 	rec->cancel();
 	// killing spread connection, exception thrown to rec thread which
 	// should be handled specifically as the cancel flag was set
 	// memberships->leaveAll();
 	con->deactivate();
-	RSBDEBUG(logger, "deactivate() stopping qad task object");
+	RSCDEBUG(logger, "deactivate() stopping qad task object");
 	qad->cancel();
-	RSBDEBUG(logger, "deactivate() stopping qad thread");
+	RSCDEBUG(logger, "deactivate() stopping qad thread");
 	exec->join(qadTask);
-	RSBDEBUG(logger, "deactivate() stopping receiver thread");
+	RSCDEBUG(logger, "deactivate() stopping receiver thread");
 	exec->join(recTask);
 //	cout << "stopping st task" << endl;
 //	staTask->cancel();
 //	cout << "stopping st thread" << endl;
 //	exec->join(staTask);
-	RSBTRACE(logger, "deactivate() finished"); // << *id);
+	RSCTRACE(logger, "deactivate() finished"); // << *id);
 };
 
 SpreadPort::~SpreadPort() {
@@ -101,18 +101,18 @@ SpreadPort::~SpreadPort() {
 void SpreadPort::notify(rsb::filter::ScopeFilter* f, rsb::filter::FilterAction::Types at) {
 	// join or leave groups
 	// TODO evaluate success
-	RSBDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);
+	RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);
 	switch (at) {
 		case rsb::filter::FilterAction::ADD:
-			RSBINFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to join Spread group");
+			RSCINFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to join Spread group");
 			memberships->join(f->getURI(),con);
 			break;
 		case rsb::filter::FilterAction::REMOVE:
-			RSBINFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to leave Spread group");
+			RSCINFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to leave Spread group");
 			memberships->leave(f->getURI(),con);
 			break;
 		default:
-			RSBWARN(logger, "ScopeFilter Action not supported by this Port implementation");
+			RSCWARN(logger, "ScopeFilter Action not supported by this Port implementation");
 			break;
 	}
 
@@ -155,9 +155,9 @@ void SpreadPort::push(RSBEventPtr e) {
 //        }
     	// TODO implement queing or throw messages away?
     	// TODO maybe return exception with msg that was not sent
-    	RSBWARN(logger, "Spread Connection inactive -> could not send message");
+    	RSCWARN(logger, "Spread Connection inactive -> could not send message");
     } else {
-    	RSBDEBUG(logger, "event sent to spread");
+    	RSCDEBUG(logger, "event sent to spread");
     }
 }
 

@@ -38,7 +38,7 @@ ReceiverTask::ReceiverTask(SpreadConnectionPtr s, ConverterMapPtr c, QADPtr q) :
 	// Verify that the version of the library that we linked against is
 	// compatible with the version of the headers we compiled against.
 	//RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
-	RSBTRACE(logger, "ReceiverTask::RecieverTask, SpreadConnection: " << con);
+	RSCTRACE(logger, "ReceiverTask::RecieverTask, SpreadConnection: " << con);
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
 
 }
@@ -53,7 +53,7 @@ void ReceiverTask::execute(rsb::util::Task<void>* t) {
 	try {
 		SpreadMessagePtr sm(new SpreadMessage(SpreadMessage::REGULAR));
 		con->receive(sm);
-		RSBDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << sm);
+		RSCDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << sm);
 		// TODO think about how to deal with non-data messages, e.g., membership
 		if (SpreadMessage::REGULAR == sm->getType()) {
 			if (!sm || !n) {
