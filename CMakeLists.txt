@@ -27,6 +27,7 @@ INCLUDE(InstallFilesRecursive)
 SET(RSB_VERSION 0.1.0)
 SET(RSB_NAME "rsb")
 SET(RSB_TEST_NAME "rsbtest")
+SET(LIBNAME RSBCore)
 
 # --- global compiler flags ---
 
@@ -94,76 +95,16 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/src
 
 ADD_SUBDIRECTORY(3rdparty)
 
-SET(PREFIX ${CMAKE_INSTALL_PREFIX})
-
-SET(BINDIR "${PREFIX}/bin")
-SET(INCLUDEDIR "${PREFIX}/include")
-SET(MANDIR "${PREFIX}/man")
-SET(LIBDIR "${PREFIX}/lib")
-SET(LIBNAME RSBCore)
-SET(BINNAME1 rsb_monitor)
-SET(EX1 rsb_informer)
-SET(EX2 rsb_listener)
-SET(EX3 rsb_videosubscriber)
-SET(TESTNAME1 rsb_test_pbuf)
-SET(TESTNAME2 rsb_test_converter)
-SET(TESTNAME3 rsb_test_subscription)
-#SET(TESTNAME4 rsb_test_tasks)
-SET(TESTNAME5 rsb_test_qad)
-SET(TESTNAME6 rsb_test_inprocess)
-SET(TESTNAME7 rsb_test_statustask)
-SET(TESTNAME8 rsb_test_taskexec)
-SET(TESTNAME9 rsb_test_ep)
-
-# Build package config file
-#FILE(READ "pkgconfig.in" PKG_IN)
-#STRING(REGEX REPLACE "@prefix@" ${CMAKE_INSTALL_PREFIX} PKG_OUT ${PKG_IN})
-#FILE(WRITE ${LIBDIR}/pkgconfig/${PKG_CONF_NAME} ${PKG_OUT})
-#MESSAGE("-- Package config file generated and installed")
+ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(examples)
+ADD_SUBDIRECTORY(apps)
 
 ENABLE_TESTING()
-ADD_SUBDIRECTORY(src)
-
-add_executable (${BINNAME1} apps/monitor/RSBMonitor.cpp
-                apps/monitor/mongoose.c)
-add_executable (${TESTNAME1} test/PBufTest.cpp)
-add_executable (${TESTNAME2} test/ConverterTest.cpp)
-add_executable (${TESTNAME3} test/SubscriptionTest.cpp)
-#add_executable (${TESTNAME4} test/TaskTest.cpp)
-add_executable (${TESTNAME5} test/QueueAndDispatchTest.cpp)
-add_executable (${TESTNAME6} test/InProcessTest.cpp)
-add_executable (${TESTNAME7} test/StatusTaskTest.cpp)
-add_executable (${TESTNAME8} test/TaskExecutorTest.cpp)
-add_executable (${TESTNAME9} test/EventProcessorTest.cpp)
-
-add_executable (${EX1} examples/informer/informer.cpp)
-add_executable (${EX2} examples/listener/listener.cpp)
-add_executable (${EX3} examples/VideoSender/VideoSubscriber.cpp)
-
-
-target_link_libraries(${BINNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-#target_link_libraries(${TESTNAME4} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME5} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME6} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME7} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME8} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME9} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${EX1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${EX2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${EX3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-
-# --- install ---
-INSTALL(TARGETS ${BINNAME1} ${EX1} ${EX2}
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib)
-INSTALL_FILES_RECURSIVE(include HEADERS)
-
-CONFIGURE_FILE(rsb.pc.in rsb.pc @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc DESTINATION lib/pkgconfig)
-
 IF(BUILD_TESTS)
     ADD_SUBDIRECTORY(test)
 ENDIF()
+
+# --- install ---
+
+CONFIGURE_FILE(rsb.pc.in rsb.pc @ONLY)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc DESTINATION lib/pkgconfig)

@@ -65,3 +65,35 @@ TARGET_LINK_LIBRARIES(${ALIMAGE_TEST_NAME}
                       /vol/nao/releases/cuttingedge/lib/liblibvision.a)
 
 ADD_TEST(${ALIMAGE_TEST_NAME} ${ALIMAGE_TEST_NAME})
+
+# --- TODO old stuff ---
+
+SET(TESTNAME1 rsb_test_pbuf)
+SET(TESTNAME2 rsb_test_converter)
+SET(TESTNAME3 rsb_test_subscription)
+#SET(TESTNAME4 rsb_test_tasks)
+SET(TESTNAME5 rsb_test_qad)
+SET(TESTNAME6 rsb_test_inprocess)
+SET(TESTNAME7 rsb_test_statustask)
+SET(TESTNAME8 rsb_test_taskexec)
+SET(TESTNAME9 rsb_test_ep)
+
+add_executable (${TESTNAME1} PBufTest.cpp)
+add_executable (${TESTNAME2} ConverterTest.cpp)
+add_executable (${TESTNAME3} SubscriptionTest.cpp)
+#add_executable (${TESTNAME4} TaskTest.cpp)
+add_executable (${TESTNAME5} QueueAndDispatchTest.cpp)
+add_executable (${TESTNAME6} InProcessTest.cpp)
+add_executable (${TESTNAME7} StatusTaskTest.cpp)
+add_executable (${TESTNAME8} TaskExecutorTest.cpp)
+add_executable (${TESTNAME9} EventProcessorTest.cpp)
+
+target_link_libraries(${TESTNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+#target_link_libraries(${TESTNAME4} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME5} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME6} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME7} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME8} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME9} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
