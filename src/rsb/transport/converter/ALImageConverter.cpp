@@ -44,7 +44,7 @@ void ALImageConverter::serialize(const std::string &type, boost::shared_ptr<
 
 		message.set_data((char *) image->getData(), image->getSize());
 		message.set_resolution(image->getResolution());
-		cout << "resolution before: " << image->getResolution() << endl;
+//		cout << "resolution before: " << image->getResolution() << endl;
 		message.set_colorspace(image->getColorSpace());
 		message.SerializeToString(&m);
 
@@ -68,7 +68,7 @@ boost::shared_ptr<void> ALImageConverter::deserialize(const std::string &type,
 		ALImageMessage message;
 		message.ParseFromString(d);
 
-		cout << "resolution after: " << message.resolution() << endl;
+//		cout << "resolution after: " << message.resolution() << endl;
 		ALImage *image = new ALImage(message.resolution(),
 				message.colorspace(), false);
 		// data needs to be copied here because the message is removed at the

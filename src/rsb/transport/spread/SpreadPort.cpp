@@ -122,21 +122,21 @@ void SpreadPort::push(RSBEventPtr e) {
 	// get matching converter
 	string s;
 	boost::shared_ptr<void> obj = boost::static_pointer_cast<void>(e->getData());
-	cerr << "SpreadPort::push Type: " << e->getType() << endl;
+//	cerr << "SpreadPort::push Type: " << e->getType() << endl;
 	boost::shared_ptr<AbstractConverter<string> > c = boost::static_pointer_cast<AbstractConverter<string> >((*converters)[e->getType()]);
 	c->serialize(e->getType(),obj,s);
-	cerr << "SpreadPort::push after serialize" << endl;
+//	cerr << "SpreadPort::push after serialize" << endl;
 	Notification n;
 	n.set_eid("not set yet");
 	n.set_s_length(0);
 	n.set_standalone(false);
 	n.set_uri(e->getURI());
 	n.set_type_id(e->getType());
-	cerr << "SpreadPort::push after set type" << endl;
+//	cerr << "SpreadPort::push after set type" << endl;
 	n.mutable_data()->set_binary(s);
 	// TODO fix this, think about whether this is needed
 	n.mutable_data()->set_length(s.length());
-	cerr << "SpreadPort::push after notification" << endl;
+//	cerr << "SpreadPort::push after notification" << endl;
 	string sm;
 
 	if (!n.SerializeToString(&sm)) {
