@@ -20,7 +20,7 @@
 #ifndef NOTIFICATION_H_
 #define NOTIFICATION_H_
 
-#include <Notification.pb.h>
+#include <rsb/protocol/Notification.pb.h>
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {

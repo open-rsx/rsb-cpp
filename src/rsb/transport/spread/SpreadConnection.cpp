@@ -34,7 +34,7 @@ namespace rsb {
 namespace spread {
 
 #define SPREAD_MAX_GROUPS   100
-#define SPREAD_MAX_MESSLEN  100000
+#define SPREAD_MAX_MESSLEN  180000
 
 // TODO make port a numerical attribute
 SpreadConnection::SpreadConnection(const string& id, const string& h,
@@ -115,7 +115,7 @@ void SpreadConnection::activate() {
 void SpreadConnection::deactivate() {
 	if (isActive()) {
 		SP_disconnect(con);
-		RSCDEBUG(logger, "Spread connection disconnected, id " << conId << " private group " << spreadpg)
+		RSCDEBUG(logger, "Spread connection disconnected, id " << conId << " private group " << spreadpg);
 		connected = false;
 	}
 }

@@ -1,7 +1,7 @@
 
 ENABLE_TESTING()
 
-INCLUDE_DIRECTORIES(BEFORE ../src ${GTEST_INCLUDE_DIR} ${GMOCK_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
+INCLUDE_DIRECTORIES(BEFORE ../src ${CMAKE_CURRENT_BINARY_DIR}/../src ${GTEST_INCLUDE_DIR} ${GMOCK_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR} 
     ${CMAKE_INSTALL_PREFIX}/include/opencv
     /vol/nao/releases/cuttingedge/include/alvision 
     /vol/nao/releases/cuttingedge/include/altools 

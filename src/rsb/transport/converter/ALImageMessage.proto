@@ -1,0 +1,7 @@
+package rsb.transport;
+
+message ALImageMessage {
+    required bytes data = 1;
+    required int32 resolution = 2;
+    required int32 colorspace = 3;
+}

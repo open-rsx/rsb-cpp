@@ -12,8 +12,6 @@ SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 SET(PROJECT_CMAKE_PATH ${CMAKE_INSTALL_PREFIX}/share/cmake/Modules)
 SET(CMAKE_MODULE_PATH ${PROJECT_CMAKE_PATH} ${CMAKE_MODULE_PATH})
 
-MESSAGE("${CMAKE_MODULE_PATH}")
-
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
         "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
@@ -73,7 +71,7 @@ FIND_PACKAGE(BoostUUID REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 MESSAGE(STATUS "Threading library: ${CMAKE_THREAD_LIBS_INIT}")
 
-FIND_PACKAGE(Protobuf REQUIRED)
+FIND_PACKAGE(ProtocolBuffers REQUIRED)
 
 PKG_CHECK_MODULES(RSC REQUIRED rsc)
 FIND_PACKAGE(RSBProtocol REQUIRED)
@@ -85,11 +83,10 @@ INCLUDE_DIRECTORIES(SYSTEM ${LIBS_INCLUDE_DIRS} ${RSC_INCLUDE_DIRS} ${Boost_INCL
 INCLUDE_DIRECTORIES(BEFORE src)
 LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
-# TODO check while /src is needed here
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/src 
-                /vol/nao/releases/cuttingedge/include/alvision 
-                /vol/nao/releases/cuttingedge/include/altools 
-                /vol/nao/releases/cuttingedge/include/alcore)
+# TODO bad hack
+INCLUDE_DIRECTORIES(/vol/nao/releases/cuttingedge/include/alvision 
+                    /vol/nao/releases/cuttingedge/include/altools 
+                    /vol/nao/releases/cuttingedge/include/alcore)
 
 # --- source code ---
 
