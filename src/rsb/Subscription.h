@@ -34,6 +34,7 @@ typedef boost::function<void(RSBEventPtr)> Action;
 
 typedef std::list<rsb::filter::AbstractFilterPtr> FilterChain;
 typedef std::list<Action> Actions;
+typedef std::list<HandlerPtr> HandlerList;
 
 // TODO implement stream operators
 // TODO add id field
@@ -50,8 +51,8 @@ public:
 	virtual void appendAction(Action a);
 	virtual void appendHandler(HandlerPtr h);
 
-	Actions::iterator getActions() {
-		return actions->begin();
+	boost::shared_ptr<Actions> getActions() {
+		return actions;
 	}
 
 	// TODO check if it is generally better to return iterators?!
@@ -71,6 +72,8 @@ private:
 	volatile bool enabled;
 	boost::shared_ptr<FilterChain> filters;
 	boost::shared_ptr<Actions> actions;
+	boost::shared_ptr<HandlerList> handlers;
+
 };
 
 typedef boost::shared_ptr<Subscription> SubscriptionPtr;

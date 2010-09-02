@@ -25,6 +25,7 @@ namespace rsb {
 Subscription::Subscription() : enabled(true) {
 	filters = boost::shared_ptr<FilterChain>(new FilterChain());
 	actions = boost::shared_ptr<Actions>(new Actions());
+	handlers = boost::shared_ptr<HandlerList>(new HandlerList());
 }
 
 Subscription::~Subscription() {
@@ -38,6 +39,7 @@ void Subscription::appendFilter(rsb::filter::AbstractFilterPtr p) {
 void Subscription::appendHandler(HandlerPtr h) {
 	rsb::Action a = boost::bind(&Handler::internal_notify,h.get(),_1);
 	appendAction(a);
+	handlers->push_back(h);
 }
 
 void Subscription::appendAction(Action a) {
