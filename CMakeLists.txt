@@ -83,6 +83,8 @@ INCLUDE_DIRECTORIES(SYSTEM ${LIBS_INCLUDE_DIRS} ${RSC_INCLUDE_DIRS} ${Boost_INCL
 INCLUDE_DIRECTORIES(BEFORE src)
 LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
+FIND_PACKAGE(Doxygen)
+
 # TODO bad hack
 INCLUDE_DIRECTORIES(/vol/nao/releases/cuttingedge/include/alvision 
                     /vol/nao/releases/cuttingedge/include/altools 
@@ -105,3 +107,23 @@ ENDIF()
 
 CONFIGURE_FILE(rsb.pc.in rsb.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc DESTINATION lib/pkgconfig)
+
+# --- documentation gneration ---
+
+IF(DOXYGEN_FOUND)
+
+    SET(API_DIR ${CMAKE_BINARY_DIR}/doc)
+    SET(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+    SET(DOXYFILE ${CMAKE_BINARY_DIR}/Doxyfile)
+    SET(WARNFILE ${CMAKE_BINARY_DIR}/doxygen-warn.log)
+    
+    CONFIGURE_FILE(Doxyfile.in ${DOXYFILE})
+    
+    ADD_CUSTOM_COMMAND(OUTPUT ${API_DIR}
+                       DEPENDS ${DOXYFILE}
+                       COMMAND ${DOXYGEN_EXECUTABLE}
+                       ARGS ${DOXYFILE}
+                       WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    ADD_CUSTOM_TARGET(doc DEPENDS ${API_DIR})
+
+ENDIF()
