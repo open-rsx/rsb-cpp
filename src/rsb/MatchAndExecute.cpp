@@ -50,7 +50,7 @@ void MatchAndExecute::process(SubscriptionPtr sub, RSBEventPtr e) {
 	try {
 		// TODO iterate over all actions
 		if (match && sub->isEnabled())
-			(*sub->getActions())(e);
+			(*sub->getActions()->begin())(e);
 	} catch (const std::exception& ex) {
 		cerr << ex.what() << endl;
 	} catch (...) {

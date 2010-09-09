@@ -24,10 +24,11 @@
 #include <math.h>
 
 #include <rsb/Publisher.h>
-#include <rsb/util/Timer.h>
+#include <rsc/misc/Timer.h>
 
 using namespace std;
 using namespace rsc::logging;
+using namespace rsc::misc;
 using namespace rsb;
 using namespace rsb::util;
 

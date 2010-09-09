@@ -20,15 +20,16 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-#include "Timer.h"
-
 #include <iostream>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/recursive_mutex.hpp>
+
 #include <rsc/logging/Logger.h>
+#include <rsc/misc/Timer.h>
 
 namespace rsb {
 
@@ -52,7 +53,7 @@ public:
 		cancelRequest = false;
 		cancelled = false;
 		// TODO add id
-	    timer = TimerPtr(new Timer("TimedObject"));
+	    timer = rsc::misc::TimerPtr(new rsc::misc::Timer("TimedObject"));
 	    timer->start();
 	//    pre = boost::bind(&TimedObject::beforeCycle,this);
 	//    post = boost::bind(&TimedObject::afterCycle,this);
@@ -154,7 +155,7 @@ protected:
 private:
 	rsc::logging::LoggerPtr logger;
 	double timestamp;
-	TimerPtr timer;
+	rsc::misc::TimerPtr timer;
 	Callback pre;
 	Callback post;
 

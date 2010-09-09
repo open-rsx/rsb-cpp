@@ -30,10 +30,11 @@
 #include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
-#include <rsb/util/Timer.h>
+#include <rsc/misc/Timer.h>
 
 using namespace std;
 using namespace rsc::logging;
+using namespace rsc::misc;
 using namespace rsb;
 using namespace rsb::filter;
 using namespace rsb::util;

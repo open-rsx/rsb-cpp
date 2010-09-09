@@ -13,7 +13,7 @@
 #include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
-#include <rsb/util/Timer.h>
+#include <rsc/misc/Timer.h>
 
 #include <alvisiondefinitions.h>
 #include <alimage.h>

@@ -49,5 +49,5 @@ int main(void) {
 	s->appendAction(a);
 
 	// match event and dispatch
-	if (s->match(e)) (*s->getActions())(e);
+	//if (s->match(e)) (*s->getActions())(e);
 }
