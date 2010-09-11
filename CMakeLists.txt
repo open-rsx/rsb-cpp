@@ -92,11 +92,6 @@ LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
 FIND_PACKAGE(Doxygen)
 
-# TODO bad hack
-INCLUDE_DIRECTORIES(/vol/nao/releases/cuttingedge/include/alvision 
-                    /vol/nao/releases/cuttingedge/include/altools 
-                    /vol/nao/releases/cuttingedge/include/alcore)
-
 # --- source code ---
 
 ADD_SUBDIRECTORY(3rdparty)

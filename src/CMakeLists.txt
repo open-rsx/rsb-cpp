@@ -25,8 +25,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/transport/Port.cpp
             rsb/transport/Router.cpp
             rsb/transport/AbstractConverter.cpp
-            rsb/transport/converter/StringConverter.cpp
-            rsb/transport/converter/ALImageConverter.cpp            
+            rsb/transport/converter/StringConverter.cpp         
             rsb/transport/TransportFactory.cpp
             rsb/transport/QueueAndDispatchTask.cpp
             rsb/transport/inprocess/StatusTask.cpp
@@ -72,7 +71,6 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/transport/Router.h
             rsb/transport/AbstractConverter.h
             rsb/transport/converter/StringConverter.h
-            rsb/transport/converter/ALImageConverter.h
             rsb/transport/inprocess/StatusTask.h
             rsb/transport/inprocess/InProcessPort.h
             rsb/transport/TransportFactory.h            
@@ -87,13 +85,8 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/introspection/IntrospectionConverter.h)
 
 ADD_LIBRARY(${LIBNAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
-TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES} ${RSC_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}
-        /vol/nao/releases/cuttingedge/lib/naoqi/libalbase.so
-        /vol/nao/releases/cuttingedge/lib/liblibvision.a
-        /vol/nao/releases/cuttingedge/lib/libcv.so
-        /vol/nao/releases/cuttingedge/lib/libhighgui.so 
-        /vol/nao/releases/cuttingedge/lib/libcxcore.so
-)
+TARGET_LINK_LIBRARIES(${LIBNAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES} ${RSC_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
 INSTALL(TARGETS ${LIBNAME}
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib)
