@@ -21,10 +21,13 @@ ENDIF()
 INCLUDE(FindPkgConfig)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(InstallFilesRecursive)
+INCLUDE(EnableCoverageReport)
 
 SET(RSB_VERSION 0.1.0)
 SET(RSB_NAME "rsb")
 SET(RSB_TEST_NAME "rsbtest")
+SET(CORE_TEST_NAME rsb_test_core)
+SET(SPREADPORT_TEST_NAME rsb_test_spread)
 SET(LIBNAME RSBCore)
 
 # --- global compiler flags ---
@@ -129,3 +132,7 @@ IF(DOXYGEN_FOUND)
     ADD_CUSTOM_TARGET(doc DEPENDS ${API_DIR})
 
 ENDIF()
+
+# --- coverage ropert ---
+
+ENABLE_COVERAGE_REPORT(TARGETS ${LIBNAME} TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} FILTER "*coverage/*" "*/test*")
