@@ -37,7 +37,7 @@ public:
 	}
 
 	boost::shared_ptr<void> execute(rsb::util::Task<void>* t) {
-		std::cout << "InProcessPort alive. Status: undefined" << std::endl;
+		std::cout << "InProcessPort alive. Status of task " << *t << ": undefined" << std::endl;
 		return boost::shared_ptr<void>();
 	}
 

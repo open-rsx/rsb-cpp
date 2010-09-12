@@ -124,6 +124,10 @@ public:
 		RSCDEBUG(logger, "waitDone() finished");
 	}
 
+	friend std::ostream& operator<< (std::ostream& out, const Task<R>& t) {
+		out << "Task[cancelRequest=" << t.cancelRequest <<"]";
+		return out;
+	}
 
 protected:
 
