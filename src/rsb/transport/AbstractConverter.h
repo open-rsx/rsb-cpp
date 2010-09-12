@@ -21,7 +21,7 @@
 #define ABSTRACTCONVERTER_H_
 
 #include <string>
-#include "../RSBEvent.h"
+#include <rsb/RSBEvent.h>
 
 namespace rsb {
 
