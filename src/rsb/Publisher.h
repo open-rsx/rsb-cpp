@@ -30,6 +30,10 @@
 
 namespace rsb {
 
+/**
+ * @todo check thread-safety, e.g. setting router to active and setting the
+ *       passive flag must be atomic
+ */
 template<class T>
 class Publisher {
 public:
