@@ -9,7 +9,7 @@ SET(RSB_TEST_SOURCES RSBTest.cpp  ${GENERIC_TEST_SOURCES})
 
 ADD_EXECUTABLE(${RSB_TEST_NAME} ${RSB_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${RSB_TEST_NAME}
-                      ${LIBNAME}
+                      ${RSB_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARY_NAME})
 
@@ -23,7 +23,7 @@ SET(CORE_TEST_SOURCES TaskTest.cpp FilterObserverTest.cpp HandlerTest.cpp ${GENE
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
-                      ${LIBNAME}
+                      ${RSB_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARY_NAME})
 
@@ -35,7 +35,7 @@ SET(SPREADPORT_TEST_SOURCES SpreadPortTest.cpp MembershipManagerTest.cpp ${GENER
 
 ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
-                      ${LIBNAME}
+                      ${RSB_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARY_NAME})
 
@@ -63,12 +63,12 @@ add_executable (${TESTNAME7} StatusTaskTest.cpp)
 add_executable (${TESTNAME8} TaskExecutorTest.cpp)
 add_executable (${TESTNAME9} EventProcessorTest.cpp)
 
-target_link_libraries(${TESTNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-#target_link_libraries(${TESTNAME4} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME5} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME6} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME7} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME8} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
-target_link_libraries(${TESTNAME9} ${CMAKE_THREAD_LIBS_INIT} -ldl ${LIBNAME})
+target_link_libraries(${TESTNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+target_link_libraries(${TESTNAME2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+target_link_libraries(${TESTNAME3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+#target_link_libraries(${TESTNAME4} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+target_link_libraries(${TESTNAME5} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+target_link_libraries(${TESTNAME6} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+target_link_libraries(${TESTNAME7} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+target_link_libraries(${TESTNAME8} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
+target_link_libraries(${TESTNAME9} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
