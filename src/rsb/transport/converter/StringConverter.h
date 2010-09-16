@@ -26,7 +26,6 @@
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {
-
 namespace transport {
 
 // converts any string into any string serializing content to a string...
@@ -35,15 +34,15 @@ public:
 	StringConverter();
 	virtual ~StringConverter();
 
+	std::string getTypeName();
+
 	void serialize(const std::string &type, boost::shared_ptr<void> data, std::string &m);
 	boost::shared_ptr<void> deserialize(const std::string &type, const std::string &d);
 };
 
 typedef boost::shared_ptr<StringConverter> StringConverterPtr;
 
-
 }
-
 }
 
 #endif /* STRINGCONVERTER_H_ */

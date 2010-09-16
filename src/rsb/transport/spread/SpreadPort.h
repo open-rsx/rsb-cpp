@@ -29,6 +29,7 @@
 #include "SpreadConnection.h"
 
 #include <rsc/logging/Logger.h>
+#include <rsc/misc/Registry.h>
 
 namespace rsb {
 
@@ -37,6 +38,8 @@ namespace spread {
 class SpreadPort: public rsb::transport::Port {
 public:
 	SpreadPort();
+	explicit SpreadPort(rsc::misc::Registry<rsb::transport::AbstractConverter<
+			std::string> > *converters);
 	virtual ~SpreadPort();
 
 	void push(rsb::RSBEventPtr e);
@@ -47,24 +50,30 @@ public:
 	void setObserver(rsb::Action a);
 	void removeObserver(rsb::Action a);
 
-	void notify(rsb::filter::ScopeFilter* f, rsb::filter::FilterAction::Types at);
+	void notify(rsb::filter::ScopeFilter* f,
+			rsb::filter::FilterAction::Types at);
 
 private:
 	rsc::logging::LoggerPtr logger;
+
+	void init();
 
 	volatile bool shutdown;
 	SpreadConnectionPtr con;
 
 	rsb::util::TaskExecutorVoidPtr exec;
- //   boost::shared_ptr<StatusTask> st;
+	//   boost::shared_ptr<StatusTask> st;
 	boost::shared_ptr<ReceiverTask> rec;
-    boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
+	boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
 
-    rsb::util::TaskPtr recTask;
+	rsb::util::TaskPtr recTask;
 	rsb::util::TaskPtr qadTask;
-//	rsb::util::TaskPtr staTask;
+	//	rsb::util::TaskPtr staTask;
 
 	MembershipManagerPtr memberships;
+
+	rsc::misc::Registry<rsb::transport::AbstractConverter<std::string> >
+			*converters;
 };
 
 }

@@ -36,6 +36,13 @@ public:
 
 	virtual void serialize(const std::string &type, boost::shared_ptr<void> d, T &m) = 0;
 	virtual boost::shared_ptr<void> deserialize(const std::string &type, const T &m) = 0;
+
+	std::string getRegistryKey() {
+		return getTypeName();
+	}
+
+	virtual std::string getTypeName() = 0;
+
 };
 
 }

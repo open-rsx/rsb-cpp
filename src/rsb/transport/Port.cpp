@@ -26,17 +26,6 @@ namespace rsb {
 namespace transport {
 
 Port::Port() {
-	converters = ConverterMapPtr(new std::map<std::string, boost::shared_ptr<void> >());
-	(*converters)["portstatechange"] = boost::static_pointer_cast<void>(
-			rsb::introspection::IntrospectionConverterPtr(
-					new rsb::introspection::IntrospectionConverter));
-	(*converters)["string"] = boost::static_pointer_cast<void>(
-				rsb::transport::StringConverterPtr(
-						new rsb::transport::StringConverter));
-	// TODO needs to be re-enabled via registry and libRSBNao
-//	(*converters)["ALImage"] = boost::static_pointer_cast<void>(
-//					rsb::transport::ALImageConverterPtr(
-//							new rsb::transport::ALImageConverter));
 }
 
 Port::~Port() {

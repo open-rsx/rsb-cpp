@@ -24,18 +24,23 @@
 #include "SpreadConnection.h"
 #include "../QueueAndDispatchTask.h"
 #include "../Port.h"
+#include "../AbstractConverter.h"
 
 #include <rsc/logging/Logger.h>
+#include <rsc/misc/Registry.h>
 
 namespace rsb {
 
 namespace spread {
 
-typedef boost::shared_ptr<rsb::transport::QueueAndDispatchTask< rsb::RSBEventPtr > > QADPtr;
+typedef boost::shared_ptr<
+		rsb::transport::QueueAndDispatchTask<rsb::RSBEventPtr> > QADPtr;
 
 class ReceiverTask {
 public:
-	ReceiverTask(SpreadConnectionPtr s, rsb::transport::ConverterMapPtr c, QADPtr q);
+	ReceiverTask(SpreadConnectionPtr s, rsc::misc::Registry<
+			rsb::transport::AbstractConverter<std::string> > *converters,
+			QADPtr q);
 	virtual ~ReceiverTask();
 
 	void execute(rsb::util::Task<void>* t);
@@ -48,7 +53,8 @@ private:
 	rsc::logging::LoggerPtr logger;
 	volatile bool cancelRequested;
 	SpreadConnectionPtr con;
-	rsb::transport::ConverterMapPtr converters;
+	rsc::misc::Registry<rsb::transport::AbstractConverter<std::string> >
+			*converters;
 	QADPtr qad;
 };
 

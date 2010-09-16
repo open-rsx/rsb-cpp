@@ -21,6 +21,8 @@
 #include "PortStateChange.h"
 #include "../protocol/ProtocolException.h"
 
+#include <rsc/misc/Registry.h>
+
 using namespace std;
 using namespace rsb::protocol;
 using namespace rsb::protocol::introspection;
@@ -38,9 +40,15 @@ IntrospectionConverter::~IntrospectionConverter() {
 	// TODO Auto-generated destructor stub
 }
 
-void IntrospectionConverter::serialize(const std::string &type, boost::shared_ptr<void> data, string &m) {
-	if (type=="portstatechange") {
-		PortStateChangePtr psc = boost::static_pointer_cast<PortStateChange>(data);
+string IntrospectionConverter::getTypeName() {
+	return "portstatechange";
+}
+
+void IntrospectionConverter::serialize(const std::string &type,
+		boost::shared_ptr<void> data, string &m) {
+	if (type == getTypeName()) {
+		PortStateChangePtr psc = boost::static_pointer_cast<PortStateChange>(
+				data);
 		// extremely simple here as so far directly the pbuf objects are used as domain objects
 		if (!psc->SerializeToString(&m)) {
 			throw ProtocolException("Failed to write notification to stream");
@@ -48,20 +56,23 @@ void IntrospectionConverter::serialize(const std::string &type, boost::shared_pt
 	}
 }
 
-
-boost::shared_ptr<void> IntrospectionConverter::deserialize(const std::string &type, const string &d) {
+boost::shared_ptr<void> IntrospectionConverter::deserialize(
+		const std::string &type, const string &d) {
 	boost::shared_ptr<void> p;
-	if (type=="portstatechange") {
+	if (type == getTypeName()) {
 		PortStateChangePtr psc(new PortStateChange());
 		if (!psc->ParseFromString(d)) {
-					throw CommException("Failed to parse notification in pbuf format");
+			throw CommException("Failed to parse notification in pbuf format");
 		}
 		p = boost::static_pointer_cast<void>(psc);
 	} else {
 		throw("No such type registered at TypeFactory!");
 	}
 	return p;
-};
+}
+
+typedef transport::AbstractConverter<string> AbstractStringConverter;
+CREATE_GLOBAL_REGISTREE(AbstractStringConverter, IntrospectionConverter);
 
 }
 

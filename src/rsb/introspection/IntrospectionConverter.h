@@ -33,6 +33,8 @@ public:
 	IntrospectionConverter();
 	virtual ~IntrospectionConverter();
 
+	std::string getTypeName();
+
 	void serialize(const std::string &type, boost::shared_ptr<void> data, std::string &m);
 	boost::shared_ptr<void> deserialize(const std::string &type, const std::string &d);
 };

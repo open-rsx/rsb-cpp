@@ -19,6 +19,8 @@
 
 #include "StringConverter.h"
 
+#include <rsc/misc/Registry.h>
+
 using namespace std;
 
 namespace rsb {
@@ -26,33 +28,44 @@ namespace rsb {
 namespace transport {
 
 StringConverter::StringConverter() {
-	// TODO Auto-generated constructor stub
-
 }
 
 StringConverter::~StringConverter() {
-	// TODO Auto-generated destructor stub
 }
 
-void StringConverter::serialize(const std::string &type, boost::shared_ptr<void> data, string &m) {
-	if (type=="string") {
+string StringConverter::getTypeName() {
+	return "string";
+}
+
+void StringConverter::serialize(const std::string &type,
+		boost::shared_ptr<void> data, string &m) {
+	// TODO common check for all converters, refactor to base class
+	if (type == getTypeName()) {
 		boost::shared_ptr<string> s = boost::static_pointer_cast<string>(data);
 		// essentially return the contained string to the serialization medium
 		m = *s;
 	}
 }
 
-
-boost::shared_ptr<void> StringConverter::deserialize(const std::string &type, const string &d) {
+boost::shared_ptr<void> StringConverter::deserialize(const std::string &type,
+		const string &d) {
 	boost::shared_ptr<void> p;
-	if (type=="string") {
+	// TODO this check will be a common case. Refactor it to the base class
+	if (type == getTypeName()) {
 		boost::shared_ptr<string> s(new string(d));
 		p = boost::static_pointer_cast<void>(s);
 	} else {
+		// TODO better exception required
 		throw("No such type registered at TypeFactory!");
 	}
 	return p;
-};
+}
+;
+
+// we need this typedef for the macro to work
+typedef AbstractConverter<std::string> AbstractStringConverter;
+CREATE_GLOBAL_REGISTREE(AbstractStringConverter, StringConverter)
+;
 
 }
 

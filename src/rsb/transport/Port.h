@@ -32,11 +32,6 @@ namespace rsb {
 
 namespace transport {
 
-// TODO extract converter map into its own class
-// TODO put specific converter into each specific port, otherwise casting needed
-// TODO converters need to be specific for
-//      different transports
-typedef boost::shared_ptr<std::map< std::string, boost::shared_ptr<void> > > ConverterMapPtr;
 typedef boost::shared_ptr<std::map< void *, rsb::Action > > ActionListPtr;
 
 class Port : public rsb::filter::FilterObserver {
@@ -58,7 +53,6 @@ protected:
 	rsb::util::UUID id;
 	rsb::Action observer;
 	//ActionListPtr actions;
-	ConverterMapPtr converters;
 
 };
 

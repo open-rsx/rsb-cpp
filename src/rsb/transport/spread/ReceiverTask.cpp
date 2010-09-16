@@ -34,7 +34,10 @@ namespace rsb {
 
 namespace spread {
 
-ReceiverTask::ReceiverTask(SpreadConnectionPtr s, ConverterMapPtr c, QADPtr q) : logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")), cancelRequested(false), con(s), converters(c), qad(q) {
+ReceiverTask::ReceiverTask(SpreadConnectionPtr s, rsc::misc::Registry<
+		rsb::transport::AbstractConverter<std::string> > *converters, QADPtr q) :
+	logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
+			cancelRequested(false), con(s), converters(converters), qad(q) {
 	// Verify that the version of the library that we linked against is
 	// compatible with the version of the headers we compiled against.
 	//RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
@@ -53,14 +56,16 @@ void ReceiverTask::execute(rsb::util::Task<void>* t) {
 	try {
 		SpreadMessagePtr sm(new SpreadMessage(SpreadMessage::REGULAR));
 		con->receive(sm);
-		RSCDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << sm);
+		RSCDEBUG(logger, "ReceiverTask::execute new SpreadMessage received "
+				<< sm);
 		// TODO think about how to deal with non-data messages, e.g., membership
 		if (SpreadMessage::REGULAR == sm->getType()) {
 			if (!sm || !n) {
 				throw CommException("Ptr Null");
 			}
 			if (!n->ParseFromString(sm->getDataAsString())) {
-				throw CommException("Failed to parse notification in pbuf format");
+				throw CommException(
+						"Failed to parse notification in pbuf format");
 			}
 			//	cout << "Parsed event ID: " << n->eid() << endl;
 			//	cout << "Binary length: " << n->data().length() << endl;
@@ -69,8 +74,7 @@ void ReceiverTask::execute(rsb::util::Task<void>* t) {
 			e->setType(n->type_id());
 			// TODO refactor converter handling and conversion
 			boost::shared_ptr<AbstractConverter<string> > c =
-					boost::static_pointer_cast<AbstractConverter<string> >(
-							(*converters)[e->getType()]);
+					converters->getRegistree(e->getType());
 			e->setData(c->deserialize(e->getType(), n->data().binary()));
 			qad->addElement(e);
 		}

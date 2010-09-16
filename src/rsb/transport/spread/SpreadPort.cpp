@@ -26,6 +26,8 @@
 #include <iostream>
 #include <string.h>
 
+#include <rsc/misc/Registry.h>
+
 #include "../AbstractConverter.h"
 #include "../../protocol/ProtocolException.h"
 
@@ -40,18 +42,32 @@ namespace rsb {
 
 namespace spread {
 
-SpreadPort::SpreadPort() : logger(rsc::logging::Logger::getLogger("rsb.spread.SpreadPort")) {
+SpreadPort::SpreadPort(
+		rsc::misc::Registry<AbstractConverter<string> > *converters) :
+	converters(converters) {
+	init();
+}
+
+SpreadPort::SpreadPort() {
+	converters = rsc::misc::Registry<AbstractConverter<string> >::instance();
+	init();
+}
+
+void SpreadPort::init() {
+	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadPort");
 	RSCDEBUG(logger, "SpreadPort() entered, port id: " << id.getIdAsString());
 	shutdown = false;
-	exec = TaskExecutorVoidPtr(new TaskExecutor<void>());
+	exec = TaskExecutorVoidPtr(new TaskExecutor<void> ());
 	// TODO ConnectionPool for SpreadConnections?!?
 	// TODO Send Message over Managing / Introspection Channel
 	// TODO Generate Unique-IDs for SpreadPorts
 	con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString()));
 	// TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
 	//st = boost::shared_ptr<StatusTask>(new StatusTask(this));
-	qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr > >(new QueueAndDispatchTask<RSBEventPtr>());
-	rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(con,converters,qad));
+	qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> >(
+			new QueueAndDispatchTask<RSBEventPtr> ());
+	rec = boost::shared_ptr<ReceiverTask>(
+			new ReceiverTask(con, converters, qad));
 	memberships = MembershipManagerPtr(new MembershipManager());
 }
 
@@ -59,8 +75,9 @@ void SpreadPort::activate() {
 	// connect to spread
 	con->activate();
 	// (re-)start threads
-	recTask = exec->schedulePeriodic<ReceiverTask>(rec,0);
-	qadTask = exec->schedulePeriodic<QueueAndDispatchTask<RSBEventPtr> >(qad,0);
+	recTask = exec->schedulePeriodic<ReceiverTask> (rec, 0);
+	qadTask = exec->schedulePeriodic<QueueAndDispatchTask<RSBEventPtr> > (qad,
+			0);
 	//staTask = exec->schedulePeriodic<StatusTask>(st,500);
 }
 
@@ -87,33 +104,39 @@ void SpreadPort::deactivate() {
 	exec->join(qadTask);
 	RSCDEBUG(logger, "deactivate() stopping receiver thread");
 	exec->join(recTask);
-//	cout << "stopping st task" << endl;
-//	staTask->cancel();
-//	cout << "stopping st thread" << endl;
-//	exec->join(staTask);
+	//	cout << "stopping st task" << endl;
+	//	staTask->cancel();
+	//	cout << "stopping st thread" << endl;
+	//	exec->join(staTask);
 	RSCTRACE(logger, "deactivate() finished"); // << *id);
-};
+}
+;
 
 SpreadPort::~SpreadPort() {
-	if (!shutdown) deactivate();
+	if (!shutdown)
+		deactivate();
 }
 
-void SpreadPort::notify(rsb::filter::ScopeFilter* f, rsb::filter::FilterAction::Types at) {
+void SpreadPort::notify(rsb::filter::ScopeFilter* f,
+		rsb::filter::FilterAction::Types at) {
 	// join or leave groups
 	// TODO evaluate success
 	RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);
 	switch (at) {
-		case rsb::filter::FilterAction::ADD:
-			RSCINFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to join Spread group");
-			memberships->join(f->getURI(),con);
-			break;
-		case rsb::filter::FilterAction::REMOVE:
-			RSCINFO(logger, "ScopeFilter URI is "<< f->getURI() << " ,now going to leave Spread group");
-			memberships->leave(f->getURI(),con);
-			break;
-		default:
-			RSCWARN(logger, "ScopeFilter Action not supported by this Port implementation");
-			break;
+	case rsb::filter::FilterAction::ADD:
+		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
+				<< " ,now going to join Spread group");
+		memberships->join(f->getURI(), con);
+		break;
+	case rsb::filter::FilterAction::REMOVE:
+		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
+				<< " ,now going to leave Spread group");
+		memberships->leave(f->getURI(), con);
+		break;
+	default:
+		RSCWARN(logger,
+				"ScopeFilter Action not supported by this Port implementation");
+		break;
 	}
 
 }
@@ -121,22 +144,24 @@ void SpreadPort::notify(rsb::filter::ScopeFilter* f, rsb::filter::FilterAction::
 void SpreadPort::push(RSBEventPtr e) {
 	// get matching converter
 	string s;
-	boost::shared_ptr<void> obj = boost::static_pointer_cast<void>(e->getData());
-//	cerr << "SpreadPort::push Type: " << e->getType() << endl;
-	boost::shared_ptr<AbstractConverter<string> > c = boost::static_pointer_cast<AbstractConverter<string> >((*converters)[e->getType()]);
-	c->serialize(e->getType(),obj,s);
-//	cerr << "SpreadPort::push after serialize" << endl;
+	boost::shared_ptr<void> obj =
+			boost::static_pointer_cast<void>(e->getData());
+	//	cerr << "SpreadPort::push Type: " << e->getType() << endl;
+	boost::shared_ptr<AbstractConverter<string> > c = rsc::misc::Registry<
+			AbstractConverter<string> >::instance()->getRegistree(e->getType());
+	c->serialize(e->getType(), obj, s);
+	//	cerr << "SpreadPort::push after serialize" << endl;
 	Notification n;
 	n.set_eid("not set yet");
 	n.set_s_length(0);
 	n.set_standalone(false);
 	n.set_uri(e->getURI());
 	n.set_type_id(e->getType());
-//	cerr << "SpreadPort::push after set type" << endl;
+	//	cerr << "SpreadPort::push after set type" << endl;
 	n.mutable_data()->set_binary(s);
 	// TODO fix this, think about whether this is needed
 	n.mutable_data()->set_length(s.length());
-//	cerr << "SpreadPort::push after notification" << endl;
+	//	cerr << "SpreadPort::push after notification" << endl;
 	string sm;
 
 	if (!n.SerializeToString(&sm)) {
@@ -144,21 +169,21 @@ void SpreadPort::push(RSBEventPtr e) {
 	}
 
 	SpreadMessage msg(sm);
-    // TODO convert URI to group name
-    // TODO check if it is necessary to join spread groups when only sending to them
+	// TODO convert URI to group name
+	// TODO check if it is necessary to join spread groups when only sending to them
 
 	msg.addGroup(e->getURI());
 
 	if (!con->send(msg)) {
-//        for (list<string>::const_iterator n = msg->getGroupsBegin(); n != msg->getGroupsEnd(); ++n) {
-//           cout << "Sending msg to following groups: " << *n << endl;
-//        }
-    	// TODO implement queing or throw messages away?
-    	// TODO maybe return exception with msg that was not sent
-    	RSCWARN(logger, "Spread Connection inactive -> could not send message");
-    } else {
-    	RSCDEBUG(logger, "event sent to spread");
-    }
+		//        for (list<string>::const_iterator n = msg->getGroupsBegin(); n != msg->getGroupsEnd(); ++n) {
+		//           cout << "Sending msg to following groups: " << *n << endl;
+		//        }
+		// TODO implement queing or throw messages away?
+		// TODO maybe return exception with msg that was not sent
+		RSCWARN(logger, "Spread Connection inactive -> could not send message");
+	} else {
+		RSCDEBUG(logger, "event sent to spread");
+	}
 }
 
 }
