@@ -38,51 +38,58 @@ namespace rsb {
 template<class T>
 class Publisher {
 public:
-	typedef boost::shared_ptr<Publisher <T> > Ptr;
+	typedef boost::shared_ptr<Publisher<T> > Ptr;
 	typedef boost::shared_ptr<T> DataPtr;
 
 	Publisher(std::string uri, std::string type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Publisher")), uri(uri), passive(false), defaultType(type) {
+		logger(rsc::logging::Logger::getLogger("rsb.Publisher." + uri)), uri(uri),
+				passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(transport::TransportFactory::NONE,
+		router = transport::RouterPtr(new transport::Router(
+				transport::TransportFactory::NONE,
 				transport::TransportFactory::SPREAD));
 		activate();
 	}
 
-	Publisher(transport::TransportFactory::PortTypes out, std::string uri, std::string type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Publisher")), uri(uri), passive(false), defaultType(type) {
+	Publisher(transport::TransportFactory::PortTypes out, std::string uri,
+			std::string type) :
+		logger(rsc::logging::Logger::getLogger("rsb.Publisher")), uri(uri),
+				passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(transport::TransportFactory::NONE, out));
+		router = transport::RouterPtr(new transport::Router(
+				transport::TransportFactory::NONE, out));
 		activate();
 	}
-	virtual ~Publisher() {};
+	virtual ~Publisher() {
+	}
+	;
 
 	// publish data via RSB directly according to
 	// publisher configuration
 	void publish(boost::shared_ptr<T> data) {
 		VoidPtr p = boost::static_pointer_cast<void>(data);
-		publish(p,defaultType);
+		publish(p, defaultType);
 	}
 
-//	void publish(const T &data) {
-//		// TODO check how this could work
-//		boost::weak_ptr<T> w(data);
-//		VoidPtr v = boost::static_pointer_cast<void>(w);
-//		publish(v,defaultType);
-//	}
+	//	void publish(const T &data) {
+	//		// TODO check how this could work
+	//		boost::weak_ptr<T> w(data);
+	//		VoidPtr v = boost::static_pointer_cast<void>(w);
+	//		publish(v,defaultType);
+	//	}
 
-//	template< class T1 >
-//	void publish(const T1 &data, std::string type) {
-//		// TODO check this!
-//		boost::weak_ptr<T1> w(data);
-//		VoidPtr v = boost::static_pointer_cast<void>(w);
-//		publish(v,type);
-//	}
+	//	template< class T1 >
+	//	void publish(const T1 &data, std::string type) {
+	//		// TODO check this!
+	//		boost::weak_ptr<T1> w(data);
+	//		VoidPtr v = boost::static_pointer_cast<void>(w);
+	//		publish(v,type);
+	//	}
 
-	template< class T1 >
+	template<class T1>
 	void publish(boost::shared_ptr<T1> data, std::string type) {
 		VoidPtr p = boost::static_pointer_cast<void>(data);
-		publish(p,type);
+		publish(p, type);
 	}
 
 	// if some metadata needs to be set externally
@@ -91,6 +98,7 @@ public:
 	void publish(RSBEventPtr event) {
 		// TODO Check that exception is thrown if no converter available!
 		event->setURI(uri);
+		RSCDEBUG(logger, "Publishing event");
 		router->publish(event);
 	}
 
@@ -100,12 +108,14 @@ public:
 	}
 
 	void deactivate() {
-		if (!passive) router->deactivate();
+		if (!passive)
+			router->deactivate();
 		passive = true;
 	}
 
 protected:
-	Publisher() { /* forbidden */ };
+	Publisher() { /* forbidden */
+	}
 
 	void publish(VoidPtr p, std::string type) {
 		RSBEventPtr e(new RSBEvent());
@@ -113,6 +123,7 @@ protected:
 		e->setURI(uri);
 		// TODO Check that exception is thrown if no converter available!
 		e->setType(type);
+		RSCDEBUG(logger, "Publishing event");
 		router->publish(e);
 	}
 
