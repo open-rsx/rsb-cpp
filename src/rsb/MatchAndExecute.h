@@ -20,6 +20,8 @@
 #ifndef MATCHANDEXECUTE_H_
 #define MATCHANDEXECUTE_H_
 
+#include <rsc/logging/Logger.h>
+
 #include "RSBEvent.h"
 #include "Subscription.h"
 
@@ -33,6 +35,10 @@ public:
 	virtual ~MatchAndExecute();
 
 	void process(rsb::SubscriptionPtr s, rsb::RSBEventPtr e);
+
+private:
+	rsc::logging::LoggerPtr logger;
+
 };
 
 }

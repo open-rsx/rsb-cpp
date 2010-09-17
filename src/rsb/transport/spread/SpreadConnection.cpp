@@ -249,7 +249,7 @@ bool SpreadConnection::send(const SpreadMessage& msg) {
 }
 
 string SpreadConnection::generateId(const string& prefix) {
-	// TODO generate meaningul and unique Id according to MAX_PRIVATE_NAME
+	// TODO generate meaningful and unique Id according to MAX_PRIVATE_NAME
 	//            uuid_t id;
 	//            uuid_generate(id);
 	//            char buf[37];

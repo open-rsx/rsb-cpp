@@ -28,7 +28,8 @@ namespace rsb {
 
 namespace internal {
 
-MatchAndExecute::MatchAndExecute() {
+MatchAndExecute::MatchAndExecute() :
+	logger(rsc::logging::Logger::getLogger("rsb.MatchAndExecute")) {
 }
 
 MatchAndExecute::~MatchAndExecute() {
@@ -36,6 +37,8 @@ MatchAndExecute::~MatchAndExecute() {
 }
 
 void MatchAndExecute::process(SubscriptionPtr sub, RSBEventPtr e) {
+	RSCDEBUG(logger, "Matching and executing event " << e
+			<< " for subscription " << sub);
 	bool match = false;
 	// match event
 	try {
@@ -48,9 +51,15 @@ void MatchAndExecute::process(SubscriptionPtr sub, RSBEventPtr e) {
 	}
 	// dispatch event
 	try {
-		// TODO iterate over all actions
-		if (match && sub->isEnabled())
-			(*sub->getActions()->begin())(e);
+		if (match && sub->isEnabled()) {
+			boost::shared_ptr<Actions> actions = sub->getActions();
+			RSCTRACE(logger, "Match and subscriber is enabled, dispatching to "
+					<< actions->size() << " actions");
+			for (Actions::iterator actionIt = actions->begin(); actionIt
+					!= actions->end(); ++actionIt) {
+				(*actionIt)(e);
+			}
+		}
 	} catch (const std::exception& ex) {
 		cerr << ex.what() << endl;
 	} catch (...) {

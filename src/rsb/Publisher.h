@@ -33,6 +33,7 @@ namespace rsb {
 /**
  * @todo check thread-safety, e.g. setting router to active and setting the
  *       passive flag must be atomic
+ * @todo does it make sense that publishers are copyable?
  */
 template<class T>
 class Publisher {
