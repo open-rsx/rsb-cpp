@@ -19,6 +19,8 @@
 
 #include "SpreadGroup.h"
 
+#include <stdexcept>
+
 #include <rsc/logging/Logger.h>
 
 using namespace std;
@@ -45,9 +47,30 @@ void SpreadGroup::join(SpreadConnectionPtr con) {
 	if (!con->isActive())
 		throw string("not active");
 
-	// TODO evaluate error codes
-	SP_join(*con->getMailbox(), name.c_str());
-	RSCDEBUG(logger, "joined spread group with name: " << name);
+	int retCode = SP_join(*con->getMailbox(), name.c_str());
+	if (!retCode) {
+		RSCDEBUG(logger, "joined spread group with name: " << name);
+	} else {
+		stringstream msg;
+		msg << "Got error while joining spread group '" << name << "': ";
+		switch (retCode) {
+		case ILLEGAL_GROUP:
+			msg << "ILLEGAL_GROUP";
+			break;
+		case ILLEGAL_SESSION:
+			msg << "ILLEGAL_SESSION";
+			break;
+		case CONNECTION_CLOSED:
+			msg << "CONNECTION_CLOSED";
+			break;
+		default:
+			msg << "Unknown spread error with code " << retCode;
+			break;
+		}
+		RSCERROR(logger, "Error joining spread group: " << msg.str());
+		// TODO real exception needed
+		throw(runtime_error(msg.str()));
+	}
 }
 
 void SpreadGroup::leave(SpreadConnectionPtr con) {
