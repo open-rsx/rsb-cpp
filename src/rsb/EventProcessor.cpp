@@ -40,6 +40,7 @@ EventProcessor::~EventProcessor() {
 
 
 void EventProcessor::process(RSBEventPtr e) {
+	// TODO subscriptions needs to be made thread-safe
     list<SubscriptionPtr>::iterator i = subscriptions.begin();
     while(i != subscriptions.end()) {
         // execute match-and-trigger if enabled, otherwise remove
