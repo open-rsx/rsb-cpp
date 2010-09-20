@@ -52,12 +52,12 @@ void MatchAndExecute::process(SubscriptionPtr sub, RSBEventPtr e) {
 	// dispatch event
 	try {
 		if (match && sub->isEnabled()) {
-			boost::shared_ptr<Actions> actions = sub->getActions();
+			boost::shared_ptr<set<HandlerPtr> > handlers = sub->getHandlers();
 			RSCTRACE(logger, "Match and subscriber is enabled, dispatching to "
-					<< actions->size() << " actions");
-			for (Actions::iterator actionIt = actions->begin(); actionIt
-					!= actions->end(); ++actionIt) {
-				(*actionIt)(e);
+					<< handlers->size() << " handlers");
+			for (set<HandlerPtr>::iterator handlerIt = handlers->begin(); handlerIt
+					!= handlers->end(); ++handlerIt) {
+				(*handlerIt)->internal_notify(e);
 			}
 		}
 	} catch (const std::exception& ex) {

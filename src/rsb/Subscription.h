@@ -25,6 +25,8 @@
 #include "filter/AbstractFilter.h"
 
 #include <list>
+#include <map>
+#include <set>
 #include <boost/function.hpp>
 
 namespace rsb {
@@ -34,7 +36,6 @@ typedef boost::function<void(RSBEventPtr)> Action;
 
 typedef std::list<rsb::filter::AbstractFilterPtr> FilterChain;
 typedef std::list<Action> Actions;
-typedef std::list<HandlerPtr> HandlerList;
 
 // TODO implement stream operators
 // TODO add id field
@@ -42,7 +43,8 @@ typedef std::list<HandlerPtr> HandlerList;
 /**
  * @todo remove header implementations
  * @todo make actions and filter thread-safe, especially for match and action
- *       execution which may be asychronous to changes in theses subscriptions
+ *       execution which may be asynchronous to changes in theses subscriptions
+ *       I think using a list in a shared_ptr is the wrong way to achieve this.
  */
 class Subscription {
 public:
@@ -56,13 +58,17 @@ public:
 	virtual void appendAction(Action a);
 	virtual void appendHandler(HandlerPtr h);
 
-	boost::shared_ptr<Actions> getActions() {
-		return actions;
-	}
-
 	// TODO check if it is generally better to return iterators?!
 	boost::shared_ptr<FilterChain> getFilters() {
 		return filters;
+	}
+
+	boost::shared_ptr<std::set<HandlerPtr> > getHandlers() {
+		return handlers;
+	}
+
+	void removeHandler(HandlerPtr h) {
+		handlers->erase(h);
 	}
 
 	bool isEnabled() {
@@ -76,8 +82,7 @@ public:
 private:
 	volatile bool enabled;
 	boost::shared_ptr<FilterChain> filters;
-	boost::shared_ptr<Actions> actions;
-	boost::shared_ptr<HandlerList> handlers;
+	boost::shared_ptr<std::set<HandlerPtr> > handlers;
 
 };
 

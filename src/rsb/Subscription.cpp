@@ -20,12 +20,31 @@
 #include "Subscription.h"
 #include <boost/bind.hpp>
 
+using namespace std;
+
 namespace rsb {
 
-Subscription::Subscription() : enabled(true) {
+class ActionAdapter: public EventHandler {
+private:
+
+	Action a;
+
+public:
+
+	ActionAdapter(Action a) :
+		a(a) {
+	}
+
+	void notify(RSBEventPtr event) {
+		a(event);
+	}
+
+};
+
+Subscription::Subscription() :
+	enabled(true) {
 	filters = boost::shared_ptr<FilterChain>(new FilterChain());
-	actions = boost::shared_ptr<Actions>(new Actions());
-	handlers = boost::shared_ptr<HandlerList>(new HandlerList());
+	handlers = boost::shared_ptr<set<HandlerPtr> >(new set<HandlerPtr> ());
 }
 
 Subscription::~Subscription() {
@@ -37,19 +56,17 @@ void Subscription::appendFilter(rsb::filter::AbstractFilterPtr p) {
 }
 
 void Subscription::appendHandler(HandlerPtr h) {
-	rsb::Action a = boost::bind(&Handler::internal_notify,h.get(),_1);
-	appendAction(a);
-	handlers->push_back(h);
+	handlers->insert(h);
 }
 
 void Subscription::appendAction(Action a) {
-	actions->push_back(a);
+	handlers->insert(HandlerPtr(new ActionAdapter(a)));
 }
 
 bool Subscription::match(RSBEventPtr e) {
 	try {
 		// call actions
-		for (FilterChain::iterator f = filters->begin(); f!= filters->end(); ++f) {
+		for (FilterChain::iterator f = filters->begin(); f != filters->end(); ++f) {
 			if (!(*f)->match(e)) {
 				return false;
 			}
