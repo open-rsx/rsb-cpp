@@ -152,7 +152,7 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 			for (int i = 0; i < num_groups; i++) {
 				if (ret_groups[i] != NULL) {
 					string group = string(ret_groups[i]);
-					RSCDEBUG(logger, "received message, adressed at group with name " << group);
+					RSCDEBUG(logger, "received message, addressed at group with name " << group);
 					sm->addGroup(group);
 				}
 			}
