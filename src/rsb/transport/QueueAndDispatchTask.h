@@ -41,7 +41,7 @@ public:
 		queue = boost::shared_ptr<std::list< T > >(new std::list< T >());
 	}
 	virtual ~QueueAndDispatchTask() {
-		std::cerr << "~QueueAndDispatchTask()" << std::endl;
+		//std::cerr << "~QueueAndDispatchTask()" << std::endl;
 	};
 
 	void addElement(T e) {
@@ -71,9 +71,9 @@ public:
 		// spurious unblocking loop
 		while (queue->empty() && !cancelRequested) {
 			// stop thread and wait for next event
-			std::cout << "Condition locked!!!" << std::endl;
+			//std::cout << "Condition locked!!!" << std::endl;
 			c.wait(lock);
-			std::cout << "Condition unlocked!!!" << std::endl;
+			//std::cout << "Condition unlocked!!!" << std::endl;
 		}
 		if (!queue->empty()) {
 			e = queue->front();
