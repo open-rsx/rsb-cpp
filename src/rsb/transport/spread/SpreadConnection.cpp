@@ -174,6 +174,7 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 			break;
 		case CONNECTION_CLOSED:
 			err = "spread receive error: message communication errors occurred";
+			break;
 		case GROUPS_TOO_SHORT:
 			err = "spread receive error: groups array too short to hold list of groups";
 			break;
