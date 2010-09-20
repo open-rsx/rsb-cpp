@@ -39,6 +39,11 @@ typedef std::list<HandlerPtr> HandlerList;
 // TODO implement stream operators
 // TODO add id field
 
+/**
+ * @todo remove header implementations
+ * @todo make actions and filter thread-safe, especially for match and action
+ *       execution which may be asychronous to changes in theses subscriptions
+ */
 class Subscription {
 public:
 	Subscription();
