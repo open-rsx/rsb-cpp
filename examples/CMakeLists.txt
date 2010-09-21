@@ -14,3 +14,6 @@ INSTALL(TARGETS ${EX1} ${EX2}
         
 ADD_EXECUTABLE(doublecheck doublecheck.cpp)
 TARGET_LINK_LIBRARIES(doublecheck -ldl ${RSB_NAME})
+
+ADD_EXECUTABLE(server server/server.cpp)
+TARGET_LINK_LIBRARIES(server -ldl ${RSB_NAME})

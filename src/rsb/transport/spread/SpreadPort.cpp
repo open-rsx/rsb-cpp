@@ -153,10 +153,16 @@ void SpreadPort::push(RSBEventPtr e) {
 	//	cerr << "SpreadPort::push after serialize" << endl;
 	Notification n;
 	n.set_eid("not set yet");
-	n.set_s_length(0);
+	n.set_sequence_length(0);
 	n.set_standalone(false);
 	n.set_uri(e->getURI());
 	n.set_type_id(e->getType());
+	for (map<string, string>::const_iterator it = e->metaInfoBegin(); it
+			!= e->metaInfoEnd(); ++it) {
+		MetaInfo *info = n.mutable_metainfos()->Add();
+		info->set_key(it->first);
+		info->set_value(it->second);
+	}
 	//	cerr << "SpreadPort::push after set type" << endl;
 	n.mutable_data()->set_binary(s);
 	// TODO fix this, think about whether this is needed

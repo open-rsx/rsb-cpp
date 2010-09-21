@@ -42,8 +42,8 @@ public:
 	typedef boost::shared_ptr<T> DataPtr;
 
 	Publisher(std::string uri, std::string type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Publisher." + uri)), uri(uri),
-				passive(false), defaultType(type) {
+		logger(rsc::logging::Logger::getLogger("rsb.Publisher." + uri)), uri(
+				uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
 		router = transport::RouterPtr(new transport::Router(
 				transport::TransportFactory::NONE,
@@ -60,9 +60,9 @@ public:
 				transport::TransportFactory::NONE, out));
 		activate();
 	}
+
 	virtual ~Publisher() {
 	}
-	;
 
 	// publish data via RSB directly according to
 	// publisher configuration

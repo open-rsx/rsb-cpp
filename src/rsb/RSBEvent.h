@@ -22,6 +22,7 @@
 
 #include "util/UUID.h"
 
+#include <map>
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -56,6 +57,12 @@ public:
 	VoidPtr getData();
 	void setData(VoidPtr d);
 
+	bool hasMetaInfo(const std::string &key) const;
+	std::string getMetaInfo(const std::string &key) const;
+	void addMetaInfo(const std::string &key, const std::string &value, bool override = false);
+	std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
+	std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
+
 	friend std::ostream& operator<< (std::ostream& out, const RSBEvent& e);
 
 private:
@@ -66,6 +73,9 @@ private:
 
 	// is this a single type, a hierarchy or a set?
 	std::string type;
+
+	std::map<std::string, std::string> metaInfos;
+
 };
 
 

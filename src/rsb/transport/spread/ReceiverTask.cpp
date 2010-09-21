@@ -72,6 +72,9 @@ void ReceiverTask::execute(rsb::util::Task<void>* t) {
 			RSBEventPtr e(new RSBEvent());
 			e->setURI(n->uri());
 			e->setType(n->type_id());
+			for (int i = 0; i < n->metainfos_size(); ++i) {
+				e->addMetaInfo(n->metainfos(i).key(), n->metainfos(i).value());
+			}
 			// TODO refactor converter handling and conversion
 			boost::shared_ptr<AbstractConverter<string> > c =
 					converters->getRegistree(e->getType());

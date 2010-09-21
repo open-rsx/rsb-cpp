@@ -37,7 +37,7 @@ int main(void) {
 
 	NotificationPtr n(new Notification());
 	n->set_eid("1");
-	n->set_s_length(12);
+	n->set_sequence_length(12);
 	n->set_standalone(false);
 	n->mutable_data()->set_binary(bin_doc);
 	// TODO fix this, think about whether this is needed

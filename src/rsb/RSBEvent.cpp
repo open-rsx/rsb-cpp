@@ -33,11 +33,11 @@ UUID RSBEvent::getUUID() {
 	return id;
 }
 
-void RSBEvent::setURI(std::string s) {
+void RSBEvent::setURI(string s) {
 	uri = s;
 }
 
-std::string RSBEvent::getURI() {
+string RSBEvent::getURI() {
 	return uri;
 }
 
@@ -49,19 +49,49 @@ VoidPtr RSBEvent::getData() {
 	return content;
 }
 
-std::string RSBEvent::getType() {
+string RSBEvent::getType() {
 	return type;
 }
 
-void RSBEvent::setType(std::string t) {
+void RSBEvent::setType(string t) {
 	type = t;
 }
 
-ostream& operator<<(ostream& out, const RSBEvent& e)
-{
+bool RSBEvent::hasMetaInfo(const string &key) const {
+	return metaInfos.count(key);
+}
+
+string RSBEvent::getMetaInfo(const string &key) const {
+	if (metaInfos.count(key)) {
+		return metaInfos.find(key)->second;
+	} else {
+		throw runtime_error("No meta info registered under key '" + key + "'");
+	}
+}
+
+void RSBEvent::addMetaInfo(const string &key, const string &value,
+		bool override) {
+
+	if (metaInfos.count(key) && !override) {
+		throw runtime_error("There already is meta info registered under key '"
+				+ key + "'");
+	}
+	metaInfos[key] = value;
+
+}
+
+map<string, string>::const_iterator RSBEvent::metaInfoBegin() const {
+	return metaInfos.begin();
+}
+
+map<string, string>::const_iterator RSBEvent::metaInfoEnd() const {
+	return metaInfos.end();
+}
+
+ostream& operator<<(ostream& out, const RSBEvent& e) {
 	//out.precision(3);
-	out << "RSBEvent[id=" << e.id.getIdAsString() << " type=" << e.type <<
-						  " uri=" << e.uri <<"] ";
+	out << "RSBEvent[id=" << e.id.getIdAsString() << " type=" << e.type
+			<< " uri=" << e.uri << "] ";
 	return out;
 }
 

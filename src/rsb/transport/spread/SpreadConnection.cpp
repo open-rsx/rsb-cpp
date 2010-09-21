@@ -38,15 +38,17 @@ namespace spread {
 
 // TODO make port a numerical attribute
 SpreadConnection::SpreadConnection(const string& id, const string& h,
-		const string& p) : logger(Logger::getLogger("rsb.spread.SpreadConnection")),
-	connected(false), host(h), port(p), conId(id), msgCount(0) {
+		const string& p) :
+	logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
+			host(h), port(p), conId(id), msgCount(0) {
 	spreadhost = port + "@" + host;
 	RSCDEBUG(logger, "instantiated spread connection with id " << conId
 			<< " to spread daemon at " << spreadhost);
 }
 
-SpreadConnection::SpreadConnection(const string& id) : logger(Logger::getLogger("rsb.spread.SpreadConnection")),
-	connected(false), conId(id), msgCount(0) {
+SpreadConnection::SpreadConnection(const string& id) :
+	logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
+			conId(id), msgCount(0) {
 	host = Configuration::getInstance()->getProperty("Spread.Host");
 	port = Configuration::getInstance()->getProperty("Spread.Port");
 	spreadhost = port + "@" + host;
@@ -62,42 +64,53 @@ SpreadConnection::~SpreadConnection() {
 void SpreadConnection::activate() {
 	// spread init and group join - not threadsafe
 	if (!connected) {
-		RSCDEBUG(logger,"connecting to spread daemon at " << spreadhost);
+		RSCDEBUG(logger, "connecting to spread daemon at " << spreadhost);
 		// TODO store connection ID
 		int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con, spreadpg);
 		if (ret != ACCEPT_SESSION) {
 			switch (ret) {
 			case ILLEGAL_SPREAD:
 				// TODO throw initialization exception
-				RSCFATAL(logger, "spread connect error: connection to spread daemon at " << spreadhost << " failed, check port and hostname");
+				RSCFATAL(logger,
+						"spread connect error: connection to spread daemon at "
+								<< spreadhost
+								<< " failed, check port and hostname");
 				break;
 			case COULD_NOT_CONNECT:
 				// TODO throw initialization exception
-				RSCFATAL(logger,"spread connect error: connection to spread daemon failed due to socket errors");
+				RSCFATAL(logger,
+						"spread connect error: connection to spread daemon failed due to socket errors");
 				break;
 			case CONNECTION_CLOSED:
 				// CHECK throw initialize exception?
-				RSCFATAL(logger, "spread connect error: communication errors occurred during setup of connection");
+				RSCFATAL(
+						logger,
+						"spread connect error: communication errors occurred during setup of connection");
 				throw CommException(
 						"spread connect error: communication errors occurred during setup of connection");
 			case REJECT_VERSION:
 				// TODO throw initialization exception
-				RSCFATAL(logger, "spread connect error: daemon or library version mismatch");
+				RSCFATAL(logger,
+						"spread connect error: daemon or library version mismatch");
 				break;
 			case REJECT_NO_NAME:
 				// TODO throw initialization exception
-				RSCFATAL(logger, "spread connect error: protocol error during setup");
+				RSCFATAL(logger,
+						"spread connect error: protocol error during setup");
 				break;
 			case REJECT_ILLEGAL_NAME:
 				// TODO throw initialization exception
-				RSCFATAL(logger, "spread connect error: name provided violated requirement, length or illegal character");
+				RSCFATAL(
+						logger,
+						"spread connect error: name provided violated requirement, length or illegal character");
 				break;
 			case REJECT_NOT_UNIQUE:
 				// TODO throw name exists exception
-				RSCFATAL(logger, "spread connect error: name provided is not unique on this daemon");
+				RSCFATAL(logger,
+						"spread connect error: name provided is not unique on this daemon");
 				break;
 			default:
-				RSCFATAL(logger,"unknown spread connect error");
+				RSCFATAL(logger, "unknown spread connect error");
 			}
 			// TODO throw exception
 			SP_error(ret);
@@ -109,22 +122,25 @@ void SpreadConnection::activate() {
 		RSCINFO(logger, "connected to spread daemon");
 
 		connected = true;
+
 	}
 }
 
 void SpreadConnection::deactivate() {
 	if (isActive()) {
-		SP_disconnect(con);
-		RSCDEBUG(logger, "Spread connection disconnected, id " << conId << " private group " << spreadpg);
+		//SP_disconnect(con);
+		SP_multicast(con, RELIABLE_MESS, spreadpg, 0, 0, 0);
+		RSCDEBUG(logger, "Spread connection disconnected, id " << conId
+				<< " private group " << spreadpg);
 		connected = false;
+	} else {
+		RSCWARN(logger, "Trying to deactivate a connection that was not active");
 	}
 }
 
 bool SpreadConnection::isActive() {
 	return connected;
 }
-
-
 
 void SpreadConnection::receive(SpreadMessagePtr sm) {
 	// read from Spread multicast group
@@ -142,17 +158,28 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 	if (ret >= 0) {
 		if (Is_regular_mess(service_type)) {
 			RSCINFO(logger, "regular spread message received");
+
+			// cancel if requested
+			if (num_groups == 1 && string(ret_groups[0]) == string(spreadpg)) {
+				SP_disconnect(con);
+				connected = false;
+				throw CommException("Cancelled!");
+			}
+
 			sm->setType(SpreadMessage::REGULAR);
 			sm->setData(string(buf, ret));
 			if (num_groups < 0) {
 				// TODO check whether we shall implement a best effort strategy here
-				RSCWARN(logger, "error during message receival, group array too large, requested size "
-						<< " configured size " << SPREAD_MAX_GROUPS);
+				RSCWARN(logger,
+						"error during message receival, group array too large, requested size "
+								<< " configured size " << SPREAD_MAX_GROUPS);
 			}
 			for (int i = 0; i < num_groups; i++) {
 				if (ret_groups[i] != NULL) {
 					string group = string(ret_groups[i]);
-					RSCDEBUG(logger, "received message, addressed at group with name " << group);
+					RSCDEBUG(logger,
+							"received message, addressed at group with name "
+									<< group);
 					sm->addGroup(group);
 				}
 			}
@@ -162,7 +189,8 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 		} else {
 			RSCWARN(logger, "received unknown spread message type");
 		}
-		RSCDEBUG(logger, "before returning spread message with content: " + sm->getDataAsString());
+		RSCDEBUG(logger, "before returning spread message with content: "
+				+ sm->getDataAsString());
 	} else {
 		string err;
 		switch (ret) {
@@ -176,10 +204,12 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 			err = "spread receive error: message communication errors occurred";
 			break;
 		case GROUPS_TOO_SHORT:
-			err = "spread receive error: groups array too short to hold list of groups";
+			err
+					= "spread receive error: groups array too short to hold list of groups";
 			break;
 		case BUFFER_TOO_SHORT:
-			err = "spread receive error: message body buffer too short to hold the message received";
+			err
+					= "spread receive error: message body buffer too short to hold the message received";
 			break;
 		default:
 			err = "unknown spread receive error";

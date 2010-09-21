@@ -21,6 +21,8 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/filter/ScopeFilter.cpp
             rsb/filter/FilterObservable.cpp
             rsb/filter/FilterObserver.cpp
+            rsb/patterns/RemoteServer.cpp
+            rsb/patterns/Server.cpp
             rsb/protocol/ProtocolException.cpp
             rsb/transport/Port.cpp
             rsb/transport/Router.cpp
@@ -65,6 +67,8 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/filter/ScopeFilter.h
             rsb/filter/FilterObservable.h
             rsb/filter/FilterObserver.h
+            rsb/patterns/RemoteServer.h
+            rsb/patterns/Server.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
             rsb/transport/Port.h
