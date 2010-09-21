@@ -89,6 +89,8 @@ private:
 
 };
 
+typedef boost::shared_ptr<Server> ServerPtr;
+
 }
 }
 

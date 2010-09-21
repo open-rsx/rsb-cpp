@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include <boost/noncopyable.hpp>
+
 #include <rsc/logging/Logger.h>
 
 #include "../RSBEvent.h"
@@ -38,7 +40,7 @@ class WaitingEventHandler;
  *
  * @author jwienke
  */
-class RemoteServer {
+class RemoteServer: public boost::noncopyable {
 public:
 
 	RemoteServer(const std::string &uri);
@@ -69,6 +71,8 @@ private:
 			const std::string &sendType);
 
 };
+
+typedef boost::shared_ptr<RemoteServer> RemoteServerPtr;
 
 }
 }
