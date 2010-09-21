@@ -58,11 +58,29 @@ public:
 	class Callback: public IntlCallback {
 	public:
 
+		Callback() {
+		}
+
+		Callback(const std::string &requestType, const std::string &replyType) :
+			requestType(requestType), replyType(replyType) {
+		}
+
+		virtual std::string getRequestType() const {
+			return requestType;
+		}
+
+		virtual std::string getReplyType() const {
+			return replyType;
+		}
+
 		virtual boost::shared_ptr<ReplyType> call(
 				const std::string &methodName,
 				boost::shared_ptr<RequestType> input) = 0;
 
 	private:
+
+		std::string requestType;
+		std::string replyType;
 
 		boost::shared_ptr<void> intlCall(const std::string &methodName,
 				boost::shared_ptr<void> input) {
