@@ -27,7 +27,9 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/transport/Port.cpp
             rsb/transport/Router.cpp
             rsb/transport/AbstractConverter.cpp
+            rsb/transport/converter/BoolConverter.cpp         
             rsb/transport/converter/StringConverter.cpp         
+            rsb/transport/converter/VoidConverter.cpp         
             rsb/transport/TransportFactory.cpp
             rsb/transport/QueueAndDispatchTask.cpp
             rsb/transport/inprocess/StatusTask.cpp
@@ -74,7 +76,9 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/transport/Port.h
             rsb/transport/Router.h
             rsb/transport/AbstractConverter.h
+            rsb/transport/converter/BoolConverter.h
             rsb/transport/converter/StringConverter.h
+            rsb/transport/converter/VoidConverter.h
             rsb/transport/inprocess/StatusTask.h
             rsb/transport/inprocess/InProcessPort.h
             rsb/transport/TransportFactory.h            

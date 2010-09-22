@@ -2,7 +2,7 @@
  *
  * This file is a part of the RSB project
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,7 +17,7 @@
  *
  * ============================================================ */
 
-#include "StringConverter.h"
+#include "BoolConverter.h"
 
 #include <rsc/misc/Registry.h>
 
@@ -27,33 +27,39 @@ namespace rsb {
 
 namespace transport {
 
-StringConverter::StringConverter() {
+BoolConverter::BoolConverter() {
 }
 
-StringConverter::~StringConverter() {
+BoolConverter::~BoolConverter() {
 }
 
-string StringConverter::getTypeName() {
-	return "string";
+string BoolConverter::getTypeName() {
+	return "bool";
 }
 
-void StringConverter::serialize(const std::string &type,
+void BoolConverter::serialize(const std::string &type,
 		boost::shared_ptr<void> data, string &m) {
 	// TODO common check for all converters, refactor to base class
 	if (type == getTypeName()) {
-		boost::shared_ptr<string> s = boost::static_pointer_cast<string>(data);
-		// essentially return the contained string to the serialization medium
-		m = *s;
+		boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data);
+		if (*s) {
+			m = "t";
+		} else {
+			m.clear();
+		}
 	}
 }
 
-boost::shared_ptr<void> StringConverter::deserialize(const std::string &type,
+boost::shared_ptr<void> BoolConverter::deserialize(const std::string &type,
 		const string &d) {
 	boost::shared_ptr<void> p;
 	// TODO this check will be a common case. Refactor it to the base class
 	if (type == getTypeName()) {
-		boost::shared_ptr<string> s(new string(d));
-		p = boost::static_pointer_cast<void>(s);
+		if (d.empty()) {
+			return boost::shared_ptr<bool>(new bool(false));
+		} else {
+			return boost::shared_ptr<bool>(new bool(true));
+		}
 	} else {
 		// TODO better exception required
 		throw("No such type registered at TypeFactory!");
@@ -63,7 +69,7 @@ boost::shared_ptr<void> StringConverter::deserialize(const std::string &type,
 
 // we need this typedef for the macro to work
 typedef AbstractConverter<std::string> AbstractStringConverter;
-CREATE_GLOBAL_REGISTREE(AbstractStringConverter, StringConverter)
+CREATE_GLOBAL_REGISTREE(AbstractStringConverter, BoolConverter)
 ;
 
 }
