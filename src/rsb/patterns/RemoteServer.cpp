@@ -82,7 +82,9 @@ public:
 			xt.sec += 25;
 			if (!condition.timed_wait(lock, xt)) {
 				RSCERROR(logger, "Timeout while waiting");
-				return RSBEventPtr();
+				throw RemoteServer::TimeoutException(
+						"Error calling method and waiting for reply with id "
+								+ requestId + ". Waited 25 seconds.");
 			}
 		}
 
@@ -168,10 +170,13 @@ RSBEventPtr RemoteServer::callMethod(const std::string &methodName,
 
 	// wait for the reply
 	RSBEventPtr result = methodSet.handler->getReply(requestId);
-	if (result) {
-		return result;
+	if (result->hasMetaInfo("isException")) {
+		assert(result->getType() == "string");
+		throw RemoteTargetInvocationException("Error calling remote method '"
+				+ methodName + "': " + *(boost::static_pointer_cast<string>(
+				result->getData())));
 	} else {
-		throw runtime_error("Timeout while waiting for the reply");
+		return result;
 	}
 
 }

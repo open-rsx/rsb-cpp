@@ -20,6 +20,7 @@
 #ifndef REMOTESERVER_H_
 #define REMOTESERVER_H_
 
+#include <stdexcept>
 #include <string>
 
 #include <boost/noncopyable.hpp>
@@ -42,6 +43,30 @@ class WaitingEventHandler;
  */
 class RemoteServer: public boost::noncopyable {
 public:
+
+	/**
+	 * Thrown if a remote called timed out.
+	 *
+	 * @author jwienke
+	 */
+	class TimeoutException: public std::runtime_error {
+	public:
+		explicit TimeoutException(const std::string &message) :
+			std::runtime_error(message) {
+		}
+	};
+
+	/**
+	 * Thrown if a remote method call resulted in an exception.
+	 *
+	 * @author jwienke
+	 */
+	class RemoteTargetInvocationException: public std::runtime_error {
+	public:
+		explicit RemoteTargetInvocationException(const std::string &message) :
+			std::runtime_error(message) {
+		}
+	};
 
 	RemoteServer(const std::string &uri);
 	virtual ~RemoteServer();

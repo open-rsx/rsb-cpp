@@ -73,6 +73,16 @@ public:
 			return replyType;
 		}
 
+		/**
+		 * Implement this method to perform actions.
+		 *
+		 * @param methodName called method
+		 * @param input input data for the method
+		 * @return result data for the method
+		 * @throw std::exception all exceptions based on this type are
+		 *                       automatically caught and delivered to the
+		 *                       remote server
+		 */
 		virtual boost::shared_ptr<ReplyType> call(
 				const std::string &methodName,
 				boost::shared_ptr<RequestType> input) = 0;
@@ -94,6 +104,13 @@ public:
 	Server(const std::string &uri);
 	virtual ~Server();
 
+	/**
+	 * Register a new method with the given name.
+	 *
+	 * @param methodName method name
+	 * @param callback callback to execute for the method
+	 * @throw std::runtime_error thrown if a method with this name alredy exists
+	 */
 	void registerMethod(const std::string &methodName, CallbackPtr callback);
 
 private:

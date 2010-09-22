@@ -65,13 +65,26 @@ public:
 			return;
 		}
 
-		VoidPtr returnData = callback->intlCall(methodName, event->getData());
-		RSBEventPtr returnEvent(new RSBEvent());
-		returnEvent->setType(callback->getReplyType());
-		returnEvent->setData(returnData);
-		returnEvent ->addMetaInfo(requestIdKey,
-				event->getMetaInfo(requestIdKey));
-		publisher->publish(returnEvent);
+		try {
+			VoidPtr returnData = callback->intlCall(methodName,
+					event->getData());
+			RSBEventPtr returnEvent(new RSBEvent());
+			returnEvent->setType(callback->getReplyType());
+			returnEvent->setData(returnData);
+			returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
+					requestIdKey));
+			publisher->publish(returnEvent);
+		} catch (exception &e) {
+			RSBEventPtr returnEvent(new RSBEvent());
+			returnEvent->setType("string");
+			string exceptionType = typeid(e).name();
+			returnEvent->setData(boost::shared_ptr<string>(new string(
+					exceptionType + ": " + e.what())));
+			returnEvent->addMetaInfo(requestIdKey, event->getMetaInfo(
+					requestIdKey));
+			returnEvent->addMetaInfo("isException", "");
+			publisher->publish(returnEvent);
+		}
 
 	}
 

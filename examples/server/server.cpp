@@ -43,7 +43,7 @@ public:
 		return "string";
 	}
 
-	boost::shared_ptr<string> call(const string &methodName, boost::shared_ptr<
+	boost::shared_ptr<string> call(const string &/*methodName*/, boost::shared_ptr<
 			string> input) {
 		return boost::shared_ptr<string>(
 				new string("reply to '" + *input + "'"));
