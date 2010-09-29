@@ -41,6 +41,23 @@ typedef std::list<Action> Actions;
 // TODO add id field
 
 /**
+ *
+ * A Subscription, used by a #Subscriber. By appending a Filter to the Subscription, one makes sure
+ * only Events of a certain types are recognized. Appending a Handler is necessary to work with the data
+ * received.
+ *
+ * The following example shows using a Subscription using a ScopeFilter (assume the same uri is used as
+ * for the Subscriber) and a QueuePushHandler as a Handler which pushes the received events to a given queue:
+ *
+ * @code
+ * 	Subscription subscription = new Subscription();
+ * 	AbstractFilterPtr f(new ScopeFilter(uri));
+ * 	subscription->appendFilter(f);
+ *	boost::shared_ptr<rsb::QueuePushHandler<T> > qph(new QueuePushHandler<T> (myQueue));
+ * 	subscription->appendHandler(qph);
+ * @endcode
+ *
+ *
  * @todo remove header implementations
  * @todo make actions and filter thread-safe, especially for match and action
  *       execution which may be asynchronous to changes in theses subscriptions
@@ -51,11 +68,25 @@ public:
 	Subscription();
 	virtual ~Subscription();
 
+	/**
+	 * Appends a Filter to the Subscription. Every event not matching the constraints provided by the
+	 * given filter is ignored in processing by the Handlers.
+	 *
+	 * @param p a Pointer to the Filter.
+	 */
 	virtual void appendFilter(rsb::filter::AbstractFilterPtr p);
 
 	virtual bool match(RSBEventPtr e);
 
+
 	virtual void appendAction(Action a);
+
+	/**
+	 * Appends a Handler to the Subscription. After events are filtered, the appended Handlers work with
+	 * the incoming events.
+	 *
+	 * @param h a Pointer to the Handler.
+	 */
 	virtual void appendHandler(HandlerPtr h);
 
 	// TODO check if it is generally better to return iterators?!

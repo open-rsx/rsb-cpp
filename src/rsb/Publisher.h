@@ -66,6 +66,11 @@ public:
 
 	// publish data via RSB directly according to
 	// publisher configuration
+	/**
+	 * Publishes the given data to the Publisher's uri.
+	 *
+	 * @param data Pointer to the data to send.
+	 */
 	void publish(boost::shared_ptr<T> data) {
 		VoidPtr p = boost::static_pointer_cast<void>(data);
 		publish(p, defaultType);
@@ -87,6 +92,12 @@ public:
 	//	}
 
 	template<class T1>
+	/**
+	 * Publishes the given data to the Publisher's uri.
+	 *
+	 * @param data Pointer to the data to send.
+	 * @param type string which defines the type of the data. F.e. "string" for strings.
+	 */
 	void publish(boost::shared_ptr<T1> data, std::string type) {
 		VoidPtr p = boost::static_pointer_cast<void>(data);
 		publish(p, type);
@@ -95,6 +106,11 @@ public:
 	// if some metadata needs to be set externally
 	// TODO assumption is that data and type field alredy set externally
 	//      throw exception if not the case
+	/**
+	 * Publishes the given event to the Publisher's uri.
+	 *
+	 * @param event the event to publish.
+	 */
 	void publish(RSBEventPtr event) {
 		// TODO Check that exception is thrown if no converter available!
 		event->setURI(uri);
@@ -102,11 +118,17 @@ public:
 		router->publish(event);
 	}
 
+	/**
+	 * Activates the Publisher and therefore the Router. Is considered being in active mode afterwards.
+	 */
 	void activate() {
 		router->activate();
 		passive = false;
 	}
 
+	/**
+	 * Deactivates the Publisher and therefore the Router. Is considered being in passive mode afterwards.
+	 */
 	void deactivate() {
 		if (!passive)
 			router->deactivate();
