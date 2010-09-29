@@ -41,20 +41,21 @@ typedef std::list<Action> Actions;
 // TODO add id field
 
 /**
+ * A Subscription, used by a @ref rsb::Subscriber. By appending an @ref rsb::filter::AbstractFilter to the
+ * Subscription, one makes sure only events of a certain types are recognized.
+ * Appending a Handler is necessary to work with the data received.
  *
- * A Subscription, used by a #Subscriber. By appending a Filter to the Subscription, one makes sure
- * only Events of a certain types are recognized. Appending a Handler is necessary to work with the data
- * received.
- *
- * The following example shows using a Subscription using a ScopeFilter (assume the same uri is used as
- * for the Subscriber) and a QueuePushHandler as a Handler which pushes the received events to a given queue:
+ * The following example shows using a Subscription using a ScopeFilter (assume
+ * the same uri is used as for the Subscriber) and a QueuePushHandler as a
+ * Handler which pushes the received events to a given queue:
  *
  * @code
- * 	Subscription subscription = new Subscription();
- * 	AbstractFilterPtr f(new ScopeFilter(uri));
- * 	subscription->appendFilter(f);
- *	boost::shared_ptr<rsb::QueuePushHandler<T> > qph(new QueuePushHandler<T> (myQueue));
- * 	subscription->appendHandler(qph);
+ * Subscription subscription = new Subscription();
+ * AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
+ * subscription->appendFilter(f);
+ * boost::shared_ptr<rsc::SynchronizedQueue<string> > myQueue(new rsc::SynchronizedQueue<string>);
+ * boost::shared_ptr<rsb::QueuePushHandler<string> > qph(new QueuePushHandler<string> (myQueue));
+ * subscription->appendHandler(qph);
  * @endcode
  *
  *
@@ -69,8 +70,9 @@ public:
 	virtual ~Subscription();
 
 	/**
-	 * Appends a Filter to the Subscription. Every event not matching the constraints provided by the
-	 * given filter is ignored in processing by the Handlers.
+	 * Appends a Filter to the Subscription. Every event not matching the
+	 * constraints provided by the given filter is ignored in processing by the
+	 * Handlers.
 	 *
 	 * @param p a Pointer to the Filter.
 	 */
@@ -78,12 +80,16 @@ public:
 
 	virtual bool match(RSBEventPtr e);
 
-
+	/**
+	 * Registers a function bound with boost::bind as a handler.
+	 *
+	 * @param a boost::bind function to use as a handler
+	 */
 	virtual void appendAction(Action a);
 
 	/**
-	 * Appends a Handler to the Subscription. After events are filtered, the appended Handlers work with
-	 * the incoming events.
+	 * Appends a Handler to the Subscription. After events are filtered, all
+	 * handlers of a subscription are informed about the event.
 	 *
 	 * @param h a Pointer to the Handler.
 	 */

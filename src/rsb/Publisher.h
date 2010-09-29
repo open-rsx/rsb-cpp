@@ -31,6 +31,20 @@
 namespace rsb {
 
 /**
+ * A publisher to publish data of a specified default type expressed through the
+ * template parameter. All data in RSB is maintained as shared pointers to avoid
+ * unnecessary copy operations. Typedefs simplify the use of the pointer types.
+ *
+ * The basic usage pattern is explained with this example code:
+ * @code
+ * Publisher<string>::Ptr informer(new Publisher<string>("rsb://example/informer","string"));
+ * Publisher<string>::DataPtr s(new string("blub"));
+ * informer->publish(s);
+ * @endcode
+ *
+ * @author swrede
+ * @tparam T default data type to send by this publisher
+ *
  * @todo check thread-safety, e.g. setting router to active and setting the
  *       passive flag must be atomic
  * @todo does it make sense that publishers are copyable?
@@ -38,9 +52,25 @@ namespace rsb {
 template<class T>
 class Publisher {
 public:
+
+	/**
+	 * Shared pointer type for this publisher.
+	 */
 	typedef boost::shared_ptr<Publisher<T> > Ptr;
+
+	/**
+	 * Shared pointer type for the default data published by this publisher.
+	 */
 	typedef boost::shared_ptr<T> DataPtr;
 
+	/**
+	 * Constructs a new publisher.
+	 *
+	 * @param uri the uri under which the data are published
+	 * @param type string describing the default type of data sent by this
+	 *             publisher. It is used to find a converter that can convert
+	 *             these data to the port
+	 */
 	Publisher(std::string uri, std::string type) :
 		logger(rsc::logging::Logger::getLogger("rsb.Publisher." + uri)), uri(
 				uri), passive(false), defaultType(type) {
@@ -104,7 +134,7 @@ public:
 	}
 
 	// if some metadata needs to be set externally
-	// TODO assumption is that data and type field alredy set externally
+	// TODO assumption is that data and type field already set externally
 	//      throw exception if not the case
 	/**
 	 * Publishes the given event to the Publisher's uri.
@@ -119,7 +149,8 @@ public:
 	}
 
 	/**
-	 * Activates the Publisher and therefore the Router. Is considered being in active mode afterwards.
+	 * Activates the Publisher and therefore the Router. Is considered being in
+	 * active mode afterwards.
 	 */
 	void activate() {
 		router->activate();
@@ -127,7 +158,8 @@ public:
 	}
 
 	/**
-	 * Deactivates the Publisher and therefore the Router. Is considered being in passive mode afterwards.
+	 * Deactivates the Publisher and therefore the Router. Is considered being
+	 * in passive mode afterwards.
 	 */
 	void deactivate() {
 		if (!passive)

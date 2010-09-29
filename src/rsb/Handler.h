@@ -29,18 +29,26 @@ namespace rsb {
 class Handlers {
 public:
 	enum Type {
-		DATA,
-		EVENT
+		DATA, EVENT
 	};
 };
 
+/**
+ * A handler is a "callback object" invoked by a @ref rsb::Subscriber when new data
+ * is available that matches the @ref rsb::Subscription this handler is attached to.
+ *
+ * @author swrede
+ */
 class Handler {
 public:
-	Handler(Handlers::Type t) : type(t) { };
-	virtual ~Handler() {};
+	Handler(Handlers::Type t) :
+		type(t) {
+	}
+	virtual ~Handler() {
+	}
 
 	// TODO make subscription a friend to hide this method from public API
-	virtual void internal_notify( RSBEventPtr ) = 0;
+	virtual void internal_notify(RSBEventPtr) = 0;
 protected:
 	Handlers::Type type;
 };
@@ -48,33 +56,55 @@ protected:
 typedef boost::shared_ptr<Handler> HandlerPtr;
 
 // TODO makes even more sense if RSBEvent would be a template type
-class EventHandler : public Handler {
+class EventHandler: public Handler {
 public:
-	EventHandler() : Handler(Handlers::EVENT) {};
-	virtual ~EventHandler() {};
+	EventHandler() :
+		Handler(Handlers::EVENT) {
+	}
+	virtual ~EventHandler() {
+	}
 
-	virtual void internal_notify( RSBEventPtr e ) {
+	virtual void internal_notify(RSBEventPtr e) {
 		notify(e);
 	}
 
-	virtual void notify( RSBEventPtr ) = 0;
+	virtual void notify(RSBEventPtr) = 0;
 
 };
 
-template < class T >
-class DataHandler : public Handler {
+/**
+ * A utility class to simplify data handling by automatically passing the data
+ * of the desired type to the notify() method.
+ *
+ * @tparam T desired data type to retrieve from the subscriber
+ * @author swrede
+ */
+template<class T>
+class DataHandler: public Handler {
 public:
-	typedef boost::shared_ptr< T > DataPtr;
 
-	DataHandler() : Handler(Handlers::DATA) {};
-	virtual ~DataHandler() {};
+	/**
+	 * Shared pointer of the target type.
+	 */
+	typedef boost::shared_ptr<T> DataPtr;
 
-	virtual void internal_notify( RSBEventPtr e ) {
+	DataHandler() :
+		Handler(Handlers::DATA) {
+	}
+	virtual ~DataHandler() {
+	}
+
+	virtual void internal_notify(RSBEventPtr e) {
 		boost::shared_ptr<T> d = boost::static_pointer_cast<T>(e->getData());
 		notify(d);
 	}
 
-	virtual void notify( DataPtr ) = 0;
+	/**
+	 * Called if new data is available.
+	 *
+	 * @param data data of the desired type
+	 */
+	virtual void notify(DataPtr data) = 0;
 
 };
 

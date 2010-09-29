@@ -35,9 +35,24 @@ namespace rsb {
 
 typedef boost::shared_ptr<void> VoidPtr;
 
+/**
+ * Basic message that is exchanged between publishers and subscribers. It is a
+ * combination of metadata and the actual data to publish / subscribe as
+ * payload.
+ *
+ * @author swrede
+ */
 class RSBEvent {
 public:
 	RSBEvent() {};
+
+	/**
+	 * Constructor.
+	 *
+	 * @param u uri of the event
+	 * @param c payload of the event
+	 * @param t type identifier to serialize / deserialize the event payload
+	 */
 	RSBEvent(std::string u, boost::shared_ptr<void> c, std::string t) :
 		uri(u), content(c), type(t) {
 	};

@@ -31,19 +31,34 @@
 
 namespace rsb {
 
-// TODO refactor commonalities of participants into a participant ?!? class
-// TODO how to deal with IDs of subscribers? (it must be possible to reference them internally somehow
-// TODO use templates in subscriptions only? (however, they need the event info)
-
 /**
- * A Subscriber subscribes to published events by a #Publisher by maintaining several #Subscriptions.
+ * A Subscriber subscribes to published events by a @ref rsb::Publisher by maintaining
+ * several @ref rsb::Subscription instances. Subscriptions must at least provide a @ref rsb::filter::ScopeFilter
+ * to inform the subscriber about the desired events to receive.
+ *
+ * Usage example:
+ * @code
+ * SubscriberPtr s(new Subscriber("blub"));
+ * SubscriptionPtr sub(new Subscription());
+ * AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
+ * sub->appendFilter(f);
+ * boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
+ * sub->appendHandler(dh);
+ * s->addSubscription(sub);
+ * @endcode
+ *
+ * @author swrede
+ *
+ * @todo refactor commonalities of participants into a participant ?!? class
+ * @todo how to deal with IDs of subscribers? (it must be possible to reference them internally somehow
+ * @todo use templates in subscriptions only? (however, they need the event info)
  */
 class Subscriber {
 public:
 
 	/**
-	 * Constructs a new Subscriber assigned to the specified uri. The Subscriber opens a #Router to
-	 * PortType Spread and is activated after construction.
+	 * Constructs a new Subscriber assigned to the specified uri. The Subscriber
+	 * opens a @ref rsb::transport::Router to PortType Spread and is activated after construction.
 	 *
 	 * @param uri the uri where the data is published.
 	 */
@@ -58,11 +73,13 @@ public:
 	}
 
 	/**
-	 * Constructs a new Subscriber assigned to the specified uri. The Subscriber opens a #Router to a
-	 * PortType specified and is activated after construction.
+	 * Constructs a new Subscriber assigned to the specified uri. The Subscriber
+	 * opens a @ref rsb::transport::Router to a PortType specified and is activated after
+	 * construction.
 	 *
 	 * @param uri the uri where the data is published.
-	 * @param in the PortType (enum) to connect with. F.e. transport::TransportFactory::SPREAD
+	 * @param in the PortType (enum) to connect with, i.e.
+	 *           transport::TransportFactory::SPREAD
 	 */
 	Subscriber(transport::TransportFactory::PortTypes in, std::string uri) :
 		logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri),
@@ -87,7 +104,8 @@ public:
 
 
 	/**
-	 * Activates the Subscriber and therefore the Router. Is considered being in active mode afterwards.
+	 * Activates the Subscriber and therefore the Router. Is considered being in
+	 * active mode afterwards.
 	 */
 	void activate() {
 		router->activate();
@@ -95,7 +113,8 @@ public:
 	}
 
 	/**
-	 * Deactivates the Subscriber and therefore the Router. Is considered being in passive mode afterwards.
+	 * Deactivates the Subscriber and therefore the Router. Is considered being
+	 * in passive mode afterwards.
 	 */
 	void deactivate() {
 		if (!passive)
