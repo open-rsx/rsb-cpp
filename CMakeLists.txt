@@ -128,6 +128,9 @@ IF(DOXYGEN_FOUND)
                        ARGS ${DOXYFILE}
                        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
     ADD_CUSTOM_TARGET(doc DEPENDS ${API_DIR})
+    
+    INSTALL(CODE "execute_process(COMMAND ${CMAKE_BUILD_TOOL} doc)")
+    INSTALL(DIRECTORY ${API_DIR} DESTINATION share/RSB)
 
 ENDIF()
 
