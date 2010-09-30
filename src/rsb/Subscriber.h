@@ -52,6 +52,7 @@ namespace rsb {
  * @todo refactor commonalities of participants into a participant ?!? class
  * @todo how to deal with IDs of subscribers? (it must be possible to reference them internally somehow
  * @todo use templates in subscriptions only? (however, they need the event info)
+ * @todo remove header implementations
  */
 class Subscriber {
 public:
