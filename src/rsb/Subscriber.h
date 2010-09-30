@@ -94,7 +94,6 @@ public:
 		if (!passive)
 			deactivate();
 	}
-	;
 
 	//	static SubscriberPtr create(std::string uri) {
 	//		boost::shared_ptr<Subscriber> s(new Subscriber());
@@ -143,7 +142,6 @@ public:
 protected:
 	Subscriber() { /* forbidden */
 	}
-	;
 
 private:
 	rsc::logging::LoggerPtr logger;
