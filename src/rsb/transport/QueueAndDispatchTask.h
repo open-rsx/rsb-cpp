@@ -34,15 +34,17 @@ namespace rsb {
 
 namespace transport {
 
-template < class T >
+template<class T>
 class QueueAndDispatchTask {
 public:
-	QueueAndDispatchTask() : cancelRequested(false) {
-		queue = boost::shared_ptr<std::list< T > >(new std::list< T >());
+	QueueAndDispatchTask() :
+		cancelRequested(false) {
+		queue = boost::shared_ptr<std::list<T> >(new std::list<T>());
 	}
 	virtual ~QueueAndDispatchTask() {
 		//std::cerr << "~QueueAndDispatchTask()" << std::endl;
-	};
+	}
+	;
 
 	void addElement(T e) {
 		{
@@ -75,15 +77,23 @@ public:
 			c.wait(lock);
 			//std::cout << "Condition unlocked!!!" << std::endl;
 		}
-		if (!queue->empty()) {
-			e = queue->front();
-			queue->pop_front();
-			// dispatch without lock
+
+		if (cancelRequested) {
 			lock.unlock();
-			if (observer)
-				observer(e);
+			t->cancel();
+			return;
 		}
-		if (cancelRequested) t->cancel();
+
+		assert(!queue->empty());
+
+		e = queue->front();
+		queue->pop_front();
+
+		// dispatch without lock
+		lock.unlock();
+		if (observer) {
+			observer(e);
+		}
 	}
 
 private:
@@ -91,9 +101,9 @@ private:
 	boost::function<void(T)> observer;
 
 	mutable boost::recursive_mutex m;
-    boost::condition c;
+	boost::condition c;
 
-    volatile bool cancelRequested;
+	volatile bool cancelRequested;
 
 };
 

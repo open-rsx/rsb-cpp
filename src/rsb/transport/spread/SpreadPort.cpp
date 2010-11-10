@@ -110,7 +110,6 @@ void SpreadPort::deactivate() {
 	//	exec->join(staTask);
 	RSCTRACE(logger, "deactivate() finished"); // << *id);
 }
-;
 
 SpreadPort::~SpreadPort() {
 	if (!shutdown)

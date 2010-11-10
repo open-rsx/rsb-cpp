@@ -25,8 +25,8 @@ INCLUDE(EnableCoverageReport)
 SET(RSB_VERSION 0.1.0)
 SET(RSB_NAME "RSBCore")
 SET(RSB_TEST_NAME "rsbtest")
-SET(CORE_TEST_NAME rsb_test_core)
-SET(SPREADPORT_TEST_NAME rsb_test_spread)
+SET(CORE_TEST_NAME rsbtest_core)
+SET(SPREADPORT_TEST_NAME rsbtest_spread)
 
 # --- global compiler flags ---
 
@@ -74,6 +74,9 @@ FIND_PACKAGE(Threads REQUIRED)
 MESSAGE(STATUS "Threading library: ${CMAKE_THREAD_LIBS_INIT}")
 
 FIND_PACKAGE(ProtocolBuffers REQUIRED)
+IF(NOT PROTOBUF_PROTOC_EXECUTABLE)
+    MESSAGE(FATAL_ERROR "protoc executable not found")
+ENDIF()
 
 PKG_CHECK_MODULES(RSC REQUIRED rsc)
 FIND_PACKAGE(RSBProtocol REQUIRED)

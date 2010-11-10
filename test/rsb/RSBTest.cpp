@@ -17,21 +17,25 @@
  *
  * ============================================================ */
 
+#include "rsb/transport/Router.h"
 #include "rsb/util/Task.h"
 #include "rsb/util/PeriodicTask.h"
 #include "rsb/transport/Port.h"
 #include "rsb/transport/spread/SpreadPort.h"
-#include "BTL2StringConverter.h"
 #include "InformerTask.h"
+#include "rsb/Subscription.h"
 #include "rsb/filter/AbstractFilter.h"
+#include "rsb/filter/ScopeFilter.h"
 
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
-//#include <rsc/logging/propertyconfigurator.h>
+//#include <rsc/logging/basicconfigurator.h>
 #include <iostream>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+#include "testhelpers.h"
 
 using namespace std;
 using namespace rsb;
@@ -42,43 +46,28 @@ using namespace rsb::transport;
 using namespace rsb::spread;
 using namespace testing;
 
-TEST(SpreadPortTest, testConstruction)
-{
-	// ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
-	// AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
-	ASSERT_NO_THROW(PortPtr p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort()));
-	// p.setTypeConverters(r);
-}
-
-TEST(SpreadPortTest, testConnnection)
-{
-	// ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
-	// AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
-	PortPtr p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort());
-	ASSERT_NO_THROW(p->activate());
-	// p.setTypeConverters(r);
-}
-
-TEST(SpreadPortTest, testRoundtrip)
+TEST(RSBTest, testRoundtrip)
 {
 	// task execution service
 	TaskExecutorVoidPtr exec(new TaskExecutor<void> ());
 
-	// in-process port
-	PortPtr p(new SpreadPort());
-	ASSERT_NO_THROW(p->activate());
+	// router instantiation
+	RouterPtr r(new Router(TransportFactory::SPREAD, TransportFactory::SPREAD));
+	r->activate();
 
-	// filter for joining test group
-	AbstractFilterPtr f = AbstractFilterPtr(new ScopeFilter("xcf://blah"));
-	FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(p);
-	f->notifyObserver(fo,FilterAction::ADD);
+	// create subscription
+	SubscriptionPtr s(new Subscription());
+	AbstractFilterPtr f(new ScopeFilter("xcf://blah"));
+	s->appendFilter(f);
 
 	// domain objects
-	boost::shared_ptr<InformerTask> source(new InformerTask(p));
-	p->setObserver(boost::bind(&InformerTask::handler, source.get(), _1));
+	boost::shared_ptr<InformerTask> source(new InformerTask(r->getOutPort()));
+	s->appendAction(boost::bind(&InformerTask::handler, source.get(), _1));
+
+	// add subscription to router
+	r->subscribe(s);
 
 	// activate port and schedule informer
-	p->activate();
 	TaskPtr task_source = exec->schedulePeriodic<InformerTask> (source, 0);
 
 	// wait *here* for shutdown as this is not known to the Port
@@ -92,26 +81,14 @@ TEST(SpreadPortTest, testRoundtrip)
 	// stop and join all threads
 	exec->join(task_source); // no cancel needed as done already locally, see execute()
 	// port is deactivated through dtr
-	cerr << "SpreadProcessTest finished" << endl;
+	cerr << "RSBTest finished" << endl;
 }
 
 int main(int argc, char* argv[]) {
-//    std::ostringstream confpath;
-//    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
-//
-//    if (log4cxxPropsEnv != NULL) {
-//
-//        confpath << log4cxxPropsEnv;
-//        cout << "Trying log4cxx configuration from file " << confpath.str()
-//                << endl;
-//
-//        try {
-//            log4cxx::PropertyConfigurator::configure(confpath.str());
-//        } catch (const std::exception& e) {
-//            cout << "Trying log4cxx configuration from file " << confpath.str()
-//                    << " failed. Using BasicConfigurator." << endl;
-//        }
-//    }
+
+	SpreadStarter spread;
+
+//	log4cxx::BasicConfigurator::configure();
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 

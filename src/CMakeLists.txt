@@ -42,8 +42,6 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/transport/spread/SpreadConnection.cpp
             rsb/transport/spread/ReceiverTask.cpp
             rsb/introspection/IntrospectionConverter.cpp
-            ../test/InformerTask.cpp
-            ../test/BTL2StringConverter.cpp
             ${PROTO_SOURCES}
             ${INTERNAL_PROTO_SOURCES})
 
