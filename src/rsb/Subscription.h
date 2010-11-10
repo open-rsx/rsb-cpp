@@ -116,6 +116,9 @@ public:
 		enabled = false;
 	}
 
+	friend std::ostream &operator<<(std::ostream &stream,
+			const Subscription &subscription);
+
 private:
 	volatile bool enabled;
 	boost::shared_ptr<FilterChain> filters;
@@ -124,6 +127,9 @@ private:
 };
 
 typedef boost::shared_ptr<Subscription> SubscriptionPtr;
+
+std::ostream
+		&operator<<(std::ostream &stream, const Subscription &subscription);
 
 }
 

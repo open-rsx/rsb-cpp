@@ -20,11 +20,13 @@
 #ifndef EVENTPROCESSOR_H_
 #define EVENTPROCESSOR_H_
 
+#include <boost/shared_ptr.hpp>
+
+#include <rsc/logging/Logger.h>
+#include <rsc/threading/OrderedQueueDispatcherPool.h>
+
 #include "RSBEvent.h"
 #include "Subscription.h"
-#include "MatchAndExecute.h"
-#include <boost/threadpool.hpp>
-#include <boost/shared_ptr.hpp>
 
 namespace rsb {
 
@@ -55,10 +57,13 @@ public:
     void unsubscribe(rsb::SubscriptionPtr s);
 
 private:
+
+    bool filter(SubscriptionPtr sub, RSBEventPtr e);
+    void deliver(SubscriptionPtr sub, RSBEventPtr e);
+
     // TODO make list subscriptions
-	std::list<rsb::SubscriptionPtr> subscriptions;
-	boost::threadpool::pool pool;
-	MatchAndExecute matcher;
+    rsc::logging::LoggerPtr logger;
+	rsc::threading::OrderedQueueDispatcherPool<RSBEventPtr, Subscription> pool;
 };
 
 typedef boost::shared_ptr<EventProcessor> EventProcessorPtr;

@@ -44,7 +44,9 @@ typedef boost::shared_ptr<void> VoidPtr;
  */
 class RSBEvent {
 public:
-	RSBEvent() {};
+	RSBEvent() {
+	}
+	;
 
 	/**
 	 * Constructor.
@@ -55,7 +57,8 @@ public:
 	 */
 	RSBEvent(std::string u, boost::shared_ptr<void> c, std::string t) :
 		uri(u), content(c), type(t) {
-	};
+	}
+	;
 
 	virtual ~RSBEvent();
 
@@ -74,11 +77,12 @@ public:
 
 	bool hasMetaInfo(const std::string &key) const;
 	std::string getMetaInfo(const std::string &key) const;
-	void addMetaInfo(const std::string &key, const std::string &value, bool override = false);
+	void addMetaInfo(const std::string &key, const std::string &value,
+			bool override = false);
 	std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
 	std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
 
-	friend std::ostream& operator<< (std::ostream& out, const RSBEvent& e);
+	friend std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
 
 private:
 	rsb::util::UUID id;
@@ -93,10 +97,9 @@ private:
 
 };
 
-
-
 typedef boost::shared_ptr<RSBEvent> RSBEventPtr;
 
+std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
 
 }
 

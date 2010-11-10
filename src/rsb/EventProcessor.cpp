@@ -18,7 +18,6 @@
  * ============================================================ */
 
 #include "EventProcessor.h"
-#include "MatchAndExecute.h"
 
 using namespace std;
 
@@ -26,42 +25,84 @@ namespace rsb {
 
 namespace internal {
 
-EventProcessor::EventProcessor() : pool(5) {
-
+EventProcessor::EventProcessor() :
+	logger(rsc::logging::Logger::getLogger("rsb.MatchAndExecute")), pool(5,
+			boost::bind(&EventProcessor::deliver, this, _1, _2)) {
+	pool.start();
 }
 
-EventProcessor::EventProcessor(unsigned int num_threads) : pool(num_threads) {
-
+EventProcessor::EventProcessor(unsigned int num_threads) :
+	logger(rsc::logging::Logger::getLogger("rsb.MatchAndExecute")), pool(
+			num_threads, boost::bind(&EventProcessor::deliver, this, _1, _2)) {
+	pool.start();
 }
 
 EventProcessor::~EventProcessor() {
-	// TODO Auto-generated destructor stub
 }
 
+bool EventProcessor::filter(SubscriptionPtr sub, RSBEventPtr e) {
+	RSCDEBUG(logger, "Matching event " << e << " for subscription " << sub);
+
+	if (!sub->isEnabled()) {
+		return false;
+	}
+
+	bool match = false;
+	// match event
+	try {
+		match = sub->match(e);
+	} catch (const exception& ex) {
+		// TODO probably disable this subscription
+		RSCFATAL(logger, "Exception matching event " << *e
+				<< " for subscription " << *sub << ":" << ex.what());
+	} catch (...) {
+		RSCFATAL(logger, "Catch-all exception matching event " << *e
+				<< " for subscription " << *sub);
+	}
+
+	return match;
+
+}
+
+void EventProcessor::deliver(SubscriptionPtr sub, RSBEventPtr e) {
+	RSCDEBUG(logger, "Delivering event " << e << " for subscription " << sub);
+
+	if (!sub->isEnabled()) {
+		return;
+	}
+
+	try {
+
+		boost::shared_ptr<set<HandlerPtr> > handlers = sub->getHandlers();
+		RSCTRACE(logger, "Match and subscriber is enabled, dispatching to "
+				<< handlers->size() << " handlers");
+		for (set<HandlerPtr>::iterator handlerIt = handlers->begin(); handlerIt
+				!= handlers->end(); ++handlerIt) {
+			(*handlerIt)->internal_notify(e);
+		}
+
+	} catch (const exception& ex) {
+		// TODO probably disable this subscription
+		RSCFATAL(logger, "Exception delivering event " << *e
+				<< " to subscription " << *sub << ":" << ex.what());
+	} catch (...) {
+		RSCFATAL(logger, "Catch-all exception delivering event " << *e
+				<< " to subscription " << *sub);
+	}
+
+}
 
 void EventProcessor::process(RSBEventPtr e) {
-	// TODO subscriptions needs to be made thread-safe
-    list<SubscriptionPtr>::iterator i = subscriptions.begin();
-    while(i != subscriptions.end()) {
-        // execute match-and-trigger if enabled, otherwise remove
-        if((*i)->isEnabled()) {
-        		pool.schedule(boost::bind(&MatchAndExecute::process, matcher, *i, e));
-        		++i;
-        } else {
-        	// actually removal of marked subscription
-        	i = subscriptions.erase(i);
-        }
-    }
+	pool.push(e);
 }
 
 void EventProcessor::subscribe(SubscriptionPtr s) {
-	subscriptions.push_back(s);
+	pool.registerReceiver(s);
 }
 void EventProcessor::unsubscribe(SubscriptionPtr s) {
-    list<SubscriptionPtr>::iterator i = find(subscriptions.begin(), subscriptions.end(), s);
-    if(i != subscriptions.end())
-        (*i)->disable();
-    // next time they are going to be removed, see process
+	// TODO subscriptions need to be made thread-safe
+	s->disable();
+	pool.unregisterReceiver(s);
 }
 
 }

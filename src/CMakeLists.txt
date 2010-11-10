@@ -14,7 +14,6 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/util/TaskExecutor.cpp
             rsb/RSBEvent.cpp
             rsb/Subscription.cpp
-            rsb/MatchAndExecute.cpp
             rsb/EventProcessor.cpp
             rsb/QueuePushHandler.cpp
             rsb/filter/AbstractFilter.cpp
@@ -60,7 +59,6 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/Action.h
             rsb/Handler.h
             rsb/Subscription.h
-            rsb/MatchAndExecute.h
             rsb/EventProcessor.h
             rsb/QueuePushHandler.h
             rsb/filter/FilterActionTypes.h
