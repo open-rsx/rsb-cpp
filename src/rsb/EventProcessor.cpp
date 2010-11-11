@@ -27,13 +27,15 @@ namespace internal {
 
 EventProcessor::EventProcessor() :
 	logger(rsc::logging::Logger::getLogger("rsb.EventProcessor")), pool(5,
-			boost::bind(&EventProcessor::deliver, this, _1, _2)) {
+			boost::bind(&EventProcessor::deliver, this, _1, _2), boost::bind(
+					&EventProcessor::filter, this, _1, _2)) {
 	pool.start();
 }
 
 EventProcessor::EventProcessor(unsigned int num_threads) :
 	logger(rsc::logging::Logger::getLogger("rsb.EventProcessor")), pool(
-			num_threads, boost::bind(&EventProcessor::deliver, this, _1, _2)) {
+			num_threads, boost::bind(&EventProcessor::deliver, this, _1, _2),
+			boost::bind(&EventProcessor::filter, this, _1, _2)) {
 	pool.start();
 }
 
@@ -41,7 +43,7 @@ EventProcessor::~EventProcessor() {
 }
 
 bool EventProcessor::filter(SubscriptionPtr sub, RSBEventPtr e) {
-	RSCDEBUG(logger, "Matching event " << e << " for subscription " << sub);
+	RSCDEBUG(logger, "Matching event " << *e << " for subscription " << *sub);
 
 	if (!sub->isEnabled()) {
 		return false;
@@ -65,7 +67,7 @@ bool EventProcessor::filter(SubscriptionPtr sub, RSBEventPtr e) {
 }
 
 void EventProcessor::deliver(SubscriptionPtr sub, RSBEventPtr e) {
-	RSCDEBUG(logger, "Delivering event " << e << " for subscription " << sub);
+	RSCDEBUG(logger, "Delivering event " << *e << " for subscription " << *sub);
 
 	if (!sub->isEnabled()) {
 		return;

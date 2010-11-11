@@ -24,6 +24,8 @@
 #include <ostream>
 #include <stdexcept>
 
+#include <rsc/logging/LoggerFactory.h>
+
 #include "testconfig.h"
 
 class SpreadStarter {
@@ -71,5 +73,12 @@ public:
 	}
 
 };
+
+inline void setupLogging() {
+
+	rsc::logging::LoggerFactory::getInstance()->reconfigure(
+			rsc::logging::Logger::TRACE);
+
+}
 
 #endif /* TESTHELPERS_H_ */

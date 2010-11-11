@@ -37,9 +37,6 @@ typedef boost::function<void(RSBEventPtr)> Action;
 typedef std::list<rsb::filter::AbstractFilterPtr> FilterChain;
 typedef std::list<Action> Actions;
 
-// TODO implement stream operators
-// TODO add id field
-
 /**
  * A Subscription, used by a @ref rsb::Subscriber. By appending an @ref rsb::filter::AbstractFilter to the
  * Subscription, one makes sure only events of a certain types are recognized.
@@ -121,6 +118,7 @@ public:
 
 private:
 	volatile bool enabled;
+	rsc::misc::UUID id;
 	boost::shared_ptr<FilterChain> filters;
 	boost::shared_ptr<std::set<HandlerPtr> > handlers;
 
@@ -128,6 +126,7 @@ private:
 
 typedef boost::shared_ptr<Subscription> SubscriptionPtr;
 
+// TODO really implement stream operators
 std::ostream
 		&operator<<(std::ostream &stream, const Subscription &subscription);
 

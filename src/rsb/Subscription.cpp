@@ -72,14 +72,15 @@ bool Subscription::match(RSBEventPtr e) {
 		}
 
 	} catch (...) {
-		throw "unknown error during event matching";
+		// TODO better exception!!!
+		throw runtime_error("unknown error during event matching");
 	}
 	return true;
 }
 
 ostream &operator<<(ostream &stream, const Subscription &subscription) {
-	// TODO improve the output. Maybe add a subscription uuid to uniquely identify them?
-	return stream << "Subscription[enabled = " << subscription.enabled
+	return stream << "Subscription[id = " << subscription.id << ", enabled = "
+			<< subscription.enabled
 			<< ", AND SEVERAL OTHER THINGS I DONT KNOW HOW TO PRINT RIGHT NOW]";
 }
 

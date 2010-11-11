@@ -94,10 +94,3 @@ TEST(TaskTest, testExecution) {
 	}
 	//cerr << "main finished" << endl;
 }
-
-int main(int argc, char* argv[]) {
-	//log4cxx::BasicConfigurator::configure();
-    InitGoogleMock(&argc, argv);
-    return RUN_ALL_TESTS();
-
-}
