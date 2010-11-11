@@ -26,13 +26,13 @@ namespace rsb {
 namespace internal {
 
 EventProcessor::EventProcessor() :
-	logger(rsc::logging::Logger::getLogger("rsb.MatchAndExecute")), pool(5,
+	logger(rsc::logging::Logger::getLogger("rsb.EventProcessor")), pool(5,
 			boost::bind(&EventProcessor::deliver, this, _1, _2)) {
 	pool.start();
 }
 
 EventProcessor::EventProcessor(unsigned int num_threads) :
-	logger(rsc::logging::Logger::getLogger("rsb.MatchAndExecute")), pool(
+	logger(rsc::logging::Logger::getLogger("rsb.EventProcessor")), pool(
 			num_threads, boost::bind(&EventProcessor::deliver, this, _1, _2)) {
 	pool.start();
 }
