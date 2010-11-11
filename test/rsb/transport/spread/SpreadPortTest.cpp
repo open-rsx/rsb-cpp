@@ -17,21 +17,19 @@
  *
  * ============================================================ */
 
-#include "rsb/util/Task.h"
-#include "rsb/util/PeriodicTask.h"
+#include <iostream>
+
+#include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
 #include "rsb/transport/Port.h"
 #include "rsb/transport/spread/SpreadPort.h"
 #include "rsb/filter/AbstractFilter.h"
 
 #include "../../InformerTask.h"
-
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-//#include <rsc/logging/propertyconfigurator.h>
-#include <iostream>
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
 #include "testhelpers.h"
 
@@ -39,10 +37,10 @@ using namespace std;
 using namespace rsb;
 using namespace rsb::test;
 using namespace rsb::filter;
-using namespace rsb::util;
 using namespace rsb::transport;
 using namespace rsb::spread;
 using namespace testing;
+using namespace rsc::threading;
 
 TEST(SpreadPortTest, testConstruction)
 {
@@ -98,26 +96,26 @@ TEST(SpreadPortTest, testRoundtrip)
 }
 
 int main(int argc, char* argv[]) {
-//    std::ostringstream confpath;
-//    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
-//
-//    if (log4cxxPropsEnv != NULL) {
-//
-//        confpath << log4cxxPropsEnv;
-//        cout << "Trying log4cxx configuration from file " << confpath.str()
-//                << endl;
-//
-//        try {
-//            log4cxx::PropertyConfigurator::configure(confpath.str());
-//        } catch (const std::exception& e) {
-//            cout << "Trying log4cxx configuration from file " << confpath.str()
-//                    << " failed. Using BasicConfigurator." << endl;
-//        }
-//    }
+	//    std::ostringstream confpath;
+	//    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
+	//
+	//    if (log4cxxPropsEnv != NULL) {
+	//
+	//        confpath << log4cxxPropsEnv;
+	//        cout << "Trying log4cxx configuration from file " << confpath.str()
+	//                << endl;
+	//
+	//        try {
+	//            log4cxx::PropertyConfigurator::configure(confpath.str());
+	//        } catch (const std::exception& e) {
+	//            cout << "Trying log4cxx configuration from file " << confpath.str()
+	//                    << " failed. Using BasicConfigurator." << endl;
+	//        }
+	//    }
 
 	SpreadStarter spread;
 
-    InitGoogleMock(&argc, argv);
-    return RUN_ALL_TESTS();
+	InitGoogleMock(&argc, argv);
+	return RUN_ALL_TESTS();
 
 }

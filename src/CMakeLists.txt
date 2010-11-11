@@ -8,9 +8,6 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/Publisher.cpp
             rsb/Subscriber.cpp
             rsb/util/Configuration.cpp
-            rsb/util/Task.cpp
-            rsb/util/PeriodicTask.cpp
-            rsb/util/TaskExecutor.cpp
             rsb/RSBEvent.cpp
             rsb/Subscription.cpp
             rsb/EventProcessor.cpp
@@ -48,9 +45,6 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/CommException.h
             rsb/util/Configuration.h
             rsb/util/ConfigException.h
-            rsb/util/Task.h
-            rsb/util/PeriodicTask.h
-            rsb/util/TaskExecutor.h
             rsb/RSBEvent.h
             rsb/Publisher.h
             rsb/Subscriber.h

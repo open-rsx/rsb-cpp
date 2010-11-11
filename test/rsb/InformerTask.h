@@ -20,14 +20,14 @@
 #ifndef INFORMERTASK_H_
 #define INFORMERTASK_H_
 
-#include "rsb/transport/Port.h"
-#include "rsb/util/Task.h"
-
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>
 
-namespace rsb {
+#include <rsc/threading/Task.h>
 
+#include "rsb/transport/Port.h"
+
+namespace rsb {
 namespace test {
 
 class InformerTask {
@@ -39,7 +39,7 @@ public:
 	boost::recursive_mutex m;
 	boost::condition cond;
 
-	void execute(rsb::util::Task<void>* t);
+	void execute(rsc::threading::Task<void>* t);
 	void handler(rsb::RSBEventPtr e);
 
 private:
@@ -49,7 +49,6 @@ private:
 };
 
 }
-
 }
 
 #endif /* INFORMERTASK_H_ */

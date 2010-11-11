@@ -22,9 +22,9 @@
 
 using namespace std;
 using namespace rsb;
-using namespace rsb::util;
 using namespace rsb::transport;
 using namespace rsb::introspection;
+using namespace rsc::threading;
 
 namespace rsb {
 
@@ -35,7 +35,6 @@ InformerTask::InformerTask(PortPtr p) : c(0), i(0), port(p) {
 };
 
 InformerTask::~InformerTask() {
-	// TODO Auto-generated destructor stub
 }
 
 void InformerTask::execute(Task<void>* t) {

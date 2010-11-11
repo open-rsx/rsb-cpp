@@ -17,17 +17,17 @@
  *
  * ============================================================ */
 
+#include <iostream>
+
+#include <string.h>
+
+#include <rsc/misc/Registry.h>
+
 #include "../../protocol/Notification.h"
 #include "SpreadPort.h"
 #include "SpreadConnection.h"
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
-
-#include <iostream>
-#include <string.h>
-
-#include <rsc/misc/Registry.h>
-
 #include "../AbstractConverter.h"
 #include "../../protocol/ProtocolException.h"
 
@@ -37,6 +37,7 @@ using namespace rsb;
 using namespace rsb::util;
 using namespace rsb::transport;
 using namespace rsb::protocol;
+using namespace rsc::threading;
 
 namespace rsb {
 

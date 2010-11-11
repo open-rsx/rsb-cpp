@@ -20,7 +20,7 @@
 #ifndef STATUSTASK_H_
 #define STATUSTASK_H_
 
-#include "../../util/Task.h"
+#include <rsc/threading/Task.h>
 
 namespace rsb {
 
@@ -31,19 +31,24 @@ typedef boost::shared_ptr<InProcessPort> InProcessPortPtr;
 
 class StatusTask {
 public:
-	StatusTask(InProcessPort* p) : port(p) {};
+
+	StatusTask(InProcessPort* p) :
+		port(p) {
+	}
+
 	~StatusTask() {
 		std::cout << "dtr ~StatusTask() " << std::endl;
 	}
 
-	boost::shared_ptr<void> execute(rsb::util::Task<void>* t) {
-		std::cout << "InProcessPort alive. Status of task " << *t << ": undefined" << std::endl;
+	boost::shared_ptr<void> execute(rsc::threading::Task<void>* t) {
+		std::cout << "InProcessPort alive. Status of task " << *t
+				<< ": undefined" << std::endl;
 		return boost::shared_ptr<void>();
 	}
 
 private:
 	// TODO how to replace this ptr by some kind of a smart ptr
-	InProcessPort* port;
+	InProcessPort *port;
 };
 
 }

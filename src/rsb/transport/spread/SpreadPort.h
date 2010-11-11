@@ -20,16 +20,16 @@
 #ifndef SPREADPORT_H_
 #define SPREADPORT_H_
 
+#include <rsc/logging/Logger.h>
+#include <rsc/misc/Registry.h>
+#include <rsc/threading/TaskExecutor.h>
+
 #include "../Port.h"
 #include "../../filter/ScopeFilter.h"
-#include "../../util/TaskExecutor.h"
 #include "../QueueAndDispatchTask.h"
 #include "ReceiverTask.h"
 #include "MembershipManager.h"
 #include "SpreadConnection.h"
-
-#include <rsc/logging/Logger.h>
-#include <rsc/misc/Registry.h>
 
 namespace rsb {
 
@@ -61,13 +61,13 @@ private:
 	volatile bool shutdown;
 	SpreadConnectionPtr con;
 
-	rsb::util::TaskExecutorVoidPtr exec;
+	rsc::threading::TaskExecutorVoidPtr exec;
 	//   boost::shared_ptr<StatusTask> st;
 	boost::shared_ptr<ReceiverTask> rec;
 	boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
 
-	rsb::util::TaskPtr recTask;
-	rsb::util::TaskPtr qadTask;
+	rsc::threading::TaskPtr recTask;
+	rsc::threading::TaskPtr qadTask;
 	//	rsb::util::TaskPtr staTask;
 
 	MembershipManagerPtr memberships;

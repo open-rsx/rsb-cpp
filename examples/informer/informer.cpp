@@ -30,7 +30,6 @@ using namespace std;
 using namespace rsc::logging;
 using namespace rsc::misc;
 using namespace rsb;
-using namespace rsb::util;
 
 int main(void) {
 

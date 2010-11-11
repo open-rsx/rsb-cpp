@@ -17,12 +17,15 @@
  *
  * ============================================================ */
 
-#include "../../protocol/Notification.h"
 #include "ReceiverTask.h"
-#include "../AbstractConverter.h"
-#include "../../CommException.h"
 
 #include <iostream>
+
+#include "../../protocol/Notification.h"
+#include "../AbstractConverter.h"
+#include "../../CommException.h"
+// must be the last include because of redefinition (see header)
+#include "SpreadConnection.h"
 
 using namespace std;
 using namespace rsb;
@@ -47,10 +50,9 @@ ReceiverTask::ReceiverTask(SpreadConnectionPtr s, rsc::misc::Registry<
 }
 
 ReceiverTask::~ReceiverTask() {
-	// TODO Auto-generated destructor stub
 }
 
-void ReceiverTask::execute(rsb::util::Task<void>* t) {
+void ReceiverTask::execute(rsc::threading::Task<void>* t) {
 	NotificationPtr n(new Notification());
 
 	try {

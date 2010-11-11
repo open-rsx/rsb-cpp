@@ -37,7 +37,6 @@ using namespace rsc::logging;
 using namespace rsc::misc;
 using namespace rsb;
 using namespace rsb::filter;
-using namespace rsb::util;
 
 class MyDataHandler : public DataHandler<string> {
 public:

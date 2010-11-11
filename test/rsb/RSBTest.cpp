@@ -17,9 +17,16 @@
  *
  * ============================================================ */
 
+
+#include <iostream>
+
+#include <boost/bind.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
 #include "rsb/transport/Router.h"
-#include "rsb/util/Task.h"
-#include "rsb/util/PeriodicTask.h"
 #include "rsb/transport/Port.h"
 #include "rsb/transport/spread/SpreadPort.h"
 #include "InformerTask.h"
@@ -27,24 +34,16 @@
 #include "rsb/filter/AbstractFilter.h"
 #include "rsb/filter/ScopeFilter.h"
 
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-//#include <rsc/logging/basicconfigurator.h>
-#include <iostream>
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
 #include "testhelpers.h"
 
 using namespace std;
 using namespace rsb;
 using namespace rsb::test;
 using namespace rsb::filter;
-using namespace rsb::util;
 using namespace rsb::transport;
 using namespace rsb::spread;
 using namespace testing;
+using namespace rsc::threading;
 
 TEST(RSBTest, testRoundtrip)
 {

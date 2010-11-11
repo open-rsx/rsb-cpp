@@ -20,17 +20,17 @@
 #ifndef INPROCESSPORT_H_
 #define INPROCESSPORT_H_
 
-#include "../Port.h"
-#include "../../util/TaskExecutor.h"
-#include "StatusTask.h"
-#include "../QueueAndDispatchTask.h"
-
 #include <boost/function.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/thread.hpp>
 
-namespace rsb {
+#include <rsc/threading/TaskExecutor.h>
 
+#include "../Port.h"
+#include "StatusTask.h"
+#include "../QueueAndDispatchTask.h"
+
+namespace rsb {
 namespace inprocess {
 
 class InProcessPort : public rsb::transport::Port {
@@ -50,12 +50,12 @@ public:
 private:
 	volatile bool shutdown;
 
-	rsb::util::TaskExecutorVoidPtr exec;
+	rsc::threading::TaskExecutorVoidPtr exec;
     boost::shared_ptr<StatusTask> st;
     boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
 
-	rsb::util::TaskPtr qadTask;
-	rsb::util::TaskPtr staTask;
+	rsc::threading::TaskPtr qadTask;
+	rsc::threading::TaskPtr staTask;
 };
 
 }

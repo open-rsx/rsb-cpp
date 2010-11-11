@@ -30,10 +30,9 @@ ADD_TEST(${RSB_TEST_NAME} ${RSB_TEST_NAME})
 # --- core test ---
 
 SET(CORE_TEST_SOURCES rsbcoretest.cpp
-                      rsb/filter/FilterObserverTest.cpp
-                      rsb/util/TaskTest.cpp
                       rsb/EventProcessorTest.cpp
-                      rsb/HandlerTest.cpp)
+                      rsb/HandlerTest.cpp
+                      rsb/filter/FilterObserverTest.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
@@ -57,33 +56,3 @@ TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
                       ${GMOCK_LIBRARY_NAME})
 
 ADD_TEST(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_NAME})
-
-# --- TODO old stuff ---
-
-SET(TESTNAME1 rsb_test_pbuf)
-SET(TESTNAME2 rsb_test_converter)
-SET(TESTNAME3 rsb_test_subscription)
-#SET(TESTNAME4 rsb_test_tasks)
-SET(TESTNAME5 rsb_test_qad)
-SET(TESTNAME6 rsb_test_inprocess)
-SET(TESTNAME7 rsb_test_statustask)
-SET(TESTNAME8 rsb_test_taskexec)
-SET(TESTNAME9 rsb_test_ep)
-
-#ADD_EXECUTABLE(${TESTNAME1} PBufTest.cpp)
-#ADD_EXECUTABLE(${TESTNAME2} ConverterTest.cpp)
-#ADD_EXECUTABLE(${TESTNAME3} SubscriptionTest.cpp)
-#ADD_EXECUTABLE(${TESTNAME5} QueueAndDispatchTest.cpp)
-#ADD_EXECUTABLE(${TESTNAME6} InProcessTest.cpp)
-#ADD_EXECUTABLE(${TESTNAME7} StatusTaskTest.cpp)
-#ADD_EXECUTABLE(${TESTNAME8} TaskExecutorTest.cpp)
-#ADD_EXECUTABLE(${TESTNAME9} EventProcessorTest.cpp)
-
-#TARGET_LINK_LIBRARIES(${TESTNAME1} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
-#TARGET_LINK_LIBRARIES(${TESTNAME2} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
-#TARGET_LINK_LIBRARIES(${TESTNAME3} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
-#TARGET_LINK_LIBRARIES(${TESTNAME5} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
-#TARGET_LINK_LIBRARIES(${TESTNAME6} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
-#TARGET_LINK_LIBRARIES(${TESTNAME7} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
-#TARGET_LINK_LIBRARIES(${TESTNAME8} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})
-#TARGET_LINK_LIBRARIES(${TESTNAME9} ${CMAKE_THREAD_LIBS_INIT} -ldl ${RSB_NAME})

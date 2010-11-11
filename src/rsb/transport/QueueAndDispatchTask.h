@@ -20,18 +20,19 @@
 #ifndef QUEUEANDDISPATCHTASK_H_
 #define QUEUEANDDISPATCHTASK_H_
 
-#include "../util/Task.h"
-#include "../RSBEvent.h"
-
 #include <list>
 #include <iostream>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/function.hpp>
 
-namespace rsb {
+#include <rsc/threading/Task.h>
 
+#include "../RSBEvent.h"
+
+namespace rsb {
 namespace transport {
 
 template<class T>
@@ -67,7 +68,7 @@ public:
 		c.notify_all();
 	}
 
-	void execute(rsb::util::Task<void>* t) {
+	void execute(rsc::threading::Task<void>* t) {
 		T e;
 		boost::recursive_mutex::scoped_lock lock(m);
 		// spurious unblocking loop

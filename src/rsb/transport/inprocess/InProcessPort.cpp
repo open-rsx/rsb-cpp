@@ -17,30 +17,33 @@
  *
  * ============================================================ */
 
+
+#include <iostream>
+
+#include <string.h>
+
+#include <boost/bind.hpp>
+
+#include <rsc/logging/Logger.h>
+
 #include "InProcessPort.h"
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
-
-#include <rsc/logging/Logger.h>
-#include <iostream>
-#include <string.h>
-
 #include "../AbstractConverter.h"
 
-#include <boost/bind.hpp>
 
 using namespace std;
 using namespace rsc::logging;
 using namespace rsb;
 using namespace rsb::util;
 using namespace rsb::transport;
+using namespace rsc::threading;
 
 namespace {
 LoggerPtr logger(Logger::getLogger("rsb.inprocess"));
 }
 
 namespace rsb {
-
 namespace inprocess {
 
 InProcessPort::InProcessPort(){
