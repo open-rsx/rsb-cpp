@@ -20,12 +20,13 @@
 #ifndef RSBEVENT_H_
 #define RSBEVENT_H_
 
-#include "util/UUID.h"
-
 #include <map>
 #include <string>
 #include <vector>
+
 #include <boost/shared_ptr.hpp>
+
+#include <rsc/misc/UUID.h>
 
 // base / interface class for all events
 // data is set via static_cast:
@@ -62,7 +63,7 @@ public:
 
 	virtual ~RSBEvent();
 
-	rsb::util::UUID getUUID();
+	rsc::misc::UUID getUUID();
 
 	// TODO REFACTOR: introduce domain object URI
 	std::string getURI();
@@ -85,7 +86,7 @@ public:
 	friend std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
 
 private:
-	rsb::util::UUID id;
+	rsc::misc::UUID id;
 	std::string uri;
 
 	VoidPtr content;

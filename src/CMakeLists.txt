@@ -7,7 +7,6 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/RSBVersion.cpp
             rsb/Publisher.cpp
             rsb/Subscriber.cpp
-            rsb/util/UUID.cpp
             rsb/util/Configuration.cpp
             rsb/util/Task.cpp
             rsb/util/PeriodicTask.cpp
@@ -47,7 +46,6 @@ SET(SOURCES rsb/RSBException.cpp
 SET(HEADERS rsb/RSBVersion.h
             rsb/RSBException.h 
             rsb/CommException.h
-            rsb/util/UUID.h
             rsb/util/Configuration.h
             rsb/util/ConfigException.h
             rsb/util/Task.h

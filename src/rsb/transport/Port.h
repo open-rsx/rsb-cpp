@@ -20,13 +20,16 @@
 #ifndef PORT_H_
 #define PORT_H_
 
+#include <map>
+
+#include <boost/shared_ptr.hpp>
+
+#include <rsc/misc/UUID.h>
+
 #include "../RSBEvent.h"
 #include "../Action.h"
 #include "../filter/FilterObserver.h"
-#include "../util/UUID.h"
 
-#include <map>
-#include <boost/shared_ptr.hpp>
 
 namespace rsb {
 
@@ -50,7 +53,7 @@ public:
 	virtual void removeObserver(rsb::Action a);
 
 protected:
-	rsb::util::UUID id;
+	rsc::misc::UUID id;
 	rsb::Action observer;
 	//ActionListPtr actions;
 

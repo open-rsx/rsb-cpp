@@ -24,7 +24,7 @@
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
 
-#include "../util/UUID.h"
+#include <rsc/misc/UUID.h>
 
 using namespace std;
 
@@ -159,7 +159,7 @@ RSBEventPtr RemoteServer::callMethod(const std::string &methodName,
 
 	// TODO check that the desired method exists
 
-	string requestId = util::UUID().getIdAsString();
+	string requestId = rsc::misc::UUID().getIdAsString();
 	// TODO duplicated string from Server
 	data->addMetaInfo("ServerRequestId", requestId, true);
 

@@ -21,7 +21,6 @@
 #include <ostream>
 
 using namespace std;
-using namespace rsb::util;
 
 namespace rsb {
 
@@ -29,7 +28,7 @@ RSBEvent::~RSBEvent() {
 	// TODO Auto-generated destructor stub
 }
 
-UUID RSBEvent::getUUID() {
+rsc::misc::UUID RSBEvent::getUUID() {
 	return id;
 }
 
