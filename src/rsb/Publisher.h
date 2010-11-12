@@ -94,8 +94,6 @@ public:
 	virtual ~Publisher() {
 	}
 
-	// publish data via RSB directly according to
-	// publisher configuration
 	/**
 	 * Publishes the given data to the Publisher's uri.
 	 *
@@ -106,40 +104,26 @@ public:
 		publish(p, defaultType);
 	}
 
-	//	void publish(const T &data) {
-	//		// TODO check how this could work
-	//		boost::weak_ptr<T> w(data);
-	//		VoidPtr v = boost::static_pointer_cast<void>(w);
-	//		publish(v,defaultType);
-	//	}
-
-	//	template< class T1 >
-	//	void publish(const T1 &data, std::string type) {
-	//		// TODO check this!
-	//		boost::weak_ptr<T1> w(data);
-	//		VoidPtr v = boost::static_pointer_cast<void>(w);
-	//		publish(v,type);
-	//	}
-
-	template<class T1>
 	/**
 	 * Publishes the given data to the Publisher's uri.
 	 *
 	 * @param data Pointer to the data to send.
-	 * @param type string which defines the type of the data. F.e. "string" for strings.
+	 * @param type string which defines the type of the data. I.e. "string"
+	 *        for strings.
 	 */
+	template<class T1>
 	void publish(boost::shared_ptr<T1> data, std::string type) {
 		VoidPtr p = boost::static_pointer_cast<void>(data);
 		publish(p, type);
 	}
 
-	// if some metadata needs to be set externally
-	// TODO assumption is that data and type field already set externally
-	//      throw exception if not the case
 	/**
-	 * Publishes the given event to the Publisher's uri.
+	 * Publishes the given event to the Publisher's uri with the ability to
+	 * define additional meta data.
 	 *
 	 * @param event the event to publish.
+	 * @todo assumption is that data and type field already set externally
+	 *       throw exception if not the case
 	 */
 	void publish(RSBEventPtr event) {
 		// TODO Check that exception is thrown if no converter available!
@@ -162,12 +146,14 @@ public:
 	 * in passive mode afterwards.
 	 */
 	void deactivate() {
-		if (!passive)
+		if (!passive) {
 			router->deactivate();
+		}
 		passive = true;
 	}
 
 protected:
+
 	Publisher() { /* forbidden */
 	}
 
