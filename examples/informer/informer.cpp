@@ -17,14 +17,15 @@
  *
  * ============================================================ */
 
-#include <stdlib.h>
 #include <iostream>
-#include <rsc/logging/Logger.h>
-//#include <rsc/logging/propertyconfigurator.h>
+
+#include <stdlib.h>
 #include <math.h>
 
-#include <rsb/Publisher.h>
+#include <rsc/logging/Logger.h>
 #include <rsc/misc/Timer.h>
+
+#include <rsb/Publisher.h>
 
 using namespace std;
 using namespace rsc::logging;
@@ -33,38 +34,23 @@ using namespace rsb;
 
 int main(void) {
 
-//    std::ostringstream confpath;
-//    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
-//
-//    if (log4cxxPropsEnv != NULL) {
-//
-//        confpath << log4cxxPropsEnv;
-//        cout << "Trying log4cxx configuration from file " << confpath.str()
-//                << endl;
-//
-//        try {
-//            log4cxx::PropertyConfigurator::configure(confpath.str());
-//        } catch (const std::exception& e) {
-//            cout << "Trying log4cxx configuration from file " << confpath.str()
-//                    << " failed. Using BasicConfigurator." << endl;
-//        }
-//    }
+	LoggerPtr l = Logger::getLogger("informer");
 
-    LoggerPtr l = Logger::getLogger("informer");
+	Publisher<string>::Ptr informer(new Publisher<string> (
+			"rsb://example/informer", "string"));
+	Publisher<string>::DataPtr s(new string("blub"));
 
-    Publisher<string>::Ptr informer(new Publisher<string>("rsb://example/informer","string"));
-    Publisher<string>::DataPtr s(new string("blub"));
+	TimerPtr t(new Timer("prototype"));
+	t->start();
 
-    TimerPtr t(new Timer("prototype"));
-    t->start();
+	for (int j = 0; j < 1200; j++) {
+		informer->publish(s);
+	}
 
-    for (int j = 0; j < 1200; j++) {
-            informer->publish(s);
-    }
+	t->stop();
+	cout << "Elapsed time for " << 1200 << " messages sent: "
+			<< t->getElapsed() << " ms" << endl;
 
-    t->stop();
-    cout << "Elapsed time for " << 1200 << " messages sent: " << t->getElapsed() << " ms" << endl;
-
-    return (EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
 

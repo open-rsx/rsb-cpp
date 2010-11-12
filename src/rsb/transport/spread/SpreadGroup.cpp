@@ -21,13 +21,14 @@
 
 #include <stdexcept>
 
+#include <sp.h>
+
 #include <rsc/logging/Logger.h>
 
 using namespace std;
 using namespace rsc::logging;
 
 namespace rsb {
-
 namespace spread {
 
 SpreadGroup::SpreadGroup(const string& n) :

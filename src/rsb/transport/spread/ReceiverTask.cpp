@@ -24,7 +24,6 @@
 #include "../../protocol/Notification.h"
 #include "../AbstractConverter.h"
 #include "../../CommException.h"
-// must be the last include because of redefinition (see header)
 #include "SpreadConnection.h"
 
 using namespace std;

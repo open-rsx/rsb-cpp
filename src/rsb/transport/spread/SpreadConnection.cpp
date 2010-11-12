@@ -22,6 +22,8 @@
 #include <iostream>
 #include <string.h>
 
+#include <sp.h>
+
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
 
@@ -30,7 +32,6 @@ using namespace rsc::logging;
 using namespace rsb::util;
 
 namespace rsb {
-
 namespace spread {
 
 #define SPREAD_MAX_GROUPS   100
@@ -66,51 +67,62 @@ void SpreadConnection::activate() {
 	if (!connected) {
 		RSCDEBUG(logger, "connecting to spread daemon at " << spreadhost);
 		// TODO store connection ID
-		int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con, spreadpg);
+		char spreadPrivateGroup[MAX_GROUP_NAME];
+		int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con,
+				spreadPrivateGroup);
+		spreadpg = string(spreadPrivateGroup);
 		if (ret != ACCEPT_SESSION) {
 			switch (ret) {
 			case ILLEGAL_SPREAD:
 				// TODO throw initialization exception
 				RSCFATAL(logger,
 						"spread connect error: connection to spread daemon at "
-								<< spreadhost
-								<< " failed, check port and hostname");
+						<< spreadhost
+						<< " failed, check port and hostname")
+				;
 				break;
 			case COULD_NOT_CONNECT:
 				// TODO throw initialization exception
 				RSCFATAL(logger,
-						"spread connect error: connection to spread daemon failed due to socket errors");
+						"spread connect error: connection to spread daemon failed due to socket errors")
+				;
 				break;
 			case CONNECTION_CLOSED:
 				// CHECK throw initialize exception?
 				RSCFATAL(
 						logger,
-						"spread connect error: communication errors occurred during setup of connection");
+						"spread connect error: communication errors occurred during setup of connection")
+				;
 				throw CommException(
 						"spread connect error: communication errors occurred during setup of connection");
 			case REJECT_VERSION:
 				// TODO throw initialization exception
 				RSCFATAL(logger,
-						"spread connect error: daemon or library version mismatch");
+						"spread connect error: daemon or library version mismatch")
+				;
 				break;
 			case REJECT_NO_NAME:
 				// TODO throw initialization exception
 				RSCFATAL(logger,
-						"spread connect error: protocol error during setup");
+						"spread connect error: protocol error during setup")
+				;
 				break;
 			case REJECT_ILLEGAL_NAME:
 				// TODO throw initialization exception
 				RSCFATAL(
 						logger,
-						"spread connect error: name provided violated requirement, length or illegal character");
+						"spread connect error: name provided violated requirement, length or illegal character")
+				;
 				break;
 			case REJECT_NOT_UNIQUE:
 				// TODO throw name exists exception
 				RSCFATAL(logger,
-						"spread connect error: name provided is not unique on this daemon");
+						"spread connect error: name provided is not unique on this daemon")
+				;
 				break;
 			default:
-				RSCFATAL(logger, "unknown spread connect error");
+				RSCFATAL(logger, "unknown spread connect error")
+				;
 			}
 			// TODO throw exception
 			SP_error(ret);
@@ -129,7 +141,7 @@ void SpreadConnection::activate() {
 void SpreadConnection::deactivate() {
 	if (isActive()) {
 		//SP_disconnect(con);
-		SP_multicast(con, RELIABLE_MESS, spreadpg, 0, 0, 0);
+		SP_multicast(con, RELIABLE_MESS, spreadpg.c_str(), 0, 0, 0);
 		RSCDEBUG(logger, "Spread connection disconnected, id " << conId
 				<< " private group " << spreadpg);
 		connected = false;
@@ -172,14 +184,14 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 				// TODO check whether we shall implement a best effort strategy here
 				RSCWARN(logger,
 						"error during message receival, group array too large, requested size "
-								<< " configured size " << SPREAD_MAX_GROUPS);
+						<< " configured size " << SPREAD_MAX_GROUPS);
 			}
 			for (int i = 0; i < num_groups; i++) {
 				if (ret_groups[i] != NULL) {
 					string group = string(ret_groups[i]);
 					RSCDEBUG(logger,
 							"received message, addressed at group with name "
-									<< group);
+							<< group);
 					sm->addGroup(group);
 				}
 			}
@@ -262,13 +274,16 @@ bool SpreadConnection::send(const SpreadMessage& msg) {
 			switch (ret) {
 			case ILLEGAL_SESSION:
 				// TODO throw exception
-				RSCWARN(logger, "Send: Illegal Session! ");
+				RSCWARN(logger, "Send: Illegal Session! ")
+				;
 				break;
 			case ILLEGAL_MESSAGE:
-				RSCWARN(logger, "Send: Illegal Message! ");
+				RSCWARN(logger, "Send: Illegal Message! ")
+				;
 				break;
 			case CONNECTION_CLOSED:
-				RSCWARN(logger, "Send: Connection Closed! ");
+				RSCWARN(logger, "Send: Connection Closed! ")
+				;
 				break;
 			}
 			return false;
@@ -292,6 +307,9 @@ unsigned long SpreadConnection::getMsgCount() {
 	return msgCount;
 }
 
+mailbox *SpreadConnection::getMailbox() {
+	return &con;
 }
 
+}
 }

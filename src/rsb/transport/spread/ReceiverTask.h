@@ -28,18 +28,13 @@
 #include "../QueueAndDispatchTask.h"
 #include "../Port.h"
 #include "../AbstractConverter.h"
+#include "SpreadConnection.h"
 
 namespace rsb {
 namespace spread {
 
 typedef boost::shared_ptr<
 		rsb::transport::QueueAndDispatchTask<rsb::RSBEventPtr> > QADPtr;
-
-// use a forward declaration because the spread header, which is available
-// through SpreadConnection.h makes the protocol buffers code unusable by
-// defining something in global scope...
-class SpreadConnection;
-typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;
 
 /**
  * @todo remove header implementations

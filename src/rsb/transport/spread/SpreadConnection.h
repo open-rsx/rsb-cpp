@@ -21,13 +21,16 @@
 #define SPREADCONNECTION_H_
 
 #include <boost/shared_ptr.hpp>
-#include <sp.h>
+
 #include <rsc/logging/Logger.h>
 
 #include "SpreadMessage.h"
 
-namespace rsb {
+// forward declaration to avoid exposing sp.h with strange defines that prevent
+// other code from compiling
+typedef int mailbox;
 
+namespace rsb {
 namespace spread {
 
 class SpreadConnection {
@@ -54,9 +57,7 @@ public:
 	unsigned long getMsgCount();
 
 	// return mailbox for other low-level functions
-	mailbox* getMailbox() {
-		return &con;
-	}
+	mailbox* getMailbox();
 
 protected:
 
@@ -69,9 +70,10 @@ private:
 	std::string host; // host
 	std::string port; // and port
 	std::string spreadhost; // and name of spread daemon, e.g., 4803@localhost
-	char spreadpg[MAX_GROUP_NAME]; // private name of this connection
+	std::string spreadpg; // private name of this connection
 	std::string conId; // user name to be used for spread connection
 	unsigned long msgCount; // nr of message sent via this connection
+
 };
 
 typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;

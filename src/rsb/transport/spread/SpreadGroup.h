@@ -20,14 +20,15 @@
 #ifndef SPREADGROUP_H_
 #define SPREADGROUP_H_
 
-#include "SpreadConnection.h"
-
 #include <string>
+
 #include <boost/shared_ptr.hpp>
+
 #include <rsc/logging/Logger.h>
 
-namespace rsb {
+#include "SpreadConnection.h"
 
+namespace rsb {
 namespace spread {
 
 class SpreadGroup {
@@ -50,7 +51,6 @@ private:
 typedef boost::shared_ptr<SpreadGroup> SpreadGroupPtr;
 
 }
-
 }
 
 #endif /* SPREADGROUP_H_ */
