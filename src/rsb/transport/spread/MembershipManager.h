@@ -42,6 +42,7 @@ typedef std::map<std::string , std::pair<SpreadGroupPtr, int> > GroupMap;
 /**
  * Reference counting class for Spread group memberships.
  *
+ * @author swrede
  */
 class MembershipManager {
 public:

@@ -33,6 +33,9 @@
 namespace rsb {
 namespace inprocess {
 
+/**
+ * @author swrede
+ */
 class InProcessPort : public rsb::transport::Port {
 public:
 	InProcessPort();
@@ -47,6 +50,8 @@ public:
 	void setObserver(rsb::Action a);
 	void removeObserver(rsb::Action a);
 
+	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+
 private:
 	volatile bool shutdown;
 
@@ -59,7 +64,6 @@ private:
 };
 
 }
-
 }
 
 #endif /* INPROCESSPORT_H_ */

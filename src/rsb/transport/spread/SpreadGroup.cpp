@@ -45,8 +45,10 @@ string SpreadGroup::getName() const {
 }
 
 void SpreadGroup::join(SpreadConnectionPtr con) {
-	if (!con->isActive())
-		throw string("not active");
+
+	if (!con->isActive()) {
+		throw runtime_error("Spread connection is not active");
+	}
 
 	int retCode = SP_join(*con->getMailbox(), name.c_str());
 	if (!retCode) {
@@ -70,8 +72,9 @@ void SpreadGroup::join(SpreadConnectionPtr con) {
 		}
 		RSCERROR(logger, "Error joining spread group: " << msg.str());
 		// TODO real exception needed
-		throw(runtime_error(msg.str()));
+		throw runtime_error(msg.str());
 	}
+
 }
 
 void SpreadGroup::leave(SpreadConnectionPtr con) {

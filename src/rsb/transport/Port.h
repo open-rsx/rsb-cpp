@@ -29,15 +29,17 @@
 #include "../RSBEvent.h"
 #include "../Action.h"
 #include "../filter/FilterObserver.h"
-
+#include "../QualityOfServiceSpec.h"
 
 namespace rsb {
-
 namespace transport {
 
-typedef boost::shared_ptr<std::map< void *, rsb::Action > > ActionListPtr;
+typedef boost::shared_ptr<std::map<void *, rsb::Action> > ActionListPtr;
 
-class Port : public rsb::filter::FilterObserver {
+/**
+ * @author swrede
+ */
+class Port: public rsb::filter::FilterObserver {
 public:
 	Port();
 	virtual ~Port();
@@ -52,6 +54,15 @@ public:
 	virtual void setObserver(rsb::Action a);
 	virtual void removeObserver(rsb::Action a);
 
+	/**
+	 * Requests new QoS settings for publishing events. Does not influence the
+	 * receiving part.
+	 *
+	 * @param specs QoS specification
+	 * @throw UnsupportedQualityOfServiceException requirements cannot be met
+	 */
+	virtual void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) = 0;
+
 protected:
 	rsc::misc::UUID id;
 	rsb::Action observer;
@@ -62,7 +73,6 @@ protected:
 typedef boost::shared_ptr<Port> PortPtr;
 
 }
-
 }
 
 #endif /* PORT_H_ */

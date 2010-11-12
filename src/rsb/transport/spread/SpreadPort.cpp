@@ -30,6 +30,7 @@
 #include "../../CommException.h"
 #include "../AbstractConverter.h"
 #include "../../protocol/ProtocolException.h"
+#include "../../UnsupportedQualityOfServiceException.h"
 
 using namespace std;
 using namespace rsc::logging;
@@ -40,8 +41,9 @@ using namespace rsb::protocol;
 using namespace rsc::threading;
 
 namespace rsb {
-
 namespace spread {
+
+const SpreadPort::QoSMap SpreadPort::qosMapping = SpreadPort::buildQoSMapping();
 
 SpreadPort::SpreadPort(
 		rsc::misc::Registry<AbstractConverter<string> > *converters) :
@@ -70,6 +72,7 @@ void SpreadPort::init() {
 	rec = boost::shared_ptr<ReceiverTask>(
 			new ReceiverTask(con, converters, qad));
 	memberships = MembershipManagerPtr(new MembershipManager());
+	setQualityOfServiceSpecs(QualityOfServiceSpec());
 }
 
 void SpreadPort::activate() {
@@ -125,17 +128,20 @@ void SpreadPort::notify(rsb::filter::ScopeFilter* f,
 	switch (at) {
 	case rsb::filter::FilterAction::ADD:
 		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
-				<< " ,now going to join Spread group");
+				<< " ,now going to join Spread group")
+		;
 		memberships->join(f->getURI(), con);
 		break;
 	case rsb::filter::FilterAction::REMOVE:
 		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
-				<< " ,now going to leave Spread group");
+				<< " ,now going to leave Spread group")
+		;
 		memberships->leave(f->getURI(), con);
 		break;
 	default:
 		RSCWARN(logger,
-				"ScopeFilter Action not supported by this Port implementation");
+				"ScopeFilter Action not supported by this Port implementation")
+		;
 		break;
 	}
 
@@ -179,6 +185,7 @@ void SpreadPort::push(RSBEventPtr e) {
 	// TODO check if it is necessary to join spread groups when only sending to them
 
 	msg.addGroup(e->getURI());
+	msg.setQOS(messageQoS);
 
 	if (!con->send(msg)) {
 		//        for (list<string>::const_iterator n = msg->getGroupsBegin(); n != msg->getGroupsEnd(); ++n) {
@@ -192,6 +199,46 @@ void SpreadPort::push(RSBEventPtr e) {
 	}
 }
 
+SpreadPort::QoSMap SpreadPort::buildQoSMapping() {
+
+	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> unorderedMap;
+	unorderedMap.insert(make_pair(QualityOfServiceSpec::UNRELIABLE,
+			SpreadMessage::UNRELIABLE));
+	unorderedMap.insert(make_pair(QualityOfServiceSpec::RELIABLE,
+			SpreadMessage::RELIABLE));
+
+	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> orderedMap;
+	orderedMap.insert(make_pair(QualityOfServiceSpec::UNRELIABLE,
+			SpreadMessage::FIFO));
+	orderedMap.insert(make_pair(QualityOfServiceSpec::RELIABLE,
+			SpreadMessage::FIFO));
+
+	map<QualityOfServiceSpec::Ordering, map<QualityOfServiceSpec::Reliability,
+			SpreadMessage::QOS> > table;
+	table.insert(make_pair(QualityOfServiceSpec::UNORDERED, unorderedMap));
+	table.insert(make_pair(QualityOfServiceSpec::ORDERED, orderedMap));
+
+	return table;
+
 }
 
+void SpreadPort::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+
+	QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
+	if (orderMapIt == qosMapping.end()) {
+		throw UnsupportedQualityOfServiceException("Unknown ordering", specs);
+	}
+	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS>::const_iterator
+			mapIt = orderMapIt->second.find(specs.getReliability());
+	if (mapIt == orderMapIt->second.end()) {
+		throw UnsupportedQualityOfServiceException("Unknown reliability", specs);
+	}
+
+	messageQoS = mapIt->second;
+
+	RSCDEBUG(logger, "Selected new message type " << messageQoS);
+
+}
+
+}
 }

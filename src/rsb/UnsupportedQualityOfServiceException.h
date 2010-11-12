@@ -17,35 +17,37 @@
  *
  * ============================================================ */
 
-#include "QualityOfServiceSpec.h"
+#ifndef UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_
+#define UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_
 
-using namespace std;
+#include <stdexcept>
+
+#include "QualityOfServiceSpec.h"
 
 namespace rsb {
 
-QualityOfServiceSpec::QualityOfServiceSpec() :
-	ordering(UNORDERED), reliability(RELIABLE) {
-}
+/**
+ * An exception indicating that a desired QualityOfServiceSpec cannot be reached
+ * by a transport.
+ *
+ * @author jwienke
+ */
+class UnsupportedQualityOfServiceException: std::runtime_error {
+public:
 
-QualityOfServiceSpec::QualityOfServiceSpec(Ordering ordering,
-		Reliability reliability) :
-	ordering(ordering), reliability(reliability) {
-}
+	UnsupportedQualityOfServiceException(const std::string &message,
+			const QualityOfServiceSpec &spec);
+	virtual ~UnsupportedQualityOfServiceException() throw ();
 
-QualityOfServiceSpec::~QualityOfServiceSpec() {
-}
+	virtual const char* what() const throw ();
 
-QualityOfServiceSpec::Ordering QualityOfServiceSpec::getOrdering() const {
-	return ordering;
-}
+private:
 
-QualityOfServiceSpec::Reliability QualityOfServiceSpec::getReliability() const {
-	return reliability;
-}
+	std::string message;
+	QualityOfServiceSpec spec;
 
-ostream &operator<<(ostream &stream, const QualityOfServiceSpec &spec) {
-	return stream << "QualityOfServiceSpec[ordering = " << spec.ordering
-			<< ", reliability = " << spec.reliability << "]";
-}
+};
 
 }
+
+#endif /* UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_ */

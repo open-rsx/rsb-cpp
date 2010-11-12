@@ -47,7 +47,7 @@ public:
 	void deactivate();
 
 	// fundamental message exchange
-	bool send(const SpreadMessage& msg);
+	bool send(const SpreadMessage &msg);
 	void receive(SpreadMessagePtr sm);
 
 	// is connected to spread daemon
@@ -57,7 +57,7 @@ public:
 	unsigned long getMsgCount();
 
 	// return mailbox for other low-level functions
-	mailbox* getMailbox();
+	mailbox *getMailbox();
 
 protected:
 

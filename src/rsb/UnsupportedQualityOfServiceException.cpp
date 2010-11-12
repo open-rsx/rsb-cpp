@@ -17,35 +17,26 @@
  *
  * ============================================================ */
 
-#include "QualityOfServiceSpec.h"
+#include "UnsupportedQualityOfServiceException.h"
+
+#include <sstream>
 
 using namespace std;
 
 namespace rsb {
 
-QualityOfServiceSpec::QualityOfServiceSpec() :
-	ordering(UNORDERED), reliability(RELIABLE) {
+UnsupportedQualityOfServiceException::UnsupportedQualityOfServiceException(
+		const std::string &message, const QualityOfServiceSpec &spec) :
+	runtime_error(message), message(message), spec(spec) {
 }
 
-QualityOfServiceSpec::QualityOfServiceSpec(Ordering ordering,
-		Reliability reliability) :
-	ordering(ordering), reliability(reliability) {
+UnsupportedQualityOfServiceException::~UnsupportedQualityOfServiceException() throw () {
 }
 
-QualityOfServiceSpec::~QualityOfServiceSpec() {
-}
-
-QualityOfServiceSpec::Ordering QualityOfServiceSpec::getOrdering() const {
-	return ordering;
-}
-
-QualityOfServiceSpec::Reliability QualityOfServiceSpec::getReliability() const {
-	return reliability;
-}
-
-ostream &operator<<(ostream &stream, const QualityOfServiceSpec &spec) {
-	return stream << "QualityOfServiceSpec[ordering = " << spec.ordering
-			<< ", reliability = " << spec.reliability << "]";
+const char* UnsupportedQualityOfServiceException::what() const throw () {
+	stringstream s;
+	s << message << ": specs: " << spec;
+	return s.str().c_str();
 }
 
 }

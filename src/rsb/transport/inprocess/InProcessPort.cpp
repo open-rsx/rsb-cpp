@@ -17,7 +17,6 @@
  *
  * ============================================================ */
 
-
 #include <iostream>
 
 #include <string.h>
@@ -30,7 +29,6 @@
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
 #include "../AbstractConverter.h"
-
 
 using namespace std;
 using namespace rsc::logging;
@@ -46,13 +44,14 @@ LoggerPtr logger(Logger::getLogger("rsb.inprocess"));
 namespace rsb {
 namespace inprocess {
 
-InProcessPort::InProcessPort(){
+InProcessPort::InProcessPort() {
 	shutdown = false;
-	exec = TaskExecutorVoidPtr(new TaskExecutor<void>());
+	exec = TaskExecutorVoidPtr(new TaskExecutor<void> ());
 
 	// TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
 	st = boost::shared_ptr<StatusTask>(new StatusTask(this));
-	qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr > >(new QueueAndDispatchTask<RSBEventPtr>());
+	qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> >(
+			new QueueAndDispatchTask<RSBEventPtr> ());
 }
 
 InProcessPort::~InProcessPort() {
@@ -62,8 +61,9 @@ InProcessPort::~InProcessPort() {
 
 void InProcessPort::activate() {
 	// (re-)start threads
-	qadTask = exec->schedulePeriodic<QueueAndDispatchTask<RSBEventPtr> >(qad,0);
-	staTask = exec->schedulePeriodic<StatusTask>(st,500);
+	qadTask = exec->schedulePeriodic<QueueAndDispatchTask<RSBEventPtr> > (qad,
+			0);
+	staTask = exec->schedulePeriodic<StatusTask> (st, 500);
 }
 
 void InProcessPort::deactivate() {
@@ -77,7 +77,7 @@ void InProcessPort::deactivate() {
 	cout << "stopping st thread" << endl;
 	exec->join(staTask);
 	cout << "InProcessPort::deactivate finished" << endl;
-};
+}
 
 void InProcessPort::push(RSBEventPtr e) {
 	// get matching converter -- can be skipped here
@@ -104,6 +104,12 @@ void InProcessPort::removeObserver(Action a) {
 	qad->setObserver(NULL);
 }
 
+/**
+ * @todo implement this!
+ */
+void InProcessPort::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+
 }
 
+}
 }

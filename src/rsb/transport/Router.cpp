@@ -29,66 +29,84 @@ using namespace rsb::internal;
 using namespace rsb::transport;
 
 namespace rsb {
-
 namespace transport {
 
-Router::Router(TransportFactory::PortTypes inType, TransportFactory::PortTypes outType) : logger(Logger::getLogger("rsb.transport.Router")) {
-	ip = TransportFactory::createPort(inType);
-	op = TransportFactory::createPort(outType);
-	if (ip) {
-		ep = EventProcessorPtr(new EventProcessor());
+Router::Router(TransportFactory::PortTypes inType,
+		TransportFactory::PortTypes outType) :
+	logger(Logger::getLogger("rsb.transport.Router")) {
+	inPort = TransportFactory::createPort(inType);
+	outPort = TransportFactory::createPort(outType);
+	if (inPort) {
+		eventProcessor = EventProcessorPtr(new EventProcessor());
 		// add event processor as observer to input port(s)
-		ip->setObserver(boost::bind(&EventProcessor::process, ep.get(), _1));
+		inPort->setObserver(boost::bind(&EventProcessor::process,
+				eventProcessor.get(), _1));
 	}
 	shutdown = false;
 }
 
 void Router::activate() {
-	if (ip) ip->activate();
-	if (op) op->activate();
+	if (inPort) {
+		inPort->activate();
+	}
+	if (outPort) {
+		outPort->activate();
+	}
 }
 
-void Router::deactivate(){
+void Router::deactivate() {
 	shutdown = true;
 	// TODO
 }
 
 Router::~Router() {
-	if (!shutdown) deactivate();
+	if (!shutdown) {
+		deactivate();
+	}
 }
 
 void Router::publish(RSBEventPtr e) {
 	RSCDEBUG(logger, "Router::publish(RSBEvent) publishing new event: " << e);
-	op->push(e);
+	outPort->push(e);
 }
 
-void Router::notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a) {
+void Router::notifyPorts(rsb::SubscriptionPtr s,
+		rsb::filter::FilterAction::Types a) {
 	// TODO missing check if there really is an inport
-	FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(ip);
-	for(rsb::FilterChain::iterator list_iter = s->getFilters()->begin();
-	    list_iter != s->getFilters()->end(); list_iter++)
-	{
+	FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(inPort);
+	for (rsb::FilterChain::iterator list_iter = s->getFilters()->begin(); list_iter
+			!= s->getFilters()->end(); list_iter++) {
 		// TODO check whether we want to do this also for out ports
 		// TODO generally use rsb::filters::Observable implementation here!
-		(*list_iter)->notifyObserver(fo,a);
+		(*list_iter)->notifyObserver(fo, a);
 	}
 }
 
 void Router::subscribe(rsb::SubscriptionPtr s) {
 	// notify ports about new subscription
-	notifyPorts(s,rsb::filter::FilterAction::ADD);
+	notifyPorts(s, rsb::filter::FilterAction::ADD);
 	// TODO missing check if there really is an inport and ep
-	ep->subscribe(s);
+	eventProcessor->subscribe(s);
 }
 
 void Router::unsubscribe(rsb::SubscriptionPtr s) {
 	// notify ports about removal of subscription
-	notifyPorts(s,rsb::filter::FilterAction::REMOVE);
+	notifyPorts(s, rsb::filter::FilterAction::REMOVE);
 	// TODO missing check if there really is an inport and ep
-	ep->unsubscribe(s);
+	eventProcessor->unsubscribe(s);
+}
+
+void Router::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+	// TODO only required if we also want to support QoS for ingoing ports
+	// aswell
+	//	if (inPort) {
+	//		inPort->setQualityOfServiceSpecs(specs);
+	//	}
+	if (outPort) {
+		outPort->setQualityOfServiceSpecs(specs);
+	}
 }
 
 }
-
 }
 

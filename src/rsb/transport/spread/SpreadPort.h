@@ -20,6 +20,8 @@
 #ifndef SPREADPORT_H_
 #define SPREADPORT_H_
 
+#include <map>
+
 #include <rsc/logging/Logger.h>
 #include <rsc/misc/Registry.h>
 #include <rsc/threading/TaskExecutor.h>
@@ -32,9 +34,11 @@
 #include "SpreadConnection.h"
 
 namespace rsb {
-
 namespace spread {
 
+/**
+ * @author swrede
+ */
 class SpreadPort: public rsb::transport::Port {
 public:
 	SpreadPort();
@@ -52,6 +56,8 @@ public:
 
 	void notify(rsb::filter::ScopeFilter* f,
 			rsb::filter::FilterAction::Types at);
+
+	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
 private:
 	rsc::logging::LoggerPtr logger;
@@ -74,6 +80,23 @@ private:
 
 	rsc::misc::Registry<rsb::transport::AbstractConverter<std::string> >
 			*converters;
+
+	/**
+	 * The message type applied to every outgoing message.
+	 */
+	SpreadMessage::QOS messageQoS;
+
+	typedef std::map<QualityOfServiceSpec::Ordering, std::map<
+			QualityOfServiceSpec::Reliability, SpreadMessage::QOS> > QoSMap;
+
+	/**
+	 * Map from 2D input space defined in QualitOfServiceSpec to 1D spread message
+	 * types. First dimension is ordering, second is reliability.
+	 */
+	static const QoSMap qosMapping;
+
+	static QoSMap buildQoSMapping();
+
 };
 
 }

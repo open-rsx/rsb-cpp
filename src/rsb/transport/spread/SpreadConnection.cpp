@@ -41,8 +41,8 @@ namespace spread {
 SpreadConnection::SpreadConnection(const string& id, const string& h,
 		const string& p) :
 	logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
-			host(h), port(p), conId(id), msgCount(0) {
-	spreadhost = port + "@" + host;
+			host(h), port(p), spreadhost(port + "@" + host), conId(id),
+			msgCount(0) {
 	RSCDEBUG(logger, "instantiated spread connection with id " << conId
 			<< " to spread daemon at " << spreadhost);
 }
@@ -121,7 +121,7 @@ void SpreadConnection::activate() {
 				;
 				break;
 			default:
-				RSCFATAL(logger, "unknown spread connect error")
+				RSCFATAL(logger, "unknown spread connect error, value: " << ret)
 				;
 			}
 			// TODO throw exception
@@ -235,7 +235,7 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 
 }
 
-bool SpreadConnection::send(const SpreadMessage& msg) {
+bool SpreadConnection::send(const SpreadMessage &msg) {
 	// TODO check message size, if larger than ~100KB throw exception
 	// TODO add mutex, enque or send directly?
 	int groupCount = msg.getGroupCount();
@@ -249,7 +249,7 @@ bool SpreadConnection::send(const SpreadMessage& msg) {
 			// use SP_multicast
 			string group = *msg.getGroupsBegin();
 			RSCDEBUG(logger, "sending message to group with name " << group);
-			ret = SP_multicast(con, RELIABLE_MESS, group.c_str(), 0,
+			ret = SP_multicast(con, msg.getQOS(), group.c_str(), 0,
 					msg.getSize(), msg.getData());
 			msgCount++;
 		} else {

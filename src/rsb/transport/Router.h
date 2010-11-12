@@ -20,62 +20,96 @@
 #ifndef ROUTER_H_
 #define ROUTER_H_
 
+#include <boost/shared_ptr.hpp>
+
+#include <rsc/logging/Logger.h>
+
 #include "TransportFactory.h"
 #include "../filter/FilterObservable.h"
 #include "../EventProcessor.h"
 #include "../Subscription.h"
-
-#include <rsc/logging/Logger.h>
-#include <boost/shared_ptr.hpp>
+#include "../QualityOfServiceSpec.h"
 
 namespace rsb {
-
 namespace transport {
 
-// TODO extend incoming and outgoing ports to sets of ports
-// TODO add configuration, provide preliminary set up interface
-// TODO implement abstract factory pattern for different port types
+/**
+ *
+ *
+ * @author swrede
+ * @todo extend incoming and outgoing ports to sets of ports
+ * @todo add configuration, provide preliminary set up interface
+ * @todo implement abstract factory pattern for different port types
+ * @todo think about null objects for ports to avoid checks for existence
+ */
 class Router { //: //public rsb::filter::FilterObservable {
 public:
-	Router(TransportFactory::PortTypes inType = TransportFactory::LOCAL, TransportFactory::PortTypes outType = TransportFactory::LOCAL);
+	Router(TransportFactory::PortTypes inType = TransportFactory::LOCAL,
+			TransportFactory::PortTypes outType = TransportFactory::LOCAL);
 	virtual ~Router();
 
 	void activate();
 	void deactivate();
 
-	// publish event to out ports of this router
+	/**
+	 * Publish event to out ports of this router.
+	 *
+	 * @param e event to publish
+	 */
 	void publish(RSBEventPtr e);
 
-    // add a subscription
-    void subscribe(rsb::SubscriptionPtr s);
+	/**
+	 * Add a subscription.
+	 *
+	 * @param s subscription to add
+	 */
+	void subscribe(rsb::SubscriptionPtr s);
 
-    // unsubscribe a subscription
-    void unsubscribe(rsb::SubscriptionPtr s);
+	/**
+	 * Unsubscribe a subscription.
+	 *
+	 * @param s subscription to remove
+	 */
+	void unsubscribe(rsb::SubscriptionPtr s);
 
-    // HACK for current tests
-    PortPtr getOutPort() {
-    	return op;
-    }
-    PortPtr getInPort() {
-    	return ip;
-    }
+	/**
+	 * Define the desired quality of service specifications for published
+	 * events.
+	 *
+	 * @param specs QoS specification
+	 * @throw UnsupportedQualityOfServiceException requirements cannot be met
+	 */
+	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+
+	// HACK for current tests
+	// TODO remove header implementation
+	PortPtr getOutPort() {
+		return outPort;
+	}
+	PortPtr getInPort() {
+		return inPort;
+	}
 
 protected:
-    // helpfer for port notification about subscription status changes
-    void notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a);
+	/**
+	 * Helper for port notification about subscription status changes.
+	 */
+	void
+	notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a);
 
 private:
 	rsc::logging::LoggerPtr logger;
-	PortPtr ip, op;
+	PortPtr inPort;
+	PortPtr outPort;
 	// ep for observation model
-	rsb::internal::EventProcessorPtr ep;
+	rsb::internal::EventProcessorPtr eventProcessor;
 	volatile bool shutdown;
+
 };
 
 typedef boost::shared_ptr<Router> RouterPtr;
 
 }
-
 }
 
 #endif /* ROUTER_H_ */

@@ -20,6 +20,8 @@
 #ifndef QUALITYOFSERVICESPEC_H_
 #define QUALITYOFSERVICESPEC_H_
 
+#include <ostream>
+
 namespace rsb {
 
 /**
@@ -102,12 +104,16 @@ public:
 	 */
 	Reliability getReliability() const;
 
+	friend std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
+
 private:
 
 	Ordering ordering;
 	Reliability reliability;
 
 };
+
+std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
 
 }
 

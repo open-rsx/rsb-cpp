@@ -20,13 +20,16 @@
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_
 
+#include <string>
+
+#include <boost/shared_ptr.hpp>
+
+#include <rsc/logging/Logger.h>
+
 #include "RSBEvent.h"
 #include "transport/Router.h"
 #include "transport/Port.h"
-
-#include <string>
-#include <rsc/logging/Logger.h>
-#include <boost/shared_ptr.hpp>
+#include "QualityOfServiceSpec.h"
 
 namespace rsb {
 
@@ -92,6 +95,16 @@ public:
 	}
 
 	virtual ~Publisher() {
+	}
+
+	/**
+	 * Defines the desired quality of service settings for this publishers.
+	 *
+	 * @param specs QoS specs
+	 * @throw UnsupportedQualityOfServiceException requirements cannot be met
+	 */
+	void setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
+		router->setQualityOfServiceSpecs(specs);
 	}
 
 	/**

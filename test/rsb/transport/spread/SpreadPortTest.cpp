@@ -44,19 +44,13 @@ using namespace rsc::threading;
 
 TEST(SpreadPortTest, testConstruction)
 {
-	// ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
-	// AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
 	ASSERT_NO_THROW(PortPtr p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort()));
-	// p.setTypeConverters(r);
 }
 
 TEST(SpreadPortTest, testConnnection)
 {
-	// ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
-	// AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
 	PortPtr p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort());
 	ASSERT_NO_THROW(p->activate());
-	// p.setTypeConverters(r);
 }
 
 TEST(SpreadPortTest, testRoundtrip)

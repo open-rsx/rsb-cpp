@@ -35,6 +35,9 @@
 namespace rsb {
 namespace transport {
 
+/**
+ * @author swrede
+ */
 template<class T>
 class QueueAndDispatchTask {
 public:
@@ -42,10 +45,10 @@ public:
 		cancelRequested(false) {
 		queue = boost::shared_ptr<std::list<T> >(new std::list<T>());
 	}
+
 	virtual ~QueueAndDispatchTask() {
 		//std::cerr << "~QueueAndDispatchTask()" << std::endl;
 	}
-	;
 
 	void addElement(T e) {
 		{
@@ -109,7 +112,6 @@ private:
 };
 
 }
-
 }
 
 #endif /* QUEUEANDDISPATCHTASK_H_ */

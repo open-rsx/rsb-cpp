@@ -29,7 +29,6 @@ Port::Port() {
 }
 
 Port::~Port() {
-	// TODO Auto-generated destructor stub
 }
 
 void Port::setObserver(rsb::Action a) {

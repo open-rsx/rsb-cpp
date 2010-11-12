@@ -29,33 +29,32 @@ LoggerPtr logger(Logger::getLogger("rsb.spread.SpreadMessage"));
 }
 
 namespace rsb {
-
 namespace spread {
 
-SpreadMessage::SpreadMessage(Type mt) :
-	t(mt) {
+SpreadMessage::SpreadMessage() :
+	qos(RELIABLE) {
 }
-;
+
+SpreadMessage::SpreadMessage(Type mt) :
+	t(mt), qos(RELIABLE) {
+}
 
 SpreadMessage::SpreadMessage(const string& d) :
-	data(d) {
+	data(d), qos(RELIABLE) {
 }
-;
 
-SpreadMessage::SpreadMessage(const char* buf) {
+SpreadMessage::SpreadMessage(const char* buf) :
+	qos(RELIABLE) {
 	data = string(buf);
 }
-;
 
 SpreadMessage::~SpreadMessage() {
 	RSCTRACE(logger, "spread message destructor called");
 }
-;
 
 void SpreadMessage::setData(const std::string& doc) {
 	data = doc;
 }
-;
 
 void SpreadMessage::setData(const char* buf) {
 	data = string(buf);
@@ -64,12 +63,10 @@ void SpreadMessage::setData(const char* buf) {
 string SpreadMessage::getDataAsString() const {
 	return data;
 }
-;
 
 const char* SpreadMessage::getData() const {
 	return data.c_str();
 }
-;
 
 int SpreadMessage::getSize() const {
 	return data.length();
@@ -86,7 +83,6 @@ SpreadMessage::Type SpreadMessage::getType() const {
 void SpreadMessage::addGroup(const std::string& name) {
 	groups.push_back(name);
 }
-;
 
 int SpreadMessage::getGroupCount() const {
 	return groups.size();
@@ -95,12 +91,18 @@ int SpreadMessage::getGroupCount() const {
 list<string>::const_iterator SpreadMessage::getGroupsBegin() const {
 	return groups.begin();
 }
-;
 
 list<string>::const_iterator SpreadMessage::getGroupsEnd() const {
 	return groups.end();
 }
 
+SpreadMessage::QOS SpreadMessage::getQOS() const {
+	return qos;
 }
 
+void SpreadMessage::setQOS(const QOS &qos) {
+	this->qos = qos;
+}
+
+}
 }

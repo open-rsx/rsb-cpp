@@ -34,7 +34,6 @@ MembershipManager::MembershipManager() : logger(Logger::getLogger("rsb.spread.Me
 }
 
 MembershipManager::~MembershipManager() {
-	// TODO Auto-generated destructor stub
 }
 
 void MembershipManager::join(string group, SpreadConnectionPtr c) {
