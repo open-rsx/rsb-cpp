@@ -29,7 +29,7 @@ ADD_TEST(${RSB_TEST_NAME} ${RSB_TEST_NAME})
 
 # --- core test ---
 
-SET(CORE_TEST_SOURCES rsbcoretest.cpp
+SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/EventProcessorTest.cpp
                       rsb/HandlerTest.cpp
                       rsb/filter/FilterObserverTest.cpp)
@@ -44,7 +44,8 @@ ADD_TEST(${CORE_TEST_NAME} ${CORE_TEST_NAME})
 
 # --- spreadport test ---
 
-SET(SPREADPORT_TEST_SOURCES rsb/transport/spread/SpreadPortTest.cpp
+SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
+                            rsb/transport/spread/SpreadPortTest.cpp
                             rsb/transport/spread/MembershipManagerTest.cpp
                             rsb/InformerTask.cpp
                             rsb/InformerTask.h)

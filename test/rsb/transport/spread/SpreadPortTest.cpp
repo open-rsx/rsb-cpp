@@ -94,28 +94,3 @@ TEST(SpreadPortTest, testRoundtrip)
 	// port is deactivated through dtr
 	cerr << "SpreadProcessTest finished" << endl;
 }
-
-int main(int argc, char* argv[]) {
-	//    std::ostringstream confpath;
-	//    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
-	//
-	//    if (log4cxxPropsEnv != NULL) {
-	//
-	//        confpath << log4cxxPropsEnv;
-	//        cout << "Trying log4cxx configuration from file " << confpath.str()
-	//                << endl;
-	//
-	//        try {
-	//            log4cxx::PropertyConfigurator::configure(confpath.str());
-	//        } catch (const std::exception& e) {
-	//            cout << "Trying log4cxx configuration from file " << confpath.str()
-	//                    << " failed. Using BasicConfigurator." << endl;
-	//        }
-	//    }
-
-	SpreadStarter spread;
-
-	InitGoogleMock(&argc, argv);
-	return RUN_ALL_TESTS();
-
-}
