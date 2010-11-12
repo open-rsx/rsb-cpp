@@ -21,6 +21,10 @@
 
 namespace rsb {
 
+QualityOfServiceSpec::QualityOfServiceSpec() :
+	ordering(UNORDERED), reliability(RELIABLE) {
+}
+
 QualityOfServiceSpec::QualityOfServiceSpec(Ordering ordering,
 		Reliability reliability) :
 	ordering(ordering), reliability(reliability) {

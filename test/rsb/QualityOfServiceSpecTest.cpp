@@ -26,6 +26,15 @@ using namespace std;
 using namespace testing;
 using namespace rsb;
 
+TEST(QualityOfServiceSpecTest, testDefaultConstructor)
+{
+
+	QualityOfServiceSpec spec;
+	EXPECT_EQ(QualityOfServiceSpec::UNORDERED, spec.getOrdering());
+	EXPECT_EQ(QualityOfServiceSpec::RELIABLE, spec.getReliability());
+
+}
+
 TEST(QualityOfServiceSpecTest, testConstruction)
 {
 

@@ -69,7 +69,23 @@ public:
 		RELIABLE = 20
 	};
 
+	/**
+	 * Constructs the default QoS specs for every publishers. Messages are
+	 * unordered but reliably.
+	 */
+	QualityOfServiceSpec();
+
+	/**
+	 * Constructs a new QoS specification with desired details.
+	 *
+	 * @param ordering desired ordering type
+	 * @param reliability desired reliability type
+	 */
 	QualityOfServiceSpec(Ordering ordering, Reliability reliability);
+
+	/**
+	 * Destructor.
+	 */
 	virtual ~QualityOfServiceSpec();
 
 	/**
