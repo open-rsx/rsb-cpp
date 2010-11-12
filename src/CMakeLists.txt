@@ -11,6 +11,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/RSBEvent.cpp
             rsb/Subscription.cpp
             rsb/EventProcessor.cpp
+            rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
             rsb/filter/AbstractFilter.cpp
             rsb/filter/ScopeFilter.cpp
@@ -52,6 +53,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/Handler.h
             rsb/Subscription.h
             rsb/EventProcessor.h
+            rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
             rsb/filter/FilterActionTypes.h
             rsb/filter/AbstractFilter.h

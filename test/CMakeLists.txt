@@ -32,6 +32,7 @@ ADD_TEST(${RSB_TEST_NAME} ${RSB_TEST_NAME})
 SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/EventProcessorTest.cpp
                       rsb/HandlerTest.cpp
+                      rsb/QualityOfServiceSpecTest.cpp
                       rsb/filter/FilterObserverTest.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
