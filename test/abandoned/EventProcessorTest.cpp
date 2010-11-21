@@ -61,4 +61,6 @@ int main(void) {
 	ep->process(e1);
 	// should be filtered
 	ep->process(e2);
+
+	return EXIT_SUCCESS;
 }

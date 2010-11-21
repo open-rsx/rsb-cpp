@@ -50,4 +50,5 @@ int main(void) {
 
 	// match event and dispatch
 	//if (s->match(e)) (*s->getActions())(e);
+	return EXIT_SUCCESS;
 }

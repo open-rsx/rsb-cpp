@@ -33,4 +33,5 @@ using namespace rsb::inprocess;
 int main(void) {
 	boost::shared_ptr<StatusTask> st = boost::shared_ptr<StatusTask>(new StatusTask (NULL));
 	boost::shared_ptr<boost::thread> t = (TaskPtr(new Task<void> (boost::bind(&StatusTask::execute, st.get(), _1))))->start();
+	return EXIT_SUCCESS;
 }

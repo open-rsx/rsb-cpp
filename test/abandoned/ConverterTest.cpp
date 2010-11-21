@@ -29,4 +29,5 @@ int main(void) {
 	cout << "Result of serialize call: " << s << endl;
 	PersonPtr p2 = boost::static_pointer_cast<Person>(c->deserialize("Person",s));
 	cout << "Result of deserialize call: " << p2->toXML() << endl;
+	return EXIT_SUCCESS;
 }

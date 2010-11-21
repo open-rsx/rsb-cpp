@@ -17,8 +17,8 @@
  *
  * ============================================================ */
 
-#include "rsb/util/Task.h"
-#include "rsb/util/TaskExecutor.h"
+#include "rsc/util/Task.h"
+#include "rsc/util/TaskExecutor.h"
 
 #include "rsb/RSBEvent.h"
 #include "rsb/transport/QueueAndDispatchTask.h"
@@ -94,4 +94,5 @@ int main(void) {
 	exec->join(task_source); // no cancel needed as done already locally, see execute()
 	sink->cancel();
 	exec->join(task_sink);
+	return EXIT_SUCCESS;
 }

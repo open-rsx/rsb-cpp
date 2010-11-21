@@ -63,4 +63,6 @@ int main(void) {
 	exec->join(task_source); // no cancel needed as done already locally, see execute()
 	// port is deactivated through dtr
 	cerr << "InProcessTest finished" << endl;
+
+	return EXIT_SUCCESS;
 }
