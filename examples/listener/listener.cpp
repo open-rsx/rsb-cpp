@@ -17,20 +17,21 @@
  *
  * ============================================================ */
 
-#include <stdlib.h>
-
 #include <iostream>
-#include <rsc/logging/Logger.h>
-// #include <rsc/logging/propertyconfigurator.h>
+
+#include <stdlib.h>
 #include <math.h>
+
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>
+#include <boost/timer.hpp>
+
+#include <rsc/logging/Logger.h>
 
 #include <rsb/Subscriber.h>
 #include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
-#include <rsc/misc/Timer.h>
 
 using namespace std;
 using namespace rsc::logging;
@@ -38,49 +39,35 @@ using namespace rsc::misc;
 using namespace rsb;
 using namespace rsb::filter;
 
-class MyDataHandler : public DataHandler<string> {
+class MyDataHandler: public DataHandler<string> {
 public:
-	MyDataHandler() : count(0) {};
+	MyDataHandler() :
+		count(0) {
+	}
+	;
 
 	void notify(boost::shared_ptr<string> e) {
 		cout << "Data received: " << *e << endl;
 		count++;
 		if (count == 1200) {
-				boost::recursive_mutex::scoped_lock lock(m);
-				cond.notify_all();
+			boost::recursive_mutex::scoped_lock lock(m);
+			cond.notify_all();
 		}
 	}
 
-    long count;
+	long count;
 	boost::recursive_mutex m;
 	boost::condition cond;
 };
 
 int main(void) {
 
-//    std::ostringstream confpath;
-//    char *log4cxxPropsEnv = getenv("LOG4CXXPROPS");
-//
-//    if (log4cxxPropsEnv != NULL) {
-//
-//        confpath << log4cxxPropsEnv;
-//        cout << "Trying log4cxx configuration from file " << confpath.str()
-//                << endl;
-//
-//        try {
-//            log4cxx::PropertyConfigurator::configure(confpath.str());
-//        } catch (const std::exception& e) {
-//            cout << "Trying log4cxx configuration from file " << confpath.str()
-//                    << " failed. Using BasicConfigurator." << endl;
-//        }
-//    }
+	LoggerPtr l = Logger::getLogger("receiver");
 
-    LoggerPtr l = Logger::getLogger("receiver");
+	boost::timer t;
 
-    TimerPtr t(new Timer("prototype"));
-
-    SubscriberPtr s(new Subscriber("blub"));
-    SubscriptionPtr sub(new Subscription());
+	SubscriberPtr s(new Subscriber("blub"));
+	SubscriptionPtr sub(new Subscription());
 	AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
 	sub->appendFilter(f);
 
@@ -92,7 +79,7 @@ int main(void) {
 
 	s->addSubscription(sub);
 
-    cout << "Subscriber setup finished. Waiting for messages..." << endl;
+	cout << "Subscriber setup finished. Waiting for messages..." << endl;
 
 	// wait *here* for shutdown as this is not known to the Subscriber
 	{
@@ -102,11 +89,11 @@ int main(void) {
 		}
 	}
 
-    t->stop();
+	cout << "Last message was sent to the following groups: " << endl;
 
-    cout << "Last message was sent to the following groups: " << endl;
+	cout << "Elapsed time per message (" << dh->count
+			<< " messages received): " << t.elapsed() / dh->count << " s"
+			<< endl;
 
-    cout << "Elapsed time per message (" << dh->count << " messages received): " << t->getElapsed()/dh->count << " ms" << endl;
-
-    return (EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
 }

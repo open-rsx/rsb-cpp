@@ -22,8 +22,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include <boost/timer.hpp>
+
 #include <rsc/logging/Logger.h>
-#include <rsc/misc/Timer.h>
 
 #include <rsb/Publisher.h>
 
@@ -40,16 +41,14 @@ int main(void) {
 			"rsb://example/informer", "string"));
 	Publisher<string>::DataPtr s(new string("blub"));
 
-	TimerPtr t(new Timer("prototype"));
-	t->start();
+	boost::timer t;
 
 	for (int j = 0; j < 1200; j++) {
 		informer->publish(s);
 	}
 
-	t->stop();
-	cout << "Elapsed time for " << 1200 << " messages sent: "
-			<< t->getElapsed() << " ms" << endl;
+	cout << "Elapsed time for " << 1200 << " messages sent: " << t.elapsed()
+			<< " s" << endl;
 
 	return EXIT_SUCCESS;
 }
