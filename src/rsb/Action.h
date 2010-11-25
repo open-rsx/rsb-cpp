@@ -20,9 +20,9 @@
 #ifndef ACTION_H_
 #define ACTION_H_
 
-#include "RSBEvent.h"
-
 #include <boost/function.hpp>
+
+#include "RSBEvent.h"
 
 namespace rsb {
 

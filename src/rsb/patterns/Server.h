@@ -30,6 +30,7 @@
 
 #include "../Publisher.h"
 #include "../Subscriber.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace patterns {
@@ -39,9 +40,14 @@ namespace patterns {
  *
  * @author jwienke
  */
-class Server: public boost::noncopyable {
+class RSB_EXPORT Server: public boost::noncopyable {
 public:
 
+	/**
+	 * Callback object interface to implement for registering callable methods.
+	 *
+	 * @author jwienke
+	 */
 	class IntlCallback {
 	public:
 

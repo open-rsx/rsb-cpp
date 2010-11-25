@@ -27,6 +27,7 @@
 
 #include "RSBEvent.h"
 #include "Subscription.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
@@ -40,7 +41,10 @@ namespace internal {
 // router config may then allow very specific and optimized configurations for
 // certain patterns using specific condition classes and ports
 
-class EventProcessor {
+/**
+ * @author swrede
+ */
+class RSB_EXPORT EventProcessor {
 public:
 	EventProcessor();
 	// TODO make threadpool size configurable

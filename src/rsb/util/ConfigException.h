@@ -10,21 +10,19 @@
 #ifndef CONFIGEXCEPTION_H_
 #define CONFIGEXCEPTION_H_
 
-#ifndef WIN32
-#define RSB_API
-#endif
-
 #include "../RSBException.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace util {
 
-/** \brief General exception thrown upon configuration errors.
+/**
+ * General exception thrown upon configuration errors.
  *
  * @author: swrede
+ * @todo remove header implementation
  */
-class RSB_API ConfigException: public rsb::RSBException {
+class RSB_EXPORT ConfigException: public rsb::RSBException {
 public:
 	ConfigException(const std::string& m) : RSBException(m) {};
 	virtual ~ConfigException() throw () {};

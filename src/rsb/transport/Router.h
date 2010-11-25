@@ -29,6 +29,7 @@
 #include "../EventProcessor.h"
 #include "../Subscription.h"
 #include "../QualityOfServiceSpec.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
@@ -41,8 +42,9 @@ namespace transport {
  * @todo add configuration, provide preliminary set up interface
  * @todo implement abstract factory pattern for different port types
  * @todo think about null objects for ports to avoid checks for existence
+ * @todo remove header implementations
  */
-class Router { //: //public rsb::filter::FilterObservable {
+class RSB_EXPORT Router { //: //public rsb::filter::FilterObservable {
 public:
 	Router(TransportFactory::PortTypes inType = TransportFactory::LOCAL,
 			TransportFactory::PortTypes outType = TransportFactory::LOCAL);

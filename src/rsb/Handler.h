@@ -20,13 +20,17 @@
 #ifndef HANDLER_H_
 #define HANDLER_H_
 
-#include "RSBEvent.h"
-
 #include <boost/shared_ptr.hpp>
+
+#include "RSBEvent.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
-class Handlers {
+/**
+ * @author swrede
+ */
+class RSB_EXPORT Handlers {
 public:
 	enum Type {
 		DATA, EVENT
@@ -38,8 +42,9 @@ public:
  * is available that matches the @ref rsb::Subscription this handler is attached to.
  *
  * @author swrede
+ * @todo remove header implementations
  */
-class Handler {
+class RSB_EXPORT Handler {
 public:
 	Handler(Handlers::Type t) :
 		type(t) {
@@ -55,8 +60,12 @@ protected:
 
 typedef boost::shared_ptr<Handler> HandlerPtr;
 
-// TODO makes even more sense if RSBEvent would be a template type
-class EventHandler: public Handler {
+/**
+ * @authrr swrede
+ * @todo makes even more sense if RSBEvent would be a template type
+ * @todo remove header implementation
+ */
+class RSB_EXPORT EventHandler: public Handler {
 public:
 	EventHandler() :
 		Handler(Handlers::EVENT) {

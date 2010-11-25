@@ -29,7 +29,10 @@
 namespace rsb {
 namespace transport {
 
-// T is the serialization format, uchar, string, binary, ...
+/**
+ * @author swrede
+ * @tparam T is the serialization format, uchar, string, binary, ...
+ */
 template<class T>
 class AbstractConverter {
 public:

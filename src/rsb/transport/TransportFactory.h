@@ -23,12 +23,15 @@
 #include "Port.h"
 #include "spread/SpreadPort.h"
 #include "inprocess/InProcessPort.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace transport {
 
-class TransportFactory {
+/**
+ * @author swrede
+ */
+class RSB_EXPORT TransportFactory {
 public:
 	enum PortTypes {
 		LOCAL,

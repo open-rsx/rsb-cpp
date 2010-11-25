@@ -23,21 +23,31 @@
 #include <exception>
 #include <string>
 
+#include "rsb/rsbexports.h"
+
 namespace rsb {
 
-// TODO implement stream operators to add variables to exception message
-
-class RSBException : public std::exception {
-    public:
+/**
+ * @author swrede
+ * @todo remove header implementation
+ * @todo implement stream operators to add variables to exception message
+ */
+class RSB_EXPORT RSBException: public std::exception {
+public:
 	RSBException();
-	RSBException(const std::string& m) : msg(m) {};
-        virtual ~RSBException() throw () {};
-        const char* what() const throw() { return msg.c_str(); }
-    private:
-        const std::string msg;
-    };
-
+	RSBException(const std::string& m) :
+		msg(m) {
+	}
+	virtual ~RSBException() throw () {
+	}
+	const char* what() const throw () {
+		return msg.c_str();
+	}
+private:
+	const std::string msg;
 };
+
+}
 
 #endif /* RSBEXCEPTION_H_ */
 

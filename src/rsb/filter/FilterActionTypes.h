@@ -20,11 +20,15 @@
 #ifndef FILTERACTIONTYPES_H_
 #define FILTERACTIONTYPES_H_
 
-namespace rsb {
+#include "rsb/rsbexports.h"
 
+namespace rsb {
 namespace filter {
 
-class FilterAction {
+/**
+ * @author swrede
+ */
+class RSB_EXPORT FilterAction {
 public:
 	enum Types {
 		ADD,
@@ -34,7 +38,6 @@ public:
 };
 
 }
-
 }
 
 #endif /* FILTERACTIONTYPES_H_ */

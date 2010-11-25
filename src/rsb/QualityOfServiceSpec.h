@@ -22,6 +22,8 @@
 
 #include <ostream>
 
+#include "rsb/rsbexports.h"
+
 namespace rsb {
 
 /**
@@ -33,7 +35,7 @@ namespace rsb {
  *
  * @author jwienke
  */
-class QualityOfServiceSpec {
+class RSB_EXPORT QualityOfServiceSpec {
 public:
 
 	/**
@@ -104,7 +106,7 @@ public:
 	 */
 	Reliability getReliability() const;
 
-	friend std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
+	friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
 
 private:
 
@@ -113,7 +115,7 @@ private:
 
 };
 
-std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
+RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
 
 }
 

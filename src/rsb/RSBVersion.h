@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "rsb/rsbexports.h"
+
 namespace rsb {
 
 #define MAJOR_VERSION 1
@@ -30,8 +32,8 @@ namespace rsb {
 #define BUILD_NUMBER 1
 #define BUILD_DATE "28/07/2010"
 
-std::string RSB_VERSION_STR();
-std::string RSB_BUILD_STR();
+RSB_EXPORT std::string RSB_VERSION_STR();
+RSB_EXPORT std::string RSB_BUILD_STR();
 
 }
 

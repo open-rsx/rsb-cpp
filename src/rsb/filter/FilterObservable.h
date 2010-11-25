@@ -20,17 +20,20 @@
 #ifndef FILTEROBSERVABLE_H_
 #define FILTEROBSERVABLE_H_
 
+#include <vector>
+
 #include "AbstractFilter.h"
 #include "FilterObserver.h"
 #include "FilterActionTypes.h"
-
-#include <vector>
+#include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace filter {
 
-class FilterObservable {
+/**
+ * @author swrede
+ */
+class RSB_EXPORT FilterObservable {
 public:
 	FilterObservable();
 	virtual ~FilterObservable();

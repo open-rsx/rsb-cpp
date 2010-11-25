@@ -30,6 +30,7 @@
 #include "../RSBEvent.h"
 #include "../Publisher.h"
 #include "../Subscriber.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace patterns {
@@ -41,13 +42,14 @@ class WaitingEventHandler;
  *
  * @author jwienke
  */
-class RemoteServer: public boost::noncopyable {
+class RSB_EXPORT RemoteServer: public boost::noncopyable {
 public:
 
 	/**
 	 * Thrown if a remote called timed out.
 	 *
 	 * @author jwienke
+	 * @todo remove header implementation
 	 */
 	class TimeoutException: public std::runtime_error {
 	public:
@@ -60,6 +62,7 @@ public:
 	 * Thrown if a remote method call resulted in an exception.
 	 *
 	 * @author jwienke
+	 * @todo remove header implementation
 	 */
 	class RemoteTargetInvocationException: public std::runtime_error {
 	public:

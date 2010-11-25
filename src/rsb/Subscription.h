@@ -20,14 +20,15 @@
 #ifndef SUBSCRIPTION_H_
 #define SUBSCRIPTION_H_
 
-#include "RSBEvent.h"
-#include "Handler.h"
-#include "filter/AbstractFilter.h"
-
 #include <list>
 #include <map>
 #include <set>
 #include <boost/function.hpp>
+
+#include "RSBEvent.h"
+#include "Handler.h"
+#include "filter/AbstractFilter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
@@ -61,7 +62,7 @@ typedef std::list<Action> Actions;
  *       execution which may be asynchronous to changes in theses subscriptions
  *       I think using a list in a shared_ptr is the wrong way to achieve this.
  */
-class Subscription {
+class RSB_EXPORT Subscription {
 public:
 	Subscription();
 	virtual ~Subscription();
@@ -113,7 +114,7 @@ public:
 		enabled = false;
 	}
 
-	friend std::ostream &operator<<(std::ostream &stream,
+	friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
 			const Subscription &subscription);
 
 private:
@@ -127,8 +128,8 @@ private:
 typedef boost::shared_ptr<Subscription> SubscriptionPtr;
 
 // TODO really implement stream operators
-std::ostream
-		&operator<<(std::ostream &stream, const Subscription &subscription);
+RSB_EXPORT std::ostream
+&operator<<(std::ostream &stream, const Subscription &subscription);
 
 }
 

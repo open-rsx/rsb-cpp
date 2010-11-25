@@ -27,11 +27,13 @@
 #include "FilterActionTypes.h"
 
 namespace rsb {
-
 namespace filter {
 
-// TODO Check if Double Dispatch pattern is best suited here
-class FilterObserver {
+/**
+ * @author srede
+ * @todo Check if Double Dispatch pattern is best suited here
+ */
+class RSB_EXPORT FilterObserver {
 public:
 	FilterObserver();
 	virtual ~FilterObserver();

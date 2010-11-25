@@ -22,15 +22,18 @@
 
 #include "../RSBEvent.h"
 #include "FilterActionTypes.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace filter {
 
 class FilterObserver;
 typedef boost::shared_ptr<FilterObserver> FilterObserverPtr;
 
-class AbstractFilter {
+/**
+ * @author swrede
+ */
+class RSB_EXPORT AbstractFilter {
 public:
 	AbstractFilter();
 	virtual ~AbstractFilter();

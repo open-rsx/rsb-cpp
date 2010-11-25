@@ -11,19 +11,17 @@
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
 
-#ifndef WIN32
-#define RSB_API
-#endif
-
 #include <string>
 #include <vector>
 #include <map>
+
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/shared_ptr.hpp>
 
-namespace rsb {
+#include "rsb/rsbexports.h"
 
+namespace rsb {
 namespace util {
 
 // a table of properties that can be referenced by name
@@ -45,7 +43,7 @@ typedef boost::shared_ptr<Configuration> ConfigurationPtr;
  * @author: swrede
  * @date: 28.12.2007
  */
-class RSB_API Configuration {
+class RSB_EXPORT Configuration {
 	// TODO think about support for user defined properties
 public:
 	static ConfigurationPtr getInstance();

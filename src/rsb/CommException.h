@@ -21,14 +21,17 @@
 #define COMMEXCEPTION_H_
 
 #include "RSBException.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
-/** \brief General exception thrown upon communication errors.
+/**
+ * General exception thrown upon communication errors.
  *
  * @author: swrede
+ * @todo remove header implementation
  */
-class CommException: public rsb::RSBException {
+class RSB_EXPORT CommException: public rsb::RSBException {
 public:
 	CommException(const std::string& m) : RSBException(m) {};
 	virtual ~CommException() throw () {};

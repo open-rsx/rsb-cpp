@@ -23,6 +23,7 @@
 
 using namespace rsc::logging;
 
+// TODO wtf? Why no class member
 namespace {
 	LoggerPtr logger(Logger::getLogger("rsb.transport.TransportFactory"));
 }

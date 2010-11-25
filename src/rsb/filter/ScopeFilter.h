@@ -21,12 +21,16 @@
 #define SCOPEFILTER_H_
 
 #include "AbstractFilter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace filter {
 
-class ScopeFilter : public AbstractFilter {
+/**
+ * @author swrede
+ * @todo remove header implementation
+ */
+class RSB_EXPORT ScopeFilter : public AbstractFilter {
 public:
 	ScopeFilter(std::string uri);
 	virtual ~ScopeFilter();

@@ -20,14 +20,17 @@
 #ifndef SUBSCRIBER_H_
 #define SUBSCRIBER_H_
 
+#include <string>
+
+#include <rsc/logging/Logger.h>
+
+#include <boost/shared_ptr.hpp>
+
 #include "RSBEvent.h"
 #include "Subscription.h"
 #include "transport/Router.h"
 #include "transport/Port.h"
-
-#include <string>
-#include <rsc/logging/Logger.h>
-#include <boost/shared_ptr.hpp>
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
@@ -54,7 +57,7 @@ namespace rsb {
  * @todo use templates in subscriptions only? (however, they need the event info)
  * @todo remove header implementations
  */
-class Subscriber {
+class RSB_EXPORT Subscriber {
 public:
 
 	/**

@@ -17,38 +17,27 @@
  *
  * ============================================================ */
 
-#ifndef UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_
-#define UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_
+#ifndef RSBEXPORTS_H_
+#define RSBEXPORTS_H_
 
-#include <stdexcept>
+#include <map>
+#include <string>
 
-#include "QualityOfServiceSpec.h"
-#include "rsb/rsbexports.h"
+#if defined (_WIN32) 
+    #if defined(@RSB_NAME@_EXPORTS)
+        #define RSB_EXPORT __declspec(dllexport)
+        #define RSB_EXPIMP
+    #else
+        #define RSB_EXPORT __declspec(dllimport)
+        #define RSB_EXPIMP extern
+    #endif
+#else
+    #define RSB_EXPORT
+#endif
 
-namespace rsb {
+// stl exports...
+#ifdef _WIN32
+RSB_EXPIMP template class RSB_EXPORT std::multimap<std::string, std::string>;
+#endif
 
-/**
- * An exception indicating that a desired QualityOfServiceSpec cannot be reached
- * by a transport.
- *
- * @author jwienke
- */
-class RSB_EXPORT UnsupportedQualityOfServiceException: std::runtime_error {
-public:
-
-	UnsupportedQualityOfServiceException(const std::string &message,
-			const QualityOfServiceSpec &spec);
-	virtual ~UnsupportedQualityOfServiceException() throw ();
-
-	virtual const char* what() const throw ();
-
-private:
-
-	std::string message;
-	QualityOfServiceSpec spec;
-
-};
-
-}
-
-#endif /* UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_ */
+#endif /* RSBEXPORTS_H_ */

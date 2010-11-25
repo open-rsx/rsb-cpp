@@ -30,6 +30,7 @@
 #include "../Action.h"
 #include "../filter/FilterObserver.h"
 #include "../QualityOfServiceSpec.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
@@ -39,7 +40,7 @@ typedef boost::shared_ptr<std::map<void *, rsb::Action> > ActionListPtr;
 /**
  * @author swrede
  */
-class Port: public rsb::filter::FilterObserver {
+class RSB_EXPORT Port: public rsb::filter::FilterObserver {
 public:
 	Port();
 	virtual ~Port();

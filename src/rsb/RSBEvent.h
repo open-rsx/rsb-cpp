@@ -28,6 +28,8 @@
 
 #include <rsc/misc/UUID.h>
 
+#include "rsb/rsbexports.h"
+
 // base / interface class for all events
 // data is set via static_cast:
 // RSBEventPtr p(RSBEvent(boost::static_pointer_cast<void> boost::shared_ptr<Person>(new Person())));
@@ -42,12 +44,13 @@ typedef boost::shared_ptr<void> VoidPtr;
  * payload.
  *
  * @author swrede
+ * @todo remove header implementations
  */
-class RSBEvent {
+class RSB_EXPORT RSBEvent {
 public:
+
 	RSBEvent() {
 	}
-	;
 
 	/**
 	 * Constructor.
@@ -59,7 +62,6 @@ public:
 	RSBEvent(std::string u, boost::shared_ptr<void> c, std::string t) :
 		uri(u), content(c), type(t) {
 	}
-	;
 
 	virtual ~RSBEvent();
 
@@ -83,7 +85,7 @@ public:
 	std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
 	std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
 
-	friend std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
+	friend RSB_EXPORT std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
 
 private:
 	rsc::misc::UUID id;
@@ -100,7 +102,7 @@ private:
 
 typedef boost::shared_ptr<RSBEvent> RSBEventPtr;
 
-std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
+RSB_EXPORT std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
 
 }
 
