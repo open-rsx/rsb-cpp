@@ -47,9 +47,7 @@ boost::shared_ptr<void> VoidConverter::deserialize(const std::string &/*type*/,
 	return boost::shared_ptr<void>();
 }
 
-// we need this typedef for the macro to work
-typedef AbstractConverter<std::string> AbstractStringConverter;
-CREATE_GLOBAL_REGISTREE(AbstractStringConverter, VoidConverter)
+CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new VoidConverter, VoidStringConverter)
 ;
 
 }

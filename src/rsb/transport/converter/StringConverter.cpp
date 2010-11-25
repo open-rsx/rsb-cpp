@@ -61,9 +61,7 @@ boost::shared_ptr<void> StringConverter::deserialize(const std::string &type,
 	return p;
 }
 
-// we need this typedef for the macro to work
-typedef AbstractConverter<std::string> AbstractStringConverter;
-CREATE_GLOBAL_REGISTREE(AbstractStringConverter, StringConverter)
+CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new StringConverter, StringStringConverter)
 ;
 
 }

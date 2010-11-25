@@ -51,8 +51,8 @@ SpreadPort::SpreadPort(
 	init();
 }
 
-SpreadPort::SpreadPort() {
-	converters = rsc::misc::Registry<AbstractConverter<string> >::instance();
+SpreadPort::SpreadPort() :
+	converters(stringConverterRegistry()) {
 	init();
 }
 
@@ -153,8 +153,8 @@ void SpreadPort::push(RSBEventPtr e) {
 	boost::shared_ptr<void> obj =
 			boost::static_pointer_cast<void>(e->getData());
 	//	cerr << "SpreadPort::push Type: " << e->getType() << endl;
-	boost::shared_ptr<AbstractConverter<string> > c = rsc::misc::Registry<
-			AbstractConverter<string> >::instance()->getRegistree(e->getType());
+	boost::shared_ptr<AbstractConverter<string> > c = converters->getRegistree(
+			e->getType());
 	c->serialize(e->getType(), obj, s);
 	//	cerr << "SpreadPort::push after serialize" << endl;
 	Notification n;

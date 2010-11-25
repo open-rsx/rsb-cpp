@@ -18,26 +18,25 @@
  * ============================================================ */
 
 #include "IntrospectionConverter.h"
+
+#include <rsc/misc/Registry.h>
+
 #include "PortStateChange.h"
 #include "../protocol/ProtocolException.h"
 
-#include <rsc/misc/Registry.h>
 
 using namespace std;
 using namespace rsb::protocol;
 using namespace rsb::protocol::introspection;
 
 namespace rsb {
-
 namespace introspection {
 
 IntrospectionConverter::IntrospectionConverter() {
-	// TODO Auto-generated constructor stub
 
 }
 
 IntrospectionConverter::~IntrospectionConverter() {
-	// TODO Auto-generated destructor stub
 }
 
 string IntrospectionConverter::getTypeName() {
@@ -71,8 +70,8 @@ boost::shared_ptr<void> IntrospectionConverter::deserialize(
 	return p;
 }
 
-typedef transport::AbstractConverter<string> AbstractStringConverter;
-CREATE_GLOBAL_REGISTREE(AbstractStringConverter, IntrospectionConverter);
+CREATE_GLOBAL_REGISTREE(::rsb::transport::stringConverterRegistry(), new IntrospectionConverter, IntrospectionStringConverter)
+;
 
 }
 

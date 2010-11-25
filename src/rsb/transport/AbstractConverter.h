@@ -21,21 +21,29 @@
 #define ABSTRACTCONVERTER_H_
 
 #include <string>
+
 #include <rsb/RSBEvent.h>
 
-namespace rsb {
+#include <rsc/misc/Registry.h>
 
+namespace rsb {
 namespace transport {
 
 // T is the serialization format, uchar, string, binary, ...
-template < class T >
+template<class T>
 class AbstractConverter {
 public:
-	AbstractConverter() {};
-	virtual ~AbstractConverter() {};
 
-	virtual void serialize(const std::string &type, boost::shared_ptr<void> d, T &m) = 0;
-	virtual boost::shared_ptr<void> deserialize(const std::string &type, const T &m) = 0;
+	AbstractConverter() {
+	}
+
+	virtual ~AbstractConverter() {
+	}
+
+	virtual void serialize(const std::string &type, boost::shared_ptr<void> d,
+			T &m) = 0;
+	virtual boost::shared_ptr<void> deserialize(const std::string &type,
+			const T &m) = 0;
 
 	std::string getRegistryKey() {
 		return getTypeName();
@@ -45,8 +53,10 @@ public:
 
 };
 
-}
+// TODO how to avoid this central wire format repository?
+CREATE_REGISTRY(AbstractConverter<std::string>, stringConverterRegistry);
 
+}
 }
 
 #endif /* ABSTRACTCONVERTER_H_ */
