@@ -7,10 +7,6 @@
 
 #include "Configuration.h"
 
-#ifdef WIN32
-#include "rsb_config.hpp"
-#endif
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -21,6 +17,13 @@
 #include <rsc/logging/Logger.h>
 
 #include "ConfigException.h"
+
+#ifdef WIN32
+// TODO make this a cmake has capability check
+#include <winsock.h>
+#include <wsipx.h>
+#include <wsnwlink.h>
+#endif
 
 #ifndef WIN32
 extern char **environ;
@@ -75,7 +78,6 @@ void openWinsockDll() {
 string getHomeDir() {
 #ifndef WIN32
 	string home = getenv("HOME") + string("/");
-	;
 #else
 	string home = string(getenv("HOMEDRIVE")) + string(getenv("HOMEPATH")) + string("\\");
 #endif

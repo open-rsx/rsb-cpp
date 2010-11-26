@@ -238,7 +238,7 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 bool SpreadConnection::send(const SpreadMessage &msg) {
 	// TODO check message size, if larger than ~100KB throw exception
 	// TODO add mutex, enque or send directly?
-	int groupCount = msg.getGroupCount();
+	const int groupCount = msg.getGroupCount();
 	if (groupCount == 0) {
 		throw CommException("group information missing in message");
 	}
@@ -254,17 +254,22 @@ bool SpreadConnection::send(const SpreadMessage &msg) {
 			msgCount++;
 		} else {
 			// use SP_multigroup_multicast
-			char groups[groupCount][MAX_GROUP_NAME];
+			char **groups = new char*[groupCount];
 			int j = 0;
 			for (list<string>::const_iterator it = msg.getGroupsBegin(); it
 					!= msg.getGroupsEnd(); ++it) {
 				string group = *it;
+				groups[j] = new char[MAX_GROUP_NAME];
 				strcpy(groups[j], group.c_str());
 				j++;
 			}
 			ret = SP_multigroup_multicast(con, RELIABLE_MESS, groupCount,
-					groups, RELIABLE_MESS, msg.getSize(), msg.getData());
+					(const char (*)[MAX_GROUP_NAME])groups, RELIABLE_MESS, msg.getSize(), msg.getData());
 			msgCount++;
+			for (int i = 0; i < groupCount; ++i) {
+				delete groups[i];
+			}
+			delete[] groups;
 		}
 		// FIXME: check return code of the above call
 		if (ret >= 0) {

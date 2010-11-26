@@ -35,9 +35,4 @@
     #define RSB_EXPORT
 #endif
 
-// stl exports...
-#ifdef _WIN32
-RSB_EXPIMP template class RSB_EXPORT std::multimap<std::string, std::string>;
-#endif
-
 #endif /* RSBEXPORTS_H_ */

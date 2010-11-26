@@ -19,6 +19,8 @@
 
 #include "Uint64Converter.h"
 
+#include <boost/cstdint.hpp>
+
 #include <rsc/misc/Registry.h>
 
 using namespace std;
@@ -59,7 +61,7 @@ boost::shared_ptr<void> Uint64Converter::deserialize(const std::string &type,
 		boost::uint64_t number;
 		// TODO check fail bit
 		s >> number;
-		return boost::shared_ptr<uint64_t>(new boost::uint64_t(number));
+		return boost::shared_ptr<boost::uint64_t>(new boost::uint64_t(number));
 	} else {
 		// TODO better exception required
 		throw("No such type registered at TypeFactory!");
