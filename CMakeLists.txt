@@ -108,10 +108,15 @@ IF(BUILD_TESTS)
     ADD_SUBDIRECTORY(test)
 ENDIF()
 
-# --- install ---
+# --- pkgconfig file ---
 
 CONFIGURE_FILE(rsb.pc.in rsb.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc DESTINATION lib/pkgconfig)
+
+# --- cmake config file ---
+
+CONFIGURE_FILE(RSBConfig.cmake.in ${CMAKE_BINARY_DIR}/RSBConfig.cmake @ONLY)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake DESTINATION share/RSB)
 
 # --- documentation gneration ---
 
