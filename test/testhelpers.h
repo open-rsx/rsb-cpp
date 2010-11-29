@@ -28,52 +28,6 @@
 
 #include "testconfig.h"
 
-class SpreadStarter {
-private:
-	pid_t spreadPid;
-
-public:
-
-	SpreadStarter() {
-
-		pid_t pid = vfork();
-		if (pid == 0) {
-
-			// child process, start the database here
-			execl(SPREAD_EXECUTABLE.c_str(), SPREAD_EXECUTABLE.c_str(), "-n",
-					"localhost", "-c", (TEST_ROOT + "/spread.conf").c_str(),
-					(char *) 0);
-
-		} else if (pid < 0) {
-
-			// failed to fork
-			throw std::runtime_error("Cannot start spread server");
-
-		} else {
-
-			spreadPid = pid;
-			// Code only executed by parent process
-			sleep(2);
-
-		}
-
-	}
-
-	~SpreadStarter() {
-
-		std::cout << "Killing spread" << std::endl;
-
-		kill(spreadPid, SIGINT);
-		int status;
-		pid_t terminated;
-		while (!(terminated = waitpid(spreadPid, &status, WNOHANG))) {
-			continue;
-		}
-
-	}
-
-};
-
 inline void setupLogging() {
 
 	rsc::logging::LoggerFactory::getInstance()->reconfigure(

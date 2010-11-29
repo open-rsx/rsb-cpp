@@ -26,6 +26,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <rsc/subprocess/Subprocess.h>
+
 #include "rsb/transport/Router.h"
 #include "rsb/transport/Port.h"
 #include "rsb/transport/spread/SpreadPort.h"
@@ -42,6 +44,7 @@ using namespace rsb::test;
 using namespace rsb::filter;
 using namespace rsb::transport;
 using namespace rsb::spread;
+using namespace rsc::subprocess;
 using namespace testing;
 using namespace rsc::threading;
 
@@ -85,9 +88,14 @@ TEST(RSBTest, testRoundtrip)
 
 int main(int argc, char* argv[]) {
 
-	SpreadStarter spread;
+	vector<string> spreadArgs;
+	spreadArgs.push_back("-n");
+	spreadArgs.push_back("localhost");
+	spreadArgs.push_back("-c");
+	spreadArgs.push_back(TEST_ROOT + "/spread.conf");
+	SubprocessPtr spread = Subprocess::newInstance(SPREAD_EXECUTABLE);
+	boost::this_thread::sleep(boost::posix_time::seconds(2));
 
-//	log4cxx::BasicConfigurator::configure();
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 
