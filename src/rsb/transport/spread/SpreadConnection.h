@@ -25,6 +25,7 @@
 #include <rsc/logging/Logger.h>
 
 #include "SpreadMessage.h"
+#include "rsb/rsbexports.h"
 
 // forward declaration to avoid exposing sp.h with strange defines that prevent
 // other code from compiling
@@ -33,7 +34,11 @@ typedef int mailbox;
 namespace rsb {
 namespace spread {
 
-class SpreadConnection {
+/**
+ * @author swrede
+ * @todo really expose this through dlls only for the unit tests?
+ */
+class RSB_EXPORT SpreadConnection {
 public:
 	SpreadConnection(const std::string& prefix, const std::string& host,
 			const std::string& port);

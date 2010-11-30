@@ -32,14 +32,16 @@
 #include "ReceiverTask.h"
 #include "MembershipManager.h"
 #include "SpreadConnection.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace spread {
 
 /**
  * @author swrede
+ * @todo do we really want to expose this through dlls only for the unit tests
  */
-class SpreadPort: public rsb::transport::Port {
+class RSB_EXPORT SpreadPort: public rsb::transport::Port {
 public:
 	SpreadPort();
 	explicit SpreadPort(rsc::misc::Registry<rsb::transport::AbstractConverter<

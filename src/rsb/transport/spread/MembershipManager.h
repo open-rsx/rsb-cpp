@@ -18,18 +18,21 @@
  * ============================================================ */
 
 #include "SpreadGroup.h"
-#include "SpreadConnection.h"
 
 #include <map>
 #include <string>
+
 #include <boost/shared_ptr.hpp>
+
 #include <rsc/logging/Logger.h>
+
+#include "SpreadConnection.h"
+#include "rsb/rsbexports.h"
 
 #ifndef MEMBERSHIPMAP_H_
 #define MEMBERSHIPMAP_H_
 
 namespace rsb {
-
 namespace spread {
 
 // TODO think about adding SpreadConnectionPtr as a member, offering
@@ -43,8 +46,9 @@ typedef std::map<std::string , std::pair<SpreadGroupPtr, int> > GroupMap;
  * Reference counting class for Spread group memberships.
  *
  * @author swrede
+ * @todo do we really want to expose this through dlls only for the unit tests
  */
-class MembershipManager {
+class RSB_EXPORT MembershipManager {
 public:
 	MembershipManager();
 	virtual ~MembershipManager();

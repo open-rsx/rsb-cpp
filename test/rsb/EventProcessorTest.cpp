@@ -24,6 +24,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <boost/thread.hpp>
+
 #include "rsb/EventProcessor.h"
 #include "rsb/Subscription.h"
 #include "rsb/QueuePushHandler.h"
@@ -66,7 +68,7 @@ TEST(EventProcessorTest, testProcessing)
 
 	processor.process(event);
 
-	usleep(500000);
+	boost::this_thread::sleep(boost::posix_time::millisec(500));
 
 	EXPECT_FALSE(okQueue->empty());
 	EXPECT_TRUE(wrongQueue->empty());

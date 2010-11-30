@@ -17,6 +17,8 @@
  *
  * ============================================================ */
 
+#include <boost/thread.hpp>
+
 #include <rsb/Publisher.h>
 #include <rsb/Subscriber.h>
 #include <rsb/Subscription.h>
@@ -71,7 +73,7 @@ int main(int argc, char **argv) {
 		publisher2.publish(Publisher<string>::DataPtr(new string(
 				"publisher2 second message")));
 
-		sleep(1);
+		boost::this_thread::sleep(boost::posix_time::seconds(1));
 
 	}
 
