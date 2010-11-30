@@ -1,7 +1,16 @@
 
 ENABLE_TESTING()
 
+# generate these files again to avoid exposing the pb files through libraries
+# on windows
+PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
+                      PROTOFILES ${RSBPROTO_FILES}
+                      PROTOROOT ${RSBPROTO_ROOT}
+                      OUTPATH ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol)
+
 INCLUDE_DIRECTORIES(BEFORE ../src
+                           ${CMAKE_CURRENT_BINARY_DIR}
+                           ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
                            ${CMAKE_CURRENT_BINARY_DIR}/../src
                            ${GTEST_INCLUDE_DIR}
                            ${GMOCK_INCLUDE_DIR}
@@ -17,7 +26,9 @@ CONFIGURE_FILE(testconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/testconfig.h)
 
 SET(RSB_TEST_SOURCES rsb/RSBTest.cpp
                      rsb/InformerTask.cpp
-                     rsb/InformerTask.h)
+                     rsb/InformerTask.h
+                     ${PROTO_HEADERS}
+                     ${PROTO_SOURCES})
 
 ADD_EXECUTABLE(${RSB_TEST_NAME} ${RSB_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${RSB_TEST_NAME}
@@ -49,7 +60,9 @@ SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
                             rsb/transport/spread/SpreadPortTest.cpp
                             rsb/transport/spread/MembershipManagerTest.cpp
                             rsb/InformerTask.cpp
-                            rsb/InformerTask.h)
+                            rsb/InformerTask.h
+                            ${PROTO_HEADERS}
+                            ${PROTO_SOURCES})
 
 ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}

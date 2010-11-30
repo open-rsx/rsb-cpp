@@ -22,7 +22,8 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <rsb/protocol/Notification.pb.h>
+#include "rsb/rsbexports.h"
+#include "rsb/protocol/Notification.pb.h"
 
 namespace rsb {
 namespace protocol {
