@@ -32,12 +32,8 @@ IF %ERRORLEVEL% NEQ 0 (
 
 echo [running tests]
 ctest -V
-IF %ERRORLEVEL% NEQ 0 (
-	echo [test error]
-	goto :error
-)
 
-echo [build and tests successful]
+echo [build successful and tests executed]
 
 echo [installing project]
 
