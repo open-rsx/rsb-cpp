@@ -25,6 +25,7 @@
 #include <stdexcept>
 
 #include <rsc/logging/LoggerFactory.h>
+#include <rsc/subprocess/Subprocess.h>
 
 #include "testconfig.h"
 
@@ -33,6 +34,22 @@ inline void setupLogging() {
 	rsc::logging::LoggerFactory::getInstance()->reconfigure(
 			rsc::logging::Logger::TRACE);
 
+}
+
+inline rsc::subprocess::SubprocessPtr startSpread() {
+	std::vector<std::string> spreadArgs;
+	spreadArgs.push_back("-n");
+	spreadArgs.push_back("localhost");
+	spreadArgs.push_back("-c");
+	spreadArgs.push_back(TEST_ROOT + "/spread.conf");
+	std::cout << "Calling " << SPREAD_EXECUTABLE << " with args:";
+	for (std::vector<std::string>::iterator it = spreadArgs.begin(); it
+			!= spreadArgs.end(); ++it) {
+		std::cout << *it << ", ";
+	}
+	std::cout << std::endl;
+	return rsc::subprocess::Subprocess::newInstance(SPREAD_EXECUTABLE,
+			spreadArgs);
 }
 
 #endif /* TESTHELPERS_H_ */

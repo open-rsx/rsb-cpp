@@ -31,17 +31,7 @@ using namespace rsc::subprocess;
 
 int main(int argc, char* argv[]) {
 
-	vector<string> spreadArgs;
-	spreadArgs.push_back("-n");
-	spreadArgs.push_back("localhost");
-	spreadArgs.push_back("-c");
-	spreadArgs.push_back("\"" + TEST_ROOT + "/spread.conf\"");
-	cout << "Calling " << SPREAD_EXECUTABLE << " with args:";
-	for (vector<string>::iterator it = spreadArgs.begin(); it != spreadArgs.end(); ++it) {
-		cout << *it << ", ";
-	}
-	cout << endl;
-	SubprocessPtr spread = Subprocess::newInstance(SPREAD_EXECUTABLE, spreadArgs);
+	SubprocessPtr spread = startSpread();
 	boost::this_thread::sleep(boost::posix_time::seconds(2));
 
 	InitGoogleMock(&argc, argv);

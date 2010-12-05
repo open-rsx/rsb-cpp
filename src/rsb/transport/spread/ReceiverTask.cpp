@@ -96,5 +96,4 @@ void ReceiverTask::execute(rsc::threading::Task<void>* t) {
 }
 
 }
-
 }

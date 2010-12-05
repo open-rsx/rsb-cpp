@@ -87,13 +87,7 @@ TEST(RSBTest, testRoundtrip)
 
 int main(int argc, char* argv[]) {
 
-	vector<string> spreadArgs;
-	spreadArgs.push_back("-n");
-	spreadArgs.push_back("localhost");
-	spreadArgs.push_back("-c");
-	spreadArgs.push_back("\"" + TEST_ROOT + "/spread.conf\"");
-	SubprocessPtr spread = Subprocess::newInstance(SPREAD_EXECUTABLE,
-			spreadArgs);
+	SubprocessPtr spread = startSpread();
 	boost::this_thread::sleep(boost::posix_time::seconds(2));
 
 	InitGoogleMock(&argc, argv);
