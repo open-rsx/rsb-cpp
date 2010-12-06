@@ -116,8 +116,9 @@ void SpreadPort::deactivate() {
 }
 
 SpreadPort::~SpreadPort() {
-	if (!shutdown)
+	if (!shutdown) {
 		deactivate();
+	}
 }
 
 void SpreadPort::notify(rsb::filter::ScopeFilter* f,
