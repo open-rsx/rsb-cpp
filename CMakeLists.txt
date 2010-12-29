@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-SET(PROJECTNAME rsb)
-PROJECT(${PROJECTNAME})
+PROJECT(RSB)
 
 # --- cmake settings ---
 
@@ -13,7 +12,7 @@ SET(CMAKE_MODULE_PATH "${PROJECT_CMAKE_PATH}" "${CMAKE_MODULE_PATH}")
 MESSAGE(STATUS "Using CMake module path: ${CMAKE_MODULE_PATH}")
 
 IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+    SET(CMAKE_BUILD_TYPE Debug CACHE STRING
         "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
         FORCE)
 ENDIF()
@@ -22,6 +21,7 @@ INCLUDE(FindPkgConfig)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(InstallFilesRecursive)
 INCLUDE(EnableCoverageReport)
+INCLUDE(GenerateDoxygen)
 
 SET(RSB_VERSION 0.1.0)
 SET(RSB_NAME "RSBCore")
@@ -130,26 +130,7 @@ INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake DESTINATION share/RSB)
 
 # --- documentation gneration ---
 
-IF(DOXYGEN_FOUND)
-
-    SET(API_DIR ${CMAKE_BINARY_DIR}/doc)
-    SET(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
-    SET(DOXYFILE ${CMAKE_BINARY_DIR}/Doxyfile)
-    SET(WARNFILE ${CMAKE_BINARY_DIR}/doxygen-warn.log)
-    
-    CONFIGURE_FILE(Doxyfile.in ${DOXYFILE})
-    
-    ADD_CUSTOM_COMMAND(OUTPUT ${API_DIR}
-                       DEPENDS ${DOXYFILE}
-                       COMMAND ${DOXYGEN_EXECUTABLE}
-                       ARGS ${DOXYFILE}
-                       WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    ADD_CUSTOM_TARGET(doc DEPENDS ${API_DIR})
-    
-    INSTALL(CODE "execute_process(COMMAND ${CMAKE_BUILD_TOOL} doc)")
-    INSTALL(DIRECTORY ${API_DIR} DESTINATION share/RSB)
-
-ENDIF()
+GENERATE_DOXYGEN(VERSION "${RSB_VERSION}")
 
 # --- coverage ropert ---
 
