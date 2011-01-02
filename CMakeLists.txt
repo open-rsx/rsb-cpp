@@ -22,6 +22,7 @@ INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(InstallFilesRecursive)
 INCLUDE(EnableCoverageReport)
 INCLUDE(GenerateDoxygen)
+INCLUDE(GenerateCppcheck)
 
 SET(RSB_VERSION 0.1.0)
 SET(RSB_NAME "RSBCore")

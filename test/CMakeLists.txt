@@ -82,3 +82,11 @@ IF(WIN32)
     SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME}
                  PROPERTY ENVIRONMENT "PATH=${PATH_STRING}")
 ENDIF()
+
+
+# --- cppcheck ---
+
+GENERATE_CPPCHECK(SOURCES ${RSB_TEST_SOURCES} ${CORE_TEST_SOURCES} ${SPREADPORT_TEST_SOURCES}
+                  ENABLE_IDS style
+                  TARGET_NAME cppcheck-tests
+                  INCLUDES "../src" ${CMAKE_CURRENT_BINARY_DIR}/../src)
