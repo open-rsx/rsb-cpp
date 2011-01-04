@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include <rsc/misc/Registry.h>
+#include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "../../protocol/Notification.h"
 #include "SpreadPort.h"
@@ -60,7 +61,7 @@ void SpreadPort::init() {
 	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadPort");
 	RSCDEBUG(logger, "SpreadPort() entered, port id: " << id.getIdAsString());
 	shutdown = false;
-	exec = TaskExecutorVoidPtr(new TaskExecutor<void> ());
+	exec = TaskExecutorPtr(new ThreadedTaskExecutor);
 	// TODO ConnectionPool for SpreadConnections?!?
 	// TODO Send Message over Managing / Introspection Channel
 	// TODO Generate Unique-IDs for SpreadPorts
@@ -79,10 +80,9 @@ void SpreadPort::activate() {
 	// connect to spread
 	con->activate();
 	// (re-)start threads
-	recTask = exec->schedulePeriodic<ReceiverTask> (rec, 0);
-	qadTask = exec->schedulePeriodic<QueueAndDispatchTask<RSBEventPtr> > (qad,
-			0);
-	//staTask = exec->schedulePeriodic<StatusTask>(st,500);
+	exec->schedule(rec);
+	exec->schedule(qad);
+	//exec->schedule(st);
 }
 
 // TODO think about extracting qad functions into QADPort?!?
@@ -104,14 +104,8 @@ void SpreadPort::deactivate() {
 	con->deactivate();
 	RSCDEBUG(logger, "deactivate() stopping qad task object");
 	qad->cancel();
-	RSCDEBUG(logger, "deactivate() stopping qad thread");
-	exec->join(qadTask);
-	RSCDEBUG(logger, "deactivate() stopping receiver thread");
-	exec->join(recTask);
 	//	cout << "stopping st task" << endl;
-	//	staTask->cancel();
-	//	cout << "stopping st thread" << endl;
-	//	exec->join(staTask);
+	//	st->cancel();
 	RSCTRACE(logger, "deactivate() finished"); // << *id);
 }
 

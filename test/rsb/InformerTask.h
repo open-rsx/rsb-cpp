@@ -23,14 +23,14 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>
 
-#include <rsc/threading/Task.h>
+#include <rsc/threading/RepetitiveTask.h>
 
 #include "rsb/transport/Port.h"
 
 namespace rsb {
 namespace test {
 
-class InformerTask {
+class InformerTask: public rsc::threading::RepetitiveTask {
 public:
 	InformerTask(rsb::transport::PortPtr p);
 	virtual ~InformerTask();
@@ -39,7 +39,7 @@ public:
 	boost::recursive_mutex m;
 	boost::condition cond;
 
-	void execute(rsc::threading::Task<void>* t);
+	void execute();
 	void handler(rsb::RSBEventPtr e);
 
 private:

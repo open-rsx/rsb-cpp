@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 
 #include <rsc/subprocess/Subprocess.h>
+#include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "rsb/transport/Router.h"
 #include "rsb/transport/Port.h"
@@ -50,7 +51,7 @@ using namespace rsc::threading;
 TEST(RSBTest, testRoundtrip)
 {
 	// task execution service
-	TaskExecutorVoidPtr exec(new TaskExecutor<void> ());
+	TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
 	// router instantiation
 	RouterPtr r(new Router(TransportFactory::SPREAD, TransportFactory::SPREAD));
@@ -69,7 +70,7 @@ TEST(RSBTest, testRoundtrip)
 	r->subscribe(s);
 
 	// activate port and schedule informer
-	TaskPtr task_source = exec->schedulePeriodic<InformerTask> (source, 0);
+	exec->schedule(source);
 
 	// wait *here* for shutdown as this is not known to the Port
 	{
@@ -79,8 +80,6 @@ TEST(RSBTest, testRoundtrip)
 		}
 	}
 
-	// stop and join all threads
-	exec->join(task_source); // no cancel needed as done already locally, see execute()
 	// port is deactivated through dtr
 	cerr << "RSBTest finished" << endl;
 }

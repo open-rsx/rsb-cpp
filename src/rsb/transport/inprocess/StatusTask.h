@@ -20,30 +20,31 @@
 #ifndef STATUSTASK_H_
 #define STATUSTASK_H_
 
-#include <rsc/threading/Task.h>
+#include <rsc/threading/PeriodicTask.h>
 
 namespace rsb {
-
 namespace inprocess {
 
 class InProcessPort;
 typedef boost::shared_ptr<InProcessPort> InProcessPortPtr;
 
-class StatusTask {
+/**
+ * @author swrede
+ * @todo remove header implementations
+ */
+class StatusTask: public rsc::threading::PeriodicTask {
 public:
 
-	StatusTask(InProcessPort* p) :
-		port(p) {
+	StatusTask(InProcessPort* p, const unsigned int &ms) :
+		rsc::threading::PeriodicTask(ms), port(p) {
 	}
 
 	~StatusTask() {
 		std::cout << "dtr ~StatusTask() " << std::endl;
 	}
 
-	boost::shared_ptr<void> execute(rsc::threading::Task<void>* t) {
-		std::cout << "InProcessPort alive. Status of task " << *t
-				<< ": undefined" << std::endl;
-		return boost::shared_ptr<void>();
+	void execute() {
+		std::cout << "InProcessPort alive." << std::endl;
 	}
 
 private:

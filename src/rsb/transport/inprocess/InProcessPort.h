@@ -55,12 +55,10 @@ public:
 private:
 	volatile bool shutdown;
 
-	rsc::threading::TaskExecutorVoidPtr exec;
+	rsc::threading::TaskExecutorPtr exec;
     boost::shared_ptr<StatusTask> st;
     boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
 
-	rsc::threading::TaskPtr qadTask;
-	rsc::threading::TaskPtr staTask;
 };
 
 }

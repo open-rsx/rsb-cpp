@@ -51,7 +51,8 @@ ReceiverTask::ReceiverTask(SpreadConnectionPtr s, rsc::misc::Registry<
 ReceiverTask::~ReceiverTask() {
 }
 
-void ReceiverTask::execute(rsc::threading::Task<void>* t) {
+void ReceiverTask::execute() {
+
 	NotificationPtr n(new Notification());
 
 	try {
@@ -83,16 +84,14 @@ void ReceiverTask::execute(rsc::threading::Task<void>* t) {
 			qad->addElement(e);
 		}
 	} catch (rsb::CommException &e) {
-		if (!cancelRequested) {
+		if (!isCancelRequested()) {
 			cout << "SpreadPort error: " << e.what() << endl;
 		} else {
 			// safely ignore, invalid mbox just signals in this context
 			// that the connection to spread was deactivated
 		}
 	}
-	if (cancelRequested) {
-		t->cancel();
-	}
+
 }
 
 }

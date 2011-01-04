@@ -69,14 +69,10 @@ private:
 	volatile bool shutdown;
 	SpreadConnectionPtr con;
 
-	rsc::threading::TaskExecutorVoidPtr exec;
+	rsc::threading::TaskExecutorPtr exec;
 	//   boost::shared_ptr<StatusTask> st;
 	boost::shared_ptr<ReceiverTask> rec;
 	boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
-
-	rsc::threading::TaskPtr recTask;
-	rsc::threading::TaskPtr qadTask;
-	//	rsb::util::TaskPtr staTask;
 
 	MembershipManagerPtr memberships;
 

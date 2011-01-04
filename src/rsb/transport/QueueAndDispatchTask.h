@@ -28,7 +28,7 @@
 #include <boost/thread/condition.hpp>
 #include <boost/function.hpp>
 
-#include <rsc/threading/Task.h>
+#include <rsc/threading/RepetitiveTask.h>
 
 #include "../RSBEvent.h"
 
@@ -37,13 +37,15 @@ namespace transport {
 
 /**
  * @author swrede
+ * @tparam T elements to dispatch
+ * @todo remove header implementations
  */
 template<class T>
-class QueueAndDispatchTask {
+class QueueAndDispatchTask: public rsc::threading::RepetitiveTask {
 public:
+
 	QueueAndDispatchTask() :
-		cancelRequested(false) {
-		queue = boost::shared_ptr<std::list<T> >(new std::list<T>());
+		cancelRequested(false), queue(new std::list<T>()) {
 	}
 
 	virtual ~QueueAndDispatchTask() {
@@ -62,6 +64,11 @@ public:
 		observer = act;
 	}
 
+	/**
+	 * @todo no custom cancel logic would be required if interruption was
+	 *       supported by the base class.... Make RepetitiveTask use boost
+	 *       interruption mechanism
+	 */
 	void cancel() {
 		{
 			// protect setting and comparison of cancel boolean, see execute()
@@ -71,7 +78,11 @@ public:
 		c.notify_all();
 	}
 
-	void execute(rsc::threading::Task<void>* t) {
+	bool isCancelRequested() {
+		return cancelRequested;
+	}
+
+	void execute() {
 		T e;
 		boost::recursive_mutex::scoped_lock lock(m);
 		// spurious unblocking loop
@@ -84,7 +95,6 @@ public:
 
 		if (cancelRequested) {
 			lock.unlock();
-			t->cancel();
 			return;
 		}
 
@@ -101,13 +111,15 @@ public:
 	}
 
 private:
-	boost::shared_ptr<std::list<rsb::RSBEventPtr> > queue;
+
+	volatile bool cancelRequested;
+
+	boost::shared_ptr<std::list<T> > queue;
 	boost::function<void(T)> observer;
 
 	mutable boost::recursive_mutex m;
 	boost::condition c;
 
-	volatile bool cancelRequested;
 
 };
 

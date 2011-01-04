@@ -22,7 +22,7 @@
 
 #include <rsc/logging/Logger.h>
 #include <rsc/misc/Registry.h>
-#include <rsc/threading/Task.h>
+#include <rsc/threading/RepetitiveTask.h>
 
 #include "../../RSBEvent.h"
 #include "../QueueAndDispatchTask.h"
@@ -37,20 +37,16 @@ typedef boost::shared_ptr<
 		rsb::transport::QueueAndDispatchTask<rsb::RSBEventPtr> > QADPtr;
 
 /**
- * @todo remove header implementations
+ * @author swrede
  */
-class ReceiverTask {
+class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 	ReceiverTask(SpreadConnectionPtr s, rsc::misc::Registry<
 			rsb::transport::AbstractConverter<std::string> > *converters,
 			QADPtr q);
 	virtual ~ReceiverTask();
 
-	void execute(rsc::threading::Task<void>* t);
-
-	void cancel() {
-		cancelRequested = true;
-	}
+	void execute();
 
 private:
 	rsc::logging::LoggerPtr logger;
@@ -62,7 +58,6 @@ private:
 };
 
 }
-
 }
 
 #endif /* RECEIVERTASK_H_ */

@@ -31,14 +31,15 @@ namespace rsb {
 
 namespace test {
 
-InformerTask::InformerTask(PortPtr p) : c(0), i(0), port(p) {
+InformerTask::InformerTask(PortPtr p) :
+	c(0), i(0), port(p) {
 	// blank
-};
+}
 
 InformerTask::~InformerTask() {
 }
 
-void InformerTask::execute(Task<void>* t) {
+void InformerTask::execute() {
 	i++;
 	cout << i << " " << flush;
 	PortStateChangePtr psc(new PortStateChange());
@@ -48,23 +49,25 @@ void InformerTask::execute(Task<void>* t) {
 	psc->set_message("port id is blub");
 	psc->set_type("SpreadPort");
 	string uri = "xcf://blah";
-	if (i%2==0) {
+	if (i % 2 == 0) {
 		// should be filtered by SpreadPort already
 		uri = "xcf://blahblah";
 	}
-	RSBEventPtr p(new RSBEvent(uri, boost::static_pointer_cast<void>(
-			psc), "portstatechange"));
+	RSBEventPtr p(new RSBEvent(uri, boost::static_pointer_cast<void>(psc),
+			"portstatechange"));
 	port->push(p);
 	if (i == 20) {
 		cout << endl;
-		t->cancel();
+		cancel();
+		return;
 	}
 }
 
 void InformerTask::handler(RSBEventPtr e) {
 	c++;
 	cout << "Event #" << c << "/10 received. Metadata: " << *e << endl;
-	PortStateChangePtr p = boost::static_pointer_cast<PortStateChange>(e->getData());
+	PortStateChangePtr p = boost::static_pointer_cast<PortStateChange>(
+			e->getData());
 	cout << "Event #" << c << "/10 contains: " << p->action() << endl;
 	if (c == 10) {
 		boost::recursive_mutex::scoped_lock lock(m);
@@ -73,5 +76,4 @@ void InformerTask::handler(RSBEventPtr e) {
 }
 
 }
-
 }

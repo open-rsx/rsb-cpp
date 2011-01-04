@@ -25,6 +25,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <rsc/threading/ThreadedTaskExecutor.h>
+
 #include "rsb/transport/Port.h"
 #include "rsb/transport/spread/SpreadPort.h"
 #include "rsb/filter/AbstractFilter.h"
@@ -56,7 +58,7 @@ TEST(SpreadPortTest, testConnnection)
 TEST(SpreadPortTest, testRoundtrip)
 {
 	// task execution service
-	TaskExecutorVoidPtr exec(new TaskExecutor<void> ());
+	TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
 	// in-process port
 	PortPtr p(new SpreadPort());
@@ -73,7 +75,7 @@ TEST(SpreadPortTest, testRoundtrip)
 
 	// activate port and schedule informer
 	p->activate();
-	TaskPtr task_source = exec->schedulePeriodic<InformerTask> (source, 0);
+	exec->schedule(source);
 
 	// wait *here* for shutdown as this is not known to the Port
 	{
@@ -83,8 +85,6 @@ TEST(SpreadPortTest, testRoundtrip)
 		}
 	}
 
-	// stop and join all threads
-	exec->join(task_source); // no cancel needed as done already locally, see execute()
 	// port is deactivated through dtr
 	cerr << "SpreadProcessTest finished" << endl;
 }

@@ -24,6 +24,7 @@
 #include <boost/bind.hpp>
 
 #include <rsc/logging/Logger.h>
+#include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "InProcessPort.h"
 #include "../../util/Configuration.h"
@@ -44,14 +45,11 @@ LoggerPtr logger(Logger::getLogger("rsb.inprocess"));
 namespace rsb {
 namespace inprocess {
 
-InProcessPort::InProcessPort() {
-	shutdown = false;
-	exec = TaskExecutorVoidPtr(new TaskExecutor<void> ());
-
-	// TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
-	st = boost::shared_ptr<StatusTask>(new StatusTask(this));
-	qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> >(
-			new QueueAndDispatchTask<RSBEventPtr> ());
+InProcessPort::InProcessPort() :
+	shutdown(false), exec(new ThreadedTaskExecutor), st(new StatusTask(this,
+			500)), qad(new QueueAndDispatchTask<RSBEventPtr> ) {
+	// TODO check if it makes sense and is possible to provide a weak_ptr to
+	// the ctr of StatusTask
 }
 
 InProcessPort::~InProcessPort() {
@@ -61,21 +59,16 @@ InProcessPort::~InProcessPort() {
 
 void InProcessPort::activate() {
 	// (re-)start threads
-	qadTask = exec->schedulePeriodic<QueueAndDispatchTask<RSBEventPtr> > (qad,
-			0);
-	staTask = exec->schedulePeriodic<StatusTask> (st, 500);
+	exec->schedule(qad);
+	exec->schedule(st);
 }
 
 void InProcessPort::deactivate() {
 	shutdown = true;
 	cout << "stopping qad task object" << endl;
 	qad->cancel();
-	cout << "stopping qad thread" << endl;
-	exec->join(qadTask);
 	cout << "stopping st task" << endl;
-	staTask->cancel();
-	cout << "stopping st thread" << endl;
-	exec->join(staTask);
+	st->cancel();
 	cout << "InProcessPort::deactivate finished" << endl;
 }
 
