@@ -63,8 +63,11 @@ TEST(RSBTest, testRoundtrip)
 	s->appendFilter(f);
 
 	// domain objects
-	boost::shared_ptr<InformerTask> source(new InformerTask(r->getOutPort()));
-	s->appendAction(boost::bind(&InformerTask::handler, source.get(), _1));
+	unsigned int numEvents = 10;
+	boost::shared_ptr<InformerTask> source(
+			new InformerTask(r->getOutPort(), 10));
+	WaitingObserver observer(numEvents);
+	s->appendAction(boost::bind(&WaitingObserver::handler, &observer, _1));
 
 	// add subscription to router
 	r->subscribe(s);
@@ -72,13 +75,7 @@ TEST(RSBTest, testRoundtrip)
 	// activate port and schedule informer
 	exec->schedule(source);
 
-	// wait *here* for shutdown as this is not known to the Port
-	{
-		boost::recursive_mutex::scoped_lock lock(source->m);
-		while (source->c != 10) {
-			source->cond.wait(lock);
-		}
-	}
+	observer.waitReceived();
 
 	// port is deactivated through dtr
 	cerr << "RSBTest finished" << endl;

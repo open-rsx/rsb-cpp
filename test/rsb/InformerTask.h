@@ -30,21 +30,41 @@
 namespace rsb {
 namespace test {
 
+/**
+ * @author swrede
+ */
 class InformerTask: public rsc::threading::RepetitiveTask {
 public:
-	InformerTask(rsb::transport::PortPtr p);
+	InformerTask(rsb::transport::PortPtr p, const unsigned int &numEvents);
 	virtual ~InformerTask();
 
-	int c;
-	boost::recursive_mutex m;
-	boost::condition cond;
-
 	void execute();
-	void handler(rsb::RSBEventPtr e);
 
 private:
-	int i;
+	unsigned int numEvents;
+	unsigned int sentEvents;
 	rsb::transport::PortPtr port;
+
+};
+
+/**
+ * @author jwienke
+ */
+class WaitingObserver {
+public:
+
+	WaitingObserver(const unsigned int &desiredEvents);
+
+	void handler(RSBEventPtr e);
+
+	void waitReceived();
+
+private:
+
+	unsigned int desiredEvents;
+	unsigned int receivedEvents;
+	boost::recursive_mutex m;
+	boost::condition condition;
 
 };
 

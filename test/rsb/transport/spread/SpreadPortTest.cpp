@@ -66,24 +66,19 @@ TEST(SpreadPortTest, testRoundtrip)
 
 	// filter for joining test group
 	AbstractFilterPtr f = AbstractFilterPtr(new ScopeFilter("xcf://blah"));
-	FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(p);
-	f->notifyObserver(fo,FilterAction::ADD);
+	f->notifyObserver(p, FilterAction::ADD);
 
 	// domain objects
-	boost::shared_ptr<InformerTask> source(new InformerTask(p));
-	p->setObserver(boost::bind(&InformerTask::handler, source.get(), _1));
+	const unsigned int numEvents = 10;
+	boost::shared_ptr<InformerTask> source(new InformerTask(p, numEvents));
+	WaitingObserver observer(numEvents);
+	p->setObserver(boost::bind(&WaitingObserver::handler, &observer, _1));
 
 	// activate port and schedule informer
 	p->activate();
 	exec->schedule(source);
 
-	// wait *here* for shutdown as this is not known to the Port
-	{
-		boost::recursive_mutex::scoped_lock lock(source->m);
-		while (source->c != 10) {
-			source->cond.wait(lock);
-		}
-	}
+	observer.waitReceived();
 
 	// port is deactivated through dtr
 	cerr << "SpreadProcessTest finished" << endl;
