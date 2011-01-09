@@ -38,23 +38,23 @@ using namespace rsb::inprocess;
 
 int main(void) {
 	// task execution service
-	TaskExecutorVoidPtr exec(new TaskExecutor<void>());
+	TaskExecutorVoidPtr exec(new TaskExecutor<void> ());
 
 	// in-process port
 	PortPtr p(new InProcessPort());
 
 	// domain objects
 	boost::shared_ptr<InformerTask> source(new InformerTask(p));
-	p->setObserver(boost::bind(&InformerTask::handler,source.get(),_1));
+	p->setObserver(boost::bind(&InformerTask::handler, source, _1));
 
 	// activate port and schedule informer
 	p->activate();
-	TaskPtr task_source = exec->schedulePeriodic<InformerTask>(source,0);
+	TaskPtr task_source = exec->schedulePeriodic<InformerTask> (source, 0);
 
 	// wait *here* for shutdown as this is not known to the Port
 	{
 		boost::recursive_mutex::scoped_lock lock(source->m);
-		while (source->c!=10) {
+		while (source->c != 10) {
 			source->cond.wait(lock);
 		}
 	}

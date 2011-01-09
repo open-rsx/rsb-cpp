@@ -40,7 +40,7 @@ Router::Router(TransportFactory::PortTypes inType,
 		eventProcessor = EventProcessorPtr(new EventProcessor());
 		// add event processor as observer to input port(s)
 		inPort->setObserver(boost::bind(&EventProcessor::process,
-				eventProcessor.get(), _1));
+				eventProcessor, _1));
 	}
 	shutdown = false;
 }

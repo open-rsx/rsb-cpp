@@ -29,7 +29,7 @@ using namespace std;
 using namespace rsb;
 using namespace testing;
 
-class MyEventHandler : public EventHandler {
+class MyEventHandler: public EventHandler {
 public:
 
 	void notify(RSBEventPtr e) {
@@ -37,7 +37,7 @@ public:
 	}
 };
 
-class MyDataHandler : public DataHandler<string> {
+class MyDataHandler: public DataHandler<string> {
 public:
 
 	void notify(boost::shared_ptr<string> e) {
@@ -45,11 +45,12 @@ public:
 	}
 };
 
-TEST(HandlerTest, testDispatch) {
+TEST(HandlerTest, testDispatch)
+{
 	EventHandler* eh = new MyEventHandler();
 	DataHandler<string>* dh = new MyDataHandler();
-	rsb::Action ea = boost::bind(&Handler::internal_notify,eh,_1);
-	rsb::Action da = boost::bind(&Handler::internal_notify,dh,_1);
+	rsb::Action ea = boost::bind(&Handler::internal_notify, eh, _1);
+	rsb::Action da = boost::bind(&Handler::internal_notify, dh, _1);
 	RSBEventPtr e(new RSBEvent());
 	e->setData(boost::shared_ptr<string>(new string("blub")));
 	e->setURI("blah");

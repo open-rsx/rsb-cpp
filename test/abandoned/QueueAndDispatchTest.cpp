@@ -36,7 +36,11 @@ using namespace rsb::transport;
 
 class NotificationTask {
 public:
-	NotificationTask(boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> > receiver) : c(0), i(0), r(receiver) {};
+	NotificationTask(
+			boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> > receiver) :
+		c(0), i(0), r(receiver) {
+	}
+	;
 
 	int c;
 	boost::recursive_mutex m;
@@ -46,9 +50,10 @@ public:
 		i++;
 		cout << i << " " << flush;
 		PersonPtr p1(new Person());
-		RSBEventPtr p(new RSBEvent("xcf://blah",boost::static_pointer_cast<void>(p1),"Person"));
+		RSBEventPtr p(new RSBEvent("xcf://blah", boost::static_pointer_cast<
+				void>(p1), "Person"));
 		r->addElement(p);
-		if (i==10) {
+		if (i == 10) {
 			cout << endl;
 			t->cancel();
 		}
@@ -56,36 +61,39 @@ public:
 
 	void handler(RSBEventPtr e) {
 		c++;
-		cout << "Event #" << c << "/10 received: URI = " << e->getURI() << endl << flush;
+		cout << "Event #" << c << "/10 received: URI = " << e->getURI() << endl
+				<< flush;
 		//if (c==10) r->cancel();
-		if (c==10) {
+		if (c == 10) {
 			boost::recursive_mutex::scoped_lock lock(m);
 			cond.notify_all();
 		}
 	}
 private:
 	int i;
-	boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr > > r;
+	boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> > r;
 
 };
 
 int main(void) {
 	// task execution service
-	TaskExecutorVoidPtr exec(new TaskExecutor<void>());
+	TaskExecutorVoidPtr exec(new TaskExecutor<void> ());
 
 	// domain objects
-	boost::shared_ptr<QueueAndDispatchTask< RSBEventPtr > > sink(new QueueAndDispatchTask<RSBEventPtr>());
+	boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> > sink(
+			new QueueAndDispatchTask<RSBEventPtr> ());
 	boost::shared_ptr<NotificationTask> source(new NotificationTask(sink));
-	sink->setObserver(boost::bind(&NotificationTask::handler,source.get(),_1));
+	sink->setObserver(boost::bind(&NotificationTask::handler, source, _1));
 
 	// schedule the two tasks
-	TaskPtr task_source = exec->schedulePeriodic<NotificationTask>(source,0);
-	TaskPtr task_sink = exec->schedulePeriodic<QueueAndDispatchTask< RSBEventPtr > >(sink,0);
+	TaskPtr task_source = exec->schedulePeriodic<NotificationTask> (source, 0);
+	TaskPtr task_sink = exec->schedulePeriodic<
+			QueueAndDispatchTask<RSBEventPtr> > (sink, 0);
 
 	// wait *here* for shutdown as this is not known to the QueueAndDispatchTask
 	{
 		boost::recursive_mutex::scoped_lock lock(source->m);
-		while (source->c!=10) {
+		while (source->c != 10) {
 			source->cond.wait(lock);
 		}
 	}
