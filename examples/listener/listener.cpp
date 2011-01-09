@@ -44,7 +44,6 @@ public:
 	MyDataHandler() :
 		count(0) {
 	}
-	;
 
 	void notify(boost::shared_ptr<string> e) {
 		cout << "Data received: " << *e << endl;
@@ -72,10 +71,9 @@ int main(void) {
 	sub->appendFilter(f);
 
 	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
-	boost::shared_ptr<Handler> h = boost::static_pointer_cast<Handler>(dh);
 
 	// register event handler
-	sub->appendHandler(h);
+	sub->appendHandler(dh);
 
 	s->addSubscription(sub);
 
