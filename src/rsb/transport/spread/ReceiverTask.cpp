@@ -72,6 +72,7 @@ void ReceiverTask::execute() {
 			//	cout << "Parsed event ID: " << n->eid() << endl;
 			//	cout << "Binary length: " << n->data().length() << endl;
 			RSBEventPtr e(new RSBEvent());
+			e->setUUID(n->eid());
 			e->setURI(n->uri());
 			e->setType(n->type_id());
 			for (int i = 0; i < n->metainfos_size(); ++i) {

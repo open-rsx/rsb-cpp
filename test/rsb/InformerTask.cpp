@@ -55,10 +55,17 @@ void InformerTask::execute() {
 	RSBEventPtr p(new RSBEvent(uri, boost::static_pointer_cast<void>(psc),
 			"portstatechange"));
 	port->push(p);
+	if (sentEvents % 2 == 1) {
+		events.push_back(p);
+	}
 	if (sentEvents == 2 * numEvents) {
 		cout << endl;
 		cancel();
 	}
+}
+
+std::vector<RSBEventPtr> InformerTask::getEvents() {
+	return events;
 }
 
 // ------
@@ -71,15 +78,17 @@ WaitingObserver::WaitingObserver(const unsigned int &desiredEvents) :
 void WaitingObserver::handler(RSBEventPtr e) {
 	boost::recursive_mutex::scoped_lock lock(m);
 	++receivedEvents;
+	events.push_back(e);
 	cout << "Event #" << receivedEvents << "/" << desiredEvents
 			<< " received. Metadata: " << *e << endl;
-	PortStateChangePtr p = boost::static_pointer_cast<PortStateChange>(
-			e->getData());
-	cout << "Event #" << receivedEvents << "/" << desiredEvents
-			<< " contains: " << p->action() << endl;
 	if (receivedEvents == desiredEvents) {
 		condition.notify_all();
 	}
+}
+
+vector<RSBEventPtr> WaitingObserver::getEvents() {
+	boost::recursive_mutex::scoped_lock lock(m);
+	return events;
 }
 
 void WaitingObserver::waitReceived() {

@@ -27,6 +27,10 @@ namespace rsb {
 RSBEvent::~RSBEvent() {
 }
 
+void RSBEvent::setUUID(const rsc::misc::UUID &id) {
+	this->id = id;
+}
+
 rsc::misc::UUID RSBEvent::getUUID() {
 	return id;
 }

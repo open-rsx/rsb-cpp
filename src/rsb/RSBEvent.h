@@ -65,6 +65,7 @@ public:
 
 	virtual ~RSBEvent();
 
+	void setUUID(const rsc::misc::UUID &id);
 	rsc::misc::UUID getUUID();
 
 	// TODO REFACTOR: introduce domain object URI

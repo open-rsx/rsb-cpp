@@ -153,7 +153,7 @@ void SpreadPort::push(RSBEventPtr e) {
 	c->serialize(e->getType(), obj, s);
 	//	cerr << "SpreadPort::push after serialize" << endl;
 	Notification n;
-	n.set_eid("not set yet");
+	n.set_eid(e->getUUID().getIdAsString());
 	n.set_sequence_length(0);
 	n.set_standalone(false);
 	n.set_uri(e->getURI());

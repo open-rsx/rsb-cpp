@@ -69,7 +69,9 @@ TEST(SpreadPortTest, testRoundtrip)
 	f->notifyObserver(p, FilterAction::ADD);
 
 	// domain objects
-	const unsigned int numEvents = 10;
+	// send only one event. Otherwise we need to do a correlation because
+	// ordering may change
+	const unsigned int numEvents = 1;
 	boost::shared_ptr<InformerTask> source(new InformerTask(p, numEvents));
 	WaitingObserver observer(numEvents);
 	p->setObserver(boost::bind(&WaitingObserver::handler, &observer, _1));
@@ -79,6 +81,16 @@ TEST(SpreadPortTest, testRoundtrip)
 	exec->schedule(source);
 
 	observer.waitReceived();
+
+	// compare sent and received events
+	ASSERT_EQ(source->getEvents().size(), observer.getEvents().size());
+	for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
+		RSBEventPtr sent = source->getEvents()[i];
+		RSBEventPtr received = observer.getEvents()[i];
+		EXPECT_EQ(sent->getUUID(), received->getUUID());
+		EXPECT_EQ(sent->getType(), received->getType());
+		EXPECT_EQ(sent->getURI(), received->getURI());
+	}
 
 	// port is deactivated through dtr
 	cerr << "SpreadProcessTest finished" << endl;

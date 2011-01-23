@@ -29,7 +29,7 @@ namespace rsb {
 namespace introspection {
 
 typedef rsb::protocol::introspection::PortStateChange PortStateChange;
-typedef boost::shared_ptr< PortStateChange > PortStateChangePtr;
+typedef boost::shared_ptr<PortStateChange> PortStateChangePtr;
 
 }
 
