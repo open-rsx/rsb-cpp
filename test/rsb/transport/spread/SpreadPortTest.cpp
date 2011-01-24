@@ -83,7 +83,7 @@ TEST(SpreadPortTest, testRoundtrip)
 	observer.waitReceived();
 
 	// compare sent and received events
-	ASSERT_EQ(source->getEvents().size(), observer.getEvents().size() + 1);
+	ASSERT_EQ(source->getEvents().size(), observer.getEvents().size());
 	for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
 		RSBEventPtr sent = source->getEvents()[i];
 		RSBEventPtr received = observer.getEvents()[i];
