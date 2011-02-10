@@ -26,6 +26,8 @@
 
 #include <rsc/misc/Registry.h>
 
+#include "rsb/rsbexports.h"
+
 namespace rsb {
 namespace transport {
 
@@ -57,7 +59,7 @@ public:
 };
 
 // TODO how to avoid this central wire format repository?
-CREATE_REGISTRY(AbstractConverter<std::string>, stringConverterRegistry);
+RSB_EXPORT rsc::misc::Registry<AbstractConverter<std::string> > *stringConverterRegistry();
 
 }
 }
