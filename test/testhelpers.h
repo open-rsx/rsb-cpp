@@ -24,6 +24,8 @@
 #include <ostream>
 #include <stdexcept>
 
+#include <boost/thread.hpp>
+
 #include <rsc/logging/LoggerFactory.h>
 #include <rsc/subprocess/Subprocess.h>
 
@@ -48,8 +50,11 @@ inline rsc::subprocess::SubprocessPtr startSpread() {
 		std::cout << *it << ", ";
 	}
 	std::cout << std::endl;
-	return rsc::subprocess::Subprocess::newInstance(SPREAD_EXECUTABLE,
-			spreadArgs);
+	rsc::subprocess::SubprocessPtr proc =
+			rsc::subprocess::Subprocess::newInstance(SPREAD_EXECUTABLE,
+					spreadArgs);
+	boost::this_thread::sleep(boost::posix_time::seconds(2));
+	return proc;
 }
 
 #endif /* TESTHELPERS_H_ */
