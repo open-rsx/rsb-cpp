@@ -90,7 +90,7 @@ void SpreadPort::setObserver(Action a) {
 	qad->setObserver(a);
 }
 
-void SpreadPort::removeObserver(Action a) {
+void SpreadPort::removeObserver(Action /*a*/) {
 	qad->setObserver(NULL);
 }
 

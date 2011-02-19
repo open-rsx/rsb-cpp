@@ -24,26 +24,22 @@
 using namespace std;
 
 namespace rsb {
-
 namespace filter {
 
-FilterObserver::FilterObserver() {
-	// TODO Auto-generated constructor stub
+FilterObserver::FilterObserver() :
+	logger(rsc::logging::Logger::getLogger("rsb.filter.FilterObserver")) {
 }
 
 FilterObserver::~FilterObserver() {
-	// TODO Auto-generated destructor stub
 }
 
-void FilterObserver::notify(AbstractFilter* f, FilterAction::Types at) {
-	cout << "FilterObserver::notify(AbstractFilterPtr a)" << endl;
+void FilterObserver::notify(AbstractFilter */*filter*/, FilterAction::Types /*at*/) {
+	RSCDEBUG(logger, "FilterObserver::notify(AbstractFilterPtr a)");
 }
 
-void FilterObserver::notify(ScopeFilter* f, FilterAction::Types at) {
-	cout << "FilterObserver::notify(ScopeFilterPtr a)" << endl;
+void FilterObserver::notify(ScopeFilter */*filter*/, FilterAction::Types /*at*/) {
+	RSCDEBUG(logger, "FilterObserver::notify(ScopeFilterPtr a)");
 }
 
-
 }
-
 }

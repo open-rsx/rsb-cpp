@@ -34,8 +34,7 @@ Port::~Port() {
 void Port::setObserver(rsb::Action a) {
 	observer = a;
 }
-void Port::removeObserver(rsb::Action a) {
-	// TODO add impl for mutiple observers
+void Port::removeObserver(rsb::Action /*a*/) {
 	observer = NULL;
 }
 

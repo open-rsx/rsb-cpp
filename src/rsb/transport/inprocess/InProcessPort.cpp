@@ -93,7 +93,7 @@ void InProcessPort::setObserver(Action a) {
 	qad->setObserver(a);
 }
 
-void InProcessPort::removeObserver(Action a) {
+void InProcessPort::removeObserver(Action /*a*/) {
 	qad->setObserver(NULL);
 }
 

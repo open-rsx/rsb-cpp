@@ -32,27 +32,27 @@ using namespace std;
 using namespace rsb::filter;
 using namespace testing;
 
-class Observable : public FilterObservable {
+class Observable: public FilterObservable {
 public:
 	void raise(AbstractFilterPtr f) {
 		// p AbstractPort implements FilterObserver
-	//		Sub s;
-	//		ep->register(s);
-	//		{
-	//			for f in s.filter:
-	//			  notifyObservers(f, ADD);
-	//		}
-		notifyObservers(f,FilterAction::ADD);
+		//		Sub s;
+		//		ep->register(s);
+		//		{
+		//			for f in s.filter:
+		//			  notifyObservers(f, ADD);
+		//		}
+		notifyObservers(f, FilterAction::ADD);
 	}
 };
 
-class Observer : public FilterObserver {
+class Observer: public FilterObserver {
 public:
-	void notify(AbstractFilter* f, FilterAction::Types at) {
-		ASSERT_FALSE(1) << "notify AbstractFilter triggered";
+	void notify(AbstractFilter */*f*/, FilterAction::Types /*at*/) {
+		ASSERT_FALSE(1)<< "notify AbstractFilter triggered";
 	}
 
-	void notify(ScopeFilter* sf, FilterAction::Types at) {
+	void notify(ScopeFilter *sf, FilterAction::Types /*at*/) {
 		ASSERT_TRUE(sf!=NULL);
 		cerr << sf->getURI() << endl;
 	}
@@ -63,8 +63,10 @@ TEST(FilterObserverTest, testDoubleDispatch)
 	// ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
 	// AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
 	AbstractFilterPtr f = AbstractFilterPtr(new ScopeFilter("xcf://blah"));
-	boost::shared_ptr<Observable> observable = boost::shared_ptr<Observable>(new Observable());
-	boost::shared_ptr<Observer> observer = boost::shared_ptr<Observer>(new Observer());
+	boost::shared_ptr<Observable> observable = boost::shared_ptr<Observable>(
+			new Observable());
+	boost::shared_ptr<Observer> observer = boost::shared_ptr<Observer>(
+			new Observer());
 	observable->addObserver(observer);
 	ASSERT_NO_THROW(observable->raise(f));
 	// p.setTypeConverters(r);
