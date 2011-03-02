@@ -61,7 +61,7 @@ protected:
 typedef boost::shared_ptr<Handler> HandlerPtr;
 
 /**
- * @authrr swrede
+ * @author swrede
  * @todo makes even more sense if RSBEvent would be a template type
  * @todo remove header implementation
  */

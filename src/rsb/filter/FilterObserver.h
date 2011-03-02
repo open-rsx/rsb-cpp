@@ -32,7 +32,7 @@ namespace rsb {
 namespace filter {
 
 /**
- * @author srede
+ * @author swrede
  * @todo Check if Double Dispatch pattern is best suited here
  * @todo use const refs
  */
