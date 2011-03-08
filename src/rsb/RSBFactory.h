@@ -21,6 +21,8 @@
 
 #include <string>
 
+#include <boost/shared_ptr.hpp>
+
 #include "rsb/rsbexports.h"
 #include "Publisher.h"
 #include "Subscriber.h"
@@ -59,6 +61,8 @@ public:
 	patterns::RemoteServerPtr createRemoteServer(const std::string &uri);
 
 };
+
+typedef boost::shared_ptr<RSBFactory> RSBFactoryPtr;
 
 }
 
