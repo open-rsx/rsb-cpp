@@ -20,46 +20,91 @@
 #ifndef ABSTRACTCONVERTER_H_
 #define ABSTRACTCONVERTER_H_
 
+#include <set>
 #include <string>
+#include <utility>
 
-#include <rsb/RSBEvent.h>
+#include <boost/shared_ptr.hpp>
 
-#include <rsc/misc/Registry.h>
+#include "../RSBEvent.h"
 
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
 
+typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
+
 /**
  * @author swrede
- * @tparam T is the serialization format, uchar, string, binary, ...
+ * @author jwienke
+ * @tparam WireFormat is the serialization format, uchar, string, binary, ...
  */
-template<class T>
+template<class WireFormat>
 class AbstractConverter {
 public:
-
-	AbstractConverter() {
-	}
 
 	virtual ~AbstractConverter() {
 	}
 
-	virtual void serialize(const std::string &type, boost::shared_ptr<void> d,
-			T &m) = 0;
-	virtual boost::shared_ptr<void> deserialize(const std::string &type,
-			const T &m) = 0;
+	/**
+	 * Serialized the given domain object to the wire.
+	 *
+	 * @param data data to serialize
+	 * @throw SerializationException if the serialization failed
+	 */
+	virtual std::string
+	serialize(const AnnotatedData &data, WireFormat &wire) = 0;
 
-	std::string getRegistryKey() {
-		return getTypeName();
+	/**
+	 * Deserializes a domain object from a wire format.
+	 *
+	 * @param wireType type of the wire message
+	 * @param wire the wire containing the date
+	 * @return the deserialized domain object annotated with its data type name
+	 * @throw SerializationException if deserializing the message fails
+	 */
+	virtual AnnotatedData deserialize(const std::string &wireType,
+			const WireFormat &wire) = 0;
+
+	/**
+	 * Returns the name of the data type this converter is applicable for.
+	 *
+	 * @return name of the data type this converter can be used for
+	 */
+	virtual std::string getDataType() const {
+		return dataType;
 	}
 
-	virtual std::string getTypeName() = 0;
+	/**
+	 * Returns the name of the wire type this converter can deserialize.
+	 *
+	 * @return name of the wire format this converter can deserialize
+	 */
+	virtual std::string getWireType() const {
+		return wireType;
+	}
+
+	typedef boost::shared_ptr<AbstractConverter<WireFormat> > Ptr;
+
+protected:
+
+	/**
+	 * Creates a new instance of this class with automatic handling for types.
+	 *
+	 * @param dataType data type this converter can serialize
+	 * @param wireType wire type this converter can deserialize
+	 */
+	AbstractConverter(const std::string &dataType, const std::string &wireType) :
+		dataType(dataType), wireType(wireType) {
+	}
+
+private:
+
+	std::string dataType;
+	std::string wireType;
 
 };
-
-// TODO how to avoid this central wire format repository?
-RSB_EXPORT rsc::misc::Registry<AbstractConverter<std::string> > *stringConverterRegistry();
 
 }
 }

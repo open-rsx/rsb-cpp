@@ -32,6 +32,7 @@
 #include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
+#include <rsb/RSBFactory.h>
 
 using namespace std;
 using namespace rsc::logging;
@@ -46,7 +47,12 @@ public:
 	}
 
 	void notify(boost::shared_ptr<string> e) {
-		cout << "Received: " << *e << endl;
+		cout << "Data received: " << *e << endl;
+		count++;
+		if (count == 1200) {
+			boost::recursive_mutex::scoped_lock lock(m);
+			cond.notify_all();
+		}
 	}
 
 	long count;
@@ -54,26 +60,17 @@ public:
 	boost::condition cond;
 };
 
-int main( int argc, const char* argv[] ) {
+int main(void) {
+
+	RSBFactory factory;
 
 	LoggerPtr l = Logger::getLogger("receiver");
 
 	boost::timer t;
 
-	SubscriberPtr s(new Subscriber("blub"));
+	SubscriberPtr s = factory.createSubscriber("blub");
 	SubscriptionPtr sub(new Subscription());
-
-	string uri = "rsb://example/informer";
-	for (int i = 0; i < argc; i++) {
-			if (argv[i][0]=='r') {
-				// assume RSB URL is given
-				uri = argv[1];
-			}
-	}
-
-	cout << "Listening with Data Handler to URL: " << uri << endl;
-
-	AbstractFilterPtr f(new ScopeFilter(uri));
+	AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
 	sub->appendFilter(f);
 
 	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
@@ -88,10 +85,16 @@ int main( int argc, const char* argv[] ) {
 	// wait *here* for shutdown as this is not known to the Subscriber
 	{
 		boost::recursive_mutex::scoped_lock lock(dh->m);
-		while (true) {
+		while (dh->count != 1200) {
 			dh->cond.wait(lock);
 		}
 	}
+
+	cout << "Last message was sent to the following groups: " << endl;
+
+	cout << "Elapsed time per message (" << dh->count
+			<< " messages received): " << t.elapsed() / dh->count << " s"
+			<< endl;
 
 	return (EXIT_SUCCESS);
 }

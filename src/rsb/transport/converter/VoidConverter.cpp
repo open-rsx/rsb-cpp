@@ -24,31 +24,30 @@
 using namespace std;
 
 namespace rsb {
-
 namespace transport {
 
-VoidConverter::VoidConverter() {
+const string VoidConverter::TYPE = "void";
+
+VoidConverter::VoidConverter() :
+	AbstractConverter<string> (TYPE, TYPE) {
 }
 
 VoidConverter::~VoidConverter() {
 }
 
-string VoidConverter::getTypeName() {
-	return "void";
+string VoidConverter::serialize(const AnnotatedData &/*data*/, string &wire) {
+	wire.clear();
+	return TYPE;
 }
 
-void VoidConverter::serialize(const std::string &/*type*/,
-		boost::shared_ptr<void> /*data*/, string &m) {
-	m.clear();
+AnnotatedData VoidConverter::deserialize(const std::string &/*wireType*/,
+		const string &/*wire*/) {
+	return make_pair(TYPE, boost::shared_ptr<void>());
 }
 
-boost::shared_ptr<void> VoidConverter::deserialize(const std::string &/*type*/,
-		const string &/*d*/) {
-	return boost::shared_ptr<void>();
-}
-
-CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new VoidConverter, VoidStringConverter)
-;
+// TODO reenable this
+//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new VoidConverter, VoidStringConverter)
+//;
 
 }
 

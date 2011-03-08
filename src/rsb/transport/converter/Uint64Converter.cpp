@@ -19,59 +19,56 @@
 
 #include "Uint64Converter.h"
 
-#include <boost/cstdint.hpp>
+#include <sstream>
 
-#include <rsc/misc/Registry.h>
+#include <boost/cstdint.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include "../SerializationException.h"
 
 using namespace std;
 
 namespace rsb {
-
 namespace transport {
 
-Uint64Converter::Uint64Converter() {
+const string Uint64Converter::TYPE = "uint64";
+
+Uint64Converter::Uint64Converter() :
+	AbstractConverter<string> (TYPE, TYPE) {
 }
 
 Uint64Converter::~Uint64Converter() {
 }
 
-string Uint64Converter::getTypeName() {
-	return "uint64";
+string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
+	assert(data.first == TYPE);
+
+	boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
+			boost::uint64_t>(data.second);
+	stringstream s;
+	s << *number;
+	wire = s.str();
+	return TYPE;
 }
 
-void Uint64Converter::serialize(const std::string &type,
-		boost::shared_ptr<void> data, string &m) {
-	// TODO common check for all converters, refactor to base class
-	if (type == getTypeName()) {
-		boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
-				boost::uint64_t>(data);
-		stringstream s;
-		s << *number;
-		m = s.str();
+AnnotatedData Uint64Converter::deserialize(const string &wireType,
+		const string &wire) {
+	assert(wireType == TYPE);
+
+	try {
+		return make_pair(TYPE,
+				boost::shared_ptr<boost::uint64_t>(new boost::uint64_t(
+						boost::lexical_cast<boost::uint64_t>(wire))));
+	} catch (boost::bad_lexical_cast &e) {
+		throw SerializationException(string(
+				"Unable to cast wire contents to number: ") + e.what());
 	}
-}
-
-boost::shared_ptr<void> Uint64Converter::deserialize(const std::string &type,
-		const string &d) {
-	boost::shared_ptr<void> p;
-	// TODO this check will be a common case. Refactor it to the base class
-	if (type == getTypeName()) {
-		stringstream s;
-		s << d;
-		boost::uint64_t number;
-		// TODO check fail bit
-		s >> number;
-		return boost::shared_ptr<boost::uint64_t>(new boost::uint64_t(number));
-	} else {
-		// TODO better exception required
-		throw("No such type registered at TypeFactory!");
-	}
-	return p;
-}
-
-CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new Uint64Converter, Uint64StringConverter)
-;
 
 }
 
+// TODO reenable this
+//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new Uint64Converter, Uint64StringConverter)
+//;
+
+}
 }

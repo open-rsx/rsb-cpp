@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is a part of the RSB project.
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,30 +17,18 @@
  *
  * ============================================================ */
 
-#ifndef PROTOCOLEXCEPTION_H_
-#define PROTOCOLEXCEPTION_H_
+#include "ConverterCollection.h"
 
-#include "../CommException.h"
+using namespace std;
 
 namespace rsb {
-namespace protocol {
+namespace transport {
 
-/**
- * @author swrede
- */
-class ProtocolException: public rsb::CommException {
-public:
-
-	ProtocolException(const std::string& m) :
-		rsb::CommException(m) {
-	}
-
-	virtual ~ProtocolException() throw () {
-	}
-
-};
+ConverterCollection<string>::Ptr stringConverterCollection() {
+	static ConverterCollection<string>::Ptr collection(new ConverterCollection<
+			string> );
+	return collection;
+}
 
 }
 }
-
-#endif /* PROTOCOLEXCEPTION_H_ */

@@ -20,6 +20,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
+            rsb/RSBFactory.cpp
             rsb/filter/AbstractFilter.cpp
             rsb/filter/ScopeFilter.cpp
             rsb/filter/FilterObservable.cpp
@@ -30,6 +31,9 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/transport/Port.cpp
             rsb/transport/Router.cpp
             rsb/transport/AbstractConverter.cpp
+            rsb/transport/ConverterCollection.cpp
+            rsb/transport/SerializationException.cpp
+            rsb/transport/converter/converters.cpp
             rsb/transport/converter/BoolConverter.cpp
             rsb/transport/converter/StringConverter.cpp
             rsb/transport/converter/Uint64Converter.cpp
@@ -45,6 +49,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/transport/spread/SpreadConnection.cpp
             rsb/transport/spread/ReceiverTask.cpp
             rsb/introspection/IntrospectionConverter.cpp
+            rsb/introspection/introspection.cpp
             ${PROTO_SOURCES}
             ${INTERNAL_PROTO_SOURCES})
 
@@ -63,6 +68,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
             rsb/UnsupportedQualityOfServiceException.h
+            rsb/RSBFactory.h
             rsb/filter/FilterActionTypes.h
             rsb/filter/AbstractFilter.h
             rsb/filter/ScopeFilter.h
@@ -75,6 +81,9 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/transport/Port.h
             rsb/transport/Router.h
             rsb/transport/AbstractConverter.h
+            rsb/transport/ConverterCollection.h
+            rsb/transport/SerializationException.h
+            rsb/transport/converter/converters.h
             rsb/transport/converter/BoolConverter.h
             rsb/transport/converter/StringConverter.h
             rsb/transport/converter/Uint64Converter.h
@@ -90,7 +99,8 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/transport/spread/SpreadConnection.h
             rsb/transport/spread/ReceiverTask.h
             rsb/introspection/PortStateChange.h
-            rsb/introspection/IntrospectionConverter.h)
+            rsb/introspection/IntrospectionConverter.h
+            rsb/introspection/introspection.h)
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")

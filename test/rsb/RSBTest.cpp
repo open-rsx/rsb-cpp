@@ -35,6 +35,7 @@
 #include "rsb/Subscription.h"
 #include "rsb/filter/AbstractFilter.h"
 #include "rsb/filter/ScopeFilter.h"
+#include "rsb/introspection/introspection.h"
 
 #include "testhelpers.h"
 
@@ -50,6 +51,9 @@ using namespace rsc::threading;
 
 TEST(RSBTest, testRoundtrip)
 {
+
+	introspection::registerIntrospectionConverters();
+
 	// task execution service
 	TaskExecutorPtr exec(new ThreadedTaskExecutor);
 

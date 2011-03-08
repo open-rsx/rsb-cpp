@@ -21,9 +21,9 @@
 #define RECEIVERTASK_H_
 
 #include <rsc/logging/Logger.h>
-#include <rsc/misc/Registry.h>
 #include <rsc/threading/RepetitiveTask.h>
 
+#include "../ConverterCollection.h"
 #include "../../RSBEvent.h"
 #include "../QueueAndDispatchTask.h"
 #include "../Port.h"
@@ -41,9 +41,8 @@ typedef boost::shared_ptr<
  */
 class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
-	ReceiverTask(SpreadConnectionPtr s, rsc::misc::Registry<
-			rsb::transport::AbstractConverter<std::string> > *converters,
-			QADPtr q);
+	ReceiverTask(SpreadConnectionPtr s, transport::ConverterCollection<
+			std::string>::Ptr converters, QADPtr q);
 	virtual ~ReceiverTask();
 
 	void execute();
@@ -52,8 +51,7 @@ private:
 	rsc::logging::LoggerPtr logger;
 	volatile bool cancelRequested;
 	SpreadConnectionPtr con;
-	rsc::misc::Registry<rsb::transport::AbstractConverter<std::string> >
-			*converters;
+	transport::ConverterCollection<std::string>::Ptr converters;
 	QADPtr qad;
 };
 

@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is a part of the RSB project.
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,30 +17,21 @@
  *
  * ============================================================ */
 
-#ifndef PROTOCOLEXCEPTION_H_
-#define PROTOCOLEXCEPTION_H_
+#pragma once
 
-#include "../CommException.h"
+#include "../RSBException.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace protocol {
+namespace transport {
 
-/**
- * @author swrede
- */
-class ProtocolException: public rsb::CommException {
+class RSB_EXPORT SerializationException: public RSBException {
 public:
 
-	ProtocolException(const std::string& m) :
-		rsb::CommException(m) {
-	}
-
-	virtual ~ProtocolException() throw () {
-	}
+	explicit SerializationException(const std::string &message);
 
 };
 
 }
 }
 
-#endif /* PROTOCOLEXCEPTION_H_ */

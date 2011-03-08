@@ -25,24 +25,30 @@
 #include <string>
 
 namespace rsb {
-
 namespace introspection {
 
-class IntrospectionConverter: public rsb::transport::AbstractConverter<std::string> {
+/**
+ * @author swrede
+ */
+class IntrospectionConverter: public rsb::transport::AbstractConverter<
+		std::string> {
 public:
 	IntrospectionConverter();
 	virtual ~IntrospectionConverter();
 
-	std::string getTypeName();
+	std::string serialize(const rsb::transport::AnnotatedData &data,
+			std::string &wire);
+	rsb::transport::AnnotatedData deserialize(const std::string &wireType,
+			const std::string &wire);
 
-	void serialize(const std::string &type, boost::shared_ptr<void> data, std::string &m);
-	boost::shared_ptr<void> deserialize(const std::string &type, const std::string &d);
+private:
+	static const std::string TYPE;
+
 };
 
 typedef boost::shared_ptr<IntrospectionConverter> IntrospectionConverterPtr;
 
 }
-
 }
 
 #endif /* INTROSPECTIONCONVERTER_H_ */

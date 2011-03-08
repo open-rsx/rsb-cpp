@@ -24,45 +24,35 @@
 using namespace std;
 
 namespace rsb {
-
 namespace transport {
 
-StringConverter::StringConverter() {
+const string StringConverter::WIRE_TYPE = "string";
+
+StringConverter::StringConverter() :
+	AbstractConverter<string> (WIRE_TYPE, WIRE_TYPE) {
 }
 
 StringConverter::~StringConverter() {
 }
 
-string StringConverter::getTypeName() {
-	return "string";
+string StringConverter::serialize(const AnnotatedData &data, string &wire) {
+	assert(data.first == WIRE_TYPE);
+	boost::shared_ptr<string> s = boost::static_pointer_cast<string>(
+			data.second);
+	// essentially return the contained string to the serialization medium
+	wire = *s;
+	return WIRE_TYPE;
 }
 
-void StringConverter::serialize(const std::string &type,
-		boost::shared_ptr<void> data, string &m) {
-	// TODO common check for all converters, refactor to base class
-	if (type == getTypeName()) {
-		boost::shared_ptr<string> s = boost::static_pointer_cast<string>(data);
-		// essentially return the contained string to the serialization medium
-		m = *s;
-	}
+AnnotatedData StringConverter::deserialize(const std::string &wireType,
+		const string &wire) {
+	assert(wireType == WIRE_TYPE);
+	return make_pair(WIRE_TYPE, boost::shared_ptr<string>(new string(wire)));
 }
 
-boost::shared_ptr<void> StringConverter::deserialize(const std::string &type,
-		const string &d) {
-	boost::shared_ptr<void> p;
-	// TODO this check will be a common case. Refactor it to the base class
-	if (type == getTypeName()) {
-		boost::shared_ptr<string> s(new string(d));
-		p = boost::static_pointer_cast<void>(s);
-	} else {
-		// TODO better exception required
-		throw("No such type registered at TypeFactory!");
-	}
-	return p;
-}
-
-CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new StringConverter, StringStringConverter)
-;
+// TODO reenable this
+//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new StringConverter, StringStringConverter)
+//;
 
 }
 

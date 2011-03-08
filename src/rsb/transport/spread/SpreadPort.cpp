@@ -47,13 +47,13 @@ namespace spread {
 const SpreadPort::QoSMap SpreadPort::qosMapping = SpreadPort::buildQoSMapping();
 
 SpreadPort::SpreadPort(
-		rsc::misc::Registry<AbstractConverter<string> > *converters) :
+		rsb::transport::ConverterCollection<std::string>::Ptr converters) :
 	converters(converters) {
 	init();
 }
 
 SpreadPort::SpreadPort() :
-	converters(stringConverterRegistry()) {
+	converters(stringConverterCollection()) {
 	init();
 }
 
@@ -144,31 +144,27 @@ void SpreadPort::notify(rsb::filter::ScopeFilter* f,
 
 void SpreadPort::push(RSBEventPtr e) {
 	// get matching converter
-	string s;
-	boost::shared_ptr<void> obj =
-			boost::static_pointer_cast<void>(e->getData());
-	//	cerr << "SpreadPort::push Type: " << e->getType() << endl;
-	boost::shared_ptr<AbstractConverter<string> > c = converters->getRegistree(
-			e->getType());
-	c->serialize(e->getType(), obj, s);
-	//	cerr << "SpreadPort::push after serialize" << endl;
+	string wire;
+	boost::shared_ptr<void> obj = e->getData();
+	// TODO exception handling if converter is not available
+	boost::shared_ptr<AbstractConverter<string> > c =
+			converters->getConverterByDataType(e->getType());
+	string wireType = c->serialize(make_pair(e->getType(), obj), wire);
+
 	Notification n;
 	n.set_eid(e->getUUID().getIdAsString());
 	n.set_sequence_length(0);
 	n.set_standalone(false);
 	n.set_uri(e->getURI());
-	n.set_type_id(e->getType());
+	n.set_type_id(wireType);
 	for (map<string, string>::const_iterator it = e->metaInfoBegin(); it
 			!= e->metaInfoEnd(); ++it) {
 		MetaInfo *info = n.mutable_metainfos()->Add();
 		info->set_key(it->first);
 		info->set_value(it->second);
 	}
-	//	cerr << "SpreadPort::push after set type" << endl;
-	n.mutable_data()->set_binary(s);
-	// TODO fix this, think about whether this is needed
-	n.mutable_data()->set_length(s.length());
-	//	cerr << "SpreadPort::push after notification" << endl;
+	n.mutable_data()->set_binary(wire);
+	n.mutable_data()->set_length(wire.length());
 	string sm;
 
 	if (!n.SerializeToString(&sm)) {

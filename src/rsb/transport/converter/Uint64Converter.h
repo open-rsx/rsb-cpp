@@ -38,10 +38,14 @@ public:
 	Uint64Converter();
 	virtual ~Uint64Converter();
 
-	std::string getTypeName();
+	std::string serialize(const AnnotatedData &data, std::string &wire);
+	AnnotatedData deserialize(const std::string &wireType,
+			const std::string &wire);
 
-	void serialize(const std::string &type, boost::shared_ptr<void> data, std::string &m);
-	boost::shared_ptr<void> deserialize(const std::string &type, const std::string &d);
+private:
+
+	static const std::string TYPE;
+
 };
 
 typedef boost::shared_ptr<Uint64Converter> Uint64ConverterPtr;

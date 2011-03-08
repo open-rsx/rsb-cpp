@@ -19,57 +19,48 @@
 
 #include "BoolConverter.h"
 
-#include <rsc/misc/Registry.h>
+#include <sstream>
+
+#include "../SerializationException.h"
 
 using namespace std;
 
 namespace rsb {
-
 namespace transport {
 
-BoolConverter::BoolConverter() {
+const string BoolConverter::WIRE_TYPE = "bool";
+
+BoolConverter::BoolConverter() :
+	AbstractConverter<string> (WIRE_TYPE, WIRE_TYPE) {
 }
 
 BoolConverter::~BoolConverter() {
 }
 
-string BoolConverter::getTypeName() {
-	return "bool";
-}
-
-void BoolConverter::serialize(const std::string &type,
-		boost::shared_ptr<void> data, string &m) {
-	// TODO common check for all converters, refactor to base class
-	if (type == getTypeName()) {
-		boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data);
-		if (*s) {
-			m = "t";
-		} else {
-			m.clear();
-		}
-	}
-}
-
-boost::shared_ptr<void> BoolConverter::deserialize(const std::string &type,
-		const string &d) {
-	boost::shared_ptr<void> p;
-	// TODO this check will be a common case. Refactor it to the base class
-	if (type == getTypeName()) {
-		if (d.empty()) {
-			return boost::shared_ptr<bool>(new bool(false));
-		} else {
-			return boost::shared_ptr<bool>(new bool(true));
-		}
+string BoolConverter::serialize(const AnnotatedData &data, string &wire) {
+	assert(data.first == WIRE_TYPE);
+	boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data.second);
+	if (*s) {
+		wire = "t";
 	} else {
-		// TODO better exception required
-		throw("No such type registered at TypeFactory!");
+		wire.clear();
 	}
-	return p;
+	return WIRE_TYPE;
 }
 
-CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new BoolConverter, BoolStringConverter);
-;
-
+AnnotatedData BoolConverter::deserialize(const std::string &wireType,
+		const string &wire) {
+	assert(wireType == WIRE_TYPE);
+	if (wire.empty()) {
+		return make_pair(WIRE_TYPE, boost::shared_ptr<bool>(new bool(false)));
+	} else {
+		return make_pair(WIRE_TYPE, boost::shared_ptr<bool>(new bool(true)));
+	}
 }
 
+// TODO registration
+//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new BoolConverter, BoolStringConverter);
+//;
+
+}
 }

@@ -23,9 +23,9 @@
 #include <map>
 
 #include <rsc/logging/Logger.h>
-#include <rsc/misc/Registry.h>
 #include <rsc/threading/TaskExecutor.h>
 
+#include "../ConverterCollection.h"
 #include "../Port.h"
 #include "../../filter/ScopeFilter.h"
 #include "../QueueAndDispatchTask.h"
@@ -44,8 +44,8 @@ namespace spread {
 class RSB_EXPORT SpreadPort: public rsb::transport::Port {
 public:
 	SpreadPort();
-	explicit SpreadPort(rsc::misc::Registry<rsb::transport::AbstractConverter<
-			std::string> > *converters);
+	explicit SpreadPort(
+			rsb::transport::ConverterCollection<std::string>::Ptr converters);
 	virtual ~SpreadPort();
 
 	void push(rsb::RSBEventPtr e);
@@ -76,8 +76,7 @@ private:
 
 	MembershipManagerPtr memberships;
 
-	rsc::misc::Registry<rsb::transport::AbstractConverter<std::string> >
-			*converters;
+	rsb::transport::ConverterCollection<std::string>::Ptr converters;
 
 	/**
 	 * The message type applied to every outgoing message.

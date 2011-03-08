@@ -33,11 +33,10 @@ using namespace rsb::transport;
 using namespace rsc::logging;
 
 namespace rsb {
-
 namespace spread {
 
-ReceiverTask::ReceiverTask(SpreadConnectionPtr s, rsc::misc::Registry<
-		rsb::transport::AbstractConverter<std::string> > *converters, QADPtr q) :
+ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
+		transport::ConverterCollection<std::string>::Ptr converters, QADPtr q) :
 	logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
 			cancelRequested(false), con(s), converters(converters), qad(q) {
 	// Verify that the version of the library that we linked against is
@@ -74,14 +73,17 @@ void ReceiverTask::execute() {
 			RSBEventPtr e(new RSBEvent());
 			e->setUUID(n->eid());
 			e->setURI(n->uri());
-			e->setType(n->type_id());
 			for (int i = 0; i < n->metainfos_size(); ++i) {
 				e->addMetaInfo(n->metainfos(i).key(), n->metainfos(i).value());
 			}
 			// TODO refactor converter handling and conversion
-			boost::shared_ptr<AbstractConverter<string> > c =
-					converters->getRegistree(e->getType());
-			e->setData(c->deserialize(e->getType(), n->data().binary()));
+			// TODO error handling
+			AbstractConverter<string>::Ptr c =
+					converters->getConverterByWireType(n->type_id());
+			transport::AnnotatedData deserialized = c->deserialize(
+					n->type_id(), n->data().binary());
+			e->setType(deserialized.first);
+			e->setData(deserialized.second);
 			qad->addElement(e);
 		}
 	} catch (rsb::CommException &e) {

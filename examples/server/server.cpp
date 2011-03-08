@@ -19,6 +19,7 @@
 
 #include <rsb/patterns/RemoteServer.h>
 #include <rsb/patterns/Server.h>
+#include <rsb/RSBFactory.h>
 
 #include <rsc/logging/LoggerFactory.h>
 
@@ -43,8 +44,8 @@ public:
 		return "string";
 	}
 
-	boost::shared_ptr<string> call(const string &/*methodName*/, boost::shared_ptr<
-			string> input) {
+	boost::shared_ptr<string> call(const string &/*methodName*/,
+			boost::shared_ptr<string> input) {
 		return boost::shared_ptr<string>(
 				new string("reply to '" + *input + "'"));
 	}
@@ -53,11 +54,13 @@ public:
 
 int main(int /*argc*/, char **/*argv*/) {
 
+	RSBFactory factory;
+
 	rsc::logging::LoggerFactory::getInstance()->reconfigure(
 			rsc::logging::Logger::FATAL);
 
 	const string uri = "rsb://sxy";
-	Server server(uri);
+	ServerPtr server = factory.createServer(uri);
 
 	const string methodName1 = "methodOne";
 	Server::CallbackPtr m1(new TestCallback(methodName1));
@@ -65,10 +68,10 @@ int main(int /*argc*/, char **/*argv*/) {
 	const string methodName2 = "methodTwo";
 	Server::CallbackPtr m2(new TestCallback(methodName2));
 
-	server.registerMethod(methodName1, m1);
-	server.registerMethod(methodName2, m2);
+	server->registerMethod(methodName1, m1);
+	server->registerMethod(methodName2, m2);
 
-	RemoteServer remoteServer(uri);
+	RemoteServerPtr remoteServer = factory.createRemoteServer(uri);
 
 	int iteration = 1;
 	while (true) {
@@ -83,7 +86,8 @@ int main(int /*argc*/, char **/*argv*/) {
 		request1->setData(VoidPtr(new string(s1.str())));
 		cout << "+++ Calling method " << methodName1 << endl;
 		try {
-			RSBEventPtr result = remoteServer.callMethod(methodName1, request1);
+			RSBEventPtr result =
+					remoteServer->callMethod(methodName1, request1);
 			cout << "+++ got result: " << *result << ": "
 					<< *(boost::static_pointer_cast<string>(result->getData()))
 					<< endl;
@@ -98,7 +102,8 @@ int main(int /*argc*/, char **/*argv*/) {
 		request2->setData(VoidPtr(new string(s2.str())));
 		cout << "+++ Calling method " << methodName2 << endl;
 		try {
-			RSBEventPtr result = remoteServer.callMethod(methodName2, request2);
+			RSBEventPtr result =
+					remoteServer->callMethod(methodName2, request2);
 			cout << "+++ got result: " << *result << ": "
 					<< *(boost::static_pointer_cast<string>(result->getData()))
 					<< endl;

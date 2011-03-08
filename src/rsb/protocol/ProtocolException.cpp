@@ -20,10 +20,7 @@
 #include "ProtocolException.h"
 
 namespace rsb {
-
 namespace transport {
 
-
 }
-
 }

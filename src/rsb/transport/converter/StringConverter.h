@@ -28,19 +28,25 @@
 namespace rsb {
 namespace transport {
 
-// converts any string into any string serializing content to a string...
+/**
+ * Converts any string into any string serializing content to a string.
+ *
+ * @author swrede
+ */
 class StringConverter: public rsb::transport::AbstractConverter<std::string> {
 public:
+
 	StringConverter();
 	virtual ~StringConverter();
 
-	std::string getTypeName();
+	std::string serialize(const AnnotatedData &data, std::string &wire);
+	AnnotatedData deserialize(const std::string &wireType,
+			const std::string &wire);
 
-	void serialize(const std::string &type, boost::shared_ptr<void> data, std::string &m);
-	boost::shared_ptr<void> deserialize(const std::string &type, const std::string &d);
+private:
+	static const std::string WIRE_TYPE;
+
 };
-
-typedef boost::shared_ptr<StringConverter> StringConverterPtr;
 
 }
 }
