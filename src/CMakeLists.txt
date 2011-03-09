@@ -104,7 +104,12 @@ SET(HEADERS rsb/RSBVersion.h
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-TARGET_LINK_LIBRARIES(${RSB_NAME} ${LIBS_LIBRARIES} ${Boost_LIBRARIES} ${SPREAD_LIBRARIES} ${PROTOBUF_LIBRARIES} ${RSC_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+TARGET_LINK_LIBRARIES(${RSB_NAME} ${LIBS_LIBRARIES}
+                                  ${Boost_LIBRARIES}
+                                  ${SPREAD_LIBRARIES}
+                                  ${PROTOBUF_LIBRARIES}
+                                  ${RSC_LIBRARIES}
+                                  ${CMAKE_THREAD_LIBS_INIT})
 SET_TARGET_PROPERTIES(${RSB_NAME}
                       PROPERTIES
                       VERSION ${RSB_VERSION})
