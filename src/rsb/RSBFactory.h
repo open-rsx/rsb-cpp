@@ -23,6 +23,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/TypeStringTools.h>
+
 #include "rsb/rsbexports.h"
 #include "Publisher.h"
 #include "Subscriber.h"
@@ -49,9 +51,9 @@ public:
 
 	template<class DataType>
 	typename Publisher<DataType>::Ptr createPublisher(const std::string &uri,
-			const std::string &typeName) {
+							  const std::string &dataType = rsc::runtime::typeName<DataType>()) {
 		return typename Publisher<DataType>::Ptr(new Publisher<DataType> (uri,
-				typeName));
+				dataType));
 	}
 
 	SubscriberPtr createSubscriber(const std::string &uri);
@@ -65,4 +67,3 @@ public:
 typedef boost::shared_ptr<RSBFactory> RSBFactoryPtr;
 
 }
-
