@@ -42,25 +42,16 @@ using namespace rsb::filter;
 
 class MyDataHandler: public DataHandler<string> {
 public:
-	MyDataHandler() :
-		count(0) {
+	MyDataHandler() {
 	}
 
 	void notify(boost::shared_ptr<string> e) {
 		cout << "Data received: " << *e << endl;
-		count++;
-		if (count == 1200) {
-			boost::recursive_mutex::scoped_lock lock(m);
-			cond.notify_all();
-		}
 	}
 
-	long count;
-	boost::recursive_mutex m;
-	boost::condition cond;
 };
 
-int main(void) {
+int main(int argc, char **argv) {
 
 	RSBFactory factory;
 
@@ -70,8 +61,11 @@ int main(void) {
 
 	SubscriberPtr s = factory.createSubscriber("blub");
 	SubscriptionPtr sub(new Subscription());
-	AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
-	sub->appendFilter(f);
+	if (argc > 1) {
+		sub->appendFilter(AbstractFilterPtr(new ScopeFilter(argv[1])));
+	} else {
+		sub->appendFilter(AbstractFilterPtr(new ScopeFilter("rsb://example/informer")));
+	}
 
 	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
 
@@ -82,19 +76,9 @@ int main(void) {
 
 	cout << "Subscriber setup finished. Waiting for messages..." << endl;
 
-	// wait *here* for shutdown as this is not known to the Subscriber
-	{
-		boost::recursive_mutex::scoped_lock lock(dh->m);
-		while (dh->count != 1200) {
-			dh->cond.wait(lock);
-		}
+	while (true) {
+		boost::this_thread::sleep(boost::posix_time::seconds(1000));
 	}
-
-	cout << "Last message was sent to the following groups: " << endl;
-
-	cout << "Elapsed time per message (" << dh->count
-			<< " messages received): " << t.elapsed() / dh->count << " s"
-			<< endl;
 
 	return (EXIT_SUCCESS);
 }
