@@ -79,7 +79,7 @@ void ReceiverTask::execute() {
 			// TODO refactor converter handling and conversion
 			// TODO error handling
 			AbstractConverter<string>::Ptr c =
-					converters->getConverterByWireType(n->type_id());
+					converters->getConverterByWireSchema(n->type_id());
 			transport::AnnotatedData deserialized = c->deserialize(
 					n->type_id(), n->data().binary());
 			e->setType(deserialized.first);

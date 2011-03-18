@@ -59,12 +59,12 @@ public:
 	/**
 	 * Deserializes a domain object from a wire format.
 	 *
-	 * @param wireType type of the wire message
+	 * @param wireSchema type of the wire message
 	 * @param wire the wire containing the date
 	 * @return the deserialized domain object annotated with its data type name
 	 * @throw SerializationException if deserializing the message fails
 	 */
-	virtual AnnotatedData deserialize(const std::string &wireType,
+	virtual AnnotatedData deserialize(const std::string &wireSchema,
 			const WireFormat &wire) = 0;
 
 	/**
@@ -77,12 +77,14 @@ public:
 	}
 
 	/**
-	 * Returns the name of the wire type this converter can deserialize.
+	 * Returns the name of the wire schema this converter can
+	 * (de)serialize from/to.
 	 *
-	 * @return name of the wire format this converter can deserialize
+	 * @return name of the wire schema from/to this converter can
+	 * (de)serialize
 	 */
-	virtual std::string getWireType() const {
-		return wireType;
+        virtual std::string getWireSchema() const {
+		return wireSchema;
 	}
 
 	typedef boost::shared_ptr<AbstractConverter<WireFormat> > Ptr;
@@ -93,16 +95,16 @@ protected:
 	 * Creates a new instance of this class with automatic handling for types.
 	 *
 	 * @param dataType data type this converter can serialize
-	 * @param wireType wire type this converter can deserialize
+	 * @param wireSchema wire schema this converter can deserialize
 	 */
-	AbstractConverter(const std::string &dataType, const std::string &wireType) :
-		dataType(dataType), wireType(wireType) {
+	AbstractConverter(const std::string &dataType, const std::string &wireSchema) :
+		dataType(dataType), wireSchema(wireSchema) {
 	}
 
 private:
 
 	std::string dataType;
-	std::string wireType;
+	std::string wireSchema;
 
 };
 

@@ -52,9 +52,9 @@ public:
 	 */
 	void registerConverter(Converter converter) {
 
-		if (wireTypeMap.count(converter->getWireType())) {
-			throw std::invalid_argument("Wire type '"
-					+ converter->getWireType()
+		if (wireSchemaMap.count(converter->getWireSchema())) {
+			throw std::invalid_argument("Wire schema '"
+					+ converter->getWireSchema()
 					+ "' already exists in the collection.");
 		}
 		if (dataTypeMap.count(converter->getDataType())) {
@@ -63,25 +63,25 @@ public:
 					+ "' already exists in the collection.");
 		}
 
-		wireTypeMap[converter->getWireType()] = converter;
+		wireSchemaMap[converter->getWireSchema()] = converter;
 		dataTypeMap[converter->getDataType()] = converter;
 
 	}
 
 	/**
-	 * Accesses a the converter for the specified wire type.
+	 * Accesses a the converter for the specified wire schema.
 	 *
-	 * @param wireType wire type to find a converter for
+	 * @param wireSchema wire schema to find a converter for
 	 * @return the converter
-	 * @throw std::invalid_argument no converter for the given type
+	 * @throw std::invalid_argument no converter for the given schema
 	 */
-	Converter getConverterByWireType(const std::string &wireType) const {
+	Converter getConverterByWireSchema(const std::string &wireSchema) const {
 
 		typename std::map<std::string, Converter>::const_iterator it =
-				wireTypeMap.find(wireType);
-		if (it == wireTypeMap.end()) {
-			throw std::invalid_argument("There is no converter for wire type '"
-					+ wireType + "'.");
+				wireSchemaMap.find(wireSchema);
+		if (it == wireSchemaMap.end()) {
+			throw std::invalid_argument("There is no converter for wire schema '"
+					+ wireSchema + "'.");
 		} else {
 			return it->second;
 		}
@@ -112,7 +112,7 @@ public:
 
 private:
 
-	std::map<std::string, Converter> wireTypeMap;
+	std::map<std::string, Converter> wireSchemaMap;
 	std::map<std::string, Converter> dataTypeMap;
 
 };
@@ -124,4 +124,3 @@ RSB_EXPORT ConverterCollection<std::string>::Ptr stringConverterCollection();
 
 }
 }
-
