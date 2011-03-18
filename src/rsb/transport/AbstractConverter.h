@@ -25,6 +25,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/TypeStringTools.h>
+
 #include "../RSBEvent.h"
 
 #include "rsb/rsbexports.h"
@@ -98,6 +100,22 @@ protected:
 	 */
 	AbstractConverter(const std::string &dataType, const std::string &wireSchema) :
 		dataType(dataType), wireSchema(wireSchema) {
+	}
+
+        /**
+	 * Creates a new instance of this class with a data type
+	 * string that is inferred based on the template parameter
+	 * @a DataType
+	 *
+	 * @tparam DataType type of the objects that the converter
+	 * (de)serializes.
+	 * @param wireSchema wire schema from/to this converter can
+	 * (de)serialize.
+	 */
+        template <typename DataType>
+	AbstractConverter(const std::string &wireSchema) :
+	        dataType(rsc::runtime::typeName<DataType>()),
+		wireSchema(wireSchema) {
 	}
 
 private:
