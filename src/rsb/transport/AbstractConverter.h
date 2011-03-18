@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef ABSTRACTCONVERTER_H_
-#define ABSTRACTCONVERTER_H_
+#pragma once
 
 #include <set>
 #include <string>
@@ -110,5 +109,3 @@ private:
 
 }
 }
-
-#endif /* ABSTRACTCONVERTER_H_ */
