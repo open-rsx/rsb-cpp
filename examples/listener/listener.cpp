@@ -46,7 +46,7 @@ public:
 	}
 
 	void notify(boost::shared_ptr<string> e) {
-		cout << "Data received: " << *e << endl;
+		cout << *e << endl;
 	}
 
 };
@@ -61,11 +61,13 @@ int main(int argc, char **argv) {
 
 	SubscriberPtr s = factory.createSubscriber("blub");
 	SubscriptionPtr sub(new Subscription());
+	string uri;
 	if (argc > 1) {
-		sub->appendFilter(AbstractFilterPtr(new ScopeFilter(argv[1])));
+		uri = argv[1];
 	} else {
-		sub->appendFilter(AbstractFilterPtr(new ScopeFilter("rsb://example/informer")));
+		uri = "rsb://example/informer";
 	}
+	sub->appendFilter(AbstractFilterPtr(new ScopeFilter(uri)));
 
 	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
 
@@ -74,7 +76,8 @@ int main(int argc, char **argv) {
 
 	s->addSubscription(sub);
 
-	cout << "Subscriber setup finished. Waiting for messages..." << endl;
+	cerr << "Subscriber setup finished. Waiting for messages on uri " << uri
+			<< endl;
 
 	while (true) {
 		boost::this_thread::sleep(boost::posix_time::seconds(1000));
