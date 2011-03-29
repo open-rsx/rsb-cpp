@@ -20,9 +20,13 @@
 #ifndef RECEIVERTASK_H_
 #define RECEIVERTASK_H_
 
+#include <map>
+
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/RepetitiveTask.h>
+#include <rsc/misc/UUID.h>
 
+#include "../../protocol/Notification.h"
 #include "../ConverterCollection.h"
 #include "../../RSBEvent.h"
 #include "../QueueAndDispatchTask.h"
@@ -31,31 +35,63 @@
 #include "SpreadConnection.h"
 
 namespace rsb {
-namespace spread {
+  namespace spread {
 
-typedef boost::shared_ptr<
-		rsb::transport::QueueAndDispatchTask<rsb::RSBEventPtr> > QADPtr;
+    typedef boost::shared_ptr<
+      rsb::transport::QueueAndDispatchTask<rsb::RSBEventPtr> > QADPtr;
 
-/**
- * @author swrede
- */
-class ReceiverTask: public rsc::threading::RepetitiveTask {
-public:
-	ReceiverTask(SpreadConnectionPtr s, transport::ConverterCollection<
-			std::string>::Ptr converters, QADPtr q);
-	virtual ~ReceiverTask();
+    /**
+     * @author swrede
+     */
+    
+    class DataStore {
+    public:
+      DataStore(rsb::protocol::NotificationPtr n) :
+      logger(rsc::logging::Logger::getLogger("rsb.spread.DataStore")),
+      receivedParts(0) {
+        store.resize(n->num_data_parts()+1);
+        add(n);
+      }
+      ~DataStore() {};
+      
+      std::string getData(unsigned int i) {
+        return store[i]->data().binary();
+      }
+      
+      unsigned int add(rsb::protocol::NotificationPtr n) {
+        RSCTRACE(logger, "Add message " << n->eid() << " (part " << n->data_part() << ") to DataStore");
+        store[n->data_part()] = n;
+        return receivedParts++;
+      }
+      
+    private:
+      rsc::logging::LoggerPtr logger;
+      unsigned int receivedParts;
+      std::vector<rsb::protocol::NotificationPtr> store;
+    };
 
-	void execute();
+    typedef boost::shared_ptr<DataStore> DataStorePtr;
+    
 
-private:
-	rsc::logging::LoggerPtr logger;
-	volatile bool cancelRequested;
-	SpreadConnectionPtr con;
-	transport::ConverterCollection<std::string>::Ptr converters;
-	QADPtr qad;
-};
+    class ReceiverTask: public rsc::threading::RepetitiveTask {
+    public:
+      ReceiverTask(SpreadConnectionPtr s, transport::ConverterCollection<
+                   std::string>::Ptr converters, QADPtr q);
+      virtual ~ReceiverTask();
 
-}
+      void execute();
+
+    private:  
+      rsc::logging::LoggerPtr logger;
+      volatile bool cancelRequested;
+      SpreadConnectionPtr con;
+      transport::ConverterCollection<std::string>::Ptr converters;
+      QADPtr qad;
+      std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
+      std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;
+    };
+
+  }
 }
 
 #endif /* RECEIVERTASK_H_ */

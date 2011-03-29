@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include <string.h>
+#include <math.h>
 
 #include <rsc/misc/Registry.h>
 #include <rsc/threading/ThreadedTaskExecutor.h>
@@ -42,194 +43,222 @@ using namespace rsb::protocol;
 using namespace rsc::threading;
 
 namespace rsb {
-namespace spread {
+  namespace spread {
+    
+    const SpreadPort::QoSMap SpreadPort::qosMapping = SpreadPort::buildQoSMapping();
+    
+    SpreadPort::SpreadPort(
+                           rsb::transport::ConverterCollection<std::string>::Ptr converters) :
+    converters(converters) {
+      init();
+    }
 
-const SpreadPort::QoSMap SpreadPort::qosMapping = SpreadPort::buildQoSMapping();
+    SpreadPort::SpreadPort() :
+      converters(stringConverterCollection()) {
+      init();
+    }
 
-SpreadPort::SpreadPort(
-		rsb::transport::ConverterCollection<std::string>::Ptr converters) :
-	converters(converters) {
-	init();
-}
+    void SpreadPort::init() {
+      logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadPort");
+      RSCDEBUG(logger, "SpreadPort() entered, port id: " << id.getIdAsString());
+      shutdown = false;
+      exec = TaskExecutorPtr(new ThreadedTaskExecutor);
+      // TODO ConnectionPool for SpreadConnections?!?
+      // TODO Send Message over Managing / Introspection Channel
+      // TODO Generate Unique-IDs for SpreadPorts
+      con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString()));
+      // TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
+      //st = boost::shared_ptr<StatusTask>(new StatusTask(this));
+      qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> >(new QueueAndDispatchTask<RSBEventPtr> ());
+      rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(con, converters, qad));
+      memberships = MembershipManagerPtr(new MembershipManager());
+      setQualityOfServiceSpecs(QualityOfServiceSpec());
+    }
 
-SpreadPort::SpreadPort() :
-	converters(stringConverterCollection()) {
-	init();
-}
+    void SpreadPort::activate() {
+      // connect to spread
+      con->activate();
+      // (re-)start threads
+      exec->schedule(rec);
+      exec->schedule(qad);
+      //exec->schedule(st);
+    }
 
-void SpreadPort::init() {
-	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadPort");
-	RSCDEBUG(logger, "SpreadPort() entered, port id: " << id.getIdAsString());
-	shutdown = false;
-	exec = TaskExecutorPtr(new ThreadedTaskExecutor);
-	// TODO ConnectionPool for SpreadConnections?!?
-	// TODO Send Message over Managing / Introspection Channel
-	// TODO Generate Unique-IDs for SpreadPorts
-	con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString()));
-	// TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
-	//st = boost::shared_ptr<StatusTask>(new StatusTask(this));
-	qad = boost::shared_ptr<QueueAndDispatchTask<RSBEventPtr> >(
-			new QueueAndDispatchTask<RSBEventPtr> ());
-	rec = boost::shared_ptr<ReceiverTask>(
-			new ReceiverTask(con, converters, qad));
-	memberships = MembershipManagerPtr(new MembershipManager());
-	setQualityOfServiceSpecs(QualityOfServiceSpec());
-}
+    // TODO think about extracting qad functions into QADPort?!?
+    void SpreadPort::setObserver(Action a) {
+      qad->setObserver(a);
+    }
 
-void SpreadPort::activate() {
-	// connect to spread
-	con->activate();
-	// (re-)start threads
-	exec->schedule(rec);
-	exec->schedule(qad);
-	//exec->schedule(st);
-}
+    void SpreadPort::removeObserver(Action /*a*/) {
+      qad->setObserver(NULL);
+    }
 
-// TODO think about extracting qad functions into QADPort?!?
-void SpreadPort::setObserver(Action a) {
-	qad->setObserver(a);
-}
+    void SpreadPort::deactivate() {
+      shutdown = true;
+      RSCDEBUG(logger, "deactivate() entered"); // << *id);
+      rec->cancel();
+      // killing spread connection, exception thrown to rec thread which
+      // should be handled specifically as the cancel flag was set
+      // memberships->leaveAll();
+      con->deactivate();
+      RSCDEBUG(logger, "deactivate() stopping qad task object");
+      qad->cancel();
+      //	cout << "stopping st task" << endl;
+      //	st->cancel();
+      RSCTRACE(logger, "deactivate() finished"); // << *id);
+    }
 
-void SpreadPort::removeObserver(Action /*a*/) {
-	qad->setObserver(NULL);
-}
+    SpreadPort::~SpreadPort() {
+      if (!shutdown) {
+        deactivate();
+      }
+    }
 
-void SpreadPort::deactivate() {
-	shutdown = true;
-	RSCDEBUG(logger, "deactivate() entered"); // << *id);
-	rec->cancel();
-	// killing spread connection, exception thrown to rec thread which
-	// should be handled specifically as the cancel flag was set
-	// memberships->leaveAll();
-	con->deactivate();
-	RSCDEBUG(logger, "deactivate() stopping qad task object");
-	qad->cancel();
-	//	cout << "stopping st task" << endl;
-	//	st->cancel();
-	RSCTRACE(logger, "deactivate() finished"); // << *id);
-}
+    void SpreadPort::notify(rsb::filter::ScopeFilter* f,
+                            rsb::filter::FilterAction::Types at) {
+      // join or leave groups
+      // TODO evaluate success
+      RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);
+      switch (at) {
+      case rsb::filter::FilterAction::ADD:
+        RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
+                << " ,now going to join Spread group")
+          ;
+        memberships->join(f->getURI(), con);
+        break;
+      case rsb::filter::FilterAction::REMOVE:
+        RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
+                << " ,now going to leave Spread group")
+          ;
+        memberships->leave(f->getURI(), con);
+        break;
+      default:
+        RSCWARN(logger,
+                "ScopeFilter Action not supported by this Port implementation")
+          ;
+        break;
+      }
 
-SpreadPort::~SpreadPort() {
-	if (!shutdown) {
-		deactivate();
-	}
-}
+    }
 
-void SpreadPort::notify(rsb::filter::ScopeFilter* f,
-		rsb::filter::FilterAction::Types at) {
-	// join or leave groups
-	// TODO evaluate success
-	RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);
-	switch (at) {
-	case rsb::filter::FilterAction::ADD:
-		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
-				<< " ,now going to join Spread group")
-		;
-		memberships->join(f->getURI(), con);
-		break;
-	case rsb::filter::FilterAction::REMOVE:
-		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
-				<< " ,now going to leave Spread group")
-		;
-		memberships->leave(f->getURI(), con);
-		break;
-	default:
-		RSCWARN(logger,
-				"ScopeFilter Action not supported by this Port implementation")
-		;
-		break;
-	}
+    void SpreadPort::push(RSBEventPtr e) {
+      // TODO Remove "data split" information from notification
+      // TODO Read max spread message len from config file
+      // get matching converter
+      string wire;
+      int spreadMaxLen = 100000;
 
-}
+      boost::shared_ptr<void> obj = e->getData();
+      // TODO exception handling if converter is not available
+      boost::shared_ptr<AbstractConverter<string> > c =
+        converters->getConverterByDataType(e->getType());
+      string wireType = c->serialize(make_pair(e->getType(), obj), wire);
+      
+      // ---- Begin split message implementation ----
+      unsigned int numDataParts = 0;
+      RSCDEBUG(logger, "Whole message size (data only): " << wire.size());
+      numDataParts = wire.size() / spreadMaxLen;
+      RSCDEBUG(logger, "Number of message parts (data only): " << numDataParts+1);        
+      
+      string dataPart;
+      size_t curPos = 0;
+      size_t maxPartSize = 100000;
+      for (unsigned int i=0; i<= numDataParts; i++) {
+        
+        Notification n;
+        n.set_eid(e->getUUID().getIdAsString());
+        n.set_sequence_length(0);
+        n.set_standalone(false);
+        n.set_uri(e->getURI());
+        n.set_type_id(wireType);
+        for (map<string, string>::const_iterator it = e->metaInfoBegin(); it
+               != e->metaInfoEnd(); ++it) {
+          MetaInfo *info = n.mutable_metainfos()->Add();
+          info->set_key(it->first);
+          info->set_value(it->second);
+        }
+        n.set_num_data_parts(numDataParts);
+        n.set_data_part(i);
+        
+        if (curPos < (wire.size() - (wire.size()%maxPartSize))) {
+          dataPart = wire.substr(curPos, maxPartSize);
+          curPos = (i * maxPartSize) + maxPartSize;
+        } else {
+          dataPart = wire.substr(curPos, wire.size()%maxPartSize);
+        }
 
-void SpreadPort::push(RSBEventPtr e) {
-	// get matching converter
-	string wire;
-	boost::shared_ptr<void> obj = e->getData();
-	// TODO exception handling if converter is not available
-	boost::shared_ptr<AbstractConverter<string> > c =
-			converters->getConverterByDataType(e->getType());
-	string wireType = c->serialize(make_pair(e->getType(), obj), wire);
+        n.mutable_data()->set_binary(dataPart);
+        n.mutable_data()->set_length(dataPart.size());
+        RSCTRACE(logger, "Size of message[" << i << "] (data only): " << dataPart.size());
+        
+        string sm;
+        if (!n.SerializeToString(&sm)) {
+          throw ProtocolException("Failed to write notification to stream");
+        }
+        
+        SpreadMessage msg(sm);
 
-	Notification n;
-	n.set_eid(e->getUUID().getIdAsString());
-	n.set_sequence_length(0);
-	n.set_standalone(false);
-	n.set_uri(e->getURI());
-	n.set_type_id(wireType);
-	for (map<string, string>::const_iterator it = e->metaInfoBegin(); it
-			!= e->metaInfoEnd(); ++it) {
-		MetaInfo *info = n.mutable_metainfos()->Add();
-		info->set_key(it->first);
-		info->set_value(it->second);
-	}
-	n.mutable_data()->set_binary(wire);
-	n.mutable_data()->set_length(wire.length());
-	string sm;
+        // TODO convert URI to group name
+        // TODO check if it is necessary to join spread groups when only sending to them
+        
+        msg.addGroup(e->getURI());
+        msg.setQOS(messageQoS);
+        
+        RSCTRACE(logger, "This is the serialized message size before send: " << msg.getSize());
+        
+        if (!con->send(msg)) {
+          //        for (list<string>::const_iterator n = msg->getGroupsBegin(); n != msg->getGroupsEnd(); ++n) {
+          //           cout << "Sending msg to following groups: " << *n << endl;
+          //        }
+          // TODO implement queing or throw messages away?
+          // TODO maybe return exception with msg that was not sent
+          RSCWARN(logger, "Spread Connection inactive -> could not send message");
+        } else {
+          RSCDEBUG(logger, "event sent to spread");
+        }
+      }
+    }
 
-	if (!n.SerializeToString(&sm)) {
-		throw ProtocolException("Failed to write notification to stream");
-	}
+    SpreadPort::QoSMap SpreadPort::buildQoSMapping() {
 
-	SpreadMessage msg(sm);
-	// TODO convert URI to group name
-	// TODO check if it is necessary to join spread groups when only sending to them
+      map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> unorderedMap;
+      unorderedMap.insert(make_pair(QualityOfServiceSpec::UNRELIABLE,
+                                    SpreadMessage::UNRELIABLE));
+      unorderedMap.insert(make_pair(QualityOfServiceSpec::RELIABLE,
+                                    SpreadMessage::RELIABLE));
 
-	msg.addGroup(e->getURI());
-	msg.setQOS(messageQoS);
+      map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> orderedMap;
+      orderedMap.insert(make_pair(QualityOfServiceSpec::UNRELIABLE,
+                                  SpreadMessage::FIFO));
+      orderedMap.insert(make_pair(QualityOfServiceSpec::RELIABLE,
+                                  SpreadMessage::FIFO));
 
-	if (!con->send(msg)) {
-		//        for (list<string>::const_iterator n = msg->getGroupsBegin(); n != msg->getGroupsEnd(); ++n) {
-		//           cout << "Sending msg to following groups: " << *n << endl;
-		//        }
-		// TODO implement queing or throw messages away?
-		// TODO maybe return exception with msg that was not sent
-		RSCWARN(logger, "Spread Connection inactive -> could not send message");
-	} else {
-		RSCDEBUG(logger, "event sent to spread");
-	}
-}
+      map<QualityOfServiceSpec::Ordering, map<QualityOfServiceSpec::Reliability,
+        SpreadMessage::QOS> > table;
+      table.insert(make_pair(QualityOfServiceSpec::UNORDERED, unorderedMap));
+      table.insert(make_pair(QualityOfServiceSpec::ORDERED, orderedMap));
 
-SpreadPort::QoSMap SpreadPort::buildQoSMapping() {
+      return table;
 
-	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> unorderedMap;
-	unorderedMap.insert(make_pair(QualityOfServiceSpec::UNRELIABLE,
-			SpreadMessage::UNRELIABLE));
-	unorderedMap.insert(make_pair(QualityOfServiceSpec::RELIABLE,
-			SpreadMessage::RELIABLE));
+    }
 
-	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> orderedMap;
-	orderedMap.insert(make_pair(QualityOfServiceSpec::UNRELIABLE,
-			SpreadMessage::FIFO));
-	orderedMap.insert(make_pair(QualityOfServiceSpec::RELIABLE,
-			SpreadMessage::FIFO));
+    void SpreadPort::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
 
-	map<QualityOfServiceSpec::Ordering, map<QualityOfServiceSpec::Reliability,
-			SpreadMessage::QOS> > table;
-	table.insert(make_pair(QualityOfServiceSpec::UNORDERED, unorderedMap));
-	table.insert(make_pair(QualityOfServiceSpec::ORDERED, orderedMap));
+      QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
+      if (orderMapIt == qosMapping.end()) {
+        throw UnsupportedQualityOfServiceException("Unknown ordering", specs);
+      }
+      map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS>::const_iterator
+        mapIt = orderMapIt->second.find(specs.getReliability());
+      if (mapIt == orderMapIt->second.end()) {
+        throw UnsupportedQualityOfServiceException("Unknown reliability", specs);
+      }
 
-	return table;
+      messageQoS = mapIt->second;
 
-}
+      RSCDEBUG(logger, "Selected new message type " << messageQoS);
 
-void SpreadPort::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+    }
 
-	QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
-	if (orderMapIt == qosMapping.end()) {
-		throw UnsupportedQualityOfServiceException("Unknown ordering", specs);
-	}
-	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS>::const_iterator
-			mapIt = orderMapIt->second.find(specs.getReliability());
-	if (mapIt == orderMapIt->second.end()) {
-		throw UnsupportedQualityOfServiceException("Unknown reliability", specs);
-	}
-
-	messageQoS = mapIt->second;
-
-	RSCDEBUG(logger, "Selected new message type " << messageQoS);
-
-}
-
-}
+  }
 }

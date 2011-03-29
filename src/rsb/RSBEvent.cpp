@@ -24,77 +24,77 @@ using namespace std;
 
 namespace rsb {
 
-RSBEvent::~RSBEvent() {
-}
+  RSBEvent::~RSBEvent() {
+  }
 
-void RSBEvent::setUUID(const rsc::misc::UUID &id) {
-	this->id = id;
-}
+  void RSBEvent::setUUID(const rsc::misc::UUID &id) {
+    this->id = id;
+  }
 
-rsc::misc::UUID RSBEvent::getUUID() {
-	return id;
-}
+  rsc::misc::UUID RSBEvent::getUUID() {
+    return id;
+  }
 
-void RSBEvent::setURI(string s) {
-	uri = s;
-}
+  void RSBEvent::setURI(string s) {
+    uri = s;
+  }
 
-string RSBEvent::getURI() {
-	return uri;
-}
+  string RSBEvent::getURI() {
+    return uri;
+  }
 
-void RSBEvent::setData(VoidPtr d) {
-	content = d;
-}
+  void RSBEvent::setData(VoidPtr d) {
+    content = d;
+  }
 
-VoidPtr RSBEvent::getData() {
-	return content;
-}
+  VoidPtr RSBEvent::getData() {
+    return content;
+  }
 
-string RSBEvent::getType() {
-	return type;
-}
+  string RSBEvent::getType() {
+    return type;
+  }
 
-void RSBEvent::setType(string t) {
-	type = t;
-}
+  void RSBEvent::setType(string t) {
+    type = t;
+  }
 
-bool RSBEvent::hasMetaInfo(const string &key) const {
-	return metaInfos.count(key);
-}
+  bool RSBEvent::hasMetaInfo(const string &key) const {
+    return metaInfos.count(key);
+  }
 
-string RSBEvent::getMetaInfo(const string &key) const {
-	if (metaInfos.count(key)) {
-		return metaInfos.find(key)->second;
-	} else {
-		throw runtime_error("No meta info registered under key '" + key + "'");
-	}
-}
+  string RSBEvent::getMetaInfo(const string &key) const {
+    if (metaInfos.count(key)) {
+      return metaInfos.find(key)->second;
+    } else {
+      throw runtime_error("No meta info registered under key '" + key + "'");
+    }
+  }
 
-void RSBEvent::addMetaInfo(const string &key, const string &value,
-		bool override) {
+  void RSBEvent::addMetaInfo(const string &key, const string &value,
+                             bool override) {
 
-	if (metaInfos.count(key) && !override) {
-		throw runtime_error("There already is meta info registered under key '"
-				+ key + "'");
-	}
-	metaInfos[key] = value;
+    if (metaInfos.count(key) && !override) {
+      throw runtime_error("There already is meta info registered under key '"
+                          + key + "'");
+    }
+    metaInfos[key] = value;
 
-}
+  }
 
-map<string, string>::const_iterator RSBEvent::metaInfoBegin() const {
-	return metaInfos.begin();
-}
+  map<string, string>::const_iterator RSBEvent::metaInfoBegin() const {
+    return metaInfos.begin();
+  }
 
-map<string, string>::const_iterator RSBEvent::metaInfoEnd() const {
-	return metaInfos.end();
-}
+  map<string, string>::const_iterator RSBEvent::metaInfoEnd() const {
+    return metaInfos.end();
+  }
 
-ostream& operator<<(ostream& out, const RSBEvent& e) {
-	//out.precision(3);
-	out << "RSBEvent[id=" << e.id.getIdAsString() << " type=" << e.type
-			<< " uri=" << e.uri << "] ";
-	return out;
-}
+  ostream& operator<<(ostream& out, const RSBEvent& e) {
+    //out.precision(3);
+    out << "RSBEvent[id=" << e.id.getIdAsString() << " type=" << e.type
+        << " uri=" << e.uri << "] ";
+    return out;
+  }
 
 }
