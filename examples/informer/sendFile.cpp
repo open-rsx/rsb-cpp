@@ -81,7 +81,9 @@ int main(void) {
     
     // Send event
 		informer->publish(event);
+#ifndef WIN32
     usleep(6000);
+#endif
   }
   cout << "READY" << endl;
 	return EXIT_SUCCESS;
