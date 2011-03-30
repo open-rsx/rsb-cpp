@@ -8,6 +8,8 @@ PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
 
 CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/rsb)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Notification.pb.h DESTINATION include/rsb/protocol)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATION include/rsb/protocol)
 
 SET(SOURCES rsb/RSBException.cpp
             rsb/RSBVersion.cpp
@@ -88,7 +90,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/transport/converter/StringConverter.h
             rsb/transport/converter/Uint64Converter.h
             rsb/transport/converter/VoidConverter.h
-	    rsb/transport/converter/ProtocolBufferConverter.h
+	          rsb/transport/converter/ProtocolBufferConverter.h
             rsb/transport/inprocess/StatusTask.h
             rsb/transport/inprocess/InProcessPort.h
             rsb/transport/TransportFactory.h
