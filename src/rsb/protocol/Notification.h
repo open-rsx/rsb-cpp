@@ -26,12 +26,12 @@
 #include "rsb/protocol/Notification.pb.h"
 
 namespace rsb {
-  namespace protocol {
+namespace protocol {
 
-    // TODO how to export google protocol buffers code? Do we need to export this?
-    typedef boost::shared_ptr<rsb::protocol::Notification> NotificationPtr;
+// TODO how to export google protocol buffers code? Do we need to export this?
+typedef boost::shared_ptr<rsb::protocol::Notification> NotificationPtr;
 
-  }
+}
 }
 
 #endif /* NOTIFICATION_H_ */
