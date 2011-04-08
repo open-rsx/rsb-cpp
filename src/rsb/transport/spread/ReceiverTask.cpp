@@ -35,97 +35,114 @@ using namespace rsc::logging;
 namespace rsb {
 namespace spread {
 
-    ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
-                               transport::ConverterCollection<std::string>::Ptr converters, QADPtr q) :
-    logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-			cancelRequested(false), con(s), converters(converters), qad(q) {
-      // Verify that the version of the library that we linked against is
-      // compatible with the version of the headers we compiled against.
-      //RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
-      RSCTRACE(logger, "ReceiverTask::RecieverTask, SpreadConnection: " << con);
-      GOOGLE_PROTOBUF_VERIFY_VERSION;
+ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
+		transport::ConverterCollection<std::string>::Ptr converters,
+		const Action &action) :
+	logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
+			cancelRequested(false), con(s), converters(converters),
+			action(action) {
+	// Verify that the version of the library that we linked against is
+	// compatible with the version of the headers we compiled against.
+	//RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
+	RSCTRACE(logger, "ReceiverTask::RecieverTask, SpreadConnection: " << con);
+	GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-    }
+}
 
-    ReceiverTask::~ReceiverTask() {
-    }
-    
-    void ReceiverTask::execute() {
-      // TODO Do performance optimization for data joining
-      // TODO Think about old data in dataPool map
-      //logger->setLevel(Logger::TRACE);
-      NotificationPtr n(new Notification());
-      bool bigMsgComplete = false;
-      boost::shared_ptr<string> s;
-      try {
-        SpreadMessagePtr sm(new SpreadMessage(SpreadMessage::REGULAR));
-        con->receive(sm);
-        RSCDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << sm);
-        // TODO think about how to deal with non-data messages, e.g., membership
-        if (SpreadMessage::REGULAR == sm->getType()) {
-          if (!sm || !n) {
-            throw CommException("Ptr Null");
-          }
-          if (!n->ParseFromString(sm->getDataAsString())) {
-            throw CommException("Failed to parse notification in pbuf format");
-          }
-          RSCTRACE(logger, "Parsed event ID: " << n->eid());
-          RSCTRACE(logger, "Binary length: " << n->data().length());
-          RSCTRACE(logger, "Number of split message parts: " << n->num_data_parts());
-          RSCTRACE(logger, "... received message part    : " << n->data_part());
-          
-          //Build data from parts
-          if (n->num_data_parts() > 0) {
-            it = dataPool.find(n->eid());
-            if ( it != dataPool.end() ) {
-              // Push message to existing DataQueue
-              RSCTRACE(logger, "Add message to existing data store");
-              if (n->num_data_parts() == it->second->add(n)) {                
-                RSCTRACE(logger, "Join data parts");
-                // Concatenate data parts
-                s = boost::shared_ptr<string>(new string(it->second->getData(0)));
-                for (int i=1;i<=n->num_data_parts();++i) {
-                  s->append(it->second->getData(i));
-                }
-                dataPool.erase(it);
-                bigMsgComplete = true;                
-              }
-            } else {
-              // Create new DataStore
-              RSCTRACE(logger, "Create new data store for message: " << n->eid());
-              dataPool.insert( pair<std::string, DataStorePtr> (n->eid(), DataStorePtr(new DataStore(n)))); 
-            }
-          } else {
-            s = boost::shared_ptr<string>(new string(n->data().binary()));
-          }
-          RSCTRACE(logger, "dataPool size: " << dataPool.size());
-          if ((n->num_data_parts() == 0) || bigMsgComplete ) {
-            // Send message as single spread event
-            RSBEventPtr e(new RSBEvent());
-            e->setUUID(n->eid());
-            e->setURI(n->uri());
-            for (int i = 0; i < n->metainfos_size(); ++i) {
-              e->addMetaInfo(n->metainfos(i).key(), n->metainfos(i).value());
-            }
-            // TODO refactor converter handling and conversion
-            // TODO error handling
-            AbstractConverter<string>::Ptr c = converters->getConverterByWireSchema(n->type_id());
-            transport::AnnotatedData deserialized = c->deserialize(n->type_id(), *s);
-            e->setType(deserialized.first);
-            e->setData(deserialized.second);
-            qad->addElement(e);
-            bigMsgComplete = false;
-          }
-        }
-      } catch (rsb::CommException &e) {
-        if (!isCancelRequested()) {
-          cout << "SpreadPort error: " << e.what() << endl;
-          exit;
-        } else {
-          // safely ignore, invalid mbox just signals in this context
-          // that the connection to spread was deactivated
-        }
-      }
-    }
-  }
+ReceiverTask::~ReceiverTask() {
+}
+
+void ReceiverTask::execute() {
+	// TODO Do performance optimization for data joining
+	// TODO Think about old data in dataPool map
+	//logger->setLevel(Logger::TRACE);
+	NotificationPtr n(new Notification());
+	bool bigMsgComplete = false;
+	boost::shared_ptr<string> s;
+	try {
+		SpreadMessagePtr sm(new SpreadMessage(SpreadMessage::REGULAR));
+		con->receive(sm);
+		RSCDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << sm);
+		// TODO think about how to deal with non-data messages, e.g., membership
+		if (SpreadMessage::REGULAR == sm->getType()) {
+			if (!sm || !n) {
+				throw CommException("Ptr Null");
+			}
+			if (!n->ParseFromString(sm->getDataAsString())) {
+				throw CommException(
+						"Failed to parse notification in pbuf format");
+			}
+			RSCTRACE(logger, "Parsed event ID: " << n->eid());
+			RSCTRACE(logger, "Binary length: " << n->data().length());
+			RSCTRACE(logger, "Number of split message parts: " << n->num_data_parts());
+			RSCTRACE(logger, "... received message part    : " << n->data_part());
+
+			//Build data from parts
+			if (n->num_data_parts() > 0) {
+				it = dataPool.find(n->eid());
+				if (it != dataPool.end()) {
+					// Push message to existing DataQueue
+					RSCTRACE(logger, "Add message to existing data store");
+					if (n->num_data_parts() == it->second->add(n)) {
+						RSCTRACE(logger, "Join data parts");
+						// Concatenate data parts
+						s = boost::shared_ptr<string>(
+								new string(it->second->getData(0)));
+						for (int i = 1; i <= n->num_data_parts(); ++i) {
+							s->append(it->second->getData(i));
+						}
+						dataPool.erase(it);
+						bigMsgComplete = true;
+					}
+				} else {
+					// Create new DataStore
+					RSCTRACE(logger, "Create new data store for message: " << n->eid());
+					dataPool.insert(
+							pair<std::string, DataStorePtr> (n->eid(),
+									DataStorePtr(new DataStore(n))));
+				}
+			} else {
+				s = boost::shared_ptr<string>(new string(n->data().binary()));
+			}
+			RSCTRACE(logger, "dataPool size: " << dataPool.size());
+			if ((n->num_data_parts() == 0) || bigMsgComplete) {
+				// Send message as single spread event
+				RSBEventPtr e(new RSBEvent());
+				e->setUUID(n->eid());
+				e->setURI(n->uri());
+				for (int i = 0; i < n->metainfos_size(); ++i) {
+					e->addMetaInfo(n->metainfos(i).key(),
+							n->metainfos(i).value());
+				}
+				// TODO refactor converter handling and conversion
+				// TODO error handling
+				AbstractConverter<string>::Ptr c =
+						converters->getConverterByWireSchema(n->type_id());
+				transport::AnnotatedData deserialized = c->deserialize(
+						n->type_id(), *s);
+				e->setType(deserialized.first);
+				e->setData(deserialized.second);
+				if (action) {
+					action(e);
+				}
+				bigMsgComplete = false;
+			}
+		}
+	} catch (rsb::CommException &e) {
+		if (!isCancelRequested()) {
+			cout << "SpreadPort error: " << e.what() << endl;
+			exit;
+		} else {
+			// safely ignore, invalid mbox just signals in this context
+			// that the connection to spread was deactivated
+		}
+	}
+
+}
+
+void ReceiverTask::setAction(const Action &action) {
+	this->action = action;
+}
+
+}
 }

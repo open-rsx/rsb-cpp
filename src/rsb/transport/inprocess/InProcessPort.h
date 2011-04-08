@@ -28,15 +28,15 @@
 
 #include "../Port.h"
 #include "StatusTask.h"
-#include "../QueueAndDispatchTask.h"
 
 namespace rsb {
 namespace inprocess {
 
 /**
+ * @todo use logging instead of cout
  * @author swrede
  */
-class InProcessPort : public rsb::transport::Port {
+class InProcessPort: public rsb::transport::Port {
 public:
 	InProcessPort();
 	virtual ~InProcessPort();
@@ -47,8 +47,8 @@ public:
 
 	// Observer may implement complex event matching
 	// or be just directly the user-level event handlers
-	void setObserver(rsb::Action a);
-	void removeObserver(rsb::Action a);
+	void setObserver(Action a);
+	void removeObserver(Action a);
 
 	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
@@ -56,8 +56,8 @@ private:
 	volatile bool shutdown;
 
 	rsc::threading::TaskExecutorPtr exec;
-    boost::shared_ptr<StatusTask> st;
-    boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
+	boost::shared_ptr<StatusTask> st;
+	Action action;
 
 };
 

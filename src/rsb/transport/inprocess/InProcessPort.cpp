@@ -46,8 +46,8 @@ namespace rsb {
 namespace inprocess {
 
 InProcessPort::InProcessPort() :
-	shutdown(false), exec(new ThreadedTaskExecutor), st(new StatusTask(this,
-			500)), qad(new QueueAndDispatchTask<RSBEventPtr> ) {
+	shutdown(false), exec(new ThreadedTaskExecutor),
+			st(new StatusTask(this, 500)) {
 	// TODO check if it makes sense and is possible to provide a weak_ptr to
 	// the ctr of StatusTask
 }
@@ -59,14 +59,11 @@ InProcessPort::~InProcessPort() {
 
 void InProcessPort::activate() {
 	// (re-)start threads
-	exec->schedule(qad);
 	exec->schedule(st);
 }
 
 void InProcessPort::deactivate() {
 	shutdown = true;
-	cout << "stopping qad task object" << endl;
-	qad->cancel();
 	cout << "stopping st task" << endl;
 	st->cancel();
 	cout << "InProcessPort::deactivate finished" << endl;
@@ -85,16 +82,15 @@ void InProcessPort::push(RSBEventPtr e) {
 	// localize dispatching in matching subsystem, don't make these ports here to complicated...
 	// decide this based on considerations of pattern implementation / configuration examples
 
-	// put new element in queue
-	qad->addElement(e);
+	action(e);
 }
 
 void InProcessPort::setObserver(Action a) {
-	qad->setObserver(a);
+	action = a;
 }
 
 void InProcessPort::removeObserver(Action /*a*/) {
-	qad->setObserver(NULL);
+	action.clear();
 }
 
 /**

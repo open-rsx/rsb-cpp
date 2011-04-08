@@ -29,69 +29,74 @@
 #include "../../protocol/Notification.h"
 #include "../ConverterCollection.h"
 #include "../../RSBEvent.h"
-#include "../QueueAndDispatchTask.h"
 #include "../Port.h"
 #include "../AbstractConverter.h"
 #include "SpreadConnection.h"
 
 namespace rsb {
-  namespace spread {
+namespace spread {
 
-    typedef boost::shared_ptr<
-      rsb::transport::QueueAndDispatchTask<rsb::RSBEventPtr> > QADPtr;
+/**
+ * @author swrede
+ */
+class DataStore {
+public:
 
-    /**
-     * @author swrede
-     */
-    
-    class DataStore {
-    public:
-      DataStore(rsb::protocol::NotificationPtr n) :
-      logger(rsc::logging::Logger::getLogger("rsb.spread.DataStore")),
-      receivedParts(0) {
-        store.resize(n->num_data_parts()+1);
-        add(n);
-      }
-      ~DataStore() {};
-      
-      std::string getData(unsigned int i) {
-        return store[i]->data().binary();
-      }
-      
-      unsigned int add(rsb::protocol::NotificationPtr n) {
-        RSCTRACE(logger, "Add message " << n->eid() << " (part " << n->data_part() << ") to DataStore");
-        store[n->data_part()] = n;
-        return receivedParts++;
-      }
-      
-    private:
-      rsc::logging::LoggerPtr logger;
-      unsigned int receivedParts;
-      std::vector<rsb::protocol::NotificationPtr> store;
-    };
+	DataStore(rsb::protocol::NotificationPtr n) :
+		logger(rsc::logging::Logger::getLogger("rsb.spread.DataStore")),
+				receivedParts(0) {
+		store.resize(n->num_data_parts() + 1);
+		add(n);
+	}
 
-    typedef boost::shared_ptr<DataStore> DataStorePtr;
-    
+	~DataStore() {
+	}
 
-    class ReceiverTask: public rsc::threading::RepetitiveTask {
-    public:
-      ReceiverTask(SpreadConnectionPtr s, transport::ConverterCollection<
-                   std::string>::Ptr converters, QADPtr q);
-      virtual ~ReceiverTask();
+	std::string getData(unsigned int i) {
+		return store[i]->data().binary();
+	}
 
-      void execute();
+	unsigned int add(rsb::protocol::NotificationPtr n) {
+		RSCTRACE(logger, "Add message " << n->eid() << " (part " << n->data_part() << ") to DataStore");
+		store[n->data_part()] = n;
+		return receivedParts++;
+	}
 
-    private:  
-      rsc::logging::LoggerPtr logger;
-      volatile bool cancelRequested;
-      SpreadConnectionPtr con;
-      transport::ConverterCollection<std::string>::Ptr converters;
-      QADPtr qad;
-      std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
-      std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;
-    };
+private:
+	rsc::logging::LoggerPtr logger;
+	unsigned int receivedParts;
+	std::vector<rsb::protocol::NotificationPtr> store;
+};
 
-  }
+typedef boost::shared_ptr<DataStore> DataStorePtr;
+
+/**
+ * @author swrede
+ * @todo does action need locking if it is set while the task is running?
+ */
+class ReceiverTask: public rsc::threading::RepetitiveTask {
+public:
+
+	ReceiverTask(SpreadConnectionPtr s,
+			transport::ConverterCollection<std::string>::Ptr converters,
+			const Action &action);
+	virtual ~ReceiverTask();
+
+	void execute();
+	void setAction(const Action &action);
+
+private:
+	rsc::logging::LoggerPtr logger;
+	volatile bool cancelRequested;
+	SpreadConnectionPtr con;
+	transport::ConverterCollection<std::string>::Ptr converters;
+	Action action;
+	std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
+	std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;
+
+};
+
+}
 }
 
 #endif /* RECEIVERTASK_H_ */

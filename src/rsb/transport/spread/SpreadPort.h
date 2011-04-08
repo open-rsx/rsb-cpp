@@ -28,7 +28,6 @@
 #include "../ConverterCollection.h"
 #include "../Port.h"
 #include "../../filter/ScopeFilter.h"
-#include "../QueueAndDispatchTask.h"
 #include "ReceiverTask.h"
 #include "MembershipManager.h"
 #include "SpreadConnection.h"
@@ -72,7 +71,6 @@ private:
 	rsc::threading::TaskExecutorPtr exec;
 	//   boost::shared_ptr<StatusTask> st;
 	boost::shared_ptr<ReceiverTask> rec;
-	boost::shared_ptr<rsb::transport::QueueAndDispatchTask<RSBEventPtr> > qad;
 
 	MembershipManagerPtr memberships;
 
@@ -93,6 +91,8 @@ private:
 	static const QoSMap qosMapping;
 
 	static QoSMap buildQoSMapping();
+
+	Action observer;
 
 };
 

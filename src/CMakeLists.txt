@@ -43,7 +43,6 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/transport/converter/Uint64Converter.cpp
             rsb/transport/converter/VoidConverter.cpp
             rsb/transport/TransportFactory.cpp
-            rsb/transport/QueueAndDispatchTask.cpp
             rsb/transport/inprocess/StatusTask.cpp
             rsb/transport/inprocess/InProcessPort.cpp
             rsb/transport/spread/SpreadGroup.cpp
@@ -92,11 +91,10 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/transport/converter/StringConverter.h
             rsb/transport/converter/Uint64Converter.h
             rsb/transport/converter/VoidConverter.h
-	          rsb/transport/converter/ProtocolBufferConverter.h
+            rsb/transport/converter/ProtocolBufferConverter.h
             rsb/transport/inprocess/StatusTask.h
             rsb/transport/inprocess/InProcessPort.h
             rsb/transport/TransportFactory.h
-            rsb/transport/QueueAndDispatchTask.h
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/MembershipManager.h
             rsb/transport/spread/SpreadPort.h
