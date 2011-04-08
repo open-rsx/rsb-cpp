@@ -1,5 +1,5 @@
 
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol)
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol ${CMAKE_CURRENT_SOURCE_DIR}/rsb)
 
 PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
                       PROTOFILES ${RSBPROTO_FILES}
@@ -11,8 +11,10 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/r
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Notification.pb.h DESTINATION include/rsb/protocol)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATION include/rsb/protocol)
 
+CONFIGURE_FILE(rsb/RSBVersion.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp @ONLY)
+
 SET(SOURCES rsb/RSBException.cpp
-            rsb/RSBVersion.cpp
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp
             rsb/Publisher.cpp
             rsb/Subscriber.cpp
             rsb/util/Configuration.cpp

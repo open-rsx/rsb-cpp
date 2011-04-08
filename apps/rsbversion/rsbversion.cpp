@@ -2,7 +2,7 @@
  *
  * This file is a part of the RSB project
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,37 +17,22 @@
  *
  * ============================================================ */
 
-#ifndef RSBVERSION_H_
-#define RSBVERSION_H_
+#include <iostream>
 
-#include <string>
+#include <stdlib.h>
 
-#include "rsb/rsbexports.h"
+#include <rsb/RSBVersion.h>
 
-namespace rsb {
+using namespace std;
+using namespace rsb;
 
-class RSB_EXPORT RSBVersion {
-public:
+int main(int /*argc*/, char **/*argv*/) {
 
-	static unsigned int major();
-	static unsigned int minor();
-	static unsigned int patch();
+	cout << "RSBVersion: " << RSBVersion::string() << ", build "
+			<< RSBVersion::buildString() << ", abi " << RSBVersion::abi()
+			<< endl;
 
-	static std::string string();
-
-	static unsigned int abi();
-
-	static std::string buildId();
-	static std::string buildDate();
-
-	static std::string buildString();
-
-private:
-	RSBVersion();
-
-};
+	return EXIT_SUCCESS;
 
 }
-
-#endif /* RSBVERSION_H_ */
 

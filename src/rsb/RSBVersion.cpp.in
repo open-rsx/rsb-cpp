@@ -17,23 +17,48 @@
  *
  * ============================================================ */
 
-#include <sstream>
 #include "RSBVersion.h"
+
+#include <sstream>
 
 using namespace std;
 
 namespace rsb {
 
-	std::string RSB_VERSION_STR() {
-		 ostringstream ss;
-		 ss << MAJOR_VERSION << '.' << MINOR_VERSION << " (ABI " << ABI_VERSON << ")";
-		 return ss.str();
-	}
+unsigned int RSBVersion::major() {
+	return @RSB_VERSION_MAJOR@;
+}
 
-	std::string RSB_BUILD_STR() {
-		 ostringstream ss;
-		 ss << BUILD_NUMBER << " (DATE " << BUILD_DATE << ")";
-		 return ss.str();
-	}
+unsigned int RSBVersion::minor() {
+	return @RSB_VERSION_MINOR@;
+}
+
+unsigned int RSBVersion::patch() {
+	return @RSB_VERSION_PATCH@;
+}
+
+string RSBVersion::string() {
+	ostringstream ss;
+	ss << major() << '.' << minor() << '.' << patch();
+	return ss.str();
+}
+
+unsigned int RSBVersion::abi() {
+	return @RSB_ABI_VERSION@;
+}
+
+string RSBVersion::buildId() {
+	return "@RSB_WC_REVISION@";
+}
+
+string RSBVersion::buildDate() {
+	return "@RSB_WC_LAST_CHANGED_DATE@";
+}
+
+string RSBVersion::buildString() {
+	ostringstream ss;
+	ss << buildId() << " (DATE " << buildDate() << ")";
+	return ss.str();
+}
 
 }
