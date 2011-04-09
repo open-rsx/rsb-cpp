@@ -29,14 +29,14 @@ namespace transport {
 const string StringConverter::WIRE_SCHEMA = "string";
 
 StringConverter::StringConverter() :
-        AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<string*>(0)) {
+	AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<string*> (0)) {
 }
 
 StringConverter::~StringConverter() {
 }
 
 string StringConverter::serialize(const AnnotatedData &data, string &wire) {
-        assert(data.first == this->getDataType());
+	assert(data.first == this->getDataType());
 
 	boost::shared_ptr<string> s = boost::static_pointer_cast<string>(
 			data.second);
@@ -49,7 +49,7 @@ AnnotatedData StringConverter::deserialize(const std::string &wireType,
 		const string &wire) {
 	assert(wireType == WIRE_SCHEMA);
 
-	return make_pair(WIRE_SCHEMA, boost::shared_ptr<string>(new string(wire)));
+	return make_pair(getDataType(), boost::shared_ptr<string>(new string(wire)));
 }
 
 }

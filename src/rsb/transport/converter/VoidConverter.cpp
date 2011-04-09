@@ -29,7 +29,7 @@ namespace transport {
 const string VoidConverter::TYPE = "void";
 
 VoidConverter::VoidConverter() :
-	AbstractConverter<string> (TYPE, TYPE) {
+	AbstractConverter<string> (TYPE, RSB_TYPE_TAG(void)) {
 }
 
 VoidConverter::~VoidConverter() {
@@ -42,7 +42,7 @@ string VoidConverter::serialize(const AnnotatedData &/*data*/, string &wire) {
 
 AnnotatedData VoidConverter::deserialize(const std::string &/*wireType*/,
 		const string &/*wire*/) {
-	return make_pair(TYPE, boost::shared_ptr<void>());
+	return make_pair(getDataType(), boost::shared_ptr<void>());
 }
 
 }

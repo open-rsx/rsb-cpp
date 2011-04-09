@@ -31,14 +31,14 @@ namespace transport {
 const string BoolConverter::WIRE_SCHEMA = "bool";
 
 BoolConverter::BoolConverter() :
-        AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<bool*>(0)) {
+	AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<bool*> (0)) {
 }
 
 BoolConverter::~BoolConverter() {
 }
 
 string BoolConverter::serialize(const AnnotatedData &data, string &wire) {
-        assert(data.first == this->getDataType());
+	assert(data.first == this->getDataType());
 
 	boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data.second);
 	if (*s) {
@@ -54,9 +54,10 @@ AnnotatedData BoolConverter::deserialize(const std::string &wireSchema,
 	assert(wireSchema == WIRE_SCHEMA);
 
 	if (wire.empty()) {
-		return make_pair(WIRE_SCHEMA, boost::shared_ptr<bool>(new bool(false)));
+		return make_pair(getDataType(),
+				boost::shared_ptr<bool>(new bool(false)));
 	} else {
-		return make_pair(WIRE_SCHEMA, boost::shared_ptr<bool>(new bool(true)));
+		return make_pair(getDataType(), boost::shared_ptr<bool>(new bool(true)));
 	}
 }
 

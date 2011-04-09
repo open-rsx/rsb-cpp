@@ -34,14 +34,15 @@ namespace transport {
 const string Uint64Converter::WIRE_SCHEMA = "uint64";
 
 Uint64Converter::Uint64Converter() :
-        AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<boost::uint64_t*>(0)) {
+			AbstractConverter<string> (WIRE_SCHEMA,
+					reinterpret_cast<boost::uint64_t*> (0)) {
 }
 
 Uint64Converter::~Uint64Converter() {
 }
 
 string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
-        assert(data.first == this->getDataType());
+	assert(data.first == this->getDataType());
 
 	boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
 			boost::uint64_t>(data.second);
@@ -56,12 +57,14 @@ AnnotatedData Uint64Converter::deserialize(const string &wireSchema,
 	assert(wireSchema == WIRE_SCHEMA);
 
 	try {
-		return make_pair(WIRE_SCHEMA,
-				boost::shared_ptr<boost::uint64_t>(new boost::uint64_t(
-						boost::lexical_cast<boost::uint64_t>(wire))));
+		return make_pair(
+				getDataType(),
+				boost::shared_ptr<boost::uint64_t>(
+						new boost::uint64_t(
+								boost::lexical_cast<boost::uint64_t>(wire))));
 	} catch (boost::bad_lexical_cast &e) {
-		throw SerializationException(string(
-				"Unable to cast wire contents to number: ") + e.what());
+		throw SerializationException(
+				string("Unable to cast wire contents to number: ") + e.what());
 	}
 
 }
