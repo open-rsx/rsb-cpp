@@ -66,6 +66,7 @@ private:
 	rsc::logging::LoggerPtr logger;
 	unsigned int receivedParts;
 	std::vector<rsb::protocol::NotificationPtr> store;
+
 };
 
 typedef boost::shared_ptr<DataStore> DataStorePtr;

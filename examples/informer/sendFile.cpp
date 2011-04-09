@@ -39,53 +39,55 @@ using namespace rsb;
 using namespace boost::posix_time;
 
 int main(void) {
-  
-	RSBFactory factory;
-  unsigned int numMsg;
-  string *bin_doc = new string();
-  string fileLoc;
-  
-	LoggerPtr l = Logger::getLogger("informer");
-  cout << "Please enter valid filename: ";
-  getline (cin, fileLoc);
-  cout << "Please enter number of messages: ";
-  cin >> numMsg;
- 
-  // Split into filename
-  size_t found;
-  found=fileLoc.find_last_of("/");
-  string file = fileLoc.substr(found+1);
 
-  // Read file
-  try {
-    ifstream in(fileLoc.c_str(), ios::binary);
-    
-    char ch;                             
-    while (in.get(ch)) {
-      bin_doc->push_back(ch);
-    }                             
-    in.close();
-  } catch (std::exception& ex) {
-    cerr << ex.what() << endl;
-  }
-  
-  // Create Publisher and RSBEvent
-  Publisher<string>::Ptr informer = factory.createPublisher<string>("rsb://example/informer", "string");
-  Publisher<string>::DataPtr data(bin_doc);
-  
-  RSBEventPtr event = RSBEventPtr(new RSBEvent("rsb://example/informer", boost::static_pointer_cast<void>(data), "string"));
-  event->addMetaInfo("file", file);
-  for (int j = 0; j < numMsg; j++) {
-    // Get current time
-    event->addMetaInfo("startTime", to_iso_string(microsec_clock::local_time()), true);
-    
-    // Send event
+	RSBFactory factory;
+	unsigned int numMsg;
+	string *bin_doc = new string();
+	string fileLoc;
+
+	LoggerPtr l = Logger::getLogger("informer");
+	cout << "Please enter valid filename: ";
+	getline(cin, fileLoc);
+	cout << "Please enter number of messages: ";
+	cin >> numMsg;
+
+	// Split into filename
+	size_t found;
+	found = fileLoc.find_last_of("/");
+	string file = fileLoc.substr(found + 1);
+
+	// Read file
+	try {
+		ifstream in(fileLoc.c_str(), ios::binary);
+
+		char ch;
+		while (in.get(ch)) {
+			bin_doc->push_back(ch);
+		}
+		in.close();
+	} catch (std::exception& ex) {
+		cerr << ex.what() << endl;
+	}
+
+	// Create Publisher and RSBEvent
+	Publisher<string>::Ptr informer = factory.createPublisher<string> (
+			"rsb://example/informer", "string");
+	Publisher<string>::DataPtr data(bin_doc);
+
+	RSBEventPtr event = RSBEventPtr(
+			new RSBEvent("rsb://example/informer",
+					boost::static_pointer_cast<void>(data), "string"));
+	event->addMetaInfo("file", file);
+	for (unsigned int j = 0; j < numMsg; j++) {
+		// Get current time
+		event->addMetaInfo("startTime",
+				to_iso_string(microsec_clock::local_time()), true);
+
+		// Send event
 		informer->publish(event);
-#ifndef WIN32
-    usleep(6000);
-#endif
-  }
-  cout << "READY" << endl;
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6));
+	}
+	cout << "READY" << endl;
 	return EXIT_SUCCESS;
 }
 

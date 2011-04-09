@@ -88,7 +88,7 @@ void ReceiverTask::execute() {
 						// Concatenate data parts
 						s = boost::shared_ptr<string>(
 								new string(it->second->getData(0)));
-						for (int i = 1; i <= n->num_data_parts(); ++i) {
+						for (unsigned int i = 1; i <= n->num_data_parts(); ++i) {
 							s->append(it->second->getData(i));
 						}
 						dataPool.erase(it);
@@ -131,7 +131,6 @@ void ReceiverTask::execute() {
 	} catch (rsb::CommException &e) {
 		if (!isCancelRequested()) {
 			cout << "SpreadPort error: " << e.what() << endl;
-			exit;
 		} else {
 			// safely ignore, invalid mbox just signals in this context
 			// that the connection to spread was deactivated
