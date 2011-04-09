@@ -84,7 +84,7 @@ public:
 	 * @return name of the wire schema from/to this converter can
 	 * (de)serialize
 	 */
-        virtual std::string getWireSchema() const {
+	virtual std::string getWireSchema() const {
 		return wireSchema;
 	}
 
@@ -98,11 +98,12 @@ protected:
 	 * @param dataType data type this converter can serialize
 	 * @param wireSchema wire schema this converter can deserialize
 	 */
-	AbstractConverter(const std::string &dataType, const std::string &wireSchema) :
+	AbstractConverter(const std::string &dataType,
+			const std::string &wireSchema) :
 		dataType(dataType), wireSchema(wireSchema) {
 	}
 
-        /**
+	/**
 	 * Creates a new instance of this class with a data type
 	 * string that is inferred based on the template parameter
 	 * @a DataType
@@ -112,10 +113,9 @@ protected:
 	 * @param wireSchema wire schema from/to this converter can
 	 * (de)serialize.
 	 */
-        template <typename DataType>
-	AbstractConverter(const std::string &wireSchema, const DataType* unused = 0) :
-	        dataType(rsc::runtime::typeName<DataType>()),
-		wireSchema(wireSchema) {
+	template<typename DataType>
+	AbstractConverter(const std::string &wireSchema, const DataType */*unused*/ = 0) :
+		dataType(rsc::runtime::typeName<DataType>()), wireSchema(wireSchema) {
 	}
 
 private:
