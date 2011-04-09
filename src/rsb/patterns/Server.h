@@ -61,11 +61,21 @@ public:
 
 	};
 
+	/**
+	 * Callback object used to register one method for a server.
+	 *
+	 * @tparam RequestType the data type of the request payload
+	 * @tparam ReplyType the data type of the reply payload
+	 * @author jwienke
+	 */
 	template<class RequestType, class ReplyType>
 	class Callback: public IntlCallback {
 	public:
-	        Callback(const std::string &requestType = rsc::runtime::typeName<RequestType>(),
-			 const std::string &replyType   = rsc::runtime::typeName<ReplyType>()) :
+		Callback(
+				const std::string &requestType = rsc::runtime::typeName<
+						RequestType>(),
+				const std::string &replyType =
+						rsc::runtime::typeName<ReplyType>()) :
 			requestType(requestType), replyType(replyType) {
 		}
 
@@ -98,8 +108,8 @@ public:
 
 		boost::shared_ptr<void> intlCall(const std::string &methodName,
 				boost::shared_ptr<void> input) {
-			return call(methodName, boost::static_pointer_cast<RequestType>(
-					input));
+			return call(methodName,
+					boost::static_pointer_cast<RequestType>(input));
 		}
 
 	};
