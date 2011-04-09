@@ -14,11 +14,14 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATI
 CONFIGURE_FILE(rsb/RSBVersion.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp @ONLY)
 
 SET(SOURCES rsb/RSBException.cpp
+            rsb/CommException.cpp
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp
             rsb/Publisher.cpp
             rsb/Subscriber.cpp
             rsb/util/Configuration.cpp
+            rsb/util/ConfigException.cpp
             rsb/RSBEvent.cpp
+            rsb/Handler.cpp
             rsb/Subscription.cpp
             rsb/EventProcessor.cpp
             rsb/QualityOfServiceSpec.cpp

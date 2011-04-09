@@ -66,9 +66,5 @@ AnnotatedData Uint64Converter::deserialize(const string &wireType,
 
 }
 
-// TODO reenable this
-//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new Uint64Converter, Uint64StringConverter)
-//;
-
 }
 }

@@ -34,15 +34,14 @@ namespace filter {
 /**
  * @author swrede
  * @todo Check if Double Dispatch pattern is best suited here
- * @todo use const refs
  */
 class RSB_EXPORT FilterObserver {
 public:
 	FilterObserver();
 	virtual ~FilterObserver();
 
-	virtual void notify(AbstractFilter* filter, FilterAction::Types at);
-	virtual void notify(ScopeFilter* filter, FilterAction::Types at);
+	virtual void notify(AbstractFilter* filter, const FilterAction::Types &at);
+	virtual void notify(ScopeFilter* filter, const FilterAction::Types &at);
 
 private:
 

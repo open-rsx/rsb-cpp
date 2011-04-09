@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is a part of the RSB project.
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,26 +17,17 @@
  *
  * ============================================================ */
 
-#include "Handler.h"
+#include "CommException.h"
+
+using namespace std;
 
 namespace rsb {
 
-Handler::Handler(const Handlers::Type &t) :
-	type(t) {
+CommException::CommException(const string &m) :
+	RSBException(m) {
 }
 
-Handler::~Handler() {
-}
-
-EventHandler::EventHandler() :
-	Handler(Handlers::EVENT) {
-}
-
-EventHandler::~EventHandler() {
-}
-
-void EventHandler::internal_notify(RSBEventPtr e) {
-	notify(e);
+CommException::~CommException() throw () {
 }
 
 }

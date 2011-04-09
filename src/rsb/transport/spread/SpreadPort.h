@@ -56,7 +56,7 @@ public:
 	void removeObserver(rsb::Action a);
 
 	void notify(rsb::filter::ScopeFilter* f,
-			rsb::filter::FilterAction::Types at);
+			const rsb::filter::FilterAction::Types &at);
 
 	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 

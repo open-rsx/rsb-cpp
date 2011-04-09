@@ -42,18 +42,17 @@ public:
  * is available that matches the @ref rsb::Subscription this handler is attached to.
  *
  * @author swrede
- * @todo remove header implementations
  */
 class RSB_EXPORT Handler {
 public:
-	Handler(Handlers::Type t) :
-		type(t) {
-	}
-	virtual ~Handler() {
-	}
+
+	Handler(const Handlers::Type &t);
+
+	virtual ~Handler();
 
 	// TODO make subscription a friend to hide this method from public API
 	virtual void internal_notify(RSBEventPtr) = 0;
+
 protected:
 	Handlers::Type type;
 };
@@ -63,19 +62,14 @@ typedef boost::shared_ptr<Handler> HandlerPtr;
 /**
  * @author swrede
  * @todo makes even more sense if RSBEvent would be a template type
- * @todo remove header implementation
  */
 class RSB_EXPORT EventHandler: public Handler {
 public:
-	EventHandler() :
-		Handler(Handlers::EVENT) {
-	}
-	virtual ~EventHandler() {
-	}
 
-	virtual void internal_notify(RSBEventPtr e) {
-		notify(e);
-	}
+	EventHandler();
+	virtual ~EventHandler();
+
+	virtual void internal_notify(RSBEventPtr e);
 
 	virtual void notify(RSBEventPtr) = 0;
 
@@ -100,6 +94,7 @@ public:
 	DataHandler() :
 		Handler(Handlers::DATA) {
 	}
+
 	virtual ~DataHandler() {
 	}
 

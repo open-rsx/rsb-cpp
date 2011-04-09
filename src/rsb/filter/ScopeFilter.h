@@ -28,18 +28,15 @@ namespace filter {
 
 /**
  * @author swrede
- * @todo remove header implementation
  */
 class RSB_EXPORT ScopeFilter : public AbstractFilter {
 public:
-	ScopeFilter(std::string uri);
+	ScopeFilter(const std::string &uri);
 	virtual ~ScopeFilter();
 
 	bool match(RSBEventPtr e);
 
-	std::string getURI() {
-		return scope;
-	}
+	std::string getURI();
 
 	void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
 

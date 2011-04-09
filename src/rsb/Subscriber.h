@@ -55,7 +55,6 @@ namespace rsb {
  * @todo refactor commonalities of participants into a participant ?!? class
  * @todo how to deal with IDs of subscribers? (it must be possible to reference them internally somehow
  * @todo use templates in subscriptions only? (however, they need the event info)
- * @todo remove header implementations
  */
 class RSB_EXPORT Subscriber {
 public:
@@ -66,15 +65,7 @@ public:
 	 *
 	 * @param uri the uri where the data is published.
 	 */
-	Subscriber(std::string uri) :
-		logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri),
-				passive(false) {
-		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(
-				transport::TransportFactory::SPREAD,
-				transport::TransportFactory::NONE));
-		activate();
-	}
+	Subscriber(const std::string &uri);
 
 	/**
 	 * Constructs a new Subscriber assigned to the specified uri. The Subscriber
@@ -85,67 +76,43 @@ public:
 	 * @param in the PortType (enum) to connect with, i.e.
 	 *           transport::TransportFactory::SPREAD
 	 */
-	Subscriber(transport::TransportFactory::PortTypes in, std::string uri) :
-		logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri),
-				passive(false) {
-		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(in,
-				transport::TransportFactory::NONE));
-		activate();
-	}
+	Subscriber(transport::TransportFactory::PortTypes in,
+			const std::string &uri);
 
-	virtual ~Subscriber() {
-		if (!passive)
-			deactivate();
-	}
-
-	//	static SubscriberPtr create(std::string uri) {
-	//		boost::shared_ptr<Subscriber> s(new Subscriber());
-	//		s->activate();
-	//		//s->setShared(s);
-	//	}
-
+	virtual ~Subscriber();
 
 	/**
 	 * Activates the Subscriber and therefore the Router. Is considered being in
 	 * active mode afterwards.
 	 */
-	void activate() {
-		router->activate();
-		passive = false;
-	}
+	void activate();
 
 	/**
 	 * Deactivates the Subscriber and therefore the Router. Is considered being
 	 * in passive mode afterwards.
 	 */
-	void deactivate() {
-		if (!passive)
-			router->deactivate();
-		passive = true;
-	}
+	void deactivate();
 
 	/**
 	 * Adds a Subscription to the Subscriber.
 	 *
 	 * @param s a Pointer to the Subscription added.
 	 */
-	void addSubscription(SubscriptionPtr s) {
-		router->subscribe(s);
-	}
+	void addSubscription(SubscriptionPtr s);
 
 	/**
 	 * Removes a Subscription to the Subscriber.
 	 *
 	 * @param s a Pointer to the Subscription removed.
 	 */
-	void removeSubscription(SubscriptionPtr s) {
-		router->unsubscribe(s);
-	}
+	void removeSubscription(SubscriptionPtr s);
 
 protected:
-	Subscriber() { /* forbidden */
-	}
+
+	/**
+	 * Forbidden constructor.
+	 */
+	Subscriber();
 
 private:
 	rsc::logging::LoggerPtr logger;

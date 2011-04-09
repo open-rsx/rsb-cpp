@@ -87,6 +87,8 @@ TEST(RSBTest, testRoundtrip)
 
 int main(int argc, char* argv[]) {
 
+	setupLogging();
+
 	SubprocessPtr spread = startSpread();
 	boost::this_thread::sleep(boost::posix_time::seconds(2));
 

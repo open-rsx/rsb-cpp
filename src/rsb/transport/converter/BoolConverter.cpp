@@ -58,9 +58,5 @@ AnnotatedData BoolConverter::deserialize(const std::string &wireType,
 	}
 }
 
-// TODO registration
-//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new BoolConverter, BoolStringConverter);
-//;
-
 }
 }

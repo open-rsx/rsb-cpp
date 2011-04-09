@@ -24,18 +24,18 @@ namespace rsb {
 namespace filter {
 
 FilterObservable::FilterObservable() {
-	observers = boost::shared_ptr< std::vector<FilterObserverPtr> >( new std::vector<FilterObserverPtr>() );
-
+	observers = boost::shared_ptr<std::vector<FilterObserverPtr> >(
+			new std::vector<FilterObserverPtr>());
 }
 
 FilterObservable::~FilterObservable() {
-	// TODO Auto-generated destructor stub
 }
 
-void FilterObservable::notifyObservers(AbstractFilterPtr af, FilterAction::Types at) {
-	for(unsigned int i = 0; i < observers->size(); i++){
-		af->notifyObserver((*observers)[i],at);
-//		->notify(af.get(),at);
+void FilterObservable::notifyObservers(AbstractFilterPtr af,
+		FilterAction::Types at) {
+	for (unsigned int i = 0; i < observers->size(); i++) {
+		af->notifyObserver((*observers)[i], at);
+		//		->notify(af.get(),at);
 	}
 }
 
@@ -45,8 +45,8 @@ void FilterObservable::addObserver(FilterObserverPtr observer) {
 
 void FilterObservable::removeObserver(FilterObserverPtr observer) {
 	std::vector<FilterObserverPtr>::iterator iter;
-	for( iter = observers->begin(); iter != observers->end(); iter++ ) {
-		if(*iter == observer){
+	for (iter = observers->begin(); iter != observers->end(); iter++) {
+		if (*iter == observer) {
 			observers->erase(iter);
 			break;
 		}

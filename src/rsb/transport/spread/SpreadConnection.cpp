@@ -38,8 +38,8 @@ namespace spread {
 #define SPREAD_MAX_MESSLEN  180000
 
 // TODO make port a numerical attribute
-SpreadConnection::SpreadConnection(const string& id, const string& h,
-		const string& p) :
+SpreadConnection::SpreadConnection(const string &id, const string &h,
+		const string &p) :
 	logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
 			host(h), port(p), spreadhost(port + "@" + host), conId(id),
 			msgCount(0) {
@@ -47,7 +47,7 @@ SpreadConnection::SpreadConnection(const string& id, const string& h,
 			<< " to spread daemon at " << spreadhost);
 }
 
-SpreadConnection::SpreadConnection(const string& id) :
+SpreadConnection::SpreadConnection(const string &id) :
 	logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
 			conId(id), msgCount(0) {
 	host = Configuration::getInstance()->getProperty("Spread.Host");
@@ -264,7 +264,8 @@ bool SpreadConnection::send(const SpreadMessage &msg) {
 				j++;
 			}
 			ret = SP_multigroup_multicast(con, RELIABLE_MESS, groupCount,
-					(const char (*)[MAX_GROUP_NAME])groups, RELIABLE_MESS, msg.getSize(), msg.getData());
+					(const char(*)[MAX_GROUP_NAME]) groups, RELIABLE_MESS,
+					msg.getSize(), msg.getData());
 			msgCount++;
 			for (int i = 0; i < groupCount; ++i) {
 				delete groups[i];
@@ -299,7 +300,7 @@ bool SpreadConnection::send(const SpreadMessage &msg) {
 	}
 }
 
-string SpreadConnection::generateId(const string& prefix) {
+string SpreadConnection::generateId(const string &prefix) {
 	// TODO generate meaningful and unique Id according to MAX_PRIVATE_NAME
 	//            uuid_t id;
 	//            uuid_generate(id);

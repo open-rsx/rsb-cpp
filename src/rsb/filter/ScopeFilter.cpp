@@ -20,16 +20,16 @@
 #include "ScopeFilter.h"
 #include "FilterObserver.h"
 
-namespace rsb {
+using namespace std;
 
+namespace rsb {
 namespace filter {
 
-ScopeFilter::ScopeFilter(std::string uri) {
+ScopeFilter::ScopeFilter(const string &uri) {
 	scope = uri;
 }
 
 ScopeFilter::~ScopeFilter() {
-	// TODO Auto-generated destructor stub
 }
 
 bool ScopeFilter::match(RSBEventPtr e) {
@@ -38,7 +38,7 @@ bool ScopeFilter::match(RSBEventPtr e) {
 	//      after dispatching of event notification, needs to be done by EventProcessor
 	// TODO whitelist must be specific for each filter, but handled globally
 	//if (whitelist[e] || (e->getURI()==scope)) {
-	if (e->getURI()==scope) {
+	if (e->getURI() == scope) {
 		return true;
 	} else {
 		return false;
@@ -46,9 +46,12 @@ bool ScopeFilter::match(RSBEventPtr e) {
 }
 
 void ScopeFilter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {
-	fo->notify(this,at);
+	fo->notify(this, at);
+}
+
+string ScopeFilter::getURI() {
+	return scope;
 }
 
 }
-
 }

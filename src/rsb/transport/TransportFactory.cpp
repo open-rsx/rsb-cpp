@@ -29,16 +29,12 @@ namespace {
 }
 
 namespace rsb {
-
 namespace transport {
 
 TransportFactory::TransportFactory() {
-	// TODO Auto-generated constructor stub
-
 }
 
 TransportFactory::~TransportFactory() {
-	// TODO Auto-generated destructor stub
 }
 
 PortPtr TransportFactory::createPort(PortTypes type) {

@@ -49,26 +49,20 @@ public:
 	 * Thrown if a remote called timed out.
 	 *
 	 * @author jwienke
-	 * @todo remove header implementation
 	 */
 	class TimeoutException: public std::runtime_error {
 	public:
-		explicit TimeoutException(const std::string &message) :
-			std::runtime_error(message) {
-		}
+		explicit TimeoutException(const std::string &message);
 	};
 
 	/**
 	 * Thrown if a remote method call resulted in an exception.
 	 *
 	 * @author jwienke
-	 * @todo remove header implementation
 	 */
 	class RemoteTargetInvocationException: public std::runtime_error {
 	public:
-		explicit RemoteTargetInvocationException(const std::string &message) :
-			std::runtime_error(message) {
-		}
+		explicit RemoteTargetInvocationException(const std::string &message);
 	};
 
 	RemoteServer(const std::string &uri);

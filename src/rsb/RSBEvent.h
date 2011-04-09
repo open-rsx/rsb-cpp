@@ -44,24 +44,21 @@ typedef boost::shared_ptr<void> VoidPtr;
  * payload.
  *
  * @author swrede
- * @todo remove header implementations
  */
 class RSB_EXPORT RSBEvent {
 public:
 
-	RSBEvent() {
-	}
+	RSBEvent();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param u uri of the event
-	 * @param c payload of the event
-	 * @param t type identifier to serialize / deserialize the event payload
+	 * @param uri uri of the event
+	 * @param payload payload of the event
+	 * @param type type identifier to serialize / deserialize the event payload
 	 */
-	RSBEvent(std::string u, boost::shared_ptr<void> c, std::string t) :
-		uri(u), content(c), type(t) {
-	}
+	RSBEvent(const std::string &uri, boost::shared_ptr<void> payload,
+			const std::string &type);
 
 	virtual ~RSBEvent();
 
@@ -86,7 +83,8 @@ public:
 	std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
 	std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
 
-	friend RSB_EXPORT std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
+	friend RSB_EXPORT std::ostream &operator<<(std::ostream& out,
+			const RSBEvent &e);
 
 private:
 	rsc::misc::UUID id;

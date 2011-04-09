@@ -39,8 +39,8 @@ Router::Router(TransportFactory::PortTypes inType,
 	if (inPort) {
 		eventProcessor = EventProcessorPtr(new EventProcessor());
 		// add event processor as observer to input port(s)
-		inPort->setObserver(boost::bind(&EventProcessor::process,
-				eventProcessor, _1));
+		inPort->setObserver(
+				boost::bind(&EventProcessor::process, eventProcessor, _1));
 	}
 	shutdown = false;
 }
@@ -105,6 +105,14 @@ void Router::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
 	if (outPort) {
 		outPort->setQualityOfServiceSpecs(specs);
 	}
+}
+
+PortPtr Router::getOutPort() {
+	return outPort;
+}
+
+PortPtr Router::getInPort() {
+	return inPort;
 }
 
 }

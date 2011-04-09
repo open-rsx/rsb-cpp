@@ -56,14 +56,13 @@ typedef std::list<Action> Actions;
  * subscription->appendHandler(qph);
  * @endcode
  *
- *
- * @todo remove header implementations
  * @todo make actions and filter thread-safe, especially for match and action
  *       execution which may be asynchronous to changes in theses subscriptions
  *       I think using a list in a shared_ptr is the wrong way to achieve this.
  */
 class RSB_EXPORT Subscription {
 public:
+
 	Subscription();
 	virtual ~Subscription();
 
@@ -93,26 +92,18 @@ public:
 	 */
 	virtual void appendHandler(HandlerPtr h);
 
-	// TODO check if it is generally better to return iterators?!
-	boost::shared_ptr<FilterChain> getFilters() {
-		return filters;
-	}
+	/**
+	 * @todo check if it is generally better to return iterators?!
+	 */
+	boost::shared_ptr<FilterChain> getFilters();
 
-	boost::shared_ptr<std::set<HandlerPtr> > getHandlers() {
-		return handlers;
-	}
+	boost::shared_ptr<std::set<HandlerPtr> > getHandlers();
 
-	void removeHandler(HandlerPtr h) {
-		handlers->erase(h);
-	}
+	void removeHandler(HandlerPtr h);
 
-	bool isEnabled() {
-		return enabled;
-	}
+	bool isEnabled();
 
-	void disable() {
-		enabled = false;
-	}
+	void disable();
 
 	friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
 			const Subscription &subscription);
@@ -127,7 +118,9 @@ private:
 
 typedef boost::shared_ptr<Subscription> SubscriptionPtr;
 
-// TODO really implement stream operators
+/**
+ * @todo really implement stream operators
+ */
 RSB_EXPORT std::ostream
 &operator<<(std::ostream &stream, const Subscription &subscription);
 

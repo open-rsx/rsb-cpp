@@ -115,7 +115,7 @@ SpreadPort::~SpreadPort() {
 }
 
 void SpreadPort::notify(rsb::filter::ScopeFilter* f,
-		rsb::filter::FilterAction::Types at) {
+		const rsb::filter::FilterAction::Types &at) {
 	// join or leave groups
 	// TODO evaluate success
 	RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);

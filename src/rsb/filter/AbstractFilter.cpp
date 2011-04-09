@@ -21,16 +21,12 @@
 #include "FilterObserver.h"
 
 namespace rsb {
-
 namespace filter {
 
 AbstractFilter::AbstractFilter() {
-	// TODO Auto-generated constructor stub
-
 }
 
 AbstractFilter::~AbstractFilter() {
-	// TODO Auto-generated destructor stub
 }
 
 void AbstractFilter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {
@@ -38,5 +34,4 @@ void AbstractFilter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at
 }
 
 }
-
 }

@@ -50,10 +50,5 @@ AnnotatedData StringConverter::deserialize(const std::string &wireType,
 	return make_pair(WIRE_TYPE, boost::shared_ptr<string>(new string(wire)));
 }
 
-// TODO reenable this
-//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new StringConverter, StringStringConverter)
-//;
-
 }
-
 }

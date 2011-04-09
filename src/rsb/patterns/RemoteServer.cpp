@@ -69,7 +69,7 @@ public:
 		waitForEvents.insert(requestId);
 	}
 
-	RSBEventPtr getReply(const std::string &requestId) {
+	RSBEventPtr getReply(const string &requestId) {
 
 		RSCTRACE(logger, "Waiting for reply with id " << requestId);
 
@@ -97,9 +97,19 @@ public:
 
 };
 
+RemoteServer::TimeoutException::TimeoutException(const string &message) :
+	runtime_error(message) {
+}
+
+RemoteServer::RemoteTargetInvocationException::RemoteTargetInvocationException(
+		const string &message) :
+	runtime_error(message) {
+}
+
 RemoteServer::RemoteServer(const string &uri) :
-			logger(rsc::logging::Logger::getLogger("rsc.patterns.RemoteServer."
-					+ uri)), uri(uri) {
+			logger(
+					rsc::logging::Logger::getLogger(
+							"rsc.patterns.RemoteServer." + uri)), uri(uri) {
 	// TODO check that this server is alive...
 	// TODO probably it would be a good idea to request some method infos from
 	//      the server, e.g. for type checking
@@ -119,16 +129,16 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 		const string replyUri = uri + "-reply-" + methodName;
 		SubscriberPtr subscriber(new Subscriber(replyUri));
 		SubscriptionPtr subscription(new Subscription);
-		subscription->appendFilter(filter::AbstractFilterPtr(
-				new filter::ScopeFilter(replyUri)));
-		boost::shared_ptr<WaitingEventHandler> handler(new WaitingEventHandler(
-				logger));
+		subscription->appendFilter(
+				filter::AbstractFilterPtr(new filter::ScopeFilter(replyUri)));
+		boost::shared_ptr<WaitingEventHandler> handler(
+				new WaitingEventHandler(logger));
 		subscription->appendHandler(handler);
 		subscriber->addSubscription(subscription);
 
 		// publisher for requests
-		Publisher<void>::Ptr publisher(new Publisher<void> (uri + "-request-"
-				+ methodName, sendType));
+		Publisher<void>::Ptr publisher(
+				new Publisher<void> (uri + "-request-" + methodName, sendType));
 
 		MethodSet set;
 		set.methodName = methodName;
@@ -143,17 +153,17 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 	}
 
 	if (methodSets[methodName].sendType != sendType) {
-		throw runtime_error("Illegal send type. Method previously accepted "
-				+ methodSets[methodName].sendType + " but now " + sendType
-				+ " was requested");
+		throw runtime_error(
+				"Illegal send type. Method previously accepted "
+						+ methodSets[methodName].sendType + " but now "
+						+ sendType + " was requested");
 	}
 
 	return methodSets[methodName];
 
 }
 
-RSBEventPtr RemoteServer::callMethod(const std::string &methodName,
-		RSBEventPtr data) {
+RSBEventPtr RemoteServer::callMethod(const string &methodName, RSBEventPtr data) {
 
 	RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
@@ -172,9 +182,10 @@ RSBEventPtr RemoteServer::callMethod(const std::string &methodName,
 	RSBEventPtr result = methodSet.handler->getReply(requestId);
 	if (result->hasMetaInfo("isException")) {
 		assert(result->getType() == "string");
-		throw RemoteTargetInvocationException("Error calling remote method '"
-				+ methodName + "': " + *(boost::static_pointer_cast<string>(
-				result->getData())));
+		throw RemoteTargetInvocationException(
+				"Error calling remote method '" + methodName + "': "
+						+ *(boost::static_pointer_cast<string>(
+								result->getData())));
 	} else {
 		return result;
 	}

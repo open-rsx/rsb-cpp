@@ -19,10 +19,22 @@
 
 #include "StatusTask.h"
 
+using namespace std;
+
 namespace rsb {
+namespace inprocess {
 
-namespace internal {
-
+StatusTask::StatusTask(InProcessPort* p, const unsigned int &ms) :
+	rsc::threading::PeriodicTask(ms), port(p) {
 }
 
+StatusTask::~StatusTask() {
+	cout << "dtr ~StatusTask() " << endl;
+}
+
+void StatusTask::execute() {
+	cout << "InProcessPort alive." << endl;
+}
+
+}
 }

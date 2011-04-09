@@ -33,11 +33,13 @@ FilterObserver::FilterObserver() :
 FilterObserver::~FilterObserver() {
 }
 
-void FilterObserver::notify(AbstractFilter */*filter*/, FilterAction::Types /*at*/) {
+void FilterObserver::notify(AbstractFilter */*filter*/,
+		const FilterAction::Types &/*at*/) {
 	RSCDEBUG(logger, "FilterObserver::notify(AbstractFilterPtr a)");
 }
 
-void FilterObserver::notify(ScopeFilter */*filter*/, FilterAction::Types /*at*/) {
+void FilterObserver::notify(ScopeFilter */*filter*/,
+		const FilterAction::Types &/*at*/) {
 	RSCDEBUG(logger, "FilterObserver::notify(ScopeFilterPtr a)");
 }
 

@@ -33,6 +33,7 @@ namespace transport {
  */
 class RSB_EXPORT TransportFactory {
 public:
+
 	enum PortTypes {
 		LOCAL,
 		SPREAD,
@@ -42,7 +43,9 @@ public:
 	TransportFactory();
 	virtual ~TransportFactory();
 
-	// TODO distinguish between in and out ports?
+	/**
+	 * @todo distinguish between in and out ports?
+	 */
 	static PortPtr createPort(PortTypes type);
 };
 

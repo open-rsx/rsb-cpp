@@ -40,9 +40,9 @@ namespace spread {
  */
 class RSB_EXPORT SpreadConnection {
 public:
-	SpreadConnection(const std::string& prefix, const std::string& host,
+	SpreadConnection(const std::string &prefix, const std::string &host,
 			const std::string& port);
-	SpreadConnection(const std::string& prefix);
+	SpreadConnection(const std::string &prefix);
 	virtual ~SpreadConnection();
 
 	// connection state management
@@ -64,10 +64,8 @@ public:
 	// return mailbox for other low-level functions
 	mailbox *getMailbox();
 
-protected:
-
 private:
-	std::string generateId(const std::string& prefix);
+	std::string generateId(const std::string &prefix);
 
 	rsc::logging::LoggerPtr logger;
 	bool connected; // flag to indicate whether we are connected to spread

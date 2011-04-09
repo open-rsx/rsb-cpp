@@ -35,8 +35,27 @@ using namespace rsc::logging;
 namespace rsb {
 namespace spread {
 
+DataStore::DataStore(rsb::protocol::NotificationPtr n) :
+	logger(Logger::getLogger("rsb.spread.DataStore")), receivedParts(0) {
+	store.resize(n->num_data_parts() + 1);
+	add(n);
+}
+
+DataStore::~DataStore() {
+}
+
+string DataStore::getData(const unsigned int &i) {
+	return store[i]->data().binary();
+}
+
+unsigned int DataStore::add(rsb::protocol::NotificationPtr n) {
+	RSCTRACE(logger, "Add message " << n->eid() << " (part " << n->data_part() << ") to DataStore");
+	store[n->data_part()] = n;
+	return receivedParts++;
+}
+
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
-		transport::ConverterCollection<std::string>::Ptr converters,
+		transport::ConverterCollection<string>::Ptr converters,
 		const Action &action) :
 	logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
 			cancelRequested(false), con(s), converters(converters),
@@ -98,7 +117,7 @@ void ReceiverTask::execute() {
 					// Create new DataStore
 					RSCTRACE(logger, "Create new data store for message: " << n->eid());
 					dataPool.insert(
-							pair<std::string, DataStorePtr> (n->eid(),
+							pair<string, DataStorePtr> (n->eid(),
 									DataStorePtr(new DataStore(n))));
 				}
 			} else {

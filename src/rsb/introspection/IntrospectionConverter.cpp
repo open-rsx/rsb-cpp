@@ -66,10 +66,5 @@ rsb::transport::AnnotatedData IntrospectionConverter::deserialize(
 
 }
 
-// TODO reenable this
-//CREATE_GLOBAL_REGISTREE(::rsb::transport::stringConverterRegistry(), new IntrospectionConverter, IntrospectionStringConverter)
-//;
-
 }
-
 }

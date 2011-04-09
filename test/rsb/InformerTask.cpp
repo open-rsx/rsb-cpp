@@ -40,7 +40,7 @@ InformerTask::~InformerTask() {
 
 void InformerTask::execute() {
 	++sentEvents;
-	cout << sentEvents << " " << flush;
+	cout << "sending event: " << sentEvents << endl;
 	PortStateChangePtr psc(new PortStateChange());
 	psc->set_action("update");
 	psc->set_comment("sent from informer task");

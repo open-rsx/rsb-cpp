@@ -42,25 +42,13 @@ namespace spread {
 class DataStore {
 public:
 
-	DataStore(rsb::protocol::NotificationPtr n) :
-		logger(rsc::logging::Logger::getLogger("rsb.spread.DataStore")),
-				receivedParts(0) {
-		store.resize(n->num_data_parts() + 1);
-		add(n);
-	}
+	DataStore(rsb::protocol::NotificationPtr n);
 
-	~DataStore() {
-	}
+	~DataStore();
 
-	std::string getData(unsigned int i) {
-		return store[i]->data().binary();
-	}
+	std::string getData(const unsigned int &i);
 
-	unsigned int add(rsb::protocol::NotificationPtr n) {
-		RSCTRACE(logger, "Add message " << n->eid() << " (part " << n->data_part() << ") to DataStore");
-		store[n->data_part()] = n;
-		return receivedParts++;
-	}
+	unsigned int add(rsb::protocol::NotificationPtr n);
 
 private:
 	rsc::logging::LoggerPtr logger;

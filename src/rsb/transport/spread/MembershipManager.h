@@ -35,11 +35,6 @@
 namespace rsb {
 namespace spread {
 
-// TODO think about adding SpreadConnectionPtr as a member, offering
-//      methods that operate on this connection only
-
-// TODO Threadsafety!!!
-
 typedef std::map<std::string , std::pair<SpreadGroupPtr, int> > GroupMap;
 
 /**
@@ -47,6 +42,9 @@ typedef std::map<std::string , std::pair<SpreadGroupPtr, int> > GroupMap;
  *
  * @author swrede
  * @todo do we really want to expose this through dlls only for the unit tests
+ * @todo think about adding SpreadConnectionPtr as a member, offering
+ *       methods that operate on this connection only
+ * @todo Threadsafety!!!
  */
 class RSB_EXPORT MembershipManager {
 public:

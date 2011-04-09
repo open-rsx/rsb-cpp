@@ -24,6 +24,11 @@ using namespace std;
 
 namespace rsb {
 
+/**
+ * Adapter from function-based Action to EventHandler.
+ *
+ * @author jwienke
+ */
 class ActionAdapter: public EventHandler {
 private:
 
@@ -76,6 +81,26 @@ bool Subscription::match(RSBEventPtr e) {
 		throw runtime_error("unknown error during event matching");
 	}
 	return true;
+}
+
+boost::shared_ptr<FilterChain> Subscription::getFilters() {
+	return filters;
+}
+
+boost::shared_ptr<std::set<HandlerPtr> > Subscription::getHandlers() {
+	return handlers;
+}
+
+void Subscription::removeHandler(HandlerPtr h) {
+	handlers->erase(h);
+}
+
+bool Subscription::isEnabled() {
+	return enabled;
+}
+
+void Subscription::disable() {
+	enabled = false;
 }
 
 ostream &operator<<(ostream &stream, const Subscription &subscription) {

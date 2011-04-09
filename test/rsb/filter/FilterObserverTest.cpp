@@ -48,11 +48,11 @@ public:
 
 class Observer: public FilterObserver {
 public:
-	void notify(AbstractFilter */*f*/, FilterAction::Types /*at*/) {
+	void notify(AbstractFilter */*f*/, const FilterAction::Types &/*at*/) {
 		ASSERT_FALSE(1)<< "notify AbstractFilter triggered";
 	}
 
-	void notify(ScopeFilter *sf, FilterAction::Types /*at*/) {
+	void notify(ScopeFilter *sf, const FilterAction::Types &/*at*/) {
 		ASSERT_TRUE(sf!=NULL);
 		cerr << sf->getURI() << endl;
 	}

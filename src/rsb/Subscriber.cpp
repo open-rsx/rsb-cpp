@@ -19,6 +19,57 @@
 
 #include "Subscriber.h"
 
+using namespace std;
+
 namespace rsb {
+
+Subscriber::Subscriber(const string &uri) :
+	logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri),
+			passive(false) {
+	// TODO evaluate configuration
+	router = transport::RouterPtr(
+			new transport::Router(transport::TransportFactory::SPREAD,
+					transport::TransportFactory::NONE));
+	activate();
+}
+
+Subscriber::Subscriber(transport::TransportFactory::PortTypes in,
+		const string &uri) :
+	logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri),
+			passive(false) {
+	// TODO evaluate configuration
+	router = transport::RouterPtr(
+			new transport::Router(in, transport::TransportFactory::NONE));
+	activate();
+}
+
+Subscriber::~Subscriber() {
+	if (!passive) {
+		deactivate();
+	}
+}
+
+void Subscriber::activate() {
+	router->activate();
+	passive = false;
+}
+
+void Subscriber::deactivate() {
+	if (!passive) {
+		router->deactivate();
+	}
+	passive = true;
+}
+
+void Subscriber::addSubscription(SubscriptionPtr s) {
+	router->subscribe(s);
+}
+
+void Subscriber::removeSubscription(SubscriptionPtr s) {
+	router->unsubscribe(s);
+}
+
+Subscriber::Subscriber() {
+}
 
 }

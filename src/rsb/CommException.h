@@ -29,12 +29,11 @@ namespace rsb {
  * General exception thrown upon communication errors.
  *
  * @author: swrede
- * @todo remove header implementation
  */
 class RSB_EXPORT CommException: public rsb::RSBException {
 public:
-	CommException(const std::string& m) : RSBException(m) {};
-	virtual ~CommException() throw () {};
+	CommException(const std::string &m);
+	virtual ~CommException() throw ();
 };
 
 }

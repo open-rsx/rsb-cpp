@@ -30,25 +30,20 @@ typedef boost::shared_ptr<InProcessPort> InProcessPortPtr;
 
 /**
  * @author swrede
- * @todo remove header implementations
  */
 class StatusTask: public rsc::threading::PeriodicTask {
 public:
 
-	StatusTask(InProcessPort* p, const unsigned int &ms) :
-		rsc::threading::PeriodicTask(ms), port(p) {
-	}
+	StatusTask(InProcessPort* p, const unsigned int &ms);
 
-	~StatusTask() {
-		std::cout << "dtr ~StatusTask() " << std::endl;
-	}
+	~StatusTask();
 
-	void execute() {
-		std::cout << "InProcessPort alive." << std::endl;
-	}
+	void execute();
 
 private:
-	// TODO how to replace this ptr by some kind of a smart ptr
+	/**
+	 * @todo how to replace this ptr by some kind of a smart ptr
+	 */
 	InProcessPort *port;
 };
 

@@ -20,16 +20,14 @@ namespace util {
  * General exception thrown upon configuration errors.
  *
  * @author: swrede
- * @todo remove header implementation
  */
 class RSB_EXPORT ConfigException: public rsb::RSBException {
 public:
-	ConfigException(const std::string& m) : RSBException(m) {};
-	virtual ~ConfigException() throw () {};
+	ConfigException(const std::string& m);
+	virtual ~ConfigException() throw ();
 };
 
 }
-
 }
 
 #endif /* CONFIGEXCEPTION_H_ */

@@ -45,10 +45,5 @@ AnnotatedData VoidConverter::deserialize(const std::string &/*wireType*/,
 	return make_pair(TYPE, boost::shared_ptr<void>());
 }
 
-// TODO reenable this
-//CREATE_GLOBAL_REGISTREE(stringConverterRegistry(), new VoidConverter, VoidStringConverter)
-//;
-
 }
-
 }

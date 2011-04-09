@@ -42,7 +42,6 @@ namespace transport {
  * @todo add configuration, provide preliminary set up interface
  * @todo implement abstract factory pattern for different port types
  * @todo think about null objects for ports to avoid checks for existence
- * @todo remove header implementations
  */
 class RSB_EXPORT Router { //: //public rsb::filter::FilterObservable {
 public:
@@ -83,14 +82,15 @@ public:
 	 */
 	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-	// HACK for current tests
-	// TODO remove header implementation
-	PortPtr getOutPort() {
-		return outPort;
-	}
-	PortPtr getInPort() {
-		return inPort;
-	}
+	/**
+	 * @name unit testing interface
+	 *
+	 * HACK for current tests.
+	 */
+	//@{
+	PortPtr getOutPort();
+	PortPtr getInPort();
+	//@}
 
 protected:
 	/**
