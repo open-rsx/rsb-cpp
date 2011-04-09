@@ -78,11 +78,11 @@ public:
 	}
 
 	/**
-	 * Returns the name of the wire schema this converter can
-	 * (de)serialize from/to.
+	 * Returns the name of the wire schema this converter can (de)serialize
+	 * from/to.
 	 *
 	 * @return name of the wire schema from/to this converter can
-	 * (de)serialize
+	 *         (de)serialize
 	 */
 	virtual std::string getWireSchema() const {
 		return wireSchema;
@@ -109,9 +109,9 @@ protected:
 	 * @a DataType
 	 *
 	 * @tparam DataType type of the objects that the converter
-	 * (de)serializes.
+	 *                  (de)serializes.
 	 * @param wireSchema wire schema from/to this converter can
-	 * (de)serialize.
+	 *                   (de)serialize.
 	 */
 	template<typename DataType>
 	AbstractConverter(const std::string &wireSchema, const DataType */*unused*/ = 0) :
