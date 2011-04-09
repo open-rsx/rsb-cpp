@@ -36,6 +36,8 @@ namespace transport {
 
 typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
 
+#define RSB_TYPE_TAG(T) (reinterpret_cast<T *> (0))
+
 /**
  * @author swrede
  * @author jwienke
@@ -109,7 +111,7 @@ protected:
 	 * @a DataType
 	 *
 	 * @tparam DataType type of the objects that the converter
-	 *                  (de)serializes.
+	 *                  (de)serializes. Use the RSB_TYPE_TAG macro with this.
 	 * @param wireSchema wire schema from/to this converter can
 	 *                   (de)serialize.
 	 */
