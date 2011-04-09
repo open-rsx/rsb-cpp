@@ -26,6 +26,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
 #include "../Publisher.h"
@@ -63,11 +64,8 @@ public:
 	template<class RequestType, class ReplyType>
 	class Callback: public IntlCallback {
 	public:
-
-		Callback() {
-		}
-
-		Callback(const std::string &requestType, const std::string &replyType) :
+	        Callback(const std::string &requestType = rsc::runtime::typeName<RequestType>(),
+			 const std::string &replyType   = rsc::runtime::typeName<ReplyType>()) :
 			requestType(requestType), replyType(replyType) {
 		}
 
