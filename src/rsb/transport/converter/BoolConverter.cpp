@@ -38,7 +38,7 @@ BoolConverter::~BoolConverter() {
 }
 
 string BoolConverter::serialize(const AnnotatedData &data, string &wire) {
-	assert(data.first == WIRE_SCHEMA);
+        assert(data.first == this->getDataType());
 
 	boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data.second);
 	if (*s) {

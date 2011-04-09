@@ -36,7 +36,7 @@ StringConverter::~StringConverter() {
 }
 
 string StringConverter::serialize(const AnnotatedData &data, string &wire) {
-	assert(data.first == WIRE_SCHEMA);
+        assert(data.first == this->getDataType());
 
 	boost::shared_ptr<string> s = boost::static_pointer_cast<string>(
 			data.second);
