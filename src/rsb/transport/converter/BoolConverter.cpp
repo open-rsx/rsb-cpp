@@ -28,33 +28,35 @@ using namespace std;
 namespace rsb {
 namespace transport {
 
-const string BoolConverter::WIRE_TYPE = "bool";
+const string BoolConverter::WIRE_SCHEMA = "bool";
 
 BoolConverter::BoolConverter() :
-	AbstractConverter<string> (WIRE_TYPE, WIRE_TYPE) {
+        AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<bool*>(0)) {
 }
 
 BoolConverter::~BoolConverter() {
 }
 
 string BoolConverter::serialize(const AnnotatedData &data, string &wire) {
-	assert(data.first == WIRE_TYPE);
+	assert(data.first == WIRE_SCHEMA);
+
 	boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data.second);
 	if (*s) {
 		wire = "t";
 	} else {
 		wire.clear();
 	}
-	return WIRE_TYPE;
+	return WIRE_SCHEMA;
 }
 
-AnnotatedData BoolConverter::deserialize(const std::string &wireType,
+AnnotatedData BoolConverter::deserialize(const std::string &wireSchema,
 		const string &wire) {
-	assert(wireType == WIRE_TYPE);
+	assert(wireSchema == WIRE_SCHEMA);
+
 	if (wire.empty()) {
-		return make_pair(WIRE_TYPE, boost::shared_ptr<bool>(new bool(false)));
+		return make_pair(WIRE_SCHEMA, boost::shared_ptr<bool>(new bool(false)));
 	} else {
-		return make_pair(WIRE_TYPE, boost::shared_ptr<bool>(new bool(true)));
+		return make_pair(WIRE_SCHEMA, boost::shared_ptr<bool>(new bool(true)));
 	}
 }
 

@@ -26,28 +26,30 @@ using namespace std;
 namespace rsb {
 namespace transport {
 
-const string StringConverter::WIRE_TYPE = "string";
+const string StringConverter::WIRE_SCHEMA = "string";
 
 StringConverter::StringConverter() :
-	AbstractConverter<string> (WIRE_TYPE, WIRE_TYPE) {
+        AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<string*>(0)) {
 }
 
 StringConverter::~StringConverter() {
 }
 
 string StringConverter::serialize(const AnnotatedData &data, string &wire) {
-	assert(data.first == WIRE_TYPE);
+	assert(data.first == WIRE_SCHEMA);
+
 	boost::shared_ptr<string> s = boost::static_pointer_cast<string>(
 			data.second);
 	// essentially return the contained string to the serialization medium
 	wire = *s;
-	return WIRE_TYPE;
+	return WIRE_SCHEMA;
 }
 
 AnnotatedData StringConverter::deserialize(const std::string &wireType,
 		const string &wire) {
-	assert(wireType == WIRE_TYPE);
-	return make_pair(WIRE_TYPE, boost::shared_ptr<string>(new string(wire)));
+	assert(wireType == WIRE_SCHEMA);
+
+	return make_pair(WIRE_SCHEMA, boost::shared_ptr<string>(new string(wire)));
 }
 
 }

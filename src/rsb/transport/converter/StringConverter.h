@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef STRINGCONVERTER_H_
-#define STRINGCONVERTER_H_
+#pragma once
 
 #include "../AbstractConverter.h"
 
@@ -40,15 +39,13 @@ public:
 	virtual ~StringConverter();
 
 	std::string serialize(const AnnotatedData &data, std::string &wire);
-	AnnotatedData deserialize(const std::string &wireType,
+	AnnotatedData deserialize(const std::string &wireSchema,
 			const std::string &wire);
 
 private:
-	static const std::string WIRE_TYPE;
+	static const std::string WIRE_SCHEMA;
 
 };
 
 }
 }
-
-#endif /* STRINGCONVERTER_H_ */
