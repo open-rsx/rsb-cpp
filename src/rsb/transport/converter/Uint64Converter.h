@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef UINT64CONVERTER_H_
-#define UINT64CONVERTER_H_
+#pragma once
 
 #include "../AbstractConverter.h"
 
@@ -39,12 +38,12 @@ public:
 	virtual ~Uint64Converter();
 
 	std::string serialize(const AnnotatedData &data, std::string &wire);
-	AnnotatedData deserialize(const std::string &wireType,
+	AnnotatedData deserialize(const std::string &wireSchema,
 			const std::string &wire);
 
 private:
 
-	static const std::string TYPE;
+	static const std::string WIRE_SCHEMA;
 
 };
 
@@ -52,5 +51,3 @@ typedef boost::shared_ptr<Uint64Converter> Uint64ConverterPtr;
 
 }
 }
-
-#endif /* UINT64CONVERTER_H_ */

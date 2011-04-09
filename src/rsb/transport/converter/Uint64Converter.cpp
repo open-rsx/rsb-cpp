@@ -31,32 +31,32 @@ using namespace std;
 namespace rsb {
 namespace transport {
 
-const string Uint64Converter::TYPE = "uint64";
+const string Uint64Converter::WIRE_SCHEMA = "uint64";
 
 Uint64Converter::Uint64Converter() :
-	AbstractConverter<string> (TYPE, TYPE) {
+        AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<uint64_t*>(0)) {
 }
 
 Uint64Converter::~Uint64Converter() {
 }
 
 string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
-	assert(data.first == TYPE);
+        assert(data.first == this->getDataType());
 
 	boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
 			boost::uint64_t>(data.second);
 	stringstream s;
 	s << *number;
 	wire = s.str();
-	return TYPE;
+	return WIRE_SCHEMA;
 }
 
-AnnotatedData Uint64Converter::deserialize(const string &wireType,
+AnnotatedData Uint64Converter::deserialize(const string &wireSchema,
 		const string &wire) {
-	assert(wireType == TYPE);
+	assert(wireSchema == WIRE_SCHEMA);
 
 	try {
-		return make_pair(TYPE,
+		return make_pair(WIRE_SCHEMA,
 				boost::shared_ptr<boost::uint64_t>(new boost::uint64_t(
 						boost::lexical_cast<boost::uint64_t>(wire))));
 	} catch (boost::bad_lexical_cast &e) {
