@@ -74,23 +74,23 @@ public:
 	 *             publisher. It is used to find a converter that can convert
 	 *             these data to the port
 	 */
-	Publisher(std::string uri, std::string type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Publisher." + uri)), uri(
-				uri), passive(false), defaultType(type) {
+	Publisher(const std::string &uri, const std::string &type) :
+		logger(rsc::logging::Logger::getLogger("rsb.Publisher." + uri)),
+				uri(uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(
-				transport::TransportFactory::NONE,
-				transport::TransportFactory::SPREAD));
+		router = transport::RouterPtr(
+				new transport::Router(transport::TransportFactory::NONE,
+						transport::TransportFactory::SPREAD));
 		activate();
 	}
 
-	Publisher(transport::TransportFactory::PortTypes out, std::string uri,
-			std::string type) :
+	Publisher(const transport::TransportFactory::PortTypes &out,
+			const std::string &uri, const std::string &type) :
 		logger(rsc::logging::Logger::getLogger("rsb.Publisher")), uri(uri),
 				passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(
-				transport::TransportFactory::NONE, out));
+		router = transport::RouterPtr(
+				new transport::Router(transport::TransportFactory::NONE, out));
 		activate();
 	}
 
@@ -170,7 +170,7 @@ protected:
 	Publisher() { /* forbidden */
 	}
 
-	void publish(VoidPtr p, std::string type) {
+	void publish(VoidPtr p, const std::string &type) {
 		RSBEventPtr e(new RSBEvent());
 		e->setData(p);
 		e->setURI(uri);
