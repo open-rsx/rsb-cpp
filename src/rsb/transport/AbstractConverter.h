@@ -113,7 +113,7 @@ protected:
 	 * (de)serialize.
 	 */
         template <typename DataType>
-	AbstractConverter(const std::string &wireSchema) :
+	AbstractConverter(const std::string &wireSchema, const DataType* unused = 0) :
 	        dataType(rsc::runtime::typeName<DataType>()),
 		wireSchema(wireSchema) {
 	}
