@@ -5,7 +5,8 @@
  * \date 28.07.2010
  *
  * Provides configuration mechanisms for RSB. Currently XCF-Style.
- * TODO Should be able to read XSRAD configs.
+ * @todo Should be able to read XSRAD configs. (jwienke: really?)
+ * @todo missing license headers
  */
 
 #pragma once

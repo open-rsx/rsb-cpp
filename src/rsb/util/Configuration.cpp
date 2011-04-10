@@ -313,8 +313,8 @@ string Configuration::getProperty(const string& key) {
 		return p->second;
 	} else {
 		RSCWARN(logger, "property not found with key: " + key);
-		throw ConfigException(string("Can't find property with key: ")
-				+ string(key));
+		throw ConfigException(
+				string("Can't find property with key: ") + string(key));
 	}
 }
 
@@ -328,14 +328,14 @@ int Configuration::getPropertyAsInt(const string& key) {
 		if (!(v >> value) || !v.eof()) {
 			RSCWARN(logger, "could not conert property with key " + key
 					+ " to int type");
-			throw ConfigException(string(
-					"Can't convert property to integer value with key: ")
-					+ string(key));
+			throw ConfigException(
+					string("Can't convert property to integer value with key: ")
+							+ string(key));
 		}
 	} else {
 		RSCWARN(logger, "property not found with key: " + key);
-		throw ConfigException(string("Can't find property with key: ")
-				+ string(key));
+		throw ConfigException(
+				string("Can't find property with key: ") + string(key));
 	}
 
 	return value;
@@ -347,9 +347,10 @@ void Configuration::setProperty(const string& key, const string& value) {
 	// Is property to be set contained in list of allowed properties?
 	std::vector<std::string>::iterator k;
 	bool valid = false;
-	for (k = keys.begin(); k != keys.end(); k++) {
-		if (*k == key)
+	for (k = keys.begin(); k != keys.end(); ++k) {
+		if (*k == key) {
 			valid = true;
+		}
 	}
 
 	if (!valid) {
@@ -413,12 +414,12 @@ void Configuration::load(const string& file) {
 		}
 	} catch (const std::exception& ex) {
 		RSCERROR(logger,
-				"catched standard exception during parsing of file at location: "
-						+ file);
-		RSCERROR(logger,"catched exception message is: " + string(ex.what()));
+				"caught standard exception during parsing of file at location: "
+				+ file);
+		RSCERROR(logger,"caught exception message is: " + string(ex.what()));
 	} catch (...) {
 		RSCERROR(logger,
-				"catched unknown exception during parsing of config file in home folder");
+				"caught unknown exception during parsing of config file in home folder");
 	}
 }
 
@@ -430,11 +431,11 @@ void Configuration::loadEnv() {
 			// parse only relevant environment variables
 			if ((strncmp(environ[i], "XCF", 3) == 0) || (strncmp(environ[i],
 					"Ice", 3) == 0) || (strncmp(environ[i], "Spr", 3) == 0)) {
-				parseLine( convertFromEnviron(environ[i]));
+				parseLine(convertFromEnviron(environ[i]));
 			}
 		} catch (...) {
 			RSCERROR(logger,
-					"catched unknown exception during parsing of environment variables");
+					"caught unknown exception during parsing of environment variables");
 		}
 	}
 #endif
@@ -483,8 +484,8 @@ void Configuration::parseLine(const std::string& line) {
 		setProperty(key, value);
 	} catch (const ConfigException &ex) {
 		// warn but ignore invalid property
-		RSCWARN(logger, "Exception catched during parsing of XCF config: " + string(
-				ex.what()));
+		RSCWARN(logger, "Exception caught during parsing of XCF config: " + string(
+						ex.what()));
 	}
 }
 

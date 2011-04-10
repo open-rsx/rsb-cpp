@@ -31,6 +31,8 @@ namespace spread {
  * Default message QOS for sending is RELIABLE.
  *
  * @author swrede
+ * @todo what happens with the message type in constructors that do not take
+ *       it as an argument
  */
 class SpreadMessage {
 public:
@@ -55,15 +57,15 @@ public:
 	};
 
 	SpreadMessage();
-	SpreadMessage(Type mt);
+	SpreadMessage(const Type &mt);
 	SpreadMessage(const std::string &d);
-	SpreadMessage(const char* d);
+	SpreadMessage(const char *d);
 	virtual ~SpreadMessage();
 
 	void setData(const std::string &doc);
 	void setData(const char* d);
 	std::string getDataAsString() const;
-	const char* getData() const;
+	const char *getData() const;
 	int getSize() const;
 	SpreadMessage::Type getType() const;
 	void setType(Type mt);
@@ -78,7 +80,7 @@ public:
 private:
 	std::string data;
 	std::list<std::string> groups;
-	Type t;
+	Type type;
 	QOS qos;
 };
 

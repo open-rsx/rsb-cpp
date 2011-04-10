@@ -74,11 +74,11 @@ void Router::notifyPorts(rsb::SubscriptionPtr s,
 		rsb::filter::FilterAction::Types a) {
 	// TODO missing check if there really is an inport
 	FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(inPort);
-	for (rsb::FilterChain::iterator list_iter = s->getFilters()->begin(); list_iter
-			!= s->getFilters()->end(); list_iter++) {
+	for (rsb::FilterChain::iterator listIt = s->getFilters()->begin(); listIt
+			!= s->getFilters()->end(); ++listIt) {
 		// TODO check whether we want to do this also for out ports
 		// TODO generally use rsb::filters::Observable implementation here!
-		(*list_iter)->notifyObserver(fo, a);
+		(*listIt)->notifyObserver(fo, a);
 	}
 }
 

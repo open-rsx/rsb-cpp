@@ -25,84 +25,84 @@ using namespace std;
 using namespace rsc::logging;
 
 namespace {
-  LoggerPtr logger(Logger::getLogger("rsb.spread.SpreadMessage"));
+LoggerPtr logger(Logger::getLogger("rsb.spread.SpreadMessage"));
 }
 
 namespace rsb {
-  namespace spread {
+namespace spread {
 
-    SpreadMessage::SpreadMessage() :
-      qos(UNRELIABLE) {
-    }
+SpreadMessage::SpreadMessage() :
+	qos(UNRELIABLE) {
+}
 
-    SpreadMessage::SpreadMessage(Type mt) :
-      t(mt), qos(UNRELIABLE) {
-    }
+SpreadMessage::SpreadMessage(const Type &mt) :
+	type(mt), qos(UNRELIABLE) {
+}
 
-    SpreadMessage::SpreadMessage(const string& d) :
-      data(d), qos(UNRELIABLE) {
-    }
+SpreadMessage::SpreadMessage(const string &d) :
+	data(d), qos(UNRELIABLE) {
+}
 
-    SpreadMessage::SpreadMessage(const char* buf) :
-      qos(UNRELIABLE) {
-      data = string(buf);
-    }
+SpreadMessage::SpreadMessage(const char *buf) :
+	qos(UNRELIABLE) {
+	data = string(buf);
+}
 
-    SpreadMessage::~SpreadMessage() {
-      RSCTRACE(logger, "spread message destructor called");
-    }
+SpreadMessage::~SpreadMessage() {
+	RSCTRACE(logger, "spread message destructor called");
+}
 
-    void SpreadMessage::setData(const std::string& doc) {
-      data = doc;
-    }
+void SpreadMessage::setData(const std::string& doc) {
+	data = doc;
+}
 
-    void SpreadMessage::setData(const char* buf) {
-      data = string(buf);
-    }
+void SpreadMessage::setData(const char* buf) {
+	data = string(buf);
+}
 
-    string SpreadMessage::getDataAsString() const {
-      return data;
-    }
+string SpreadMessage::getDataAsString() const {
+	return data;
+}
 
-    const char* SpreadMessage::getData() const {
-      return data.c_str();
-    }
+const char* SpreadMessage::getData() const {
+	return data.c_str();
+}
 
-    int SpreadMessage::getSize() const {
-      return data.length();
-    }
+int SpreadMessage::getSize() const {
+	return data.length();
+}
 
-    void SpreadMessage::setType(Type mt) {
-      t = mt;
-    }
+void SpreadMessage::setType(Type mt) {
+	type = mt;
+}
 
-    SpreadMessage::Type SpreadMessage::getType() const {
-      return t;
-    }
+SpreadMessage::Type SpreadMessage::getType() const {
+	return type;
+}
 
-    void SpreadMessage::addGroup(const std::string& name) {
-      groups.push_back(name);
-    }
+void SpreadMessage::addGroup(const std::string& name) {
+	groups.push_back(name);
+}
 
-    int SpreadMessage::getGroupCount() const {
-      return groups.size();
-    }
+int SpreadMessage::getGroupCount() const {
+	return groups.size();
+}
 
-    list<string>::const_iterator SpreadMessage::getGroupsBegin() const {
-      return groups.begin();
-    }
+list<string>::const_iterator SpreadMessage::getGroupsBegin() const {
+	return groups.begin();
+}
 
-    list<string>::const_iterator SpreadMessage::getGroupsEnd() const {
-      return groups.end();
-    }
+list<string>::const_iterator SpreadMessage::getGroupsEnd() const {
+	return groups.end();
+}
 
-    SpreadMessage::QOS SpreadMessage::getQOS() const {
-      return qos;
-    }
+SpreadMessage::QOS SpreadMessage::getQOS() const {
+	return qos;
+}
 
-    void SpreadMessage::setQOS(const QOS &qos) {
-      this->qos = qos;
-    }
+void SpreadMessage::setQOS(const QOS &qos) {
+	this->qos = qos;
+}
 
-  }
+}
 }
