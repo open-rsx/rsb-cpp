@@ -28,6 +28,7 @@ INCLUDE(FindPkgConfig)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(InstallFilesRecursive)
 INCLUDE(EnableCoverageReport)
+INCLUDE(EnableSlocCount)
 INCLUDE(GenerateDoxygen)
 INCLUDE(GenerateCppcheck)
 
@@ -142,3 +143,7 @@ GENERATE_DOXYGEN(VERSION "${RSB_VERSION}")
 # --- coverage ropert ---
 
 ENABLE_COVERAGE_REPORT(TARGETS ${RSB_NAME} TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} FILTER "*coverage/*" "*/test*")
+
+# --- sloccount ---
+
+ENABLE_SLOCCOUNT(FOLDERS src test examples apps)
