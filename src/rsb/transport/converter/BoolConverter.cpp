@@ -31,7 +31,7 @@ namespace transport {
 const string BoolConverter::WIRE_SCHEMA = "bool";
 
 BoolConverter::BoolConverter() :
-	AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<bool*> (0)) {
+	AbstractConverter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(bool)) {
 }
 
 BoolConverter::~BoolConverter() {

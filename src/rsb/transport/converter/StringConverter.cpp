@@ -29,7 +29,7 @@ namespace transport {
 const string StringConverter::WIRE_SCHEMA = "string";
 
 StringConverter::StringConverter() :
-	AbstractConverter<string> (WIRE_SCHEMA, reinterpret_cast<string*> (0)) {
+	AbstractConverter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(string)) {
 }
 
 StringConverter::~StringConverter() {

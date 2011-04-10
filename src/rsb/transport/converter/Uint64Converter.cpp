@@ -34,8 +34,7 @@ namespace transport {
 const string Uint64Converter::WIRE_SCHEMA = "uint64";
 
 Uint64Converter::Uint64Converter() :
-			AbstractConverter<string> (WIRE_SCHEMA,
-					reinterpret_cast<boost::uint64_t*> (0)) {
+	AbstractConverter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(boost::uint64_t)) {
 }
 
 Uint64Converter::~Uint64Converter() {
