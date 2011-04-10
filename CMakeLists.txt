@@ -147,3 +147,9 @@ ENABLE_COVERAGE_REPORT(TARGETS ${RSB_NAME} TESTS ${RSB_TEST_NAME} ${CORE_TEST_NA
 # --- sloccount ---
 
 ENABLE_SLOCCOUNT(FOLDERS src test examples apps)
+
+# --- cppcheck ---
+
+GENERATE_CPPCHECK(SOURCES src test apps examples
+                          "${CMAKE_CURRENT_BINARY_DIR}/src" "${CMAKE_CURRENT_BINARY_DIR}/test" "${CMAKE_CURRENT_BINARY_DIR}/apps" "${CMAKE_CURRENT_BINARY_DIR}/examples"
+                  ENABLE_IDS style)

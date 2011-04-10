@@ -129,10 +129,3 @@ INSTALL(TARGETS ${RSB_NAME}
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
 INSTALL_FILES_RECURSIVE(include HEADERS)
-
-# --- cppcheck ---
-
-GENERATE_CPPCHECK(SOURCES ${SOURCES}
-                          ${HEADERS}
-                          ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h
-                  ENABLE_IDS style)
