@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef INTROSPECTIONCONVERTER_H_
-#define INTROSPECTIONCONVERTER_H_
+#pragma once
 
 #include "../transport/AbstractConverter.h"
 
@@ -51,4 +50,3 @@ typedef boost::shared_ptr<IntrospectionConverter> IntrospectionConverterPtr;
 }
 }
 
-#endif /* INTROSPECTIONCONVERTER_H_ */

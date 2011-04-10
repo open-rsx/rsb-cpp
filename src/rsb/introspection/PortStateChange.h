@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef PORTSTATECHANGE_H_
-#define PORTSTATECHANGE_H_
+#pragma once
 
 #include "rsb/protocol/introspection/PortStateChange.pb.h"
 
@@ -35,4 +34,3 @@ typedef boost::shared_ptr<PortStateChange> PortStateChangePtr;
 
 }
 
-#endif /* PORTSTATECHANGE_H_ */

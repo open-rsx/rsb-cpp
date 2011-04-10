@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef PROTOCOLEXCEPTION_H_
-#define PROTOCOLEXCEPTION_H_
+#pragma once
 
 #include "../CommException.h"
 
@@ -43,4 +42,3 @@ public:
 }
 }
 
-#endif /* PROTOCOLEXCEPTION_H_ */

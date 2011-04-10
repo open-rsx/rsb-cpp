@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef INFORMERTASK_H_
-#define INFORMERTASK_H_
+#pragma once
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/condition.hpp>
@@ -77,4 +76,3 @@ private:
 }
 }
 
-#endif /* INFORMERTASK_H_ */

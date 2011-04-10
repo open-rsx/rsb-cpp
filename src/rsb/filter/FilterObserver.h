@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef FILTEROBSERVER_H_
-#define FILTEROBSERVER_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -49,12 +48,9 @@ private:
 
 };
 
-
 typedef boost::shared_ptr<FilterObserver> FilterObserverPtr;
 
-
 }
 
 }
 
-#endif /* FILTEROBSERVER_H_ */

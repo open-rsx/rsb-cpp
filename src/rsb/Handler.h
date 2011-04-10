@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef HANDLER_H_
-#define HANDLER_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -114,4 +113,3 @@ public:
 
 }
 
-#endif /* HANDLER_H_ */

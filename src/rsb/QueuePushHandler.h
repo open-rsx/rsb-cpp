@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef QUEUEPUSHHANDLER_H_
-#define QUEUEPUSHHANDLER_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -61,4 +60,3 @@ public:
 
 }
 
-#endif /* QUEUEPUSHHANDLER_H_ */

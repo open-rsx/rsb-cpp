@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef STATUSTASK_H_
-#define STATUSTASK_H_
+#pragma once
 
 #include <rsc/threading/PeriodicTask.h>
 
@@ -51,4 +50,3 @@ private:
 
 }
 
-#endif /* STATUSTASK_H_ */

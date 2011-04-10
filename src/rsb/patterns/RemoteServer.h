@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef REMOTESERVER_H_
-#define REMOTESERVER_H_
+#pragma once
 
 #include <stdexcept>
 #include <string>
@@ -99,4 +98,3 @@ typedef boost::shared_ptr<RemoteServer> RemoteServerPtr;
 }
 }
 
-#endif /* REMOTESERVER_H_ */

@@ -7,8 +7,7 @@
  * Exception thrown upon configuration errors.
  */
 
-#ifndef CONFIGEXCEPTION_H_
-#define CONFIGEXCEPTION_H_
+#pragma once
 
 #include "../RSBException.h"
 #include "rsb/rsbexports.h"
@@ -30,4 +29,3 @@ public:
 }
 }
 
-#endif /* CONFIGEXCEPTION_H_ */

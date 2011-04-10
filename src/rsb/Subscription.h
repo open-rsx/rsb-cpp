@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SUBSCRIPTION_H_
-#define SUBSCRIPTION_H_
+#pragma once
 
 #include <list>
 #include <map>
@@ -126,4 +125,3 @@ RSB_EXPORT std::ostream
 
 }
 
-#endif /* SUBSCRIPTION_H_ */

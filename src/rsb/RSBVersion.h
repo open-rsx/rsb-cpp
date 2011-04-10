@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef RSBVERSION_H_
-#define RSBVERSION_H_
+#pragma once
 
 #include <string>
 
@@ -48,6 +47,4 @@ private:
 };
 
 }
-
-#endif /* RSBVERSION_H_ */
 

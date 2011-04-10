@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef PORT_H_
-#define PORT_H_
+#pragma once
 
 #include <map>
 
@@ -79,4 +78,3 @@ typedef boost::shared_ptr<Port> PortPtr;
 }
 }
 
-#endif /* PORT_H_ */

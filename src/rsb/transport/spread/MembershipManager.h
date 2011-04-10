@@ -29,8 +29,7 @@
 #include "SpreadConnection.h"
 #include "rsb/rsbexports.h"
 
-#ifndef MEMBERSHIPMAP_H_
-#define MEMBERSHIPMAP_H_
+#pragma once
 
 namespace rsb {
 namespace spread {
@@ -79,4 +78,3 @@ typedef boost::shared_ptr<MembershipManager> MembershipManagerPtr;
 
 }
 
-#endif /* MEMBERSHIPMAP_H_ */

@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef NOTIFICATION_H_
-#define NOTIFICATION_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -34,4 +33,3 @@ typedef boost::shared_ptr<rsb::protocol::Notification> NotificationPtr;
 }
 }
 
-#endif /* NOTIFICATION_H_ */

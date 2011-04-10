@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef EVENTPROCESSOR_H_
-#define EVENTPROCESSOR_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -76,4 +75,3 @@ typedef boost::shared_ptr<EventProcessor> EventProcessorPtr;
 
 }
 
-#endif /* EVENTPROCESSOR_H_ */

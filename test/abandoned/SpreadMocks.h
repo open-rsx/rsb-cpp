@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SPREADMOCKS_H_
-#define SPREADMOCKS_H_
+#pragma once
 
 #include <gmock/gmock.h>
 
@@ -40,4 +39,3 @@ class SpreadConnectionMock : public SpreadConnection {
 	// cluttered over the code, e.g., in the SpreadGroup Object
 };
 
-#endif /* SPREADMOCKS_H_ */

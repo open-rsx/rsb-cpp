@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef ABSTRACTFILTER_H_
-#define ABSTRACTFILTER_H_
+#pragma once
 
 #include "../RSBEvent.h"
 #include "FilterActionTypes.h"
@@ -46,7 +45,5 @@ public:
 typedef boost::shared_ptr<AbstractFilter> AbstractFilterPtr;
 
 }
-
 }
 
-#endif /* ABSTRACTFILTER_H_ */

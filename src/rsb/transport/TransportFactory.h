@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef TRANSPORTFACTORY_H_
-#define TRANSPORTFACTORY_H_
+#pragma once
 
 #include "Port.h"
 #include "spread/SpreadPort.h"
@@ -53,4 +52,3 @@ public:
 
 }
 
-#endif /* TRANSPORTFACTORY_H_ */

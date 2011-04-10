@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SERVER_H_
-#define SERVER_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -141,4 +140,3 @@ typedef boost::shared_ptr<Server> ServerPtr;
 }
 }
 
-#endif /* SERVER_H_ */

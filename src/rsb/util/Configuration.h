@@ -8,8 +8,7 @@
  * TODO Should be able to read XSRAD configs.
  */
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -86,10 +85,7 @@ private:
 	void setLoggingProperties();
 };
 
-
-
 }
 
 }
 
-#endif /* CONFIGURATION_H_ */

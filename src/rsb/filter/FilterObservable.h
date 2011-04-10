@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef FILTEROBSERVABLE_H_
-#define FILTEROBSERVABLE_H_
+#pragma once
 
 #include <vector>
 
@@ -54,4 +53,3 @@ private:
 
 }
 
-#endif /* FILTEROBSERVABLE_H_ */

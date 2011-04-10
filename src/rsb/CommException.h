@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef COMMEXCEPTION_H_
-#define COMMEXCEPTION_H_
+#pragma once
 
 #include "RSBException.h"
 #include "rsb/rsbexports.h"
@@ -38,4 +37,3 @@ public:
 
 }
 
-#endif /* COMMEXCEPTION_H_ */

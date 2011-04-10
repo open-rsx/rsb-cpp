@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_
-#define UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_
+#pragma once
 
 #include <stdexcept>
 
@@ -51,4 +50,3 @@ private:
 
 }
 
-#endif /* UNSUPPORTEDQUALITYOFSERVICEEXCEPTION_H_ */

@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef RSBEVENT_H_
-#define RSBEVENT_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -105,4 +104,3 @@ RSB_EXPORT std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
 
 }
 
-#endif /* RSBEVENT_H_ */

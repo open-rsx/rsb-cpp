@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SCOPEFILTER_H_
-#define SCOPEFILTER_H_
+#pragma once
 
 #include "AbstractFilter.h"
 #include "rsb/rsbexports.h"
@@ -48,4 +47,3 @@ private:
 
 }
 
-#endif /* SCOPEFILTER_H_ */

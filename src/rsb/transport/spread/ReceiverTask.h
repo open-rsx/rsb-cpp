@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef RECEIVERTASK_H_
-#define RECEIVERTASK_H_
+#pragma once
 
 #include <map>
 
@@ -88,4 +87,3 @@ private:
 }
 }
 
-#endif /* RECEIVERTASK_H_ */

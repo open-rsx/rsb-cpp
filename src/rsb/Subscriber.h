@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SUBSCRIBER_H_
-#define SUBSCRIBER_H_
+#pragma once
 
 #include <string>
 
@@ -126,4 +125,3 @@ typedef boost::shared_ptr<Subscriber> SubscriberPtr;
 
 }
 
-#endif /* SUBSCRIBER_H_ */

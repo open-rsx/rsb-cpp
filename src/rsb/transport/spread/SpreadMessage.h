@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SPREADMESSAGE_H_
-#define SPREADMESSAGE_H_
+#pragma once
 
 #include <string>
 #include <list>
@@ -88,4 +87,3 @@ typedef boost::shared_ptr<SpreadMessage> SpreadMessagePtr;
 }
 }
 
-#endif /* SPREADMESSAGE_H_ */

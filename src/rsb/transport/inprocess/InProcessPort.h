@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef INPROCESSPORT_H_
-#define INPROCESSPORT_H_
+#pragma once
 
 #include <boost/function.hpp>
 #include <boost/weak_ptr.hpp>
@@ -64,4 +63,3 @@ private:
 }
 }
 
-#endif /* INPROCESSPORT_H_ */

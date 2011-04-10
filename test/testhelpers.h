@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef TESTHELPERS_H_
-#define TESTHELPERS_H_
+#pragma once
 
 #include <iostream>
 #include <ostream>
@@ -57,4 +56,3 @@ inline rsc::subprocess::SubprocessPtr startSpread() {
 	return proc;
 }
 
-#endif /* TESTHELPERS_H_ */

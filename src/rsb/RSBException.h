@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef RSBEXCEPTION_H_
-#define RSBEXCEPTION_H_
+#pragma once
 
 #include <exception>
 #include <string>
@@ -44,6 +43,4 @@ private:
 };
 
 }
-
-#endif /* RSBEXCEPTION_H_ */
 

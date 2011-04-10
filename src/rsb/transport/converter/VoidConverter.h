@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef VOIDCONVERTER_H_
-#define VOIDCONVERTER_H_
+#pragma once
 
 #include "../AbstractConverter.h"
 
@@ -51,4 +50,3 @@ typedef boost::shared_ptr<VoidConverter> VoidConverterPtr;
 }
 }
 
-#endif /* VOIDCONVERTER_H_ */

@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SPREADPORT_H_
-#define SPREADPORT_H_
+#pragma once
 
 #include <map>
 
@@ -100,4 +99,3 @@ private:
 
 }
 
-#endif /* SPREADPORT_H_ */

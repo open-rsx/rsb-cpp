@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef QUALITYOFSERVICESPEC_H_
-#define QUALITYOFSERVICESPEC_H_
+#pragma once
 
 #include <ostream>
 
@@ -119,4 +118,3 @@ RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const QualityOfService
 
 }
 
-#endif /* QUALITYOFSERVICESPEC_H_ */

@@ -5,8 +5,7 @@
  *      Author: swrede
  */
 
-#ifndef BTL2STRINGCONVERTER_H_
-#define BTL2STRINGCONVERTER_H_
+#pragma once
 
 #include "rsb/transport/AbstractConverter.h"
 
@@ -39,4 +38,3 @@ typedef boost::shared_ptr<BTL2StringConverter> BTL2StringConverterPtr;
 
 }
 
-#endif /* BTL2STRINGCONVERTER_H_ */

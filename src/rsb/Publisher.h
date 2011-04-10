@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef PUBLISHER_H_
-#define PUBLISHER_H_
+#pragma once
 
 #include <string>
 
@@ -191,4 +190,3 @@ private:
 
 }
 
-#endif /* PUBLISHER_H_ */

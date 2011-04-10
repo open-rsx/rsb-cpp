@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef FILTERACTIONTYPES_H_
-#define FILTERACTIONTYPES_H_
+#pragma once
 
 #include "rsb/rsbexports.h"
 
@@ -40,4 +39,3 @@ public:
 }
 }
 
-#endif /* FILTERACTIONTYPES_H_ */

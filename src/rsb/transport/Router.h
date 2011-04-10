@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef ROUTER_H_
-#define ROUTER_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -114,4 +113,3 @@ typedef boost::shared_ptr<Router> RouterPtr;
 }
 }
 
-#endif /* ROUTER_H_ */

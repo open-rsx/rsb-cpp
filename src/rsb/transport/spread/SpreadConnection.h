@@ -17,8 +17,7 @@
  *
  * ============================================================ */
 
-#ifndef SPREADCONNECTION_H_
-#define SPREADCONNECTION_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -85,4 +84,3 @@ typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;
 
 }
 
-#endif /* SPREADCONNECTION_H_ */
