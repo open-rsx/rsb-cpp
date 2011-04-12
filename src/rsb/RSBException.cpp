@@ -23,18 +23,15 @@ using namespace std;
 
 namespace rsb {
 
-RSBException::RSBException() {
+RSBException::RSBException() :
+	runtime_error("Unspecified exception") {
 }
 
-RSBException::RSBException(const string& m) :
-	msg(m) {
+RSBException::RSBException(const string &m) :
+	runtime_error(m) {
 }
 
 RSBException::~RSBException() throw () {
-}
-
-const char *RSBException::what() const throw () {
-	return msg.c_str();
 }
 
 }

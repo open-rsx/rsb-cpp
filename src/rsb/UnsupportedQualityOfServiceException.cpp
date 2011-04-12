@@ -27,7 +27,7 @@ namespace rsb {
 
 UnsupportedQualityOfServiceException::UnsupportedQualityOfServiceException(
 		const std::string &message, const QualityOfServiceSpec &spec) :
-	runtime_error(message), message(message), spec(spec) {
+	RSBException(message), message(message), spec(spec) {
 }
 
 UnsupportedQualityOfServiceException::~UnsupportedQualityOfServiceException() throw () {

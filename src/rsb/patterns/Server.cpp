@@ -23,6 +23,8 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "MethodExistsException.h"
+
 using namespace std;
 
 namespace rsb {
@@ -41,8 +43,10 @@ public:
 
 	RequestHandler(const string &methodName, Server::CallbackPtr callback,
 			Publisher<void>::Ptr publisher) :
-		logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
-				+ methodName)), methodName(methodName), callback(callback),
+				logger(
+						rsc::logging::Logger::getLogger(
+								"rsb.patterns.RequestHandler." + methodName)),
+				methodName(methodName), callback(callback),
 				publisher(publisher) {
 	}
 
@@ -61,7 +65,7 @@ public:
 		if (!event->hasMetaInfo(requestIdKey)) {
 			RSCERROR(logger,
 					"Request event does not contain a valid request ID "
-							<< "to answer to.");
+					<< "to answer to.");
 			return;
 		}
 
@@ -71,17 +75,18 @@ public:
 			RSBEventPtr returnEvent(new RSBEvent());
 			returnEvent->setType(callback->getReplyType());
 			returnEvent->setData(returnData);
-			returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
-					requestIdKey));
+			returnEvent ->addMetaInfo(requestIdKey,
+					event->getMetaInfo(requestIdKey));
 			publisher->publish(returnEvent);
 		} catch (exception &e) {
 			RSBEventPtr returnEvent(new RSBEvent());
 			returnEvent->setType("string");
 			string exceptionType = typeid(e).name();
-			returnEvent->setData(boost::shared_ptr<string>(new string(
-					exceptionType + ": " + e.what())));
-			returnEvent->addMetaInfo(requestIdKey, event->getMetaInfo(
-					requestIdKey));
+			returnEvent->setData(
+					boost::shared_ptr<string>(
+							new string(exceptionType + ": " + e.what())));
+			returnEvent->addMetaInfo(requestIdKey,
+					event->getMetaInfo(requestIdKey));
 			returnEvent->addMetaInfo("isException", "");
 			publisher->publish(returnEvent);
 		}
@@ -101,19 +106,20 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
 
 	// check that method does not exist
 	if (methods.count(methodName)) {
-		throw(runtime_error("Method with name '" + methodName
-				+ "' already exists."));
+		throw(MethodExistsException(methodName, uri));
 	}
 
 	// TODO check that the reply type is convertible
-	Publisher<void>::Ptr publisher(new Publisher<void> (uri + "-reply-"
-			+ methodName, callback->getReplyType()));
+	Publisher<void>::Ptr publisher(
+			new Publisher<void> (uri + "-reply-" + methodName,
+					callback->getReplyType()));
 
 	SubscriptionPtr subscription(new Subscription);
-	subscription->appendFilter(filter::AbstractFilterPtr(
-			new filter::ScopeFilter(uri + "-request-" + methodName)));
-	subscription->appendHandler(HandlerPtr(new RequestHandler(methodName,
-			callback, publisher)));
+	subscription->appendFilter(
+			filter::AbstractFilterPtr(
+					new filter::ScopeFilter(uri + "-request-" + methodName)));
+	subscription->appendHandler(
+			HandlerPtr(new RequestHandler(methodName, callback, publisher)));
 	requestSubscriber->addSubscription(subscription);
 
 	methods[methodName] = make_pair(subscription, publisher);

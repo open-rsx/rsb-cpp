@@ -70,9 +70,12 @@ public:
 	template<class RequestType, class ReplyType>
 	class Callback: public IntlCallback {
 	public:
-	        // typeid is due to msvc strangeness
-	        Callback(const std::string &requestType = rsc::runtime::typeName(typeid(RequestType)),
-		   const std::string &replyType   = rsc::runtime::typeName(typeid(ReplyType))) :
+		// typeid is due to msvc strangeness
+		Callback(
+				const std::string &requestType = rsc::runtime::typeName(
+						typeid(RequestType)),
+				const std::string &replyType = rsc::runtime::typeName(
+						typeid(ReplyType))) :
 			requestType(requestType), replyType(replyType) {
 		}
 
@@ -120,7 +123,7 @@ public:
 	 *
 	 * @param methodName method name
 	 * @param callback callback to execute for the method
-	 * @throw std::runtime_error thrown if a method with this name alredy exists
+	 * @throw MethodExistsException thrown if a method with this name already exists
 	 */
 	void registerMethod(const std::string &methodName, CallbackPtr callback);
 

@@ -76,6 +76,8 @@ bool Subscription::match(RSBEventPtr e) {
 			}
 		}
 
+	} catch (exception &e) {
+		throw e;
 	} catch (...) {
 		// TODO better exception!!!
 		throw runtime_error("unknown error during event matching");

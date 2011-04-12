@@ -25,6 +25,11 @@
 namespace rsb {
 namespace transport {
 
+/**
+ * An exception indicating a serialization or deserialization problem for data.
+ *
+ * @author jwienke
+ */
 class RSB_EXPORT SerializationException: public RSBException {
 public:
 

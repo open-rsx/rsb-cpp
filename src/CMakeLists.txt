@@ -34,6 +34,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/filter/FilterObserver.cpp
             rsb/patterns/RemoteServer.cpp
             rsb/patterns/Server.cpp
+            rsb/patterns/MethodExistsException.cpp
             rsb/protocol/ProtocolException.cpp
             rsb/transport/Port.cpp
             rsb/transport/Router.cpp
@@ -82,6 +83,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/filter/FilterObserver.h
             rsb/patterns/RemoteServer.h
             rsb/patterns/Server.h
+            rsb/patterns/MethodExistsException.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
             rsb/transport/Port.h

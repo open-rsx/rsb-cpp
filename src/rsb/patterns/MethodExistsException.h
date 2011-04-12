@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is a part of the RSB project.
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -19,25 +19,31 @@
 
 #pragma once
 
-#include <stdexcept>
-#include <string>
-
+#include "../RSBException.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+namespace patterns {
 
 /**
- * @author swrede
- * @todo implement stream operators to add variables to exception message
+ * Indicates that a method of a Server already exists.
+ *
+ * @author jwienke
  */
-class RSB_EXPORT RSBException: public std::runtime_error {
+class RSB_EXPORT MethodExistsException: public rsb::RSBException {
 public:
 
-	RSBException();
-	RSBException(const std::string &m);
-	virtual ~RSBException() throw ();
-
+	/**
+	 * Constructs a new exception.
+	 *
+	 * @param methodName name of the method
+	 * @param server name of the server
+	 */
+	MethodExistsException(const std::string &methodName,
+			const std::string &server);
+	virtual ~MethodExistsException() throw ();
 };
 
+}
 }
 
