@@ -21,6 +21,7 @@
 
 #include "PortStateChange.h"
 #include "../protocol/ProtocolException.h"
+#include "../transport/SerializationException.h"
 
 using namespace std;
 using namespace rsb::protocol;
@@ -46,8 +47,8 @@ string IntrospectionConverter::serialize(
 			data.second);
 	// extremely simple here as so far directly the pbuf objects are used as domain objects
 	if (!psc->SerializeToString(&wire)) {
-		// TODO this does not match the normal converter exception specification. what to do?
-		throw ProtocolException("Failed to write notification to stream");
+		throw transport::SerializationException(
+				"Failed to write notification to stream");
 	}
 	return TYPE;
 }
@@ -58,8 +59,8 @@ rsb::transport::AnnotatedData IntrospectionConverter::deserialize(
 
 	PortStateChangePtr psc(new PortStateChange());
 	if (!psc->ParseFromString(wire)) {
-		// TODO yet another wrong exception. What to do here?
-		throw CommException("Failed to parse notification in pbuf format");
+		throw transport::SerializationException(
+				"Failed to parse notification in pbuf format");
 	}
 
 	return make_pair(TYPE, psc);

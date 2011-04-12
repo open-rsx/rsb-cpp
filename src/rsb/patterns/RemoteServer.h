@@ -29,6 +29,7 @@
 #include "../RSBEvent.h"
 #include "../Publisher.h"
 #include "../Subscriber.h"
+#include "../RSBException.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -45,11 +46,11 @@ class RSB_EXPORT RemoteServer: public boost::noncopyable {
 public:
 
 	/**
-	 * Thrown if a remote called timed out.
+	 * Thrown if a remote calle timed out.
 	 *
 	 * @author jwienke
 	 */
-	class TimeoutException: public std::runtime_error {
+	class TimeoutException: public RSBException {
 	public:
 		explicit TimeoutException(const std::string &message);
 	};
@@ -59,7 +60,7 @@ public:
 	 *
 	 * @author jwienke
 	 */
-	class RemoteTargetInvocationException: public std::runtime_error {
+	class RemoteTargetInvocationException: public RSBException {
 	public:
 		explicit RemoteTargetInvocationException(const std::string &message);
 	};

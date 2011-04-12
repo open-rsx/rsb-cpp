@@ -106,7 +106,7 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
 
 	// check that method does not exist
 	if (methods.count(methodName)) {
-		throw(MethodExistsException(methodName, uri));
+		throw MethodExistsException(methodName, uri);
 	}
 
 	// TODO check that the reply type is convertible
