@@ -25,7 +25,7 @@
 
 #include "Factory.h"
 #include "../filter/FilterObservable.h"
-#include "../EventProcessor.h"
+#include "../EventProcessingStrategy.h"
 #include "../Subscription.h"
 #include "../QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
@@ -104,7 +104,7 @@ private:
 	ConnectorPtr inConnector;
 	ConnectorPtr outConnector;
 	// ep for observation model
-	rsb::internal::EventProcessorPtr eventProcessor;
+	rsb::internal::EventProcessingStrategyPtr eventProcessingStrategy;
 	volatile bool shutdown;
 
 };

@@ -26,7 +26,7 @@
 
 #include <boost/thread.hpp>
 
-#include "rsb/EventProcessor.h"
+#include "rsb/EventProcessingStrategy.h"
 #include "rsb/Subscription.h"
 #include "rsb/QueuePushHandler.h"
 #include "rsb/filter/ScopeFilter.h"
@@ -38,10 +38,10 @@ using namespace testing;
 using namespace rsc::threading;
 using namespace rsb::filter;
 
-TEST(EventProcessorTest, testProcessing)
+TEST(EventProcessingStrategyTest, testProcessing)
 {
 
-	EventProcessor processor(1);
+	EventProcessingStrategy processor(1);
 
 	boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > > okQueue(
 			new SynchronizedQueue<boost::shared_ptr<string> > );

@@ -17,7 +17,7 @@
  *
  * ============================================================ */
 
-#include "EventProcessor.h"
+#include "EventProcessingStrategy.h"
 
 using namespace std;
 
@@ -25,24 +25,24 @@ namespace rsb {
 
 namespace internal {
 
-EventProcessor::EventProcessor() :
-	logger(rsc::logging::Logger::getLogger("rsb.EventProcessor")), pool(5,
-			boost::bind(&EventProcessor::deliver, this, _1, _2), boost::bind(
-					&EventProcessor::filter, this, _1, _2)) {
+EventProcessingStrategy::EventProcessingStrategy() :
+	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")), pool(5,
+			boost::bind(&EventProcessingStrategy::deliver, this, _1, _2), boost::bind(
+					&EventProcessingStrategy::filter, this, _1, _2)) {
 	pool.start();
 }
 
-EventProcessor::EventProcessor(unsigned int num_threads) :
-	logger(rsc::logging::Logger::getLogger("rsb.EventProcessor")), pool(
-			num_threads, boost::bind(&EventProcessor::deliver, this, _1, _2),
-			boost::bind(&EventProcessor::filter, this, _1, _2)) {
+EventProcessingStrategy::EventProcessingStrategy(unsigned int num_threads) :
+	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")), pool(
+			num_threads, boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
+			boost::bind(&EventProcessingStrategy::filter, this, _1, _2)) {
 	pool.start();
 }
 
-EventProcessor::~EventProcessor() {
+EventProcessingStrategy::~EventProcessingStrategy() {
 }
 
-bool EventProcessor::filter(SubscriptionPtr sub, EventPtr e) {
+bool EventProcessingStrategy::filter(SubscriptionPtr sub, EventPtr e) {
 	RSCDEBUG(logger, "Matching event " << *e << " for subscription " << *sub);
 
 	if (!sub->isEnabled()) {
@@ -66,7 +66,7 @@ bool EventProcessor::filter(SubscriptionPtr sub, EventPtr e) {
 
 }
 
-void EventProcessor::deliver(SubscriptionPtr sub, EventPtr e) {
+void EventProcessingStrategy::deliver(SubscriptionPtr sub, EventPtr e) {
 	RSCDEBUG(logger, "Delivering event " << *e << " for subscription " << *sub);
 
 	if (!sub->isEnabled()) {
@@ -94,14 +94,14 @@ void EventProcessor::deliver(SubscriptionPtr sub, EventPtr e) {
 
 }
 
-void EventProcessor::process(EventPtr e) {
+void EventProcessingStrategy::process(EventPtr e) {
 	pool.push(e);
 }
 
-void EventProcessor::subscribe(SubscriptionPtr s) {
+void EventProcessingStrategy::subscribe(SubscriptionPtr s) {
 	pool.registerReceiver(s);
 }
-void EventProcessor::unsubscribe(SubscriptionPtr s) {
+void EventProcessingStrategy::unsubscribe(SubscriptionPtr s) {
 	// TODO subscriptions need to be made thread-safe
 	s->disable();
 	pool.unregisterReceiver(s);

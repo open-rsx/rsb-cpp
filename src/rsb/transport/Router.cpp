@@ -37,10 +37,10 @@ Router::Router(Factory::ConnectorTypes inType,
 	inConnector = Factory::createConnector(inType);
 	outConnector = Factory::createConnector(outType);
 	if (inConnector) {
-		eventProcessor = EventProcessorPtr(new EventProcessor());
+		eventProcessingStrategy = EventProcessingStrategyPtr(new EventProcessingStrategy());
 		// add event processor as observer to input port(s)
 		inConnector->setObserver(
-				boost::bind(&EventProcessor::process, eventProcessor, _1));
+				boost::bind(&EventProcessingStrategy::process, eventProcessingStrategy, _1));
 	}
 	shutdown = false;
 }
@@ -86,14 +86,14 @@ void Router::subscribe(rsb::SubscriptionPtr s) {
 	// notify ports about new subscription
 	notifyConnectors(s, rsb::filter::FilterAction::ADD);
 	// TODO missing check if there really is an inport and ep
-	eventProcessor->subscribe(s);
+	eventProcessingStrategy->subscribe(s);
 }
 
 void Router::unsubscribe(rsb::SubscriptionPtr s) {
 	// notify ports about removal of subscription
 	notifyConnectors(s, rsb::filter::FilterAction::REMOVE);
 	// TODO missing check if there really is an inport and ep
-	eventProcessor->unsubscribe(s);
+	eventProcessingStrategy->unsubscribe(s);
 }
 
 void Router::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {

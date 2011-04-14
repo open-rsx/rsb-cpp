@@ -23,7 +23,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/Event.cpp
             rsb/Handler.cpp
             rsb/Subscription.cpp
-            rsb/EventProcessor.cpp
+            rsb/EventProcessingStrategy.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
@@ -71,7 +71,7 @@ SET(HEADERS rsb/Version.h
             rsb/Action.h
             rsb/Handler.h
             rsb/Subscription.h
-            rsb/EventProcessor.h
+            rsb/EventProcessingStrategy.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
             rsb/UnsupportedQualityOfServiceException.h

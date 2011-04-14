@@ -43,12 +43,12 @@ namespace internal {
 /**
  * @author swrede
  */
-class RSB_EXPORT EventProcessor {
+class RSB_EXPORT EventProcessingStrategy {
 public:
-	EventProcessor();
+	EventProcessingStrategy();
 	// TODO make threadpool size configurable
-	EventProcessor(unsigned int num_threads);
-	virtual ~EventProcessor();
+	EventProcessingStrategy(unsigned int num_threads);
+	virtual ~EventProcessingStrategy();
 
 	// if invoked, the event is dispatched to listeners, typically called by ports
     void process(rsb::EventPtr e);
@@ -69,7 +69,7 @@ private:
 	rsc::threading::OrderedQueueDispatcherPool<EventPtr, Subscription> pool;
 };
 
-typedef boost::shared_ptr<EventProcessor> EventProcessorPtr;
+typedef boost::shared_ptr<EventProcessingStrategy> EventProcessingStrategyPtr;
 
 }
 

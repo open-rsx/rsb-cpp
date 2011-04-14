@@ -19,7 +19,7 @@
 
 #include "rsb/Subscription.h"
 #include "rsb/Event.h"
-#include "rsb/EventProcessor.h"
+#include "rsb/EventProcessingStrategy.h"
 #include "rsb/filter/AbstractFilter.h"
 #include "rsb/filter/ScopeFilter.h"
 
@@ -47,7 +47,7 @@ int main(void) {
 	AbstractFilterPtr f(new ScopeFilter("xcf://blah"));
 	s->appendFilter(f);
 
-	EventProcessorPtr ep(new EventProcessor());
+	EventProcessingStrategyPtr ep(new EventProcessingStrategy());
 
 	// register event handler
 	Action a = boost::bind(&handler, _1);
