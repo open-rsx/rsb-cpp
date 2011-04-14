@@ -69,7 +69,7 @@ void InProcessPort::deactivate() {
 	cout << "InProcessPort::deactivate finished" << endl;
 }
 
-void InProcessPort::push(RSBEventPtr e) {
+void InProcessPort::push(EventPtr e) {
 	// get matching converter -- can be skipped here
 	//	string s;
 	//	boost::shared_ptr<void> obj = boost::static_pointer_cast<void>(e->getData());

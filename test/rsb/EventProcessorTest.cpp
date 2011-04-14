@@ -62,7 +62,7 @@ TEST(EventProcessorTest, testProcessing)
 	wrongSubscription->appendHandler(wrongHandler);
 	processor.subscribe(wrongSubscription);
 
-	RSBEventPtr event(new RSBEvent);
+	EventPtr event(new Event);
 	event->setURI(okScope);
 	event->setData(boost::shared_ptr<string>(new string("hello")));
 

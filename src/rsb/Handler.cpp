@@ -35,7 +35,7 @@ EventHandler::EventHandler() :
 EventHandler::~EventHandler() {
 }
 
-void EventHandler::internal_notify(RSBEventPtr e) {
+void EventHandler::internal_notify(EventPtr e) {
 	notify(e);
 }
 

@@ -32,7 +32,7 @@ ScopeFilter::ScopeFilter(const string &uri) {
 ScopeFilter::~ScopeFilter() {
 }
 
-bool ScopeFilter::match(RSBEventPtr e) {
+bool ScopeFilter::match(EventPtr e) {
 	// TODO implement whitelisting
 	// TODO implement removal of pointers in whitelist
 	//      after dispatching of event notification, needs to be done by EventProcessor

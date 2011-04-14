@@ -32,7 +32,7 @@ using namespace testing;
 class MyEventHandler: public EventHandler {
 public:
 
-	void notify(RSBEventPtr e) {
+	void notify(EventPtr e) {
 		cout << "Event received: " << e->getUUID().getIdAsString() << endl;
 	}
 };
@@ -51,7 +51,7 @@ TEST(HandlerTest, testDispatch)
 	DataHandler<string>* dh = new MyDataHandler();
 	rsb::Action ea = boost::bind(&Handler::internal_notify, eh, _1);
 	rsb::Action da = boost::bind(&Handler::internal_notify, dh, _1);
-	RSBEventPtr e(new RSBEvent());
+	EventPtr e(new Event());
 	e->setData(boost::shared_ptr<string>(new string("blub")));
 	e->setURI("blah");
 	// TODO Check that exception is thrown if no converter available!

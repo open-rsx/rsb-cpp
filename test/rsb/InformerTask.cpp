@@ -52,7 +52,7 @@ void InformerTask::execute() {
 		// should be filtered by Port already
 		uri = "xcf://blahblah";
 	}
-	RSBEventPtr p(new RSBEvent(uri, boost::static_pointer_cast<void>(psc),
+	EventPtr p(new Event(uri, boost::static_pointer_cast<void>(psc),
 			"portstatechange"));
 	port->push(p);
 	if (sentEvents % 2 == 1) {
@@ -64,7 +64,7 @@ void InformerTask::execute() {
 	}
 }
 
-std::vector<RSBEventPtr> InformerTask::getEvents() {
+std::vector<EventPtr> InformerTask::getEvents() {
 	return events;
 }
 
@@ -75,7 +75,7 @@ WaitingObserver::WaitingObserver(const unsigned int &desiredEvents) :
 
 }
 
-void WaitingObserver::handler(RSBEventPtr e) {
+void WaitingObserver::handler(EventPtr e) {
 	boost::recursive_mutex::scoped_lock lock(m);
 	++receivedEvents;
 	events.push_back(e);
@@ -86,7 +86,7 @@ void WaitingObserver::handler(RSBEventPtr e) {
 	}
 }
 
-vector<RSBEventPtr> WaitingObserver::getEvents() {
+vector<EventPtr> WaitingObserver::getEvents() {
 	boost::recursive_mutex::scoped_lock lock(m);
 	return events;
 }

@@ -24,7 +24,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/OrderedQueueDispatcherPool.h>
 
-#include "RSBEvent.h"
+#include "Event.h"
 #include "Subscription.h"
 #include "rsb/rsbexports.h"
 
@@ -51,7 +51,7 @@ public:
 	virtual ~EventProcessor();
 
 	// if invoked, the event is dispatched to listeners, typically called by ports
-    void process(rsb::RSBEventPtr e);
+    void process(rsb::EventPtr e);
 
     // add a subscription
     void subscribe(rsb::SubscriptionPtr s);
@@ -61,12 +61,12 @@ public:
 
 private:
 
-    bool filter(SubscriptionPtr sub, RSBEventPtr e);
-    void deliver(SubscriptionPtr sub, RSBEventPtr e);
+    bool filter(SubscriptionPtr sub, EventPtr e);
+    void deliver(SubscriptionPtr sub, EventPtr e);
 
     // TODO make list subscriptions
     rsc::logging::LoggerPtr logger;
-	rsc::threading::OrderedQueueDispatcherPool<RSBEventPtr, Subscription> pool;
+	rsc::threading::OrderedQueueDispatcherPool<EventPtr, Subscription> pool;
 };
 
 typedef boost::shared_ptr<EventProcessor> EventProcessorPtr;

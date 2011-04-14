@@ -33,7 +33,7 @@ public:
 	ScopeFilter(const std::string &uri);
 	virtual ~ScopeFilter();
 
-	bool match(RSBEventPtr e);
+	bool match(EventPtr e);
 
 	std::string getURI();
 

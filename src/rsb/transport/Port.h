@@ -25,7 +25,7 @@
 
 #include <rsc/misc/UUID.h>
 
-#include "../RSBEvent.h"
+#include "../Event.h"
 #include "../Action.h"
 #include "../filter/FilterObserver.h"
 #include "../QualityOfServiceSpec.h"
@@ -47,7 +47,7 @@ public:
 	virtual void activate() = 0;
 	virtual void deactivate() = 0;
 
-	virtual void push(rsb::RSBEventPtr e) = 0;
+	virtual void push(rsb::EventPtr e) = 0;
 
 	// Observer may implement complex event matching
 	// or be just directly the user-level event handlers

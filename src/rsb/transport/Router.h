@@ -56,7 +56,7 @@ public:
 	 *
 	 * @param e event to publish
 	 */
-	void publish(RSBEventPtr e);
+	void publish(EventPtr e);
 
 	/**
 	 * Add a subscription.

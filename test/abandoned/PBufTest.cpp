@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "rsb/protocol/Notification.h"
-#include "rsb/RSBEvent.h"
+#include "rsb/Event.h"
 
 using namespace std;
 using namespace rsb;
@@ -16,7 +16,7 @@ int main(void) {
 	// compatible with the version of the headers we compiled against.
 	GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-	RSBEventPtr e(new RSBEvent("xcf://blah",boost::static_pointer_cast<void>(boost::shared_ptr<string>(new string("Hello World!"))),"RSBEventString"));
+	EventPtr e(new Event("xcf://blah",boost::static_pointer_cast<void>(boost::shared_ptr<string>(new string("Hello World!"))),"EventString"));
 
 	// Attention: If an array is set into binary attachment
 	//            null values are treated as termination symbols!

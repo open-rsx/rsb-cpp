@@ -24,14 +24,14 @@
 #include <set>
 #include <boost/function.hpp>
 
-#include "RSBEvent.h"
+#include "Event.h"
 #include "Handler.h"
 #include "filter/AbstractFilter.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 
-typedef boost::function<void(RSBEventPtr)> Action;
+typedef boost::function<void(EventPtr)> Action;
 // Q: Does it make sense to wrap boost::function in a shared_ptr?
 
 typedef std::list<rsb::filter::AbstractFilterPtr> FilterChain;
@@ -74,7 +74,7 @@ public:
 	 */
 	virtual void appendFilter(rsb::filter::AbstractFilterPtr p);
 
-	virtual bool match(RSBEventPtr e);
+	virtual bool match(EventPtr e);
 
 	/**
 	 * Registers a function bound with boost::bind as a handler.

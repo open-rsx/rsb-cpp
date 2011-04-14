@@ -25,7 +25,7 @@
 
 #include <rsc/logging/Logger.h>
 
-#include "RSBEvent.h"
+#include "Event.h"
 #include "transport/Router.h"
 #include "transport/Port.h"
 #include "QualityOfServiceSpec.h"
@@ -137,7 +137,7 @@ public:
 	 * @todo assumption is that data and type field already set externally
 	 *       throw exception if not the case
 	 */
-	void publish(RSBEventPtr event) {
+	void publish(EventPtr event) {
 		// TODO Check that exception is thrown if no converter available!
 		event->setURI(uri);
 		RSCDEBUG(logger, "Publishing event");
@@ -170,7 +170,7 @@ protected:
 	}
 
 	void publish(VoidPtr p, const std::string &type) {
-		RSBEventPtr e(new RSBEvent());
+		EventPtr e(new Event());
 		e->setData(p);
 		e->setURI(uri);
 		// TODO Check that exception is thrown if no converter available!

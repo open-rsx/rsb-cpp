@@ -18,7 +18,7 @@
  * ============================================================ */
 
 #include "rsb/Subscription.h"
-#include "rsb/RSBEvent.h"
+#include "rsb/Event.h"
 #include "rsb/filter/AbstractFilter.h"
 #include "rsb/filter/ScopeFilter.h"
 
@@ -30,14 +30,17 @@ using namespace std;
 using namespace rsb;
 using namespace rsb::filter;
 
-void handler(RSBEventPtr e) {
-	boost::shared_ptr<string> s = boost::static_pointer_cast<string>(e->getData());
+void handler(EventPtr e) {
+	boost::shared_ptr<string> s = boost::static_pointer_cast<string>(
+			e->getData());
 	cout << "Event received: " << *s << endl;
 }
 
 int main(void) {
 	// create examplary event
-	RSBEventPtr e(new RSBEvent("xcf://blah",boost::static_pointer_cast<void>(boost::shared_ptr<string>(new string("Hello World!"))),"RSBEventString"));
+	EventPtr e(new Event("xcf://blah", boost::static_pointer_cast<void>(
+			boost::shared_ptr<string>(new string("Hello World!"))),
+			"EventString"));
 
 	// create subscription
 	SubscriptionPtr s(new Subscription());

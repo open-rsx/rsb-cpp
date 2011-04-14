@@ -26,7 +26,7 @@
 
 #include <rsc/logging/Logger.h>
 
-#include "../RSBEvent.h"
+#include "../Event.h"
 #include "../Informer.h"
 #include "../Listener.h"
 #include "../RSBException.h"
@@ -68,7 +68,7 @@ public:
 	RemoteServer(const std::string &uri);
 	virtual ~RemoteServer();
 
-	RSBEventPtr callMethod(const std::string &methodName, RSBEventPtr data);
+	EventPtr callMethod(const std::string &methodName, EventPtr data);
 
 private:
 

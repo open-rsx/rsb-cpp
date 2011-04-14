@@ -48,7 +48,7 @@ public:
 				informer(informer) {
 	}
 
-	void notify(RSBEventPtr event) {
+	void notify(EventPtr event) {
 
 		const string requestIdKey = "ServerRequestId";
 
@@ -70,14 +70,14 @@ public:
 		try {
 			VoidPtr returnData = callback->intlCall(methodName,
 					event->getData());
-			RSBEventPtr returnEvent(new RSBEvent());
+			EventPtr returnEvent(new Event());
 			returnEvent->setType(callback->getReplyType());
 			returnEvent->setData(returnData);
 			returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
 					requestIdKey));
 			informer->publish(returnEvent);
 		} catch (exception &e) {
-			RSBEventPtr returnEvent(new RSBEvent());
+			EventPtr returnEvent(new Event());
 			returnEvent->setType("string");
 			string exceptionType = typeid(e).name();
 			returnEvent->setData(boost::shared_ptr<string>(new string(

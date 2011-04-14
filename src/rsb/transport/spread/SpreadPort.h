@@ -46,7 +46,7 @@ public:
 			rsb::transport::ConverterCollection<std::string>::Ptr converters);
 	virtual ~SpreadPort();
 
-	void push(rsb::RSBEventPtr e);
+	void push(rsb::EventPtr e);
 
 	void activate();
 	void deactivate();

@@ -65,8 +65,8 @@ Router::~Router() {
 	}
 }
 
-void Router::publish(RSBEventPtr e) {
-	RSCDEBUG(logger, "Router::publish(RSBEvent) publishing new event: " << e);
+void Router::publish(EventPtr e) {
+	RSCDEBUG(logger, "Router::publish(Event) publishing new event: " << e);
 	outPort->push(e);
 }
 

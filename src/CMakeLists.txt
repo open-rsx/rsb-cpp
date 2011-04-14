@@ -20,7 +20,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/Listener.cpp
             rsb/util/Configuration.cpp
             rsb/util/ConfigException.cpp
-            rsb/RSBEvent.cpp
+            rsb/Event.cpp
             rsb/Handler.cpp
             rsb/Subscription.cpp
             rsb/EventProcessor.cpp
@@ -65,7 +65,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/CommException.h
             rsb/util/Configuration.h
             rsb/util/ConfigException.h
-            rsb/RSBEvent.h
+            rsb/Event.h
             rsb/Informer.h
             rsb/Listener.h
             rsb/Action.h

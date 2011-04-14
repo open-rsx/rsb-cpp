@@ -79,14 +79,14 @@ int main(int /*argc*/, char **/*argv*/) {
 
 		cout << "++++++++++++ new iteration" << endl;
 
-		RSBEventPtr request1(new RSBEvent);
+		EventPtr request1(new Event);
 		request1->setType("string");
 		stringstream s1;
 		s1 << "This is request 1 in iteration " << iteration;
 		request1->setData(VoidPtr(new string(s1.str())));
 		cout << "+++ Calling method " << methodName1 << endl;
 		try {
-			RSBEventPtr result =
+			EventPtr result =
 					remoteServer->callMethod(methodName1, request1);
 			cout << "+++ got result: " << *result << ": "
 					<< *(boost::static_pointer_cast<string>(result->getData()))
@@ -95,14 +95,14 @@ int main(int /*argc*/, char **/*argv*/) {
 			cerr << "+++ Error calling method: " << e.what() << endl;
 		}
 
-		RSBEventPtr request2(new RSBEvent);
+		EventPtr request2(new Event);
 		request2->setType("string");
 		stringstream s2;
 		s2 << "This is request 2 in iteration " << iteration;
 		request2->setData(VoidPtr(new string(s2.str())));
 		cout << "+++ Calling method " << methodName2 << endl;
 		try {
-			RSBEventPtr result =
+			EventPtr result =
 					remoteServer->callMethod(methodName2, request2);
 			cout << "+++ got result: " << *result << ": "
 					<< *(boost::static_pointer_cast<string>(result->getData()))

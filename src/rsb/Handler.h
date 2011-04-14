@@ -21,7 +21,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "RSBEvent.h"
+#include "Event.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -50,7 +50,7 @@ public:
 	virtual ~Handler();
 
 	// TODO make subscription a friend to hide this method from public API
-	virtual void internal_notify(RSBEventPtr) = 0;
+	virtual void internal_notify(EventPtr) = 0;
 
 protected:
 	Handlers::Type type;
@@ -60,7 +60,7 @@ typedef boost::shared_ptr<Handler> HandlerPtr;
 
 /**
  * @author swrede
- * @todo makes even more sense if RSBEvent would be a template type
+ * @todo makes even more sense if Event would be a template type
  */
 class RSB_EXPORT EventHandler: public Handler {
 public:
@@ -68,9 +68,9 @@ public:
 	EventHandler();
 	virtual ~EventHandler();
 
-	virtual void internal_notify(RSBEventPtr e);
+	virtual void internal_notify(EventPtr e);
 
-	virtual void notify(RSBEventPtr) = 0;
+	virtual void notify(EventPtr) = 0;
 
 };
 
@@ -97,7 +97,7 @@ public:
 	virtual ~DataHandler() {
 	}
 
-	virtual void internal_notify(RSBEventPtr e) {
+	virtual void internal_notify(EventPtr e) {
 		boost::shared_ptr<T> d = boost::static_pointer_cast<T>(e->getData());
 		notify(d);
 	}

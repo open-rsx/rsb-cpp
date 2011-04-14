@@ -42,7 +42,7 @@ EventProcessor::EventProcessor(unsigned int num_threads) :
 EventProcessor::~EventProcessor() {
 }
 
-bool EventProcessor::filter(SubscriptionPtr sub, RSBEventPtr e) {
+bool EventProcessor::filter(SubscriptionPtr sub, EventPtr e) {
 	RSCDEBUG(logger, "Matching event " << *e << " for subscription " << *sub);
 
 	if (!sub->isEnabled()) {
@@ -66,7 +66,7 @@ bool EventProcessor::filter(SubscriptionPtr sub, RSBEventPtr e) {
 
 }
 
-void EventProcessor::deliver(SubscriptionPtr sub, RSBEventPtr e) {
+void EventProcessor::deliver(SubscriptionPtr sub, EventPtr e) {
 	RSCDEBUG(logger, "Delivering event " << *e << " for subscription " << *sub);
 
 	if (!sub->isEnabled()) {
@@ -94,7 +94,7 @@ void EventProcessor::deliver(SubscriptionPtr sub, RSBEventPtr e) {
 
 }
 
-void EventProcessor::process(RSBEventPtr e) {
+void EventProcessor::process(EventPtr e) {
 	pool.push(e);
 }
 

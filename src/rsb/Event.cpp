@@ -17,7 +17,7 @@
  *
  * ============================================================ */
 
-#include "RSBEvent.h"
+#include "Event.h"
 
 #include <ostream>
 
@@ -25,54 +25,54 @@ using namespace std;
 
 namespace rsb {
 
-RSBEvent::RSBEvent() {
+Event::Event() {
 }
 
-RSBEvent::RSBEvent(const string &uri, boost::shared_ptr<void> payload,
+Event::Event(const string &uri, boost::shared_ptr<void> payload,
 		const string &type) :
 	uri(uri), content(payload), type(type) {
 }
 
-RSBEvent::~RSBEvent() {
+Event::~Event() {
 }
 
-void RSBEvent::setUUID(const rsc::misc::UUID &id) {
+void Event::setUUID(const rsc::misc::UUID &id) {
 	this->id = id;
 }
 
-rsc::misc::UUID RSBEvent::getUUID() {
+rsc::misc::UUID Event::getUUID() {
 	return id;
 }
 
-void RSBEvent::setURI(string s) {
+void Event::setURI(string s) {
 	uri = s;
 }
 
-string RSBEvent::getURI() {
+string Event::getURI() {
 	return uri;
 }
 
-void RSBEvent::setData(VoidPtr d) {
+void Event::setData(VoidPtr d) {
 	content = d;
 }
 
-VoidPtr RSBEvent::getData() {
+VoidPtr Event::getData() {
 	return content;
 }
 
-string RSBEvent::getType() {
+string Event::getType() {
 	return type;
 }
 
-void RSBEvent::setType(string t) {
+void Event::setType(string t) {
 	type = t;
 }
 
-bool RSBEvent::hasMetaInfo(const string &key) const {
+bool Event::hasMetaInfo(const string &key) const {
 	return metaInfos.count(key);
 }
 
-string RSBEvent::getMetaInfo(const string &key) const {
+string Event::getMetaInfo(const string &key) const {
 	if (metaInfos.count(key)) {
 		return metaInfos.find(key)->second;
 	} else {
@@ -80,7 +80,7 @@ string RSBEvent::getMetaInfo(const string &key) const {
 	}
 }
 
-void RSBEvent::addMetaInfo(const string &key, const string &value,
+void Event::addMetaInfo(const string &key, const string &value,
 		bool override) {
 
 	if (metaInfos.count(key) && !override) {
@@ -91,17 +91,17 @@ void RSBEvent::addMetaInfo(const string &key, const string &value,
 
 }
 
-map<string, string>::const_iterator RSBEvent::metaInfoBegin() const {
+map<string, string>::const_iterator Event::metaInfoBegin() const {
 	return metaInfos.begin();
 }
 
-map<string, string>::const_iterator RSBEvent::metaInfoEnd() const {
+map<string, string>::const_iterator Event::metaInfoEnd() const {
 	return metaInfos.end();
 }
 
-ostream& operator<<(ostream& out, const RSBEvent& e) {
+ostream& operator<<(ostream& out, const Event& e) {
 	//out.precision(3);
-	out << "RSBEvent[id=" << e.id.getIdAsString() << " type=" << e.type
+	out << "Event[id=" << e.id.getIdAsString() << " type=" << e.type
 			<< " uri=" << e.uri << "] ";
 	return out;
 }

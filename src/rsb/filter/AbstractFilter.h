@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../RSBEvent.h"
+#include "../Event.h"
 #include "FilterActionTypes.h"
 #include "rsb/rsbexports.h"
 
@@ -37,7 +37,7 @@ public:
 	AbstractFilter();
 	virtual ~AbstractFilter();
 
-	virtual bool match(RSBEventPtr e) = 0;
+	virtual bool match(EventPtr e) = 0;
 
 	virtual void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
 };

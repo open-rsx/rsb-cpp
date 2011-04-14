@@ -31,7 +31,7 @@
 
 // base / interface class for all events
 // data is set via static_cast:
-// RSBEventPtr p(RSBEvent(boost::static_pointer_cast<void> boost::shared_ptr<Person>(new Person())));
+// EventPtr p(Event(boost::static_pointer_cast<void> boost::shared_ptr<Person>(new Person())));
 
 namespace rsb {
 
@@ -44,10 +44,10 @@ typedef boost::shared_ptr<void> VoidPtr;
  *
  * @author swrede
  */
-class RSB_EXPORT RSBEvent {
+class RSB_EXPORT Event {
 public:
 
-	RSBEvent();
+	Event();
 
 	/**
 	 * Constructor.
@@ -56,10 +56,10 @@ public:
 	 * @param payload payload of the event
 	 * @param type type identifier to serialize / deserialize the event payload
 	 */
-	RSBEvent(const std::string &uri, boost::shared_ptr<void> payload,
+	Event(const std::string &uri, boost::shared_ptr<void> payload,
 			const std::string &type);
 
-	virtual ~RSBEvent();
+	virtual ~Event();
 
 	void setUUID(const rsc::misc::UUID &id);
 	rsc::misc::UUID getUUID();
@@ -83,7 +83,7 @@ public:
 	std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
 
 	friend RSB_EXPORT std::ostream &operator<<(std::ostream& out,
-			const RSBEvent &e);
+			const Event &e);
 
 private:
 	rsc::misc::UUID id;
@@ -98,9 +98,9 @@ private:
 
 };
 
-typedef boost::shared_ptr<RSBEvent> RSBEventPtr;
+typedef boost::shared_ptr<Event> EventPtr;
 
-RSB_EXPORT std::ostream &operator<<(std::ostream& out, const RSBEvent &e);
+RSB_EXPORT std::ostream &operator<<(std::ostream& out, const Event &e);
 
 }
 

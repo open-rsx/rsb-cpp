@@ -27,7 +27,7 @@
 
 #include "../../protocol/Notification.h"
 #include "../ConverterCollection.h"
-#include "../../RSBEvent.h"
+#include "../../Event.h"
 #include "../Port.h"
 #include "../AbstractConverter.h"
 #include "SpreadConnection.h"

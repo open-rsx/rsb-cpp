@@ -27,7 +27,7 @@
 
 #include <rsc/runtime/TypeStringTools.h>
 
-#include "../RSBEvent.h"
+#include "../Event.h"
 
 #include "rsb/rsbexports.h"
 

@@ -40,7 +40,7 @@ private:
 	boost::condition condition;
 
 	set<string> waitForEvents;
-	map<string, RSBEventPtr> storedEvents;
+	map<string, EventPtr> storedEvents;
 
 public:
 
@@ -48,7 +48,7 @@ public:
 		logger(logger) {
 	}
 
-	void notify(RSBEventPtr event) {
+	void notify(EventPtr event) {
 		{
 			boost::mutex::scoped_lock lock(mutex);
 			if (event && event->hasMetaInfo("ServerRequestId")
@@ -69,7 +69,7 @@ public:
 		waitForEvents.insert(requestId);
 	}
 
-	RSBEventPtr getReply(const string &requestId) {
+	EventPtr getReply(const string &requestId) {
 
 		RSCTRACE(logger, "Waiting for reply with id " << requestId);
 
@@ -88,7 +88,7 @@ public:
 			}
 		}
 
-		RSBEventPtr reply = storedEvents[requestId];
+		EventPtr reply = storedEvents[requestId];
 		storedEvents.erase(requestId);
 
 		RSCDEBUG(logger, "Received correct reply event " << *reply);
@@ -161,7 +161,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 
 }
 
-RSBEventPtr RemoteServer::callMethod(const string &methodName, RSBEventPtr data) {
+EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
 
 	RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
@@ -177,7 +177,7 @@ RSBEventPtr RemoteServer::callMethod(const string &methodName, RSBEventPtr data)
 	methodSet.requestInformer->publish(data);
 
 	// wait for the reply
-	RSBEventPtr result = methodSet.handler->getReply(requestId);
+	EventPtr result = methodSet.handler->getReply(requestId);
 	if (result->hasMetaInfo("isException")) {
 		assert(result->getType() == "string");
 		throw RemoteTargetInvocationException("Error calling remote method '"

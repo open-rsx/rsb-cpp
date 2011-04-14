@@ -42,7 +42,7 @@ public:
 
 	void activate();
 	void deactivate();
-	void push(rsb::RSBEventPtr e);
+	void push(rsb::EventPtr e);
 
 	// Observer may implement complex event matching
 	// or be just directly the user-level event handlers

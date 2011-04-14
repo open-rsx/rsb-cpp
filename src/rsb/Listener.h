@@ -25,7 +25,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "RSBEvent.h"
+#include "Event.h"
 #include "Subscription.h"
 #include "transport/Router.h"
 #include "transport/Port.h"

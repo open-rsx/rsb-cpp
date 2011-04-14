@@ -141,7 +141,7 @@ void SpreadPort::notify(rsb::filter::ScopeFilter* f,
 
 }
 
-void SpreadPort::push(RSBEventPtr e) {
+void SpreadPort::push(EventPtr e) {
 	// TODO Remove "data split" information from notification
 	// TODO Read max spread message len from config file
 	// get matching converter

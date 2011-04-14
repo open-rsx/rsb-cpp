@@ -39,13 +39,13 @@ public:
 
 	void execute();
 
-	std::vector<RSBEventPtr> getEvents();
+	std::vector<EventPtr> getEvents();
 
 private:
 	unsigned int numEvents;
 	unsigned int sentEvents;
 	rsb::transport::PortPtr port;
-	std::vector<RSBEventPtr> events;
+	std::vector<EventPtr> events;
 
 };
 
@@ -57,11 +57,11 @@ public:
 
 	WaitingObserver(const unsigned int &desiredEvents);
 
-	void handler(RSBEventPtr e);
+	void handler(EventPtr e);
 
 	void waitReceived();
 
-	std::vector<RSBEventPtr> getEvents();
+	std::vector<EventPtr> getEvents();
 
 private:
 
@@ -69,7 +69,7 @@ private:
 	unsigned int receivedEvents;
 	boost::recursive_mutex m;
 	boost::condition condition;
-	std::vector<RSBEventPtr> events;
+	std::vector<EventPtr> events;
 
 };
 

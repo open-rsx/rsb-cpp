@@ -21,11 +21,11 @@
 
 #include <boost/function.hpp>
 
-#include "RSBEvent.h"
+#include "Event.h"
 
 namespace rsb {
 
-typedef boost::function<void(RSBEventPtr)> Action;
+typedef boost::function<void(EventPtr)> Action;
 // TODO: Check if it makes sense to wrap boost::function in a shared_ptr?
 
 }

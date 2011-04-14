@@ -50,7 +50,7 @@ public:
 		counter = 0;
 	}
 
-	void notify(RSBEventPtr e) {
+	void notify(EventPtr e) {
 
 		counter++;
 		ptime receiveTime = microsec_clock::local_time();

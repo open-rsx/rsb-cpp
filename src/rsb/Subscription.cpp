@@ -40,7 +40,7 @@ public:
 		a(a) {
 	}
 
-	void notify(RSBEventPtr event) {
+	void notify(EventPtr event) {
 		a(event);
 	}
 
@@ -67,7 +67,7 @@ void Subscription::appendAction(Action a) {
 	handlers->insert(HandlerPtr(new ActionAdapter(a)));
 }
 
-bool Subscription::match(RSBEventPtr e) {
+bool Subscription::match(EventPtr e) {
 	try {
 		// call actions
 		for (FilterChain::iterator f = filters->begin(); f != filters->end(); ++f) {

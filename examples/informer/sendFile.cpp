@@ -69,19 +69,18 @@ int main(void) {
 		cerr << ex.what() << endl;
 	}
 
-	// Create Informer and RSBEvent
+	// Create Informer and Event
 	Informer<string>::Ptr informer = factory.createInformer<string> (
 			"rsb://example/informer", "string");
 	Informer<string>::DataPtr data(bin_doc);
 
-	RSBEventPtr event = RSBEventPtr(
-			new RSBEvent("rsb://example/informer",
-					boost::static_pointer_cast<void>(data), "string"));
+	EventPtr event = EventPtr(new Event("rsb://example/informer",
+			boost::static_pointer_cast<void>(data), "string"));
 	event->addMetaInfo("file", file);
 	for (unsigned int j = 0; j < numMsg; j++) {
 		// Get current time
-		event->addMetaInfo("startTime",
-				to_iso_string(microsec_clock::local_time()), true);
+		event->addMetaInfo("startTime", to_iso_string(
+				microsec_clock::local_time()), true);
 
 		// Send event
 		informer->publish(event);
