@@ -24,7 +24,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/TaskExecutor.h>
 
-#include "../ConverterCollection.h"
+#include "../Repository.h"
 #include "../Connector.h"
 #include "../../filter/ScopeFilter.h"
 #include "ReceiverTask.h"
@@ -43,7 +43,7 @@ class RSB_EXPORT SpreadConnector: public rsb::transport::Connector {
 public:
 	SpreadConnector();
 	explicit SpreadConnector(
-			rsb::transport::ConverterCollection<std::string>::Ptr converters);
+			rsb::transport::Repository<std::string>::Ptr converters);
 	virtual ~SpreadConnector();
 
 	void push(rsb::EventPtr e);
@@ -73,7 +73,7 @@ private:
 
 	MembershipManagerPtr memberships;
 
-	rsb::transport::ConverterCollection<std::string>::Ptr converters;
+	rsb::transport::Repository<std::string>::Ptr converters;
 
 	/**
 	 * The message type applied to every outgoing message.

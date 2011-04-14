@@ -38,7 +38,7 @@ namespace transport {
  * @tparam WireFormat the wire format of the collected converters
  */
 template<class WireFormat>
-class ConverterCollection {
+class Repository {
 public:
 
 	typedef typename Converter<WireFormat>::Ptr Converter;
@@ -108,7 +108,7 @@ public:
 
 	}
 
-	typedef boost::shared_ptr<ConverterCollection<WireFormat> > Ptr;
+	typedef boost::shared_ptr<Repository<WireFormat> > Ptr;
 
 private:
 
@@ -120,7 +120,7 @@ private:
 /**
  * @todo how to avoid this central wire format repository?
  */
-RSB_EXPORT ConverterCollection<std::string>::Ptr stringConverterCollection();
+RSB_EXPORT Repository<std::string>::Ptr stringConverterRepository();
 
 }
 }

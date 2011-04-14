@@ -26,7 +26,7 @@
 #include <rsc/misc/UUID.h>
 
 #include "../../protocol/Notification.h"
-#include "../ConverterCollection.h"
+#include "../Repository.h"
 #include "../../Event.h"
 #include "../Connector.h"
 #include "../Converter.h"
@@ -66,7 +66,7 @@ class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
 	ReceiverTask(SpreadConnectionPtr s,
-			transport::ConverterCollection<std::string>::Ptr converters,
+			transport::Repository<std::string>::Ptr converters,
 			const Action &action);
 	virtual ~ReceiverTask();
 
@@ -77,7 +77,7 @@ private:
 	rsc::logging::LoggerPtr logger;
 	volatile bool cancelRequested;
 	SpreadConnectionPtr con;
-	transport::ConverterCollection<std::string>::Ptr converters;
+	transport::Repository<std::string>::Ptr converters;
 	Action action;
 	std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
 	std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;

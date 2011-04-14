@@ -21,7 +21,7 @@
 
 #include <boost/thread.hpp>
 
-#include "../transport/ConverterCollection.h"
+#include "../transport/Repository.h"
 #include "IntrospectionConverter.h"
 
 namespace rsb {
@@ -34,7 +34,7 @@ void registerIntrospectionConverters() {
 
 	boost::mutex::scoped_lock lock(registrationMutex);
 	if (!registered) {
-		transport::stringConverterCollection()->registerConverter(
+		transport::stringConverterRepository()->registerConverter(
 				transport::Converter<std::string>::Ptr(
 						new IntrospectionConverter));
 		registered = true;

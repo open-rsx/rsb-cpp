@@ -48,13 +48,13 @@ namespace spread {
 const SpreadConnector::QoSMap SpreadConnector::qosMapping = SpreadConnector::buildQoSMapping();
 
 SpreadConnector::SpreadConnector(
-		rsb::transport::ConverterCollection<std::string>::Ptr converters) :
+		rsb::transport::Repository<std::string>::Ptr converters) :
 	converters(converters) {
 	init();
 }
 
 SpreadConnector::SpreadConnector() :
-	converters(stringConverterCollection()) {
+	converters(stringConverterRepository()) {
 	init();
 }
 

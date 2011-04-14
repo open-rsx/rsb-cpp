@@ -21,7 +21,7 @@
 
 #include <boost/thread.hpp>
 
-#include "../ConverterCollection.h"
+#include "../Repository.h"
 #include "BoolConverter.h"
 #include "StringConverter.h"
 #include "Uint64Converter.h"
@@ -37,16 +37,16 @@ void registerDefaultConverters() {
 
 	boost::mutex::scoped_lock lock(registrationMutex);
 	if (!registered) {
-		transport::stringConverterCollection()->registerConverter(
+		transport::stringConverterRepository()->registerConverter(
 				transport::Converter<std::string>::Ptr(
 						new BoolConverter));
-		transport::stringConverterCollection()->registerConverter(
+		transport::stringConverterRepository()->registerConverter(
 				transport::Converter<std::string>::Ptr(
 						new StringConverter));
-		transport::stringConverterCollection()->registerConverter(
+		transport::stringConverterRepository()->registerConverter(
 				transport::Converter<std::string>::Ptr(
 						new Uint64Converter));
-		transport::stringConverterCollection()->registerConverter(
+		transport::stringConverterRepository()->registerConverter(
 				transport::Converter<std::string>::Ptr(
 						new VoidConverter));
 		registered = true;

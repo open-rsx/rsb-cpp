@@ -39,7 +39,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/transport/Connector.cpp
             rsb/transport/Router.cpp
             rsb/transport/Converter.cpp
-            rsb/transport/ConverterCollection.cpp
+            rsb/transport/Repository.cpp
             rsb/transport/SerializationException.cpp
             rsb/transport/converter/converters.cpp
             rsb/transport/converter/BoolConverter.cpp
@@ -89,7 +89,7 @@ SET(HEADERS rsb/Version.h
             rsb/transport/Connector.h
             rsb/transport/Router.h
             rsb/transport/Converter.h
-            rsb/transport/ConverterCollection.h
+            rsb/transport/Repository.h
             rsb/transport/SerializationException.h
             rsb/transport/converter/converters.h
             rsb/transport/converter/BoolConverter.h

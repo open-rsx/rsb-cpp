@@ -55,7 +55,7 @@ unsigned int DataStore::add(rsb::protocol::NotificationPtr n) {
 }
 
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
-		transport::ConverterCollection<string>::Ptr converters,
+		transport::Repository<string>::Ptr converters,
 		const Action &action) :
 	logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
 			cancelRequested(false), con(s), converters(converters),

@@ -17,15 +17,15 @@
  *
  * ============================================================ */
 
-#include "ConverterCollection.h"
+#include "Repository.h"
 
 using namespace std;
 
 namespace rsb {
 namespace transport {
 
-ConverterCollection<string>::Ptr stringConverterCollection() {
-	static ConverterCollection<string>::Ptr collection(new ConverterCollection<
+Repository<string>::Ptr stringConverterRepository() {
+	static Repository<string>::Ptr collection(new Repository<
 			string> );
 	return collection;
 }
