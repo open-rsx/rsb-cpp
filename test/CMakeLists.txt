@@ -46,8 +46,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/eventprocessing/EventProcessingStrategyTest.cpp
                       rsb/HandlerTest.cpp
                       rsb/QualityOfServiceSpecTest.cpp
-                      rsb/filter/FilterObserverTest.cpp
-		      rsb/transport/SimpleConverterTest.cpp)
+                      rsb/filter/FilterObserverTest.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
