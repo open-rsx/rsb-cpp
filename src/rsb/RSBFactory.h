@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
+#include <rsc/patterns/Singleton.h>
 
 #include "rsb/rsbexports.h"
 #include "Publisher.h"
@@ -40,20 +41,16 @@ namespace rsb {
  * @todo integrate model and validate requests against it
  * @todo port type selection missing
  */
-class RSB_EXPORT RSBFactory {
+class RSB_EXPORT RSBFactory: public rsc::patterns::Singleton<RSBFactory> {
 public:
 
-	/**
-	 * Constructs a new factory instance with a default port type.
-	 */
-	RSBFactory();
 	virtual ~RSBFactory();
 
 	template<class DataType>
 	typename Publisher<DataType>::Ptr createPublisher(const std::string &uri,
-							  const std::string &dataType = rsc::runtime::typeName<DataType>()) {
-		return typename Publisher<DataType>::Ptr(new Publisher<DataType> (uri,
-				dataType));
+			const std::string &dataType = rsc::runtime::typeName<DataType>()) {
+		return typename Publisher<DataType>::Ptr(
+				new Publisher<DataType> (uri, dataType));
 	}
 
 	SubscriberPtr createSubscriber(const std::string &uri);
@@ -62,8 +59,15 @@ public:
 
 	patterns::RemoteServerPtr createRemoteServer(const std::string &uri);
 
-};
+	friend class rsc::patterns::Singleton<RSBFactory>;
 
-typedef boost::shared_ptr<RSBFactory> RSBFactoryPtr;
+private:
+
+	/**
+	 * Singleton constructor.
+	 */
+	RSBFactory();
+
+};
 
 }

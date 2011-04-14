@@ -74,7 +74,7 @@ public:
 
 int main(int argc, char **argv) {
 
-	RSBFactory factory;
+	RSBFactory &factory = RSBFactory::getInstance();
 
 	LoggerPtr l = Logger::getLogger("receiver");
 

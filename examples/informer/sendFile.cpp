@@ -40,7 +40,7 @@ using namespace boost::posix_time;
 
 int main(void) {
 
-	RSBFactory factory;
+	RSBFactory &factory = RSBFactory::getInstance();
 	unsigned int numMsg;
 	string *bin_doc = new string();
 	string fileLoc;

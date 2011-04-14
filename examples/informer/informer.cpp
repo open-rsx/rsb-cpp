@@ -36,7 +36,7 @@ using namespace rsb;
 
 int main(void) {
 
-	RSBFactory factory;
+	RSBFactory &factory = RSBFactory::getInstance();
 
 	LoggerPtr l = Logger::getLogger("informer");
 

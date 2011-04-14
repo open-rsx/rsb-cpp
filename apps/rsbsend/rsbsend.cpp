@@ -32,7 +32,7 @@ using namespace rsb;
 
 int main(int argc, char **argv) {
 
-	RSBFactory factory;
+	RSBFactory &factory = RSBFactory::getInstance();
 
 	if (argc != 3) {
 		cerr << "Usage: " << argv[0] << " [uri] [file with contents]" << endl;

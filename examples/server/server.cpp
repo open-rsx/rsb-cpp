@@ -54,7 +54,7 @@ public:
 
 int main(int /*argc*/, char **/*argv*/) {
 
-	RSBFactory factory;
+	RSBFactory &factory = RSBFactory::getInstance();
 
 	rsc::logging::LoggerFactory::getInstance()->reconfigure(
 			rsc::logging::Logger::FATAL);
