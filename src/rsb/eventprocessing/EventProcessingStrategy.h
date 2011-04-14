@@ -26,7 +26,7 @@
 
 #include "../Event.h"
 #include "../Subscription.h"
-#include "../rsbexports.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
