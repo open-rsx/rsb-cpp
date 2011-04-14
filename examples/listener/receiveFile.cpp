@@ -31,7 +31,7 @@
 
 #include <rsc/logging/Logger.h>
 
-#include <rsb/Subscriber.h>
+#include <rsb/Listener.h>
 #include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
@@ -47,28 +47,32 @@ using namespace boost::posix_time;
 class MyDataHandler: public EventHandler {
 public:
 	MyDataHandler() {
-    counter = 0;
+		counter = 0;
 	}
-  
+
 	void notify(RSBEventPtr e) {
 
-    counter++;
-    ptime receiveTime = microsec_clock::local_time();
-    string file = e->getMetaInfo("file");
-    string fileLoc = "/tmp/" + file;
-    
-    boost::shared_ptr<string> data = boost::static_pointer_cast<string>(e->getData());
-    ptime sendTime = from_iso_string(e->getMetaInfo("startTime"));
-    cout << "Received message [" << counter << "] - " << file << endl;
-    cout << "... elapsed time between SEND -> RECEIVE: " << to_simple_string(receiveTime - sendTime) << endl;
+		counter++;
+		ptime receiveTime = microsec_clock::local_time();
+		string file = e->getMetaInfo("file");
+		string fileLoc = "/tmp/" + file;
 
-    ofstream out(fileLoc.c_str(), ios::binary);
-    for (it=data->begin();it<data->end();++it) { out << *it; }
-    out.close();
+		boost::shared_ptr<string> data = boost::static_pointer_cast<string>(
+				e->getData());
+		ptime sendTime = from_iso_string(e->getMetaInfo("startTime"));
+		cout << "Received message [" << counter << "] - " << file << endl;
+		cout << "... elapsed time between SEND -> RECEIVE: "
+				<< to_simple_string(receiveTime - sendTime) << endl;
+
+		ofstream out(fileLoc.c_str(), ios::binary);
+		for (it = data->begin(); it < data->end(); ++it) {
+			out << *it;
+		}
+		out.close();
 	}
-  
-  long counter;
-  string::iterator it;
+
+	long counter;
+	string::iterator it;
 
 };
 
@@ -80,7 +84,7 @@ int main(int argc, char **argv) {
 
 	boost::timer t;
 
-	SubscriberPtr s = factory.createSubscriber("blub");
+	ListenerPtr s = factory.createListener("blub");
 	SubscriptionPtr sub(new Subscription());
 	string uri;
 	if (argc > 1) {
@@ -89,18 +93,18 @@ int main(int argc, char **argv) {
 		uri = "rsb://example/informer";
 	}
 	sub->appendFilter(AbstractFilterPtr(new ScopeFilter(uri)));
-  
+
 	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
-  
+
 	// register event handler
 	sub->appendHandler(dh);
 	s->addSubscription(sub);
-  
-	cout << "Subscriber setup finished. Waiting for messages on uri " << uri
-       << endl;
+
+	cout << "Listener setup finished. Waiting for messages on uri " << uri
+			<< endl;
 	while (true) {
 		boost::this_thread::sleep(boost::posix_time::seconds(1000));
 	}
-  
+
 	return (EXIT_SUCCESS);
 }

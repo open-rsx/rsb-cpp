@@ -38,7 +38,7 @@ namespace rsb {
 typedef boost::shared_ptr<void> VoidPtr;
 
 /**
- * Basic message that is exchanged between publishers and subscribers. It is a
+ * Basic message that is exchanged between informers and listeners. It is a
  * combination of metadata and the actual data to publish / subscribe as
  * payload.
  *

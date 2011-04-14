@@ -34,8 +34,8 @@ RSBFactory::RSBFactory() {
 RSBFactory::~RSBFactory() {
 }
 
-SubscriberPtr RSBFactory::createSubscriber(const string &uri) {
-	return SubscriberPtr(new Subscriber(uri));
+ListenerPtr RSBFactory::createListener(const string &uri) {
+	return ListenerPtr(new Listener(uri));
 }
 
 patterns::ServerPtr RSBFactory::createServer(const string &uri) {

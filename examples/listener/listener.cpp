@@ -28,7 +28,7 @@
 
 #include <rsc/logging/Logger.h>
 
-#include <rsb/Subscriber.h>
+#include <rsb/Listener.h>
 #include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 
 	boost::timer t;
 
-	SubscriberPtr s = factory.createSubscriber("blub");
+	ListenerPtr s = factory.createListener("blub");
 	SubscriptionPtr sub(new Subscription());
 	string uri;
 	if (argc > 1) {
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 
 	s->addSubscription(sub);
 
-	cerr << "Subscriber setup finished. Waiting for messages on uri " << uri
+	cerr << "Listener setup finished. Waiting for messages on uri " << uri
 			<< endl;
 
 	while (true) {

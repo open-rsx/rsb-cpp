@@ -107,9 +107,8 @@ RemoteServer::RemoteTargetInvocationException::RemoteTargetInvocationException(
 }
 
 RemoteServer::RemoteServer(const string &uri) :
-			logger(
-					rsc::logging::Logger::getLogger(
-							"rsc.patterns.RemoteServer." + uri)), uri(uri) {
+			logger(rsc::logging::Logger::getLogger("rsc.patterns.RemoteServer."
+					+ uri)), uri(uri) {
 	// TODO check that this server is alive...
 	// TODO probably it would be a good idea to request some method infos from
 	//      the server, e.g. for type checking
@@ -125,26 +124,26 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 
 	if (!methodSets.count(methodName)) {
 
-		// start a subscriber to wait for the reply
+		// start a listener to wait for the reply
 		const string replyUri = uri + "-reply-" + methodName;
-		SubscriberPtr subscriber(new Subscriber(replyUri));
+		ListenerPtr listener(new Listener(replyUri));
 		SubscriptionPtr subscription(new Subscription);
-		subscription->appendFilter(
-				filter::AbstractFilterPtr(new filter::ScopeFilter(replyUri)));
-		boost::shared_ptr<WaitingEventHandler> handler(
-				new WaitingEventHandler(logger));
+		subscription->appendFilter(filter::AbstractFilterPtr(
+				new filter::ScopeFilter(replyUri)));
+		boost::shared_ptr<WaitingEventHandler> handler(new WaitingEventHandler(
+				logger));
 		subscription->appendHandler(handler);
-		subscriber->addSubscription(subscription);
+		listener->addSubscription(subscription);
 
 		// publisher for requests
-		Publisher<void>::Ptr publisher(
-				new Publisher<void> (uri + "-request-" + methodName, sendType));
+		Publisher<void>::Ptr publisher(new Publisher<void> (uri + "-request-"
+				+ methodName, sendType));
 
 		MethodSet set;
 		set.methodName = methodName;
 		set.sendType = sendType;
 		set.handler = handler;
-		set.replySubscriber = subscriber;
+		set.replyListener = listener;
 		set.replySubscription = subscription;
 		set.requestPublisher = publisher;
 
@@ -153,10 +152,9 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 	}
 
 	if (methodSets[methodName].sendType != sendType) {
-		throw runtime_error(
-				"Illegal send type. Method previously accepted "
-						+ methodSets[methodName].sendType + " but now "
-						+ sendType + " was requested");
+		throw runtime_error("Illegal send type. Method previously accepted "
+				+ methodSets[methodName].sendType + " but now " + sendType
+				+ " was requested");
 	}
 
 	return methodSets[methodName];
@@ -182,10 +180,9 @@ RSBEventPtr RemoteServer::callMethod(const string &methodName, RSBEventPtr data)
 	RSBEventPtr result = methodSet.handler->getReply(requestId);
 	if (result->hasMetaInfo("isException")) {
 		assert(result->getType() == "string");
-		throw RemoteTargetInvocationException(
-				"Error calling remote method '" + methodName + "': "
-						+ *(boost::static_pointer_cast<string>(
-								result->getData())));
+		throw RemoteTargetInvocationException("Error calling remote method '"
+				+ methodName + "': " + *(boost::static_pointer_cast<string>(
+				result->getData())));
 	} else {
 		return result;
 	}

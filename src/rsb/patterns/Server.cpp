@@ -43,10 +43,8 @@ public:
 
 	RequestHandler(const string &methodName, Server::CallbackPtr callback,
 			Publisher<void>::Ptr publisher) :
-				logger(
-						rsc::logging::Logger::getLogger(
-								"rsb.patterns.RequestHandler." + methodName)),
-				methodName(methodName), callback(callback),
+		logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
+				+ methodName)), methodName(methodName), callback(callback),
 				publisher(publisher) {
 	}
 
@@ -75,18 +73,17 @@ public:
 			RSBEventPtr returnEvent(new RSBEvent());
 			returnEvent->setType(callback->getReplyType());
 			returnEvent->setData(returnData);
-			returnEvent ->addMetaInfo(requestIdKey,
-					event->getMetaInfo(requestIdKey));
+			returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
+					requestIdKey));
 			publisher->publish(returnEvent);
 		} catch (exception &e) {
 			RSBEventPtr returnEvent(new RSBEvent());
 			returnEvent->setType("string");
 			string exceptionType = typeid(e).name();
-			returnEvent->setData(
-					boost::shared_ptr<string>(
-							new string(exceptionType + ": " + e.what())));
-			returnEvent->addMetaInfo(requestIdKey,
-					event->getMetaInfo(requestIdKey));
+			returnEvent->setData(boost::shared_ptr<string>(new string(
+					exceptionType + ": " + e.what())));
+			returnEvent->addMetaInfo(requestIdKey, event->getMetaInfo(
+					requestIdKey));
 			returnEvent->addMetaInfo("isException", "");
 			publisher->publish(returnEvent);
 		}
@@ -96,7 +93,7 @@ public:
 };
 
 Server::Server(const std::string &uri) :
-	uri(uri), requestSubscriber(new Subscriber(uri + "-request")) {
+	uri(uri), requestListener(new Listener(uri + "-request")) {
 }
 
 Server::~Server() {
@@ -110,17 +107,15 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
 	}
 
 	// TODO check that the reply type is convertible
-	Publisher<void>::Ptr publisher(
-			new Publisher<void> (uri + "-reply-" + methodName,
-					callback->getReplyType()));
+	Publisher<void>::Ptr publisher(new Publisher<void> (uri + "-reply-"
+			+ methodName, callback->getReplyType()));
 
 	SubscriptionPtr subscription(new Subscription);
-	subscription->appendFilter(
-			filter::AbstractFilterPtr(
-					new filter::ScopeFilter(uri + "-request-" + methodName)));
-	subscription->appendHandler(
-			HandlerPtr(new RequestHandler(methodName, callback, publisher)));
-	requestSubscriber->addSubscription(subscription);
+	subscription->appendFilter(filter::AbstractFilterPtr(
+			new filter::ScopeFilter(uri + "-request-" + methodName)));
+	subscription->appendHandler(HandlerPtr(new RequestHandler(methodName,
+			callback, publisher)));
+	requestListener->addSubscription(subscription);
 
 	methods[methodName] = make_pair(subscription, publisher);
 

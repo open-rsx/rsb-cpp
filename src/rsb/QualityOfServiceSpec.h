@@ -38,7 +38,7 @@ class RSB_EXPORT QualityOfServiceSpec {
 public:
 
 	/**
-	 * Specifies the ordering of events for subscribers on a publisher.
+	 * Specifies the ordering of events for listeners on a publisher.
 	 *
 	 * @author jwienke
 	 */
@@ -48,7 +48,7 @@ public:
 		 */
 		UNORDERED = 10,
 		/**
-		 * Every subscriber receives the events of one publisher in the order
+		 * Every listener receives the events of one publisher in the order
 		 * the publisher sent the events. No guarantees are given for events of
 		 * multiple publishers.
 		 */
@@ -62,7 +62,7 @@ public:
 	 */
 	enum Reliability {
 		/**
-		 * Events may be dropped and not be visible to a subscriber.
+		 * Events may be dropped and not be visible to a listener.
 		 */
 		UNRELIABLE = 10,
 		/**
@@ -105,7 +105,8 @@ public:
 	 */
 	Reliability getReliability() const;
 
-	friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
+	friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
+			const QualityOfServiceSpec &spec);
 
 private:
 
@@ -114,7 +115,8 @@ private:
 
 };
 
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const QualityOfServiceSpec &spec);
+RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
+		const QualityOfServiceSpec &spec);
 
 }
 

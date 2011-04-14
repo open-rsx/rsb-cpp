@@ -37,7 +37,7 @@ public:
 };
 
 /**
- * A handler is a "callback object" invoked by a @ref rsb::Subscriber when new data
+ * A handler is a "callback object" invoked by a @ref rsb::Listener when new data
  * is available that matches the @ref rsb::Subscription this handler is attached to.
  *
  * @author swrede
@@ -78,7 +78,7 @@ public:
  * A utility class to simplify data handling by automatically passing the data
  * of the desired type to the notify() method.
  *
- * @tparam T desired data type to retrieve from the subscriber
+ * @tparam T desired data type to retrieve from the listeners
  * @author swrede
  */
 template<class T>

@@ -34,13 +34,13 @@
 namespace rsb {
 
 /**
- * A Subscriber subscribes to published events by a @ref rsb::Publisher by maintaining
+ * A Listener subscribes to published events by a @ref rsb::Informer by maintaining
  * several @ref rsb::Subscription instances. Subscriptions must at least provide a @ref rsb::filter::ScopeFilter
- * to inform the subscriber about the desired events to receive.
+ * to inform the listener about the desired events to receive.
  *
  * Usage example:
  * @code
- * SubscriberPtr s(new Subscriber("blub"));
+ * ListenerPtr s(new Listener("blub"));
  * SubscriptionPtr sub(new Subscription());
  * AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
  * sub->appendFilter(f);
@@ -52,22 +52,22 @@ namespace rsb {
  * @author swrede
  *
  * @todo refactor commonalities of participants into a participant ?!? class
- * @todo how to deal with IDs of subscribers? (it must be possible to reference them internally somehow
+ * @todo how to deal with IDs of listeners? (it must be possible to reference them internally somehow
  * @todo use templates in subscriptions only? (however, they need the event info)
  */
-class RSB_EXPORT Subscriber {
+class RSB_EXPORT Listener {
 public:
 
 	/**
-	 * Constructs a new Subscriber assigned to the specified uri. The Subscriber
+	 * Constructs a new Listener assigned to the specified uri. The Listener
 	 * opens a @ref rsb::transport::Router to PortType Spread and is activated after construction.
 	 *
 	 * @param uri the uri where the data is published.
 	 */
-	Subscriber(const std::string &uri);
+	Listener(const std::string &uri);
 
 	/**
-	 * Constructs a new Subscriber assigned to the specified uri. The Subscriber
+	 * Constructs a new Listener assigned to the specified uri. The Listener
 	 * opens a @ref rsb::transport::Router to a PortType specified and is activated after
 	 * construction.
 	 *
@@ -75,32 +75,31 @@ public:
 	 * @param in the PortType (enum) to connect with, i.e.
 	 *           transport::TransportFactory::SPREAD
 	 */
-	Subscriber(transport::TransportFactory::PortTypes in,
-			const std::string &uri);
+	Listener(transport::TransportFactory::PortTypes in, const std::string &uri);
 
-	virtual ~Subscriber();
+	virtual ~Listener();
 
 	/**
-	 * Activates the Subscriber and therefore the Router. Is considered being in
+	 * Activates the Listener and therefore the Router. Is considered being in
 	 * active mode afterwards.
 	 */
 	void activate();
 
 	/**
-	 * Deactivates the Subscriber and therefore the Router. Is considered being
+	 * Deactivates the Listener and therefore the Router. Is considered being
 	 * in passive mode afterwards.
 	 */
 	void deactivate();
 
 	/**
-	 * Adds a Subscription to the Subscriber.
+	 * Adds a Subscription to the Listener.
 	 *
 	 * @param s a Pointer to the Subscription added.
 	 */
 	void addSubscription(SubscriptionPtr s);
 
 	/**
-	 * Removes a Subscription to the Subscriber.
+	 * Removes a Subscription to the Listener.
 	 *
 	 * @param s a Pointer to the Subscription removed.
 	 */
@@ -111,7 +110,7 @@ protected:
 	/**
 	 * Forbidden constructor.
 	 */
-	Subscriber();
+	Listener();
 
 private:
 	rsc::logging::LoggerPtr logger;
@@ -121,7 +120,7 @@ private:
 
 };
 
-typedef boost::shared_ptr<Subscriber> SubscriberPtr;
+typedef boost::shared_ptr<Listener> ListenerPtr;
 
 }
 

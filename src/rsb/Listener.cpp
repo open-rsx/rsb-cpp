@@ -17,59 +17,58 @@
  *
  * ============================================================ */
 
-#include "Subscriber.h"
+#include "Listener.h"
 
 using namespace std;
 
 namespace rsb {
 
-Subscriber::Subscriber(const string &uri) :
-	logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri),
-			passive(false) {
+Listener::Listener(const string &uri) :
+	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri), passive(
+			false) {
 	// TODO evaluate configuration
-	router = transport::RouterPtr(
-			new transport::Router(transport::TransportFactory::SPREAD,
-					transport::TransportFactory::NONE));
+	router = transport::RouterPtr(new transport::Router(
+			transport::TransportFactory::SPREAD,
+			transport::TransportFactory::NONE));
 	activate();
 }
 
-Subscriber::Subscriber(transport::TransportFactory::PortTypes in,
-		const string &uri) :
-	logger(rsc::logging::Logger::getLogger("rsb.Subscriber")), uri(uri),
-			passive(false) {
+Listener::Listener(transport::TransportFactory::PortTypes in, const string &uri) :
+	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri), passive(
+			false) {
 	// TODO evaluate configuration
-	router = transport::RouterPtr(
-			new transport::Router(in, transport::TransportFactory::NONE));
+	router = transport::RouterPtr(new transport::Router(in,
+			transport::TransportFactory::NONE));
 	activate();
 }
 
-Subscriber::~Subscriber() {
+Listener::~Listener() {
 	if (!passive) {
 		deactivate();
 	}
 }
 
-void Subscriber::activate() {
+void Listener::activate() {
 	router->activate();
 	passive = false;
 }
 
-void Subscriber::deactivate() {
+void Listener::deactivate() {
 	if (!passive) {
 		router->deactivate();
 	}
 	passive = true;
 }
 
-void Subscriber::addSubscription(SubscriptionPtr s) {
+void Listener::addSubscription(SubscriptionPtr s) {
 	router->subscribe(s);
 }
 
-void Subscriber::removeSubscription(SubscriptionPtr s) {
+void Listener::removeSubscription(SubscriptionPtr s) {
 	router->unsubscribe(s);
 }
 
-Subscriber::Subscriber() {
+Listener::Listener() {
 }
 
 }

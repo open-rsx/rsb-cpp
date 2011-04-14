@@ -50,7 +50,7 @@ public:
 	EventProcessor(unsigned int num_threads);
 	virtual ~EventProcessor();
 
-	// if invoked, the event is dispatched to subscribers, typically called by ports
+	// if invoked, the event is dispatched to listeners, typically called by ports
     void process(rsb::RSBEventPtr e);
 
     // add a subscription

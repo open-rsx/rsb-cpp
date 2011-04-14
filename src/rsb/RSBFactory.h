@@ -28,7 +28,7 @@
 
 #include "rsb/rsbexports.h"
 #include "Publisher.h"
-#include "Subscriber.h"
+#include "Listener.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
 
@@ -49,11 +49,11 @@ public:
 	template<class DataType>
 	typename Publisher<DataType>::Ptr createPublisher(const std::string &uri,
 			const std::string &dataType = rsc::runtime::typeName<DataType>()) {
-		return typename Publisher<DataType>::Ptr(
-				new Publisher<DataType> (uri, dataType));
+		return typename Publisher<DataType>::Ptr(new Publisher<DataType> (uri,
+				dataType));
 	}
 
-	SubscriberPtr createSubscriber(const std::string &uri);
+	ListenerPtr createListener(const std::string &uri);
 
 	patterns::ServerPtr createServer(const std::string &uri);
 

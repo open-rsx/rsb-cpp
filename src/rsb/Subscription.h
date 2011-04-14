@@ -38,12 +38,12 @@ typedef std::list<rsb::filter::AbstractFilterPtr> FilterChain;
 typedef std::list<Action> Actions;
 
 /**
- * A Subscription, used by a @ref rsb::Subscriber. By appending an @ref rsb::filter::AbstractFilter to the
+ * A Subscription, used by a @ref rsb::Listener. By appending an @ref rsb::filter::AbstractFilter to the
  * Subscription, one makes sure only events of a certain types are recognized.
  * Appending a Handler is necessary to work with the data received.
  *
  * The following example shows using a Subscription using a ScopeFilter (assume
- * the same uri is used as for the Subscriber) and a QueuePushHandler as a
+ * the same uri is used as for the Listener) and a QueuePushHandler as a
  * Handler which pushes the received events to a given queue:
  *
  * @code

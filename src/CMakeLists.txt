@@ -17,7 +17,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/CommException.cpp
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp
             rsb/Publisher.cpp
-            rsb/Subscriber.cpp
+            rsb/Listener.cpp
             rsb/util/Configuration.cpp
             rsb/util/ConfigException.cpp
             rsb/RSBEvent.cpp
@@ -67,7 +67,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/util/ConfigException.h
             rsb/RSBEvent.h
             rsb/Publisher.h
-            rsb/Subscriber.h
+            rsb/Listener.h
             rsb/Action.h
             rsb/Handler.h
             rsb/Subscription.h

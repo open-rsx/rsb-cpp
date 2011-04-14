@@ -20,7 +20,7 @@
 #include <boost/thread.hpp>
 
 #include <rsb/Publisher.h>
-#include <rsb/Subscriber.h>
+#include <rsb/Listener.h>
 #include <rsb/Subscription.h>
 #include <rsb/RSBFactory.h>
 
@@ -55,32 +55,28 @@ int main(int /*argc*/, char **/*argv*/) {
 		Publisher<string>::Ptr publisher2 = factory.createPublisher<string> (
 				uri2, "string");
 
-		SubscriberPtr subscriber1 = factory.createSubscriber(uri1);
-		SubscriberPtr subscriber2 = factory.createSubscriber(uri2);
+		ListenerPtr listener1 = factory.createListener(uri1);
+		ListenerPtr listener2 = factory.createListener(uri2);
 
 		SubscriptionPtr sub1(new Subscription);
 		sub1->appendFilter(AbstractFilterPtr(new ScopeFilter(uri1)));
 		sub1->appendHandler(HandlerPtr(new PrintHandler("sub1")));
-		subscriber1->addSubscription(sub1);
+		listener1->addSubscription(sub1);
 
 		SubscriptionPtr sub2(new Subscription);
 		sub2->appendFilter(AbstractFilterPtr(new ScopeFilter(uri2)));
 		sub2->appendHandler(HandlerPtr(new PrintHandler("sub2")));
-		subscriber2->addSubscription(sub2);
+		listener2->addSubscription(sub2);
 
-		publisher1->publish(
-				Publisher<string>::DataPtr(
-						new string("publisher1 first message")));
-		publisher1->publish(
-				Publisher<string>::DataPtr(
-						new string("publisher1 second message")));
+		publisher1->publish(Publisher<string>::DataPtr(new string(
+				"publisher1 first message")));
+		publisher1->publish(Publisher<string>::DataPtr(new string(
+				"publisher1 second message")));
 
-		publisher2->publish(
-				Publisher<string>::DataPtr(
-						new string("publisher2 first message")));
-		publisher2->publish(
-				Publisher<string>::DataPtr(
-						new string("publisher2 second message")));
+		publisher2->publish(Publisher<string>::DataPtr(new string(
+				"publisher2 first message")));
+		publisher2->publish(Publisher<string>::DataPtr(new string(
+				"publisher2 second message")));
 
 		boost::this_thread::sleep(boost::posix_time::seconds(2));
 

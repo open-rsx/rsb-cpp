@@ -28,7 +28,7 @@
 
 #include "../RSBEvent.h"
 #include "../Publisher.h"
-#include "../Subscriber.h"
+#include "../Listener.h"
 #include "../RSBException.h"
 #include "rsb/rsbexports.h"
 
@@ -81,7 +81,7 @@ private:
 		std::string methodName;
 		std::string sendType;
 		boost::shared_ptr<WaitingEventHandler> handler;
-		SubscriberPtr replySubscriber;
+		ListenerPtr replyListener;
 		SubscriptionPtr replySubscription;
 		Publisher<void>::Ptr requestPublisher;
 	};
