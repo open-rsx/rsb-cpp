@@ -25,7 +25,7 @@
 
 #include "Factory.h"
 #include "../filter/FilterObservable.h"
-#include "../EventProcessingStrategy.h"
+#include "../eventprocessing/EventProcessingStrategy.h"
 #include "../Subscription.h"
 #include "../QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
@@ -104,7 +104,7 @@ private:
 	ConnectorPtr inConnector;
 	ConnectorPtr outConnector;
 	// ep for observation model
-	rsb::internal::EventProcessingStrategyPtr eventProcessingStrategy;
+	rsb::eventprocessing::EventProcessingStrategyPtr eventProcessingStrategy;
 	volatile bool shutdown;
 
 };
@@ -113,4 +113,3 @@ typedef boost::shared_ptr<Router> RouterPtr;
 
 }
 }
-

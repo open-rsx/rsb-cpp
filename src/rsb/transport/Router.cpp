@@ -25,7 +25,7 @@ using namespace std;
 using namespace rsc::logging;
 using namespace rsb;
 using namespace rsb::filter;
-using namespace rsb::internal;
+using namespace rsb::eventprocessing;
 using namespace rsb::transport;
 
 namespace rsb {
@@ -117,4 +117,3 @@ ConnectorPtr Router::getInConnector() {
 
 }
 }
-

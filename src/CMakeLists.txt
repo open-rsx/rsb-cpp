@@ -23,7 +23,6 @@ SET(SOURCES rsb/Exception.cpp
             rsb/Event.cpp
             rsb/Handler.cpp
             rsb/Subscription.cpp
-            rsb/EventProcessingStrategy.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
@@ -36,6 +35,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/patterns/Server.cpp
             rsb/patterns/MethodExistsException.cpp
             rsb/protocol/ProtocolException.cpp
+	    rsb/eventprocessing/EventProcessingStrategy.cpp
             rsb/transport/Connector.cpp
             rsb/transport/Router.cpp
             rsb/transport/Converter.cpp
@@ -71,7 +71,6 @@ SET(HEADERS rsb/Version.h
             rsb/Action.h
             rsb/Handler.h
             rsb/Subscription.h
-            rsb/EventProcessingStrategy.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
             rsb/UnsupportedQualityOfServiceException.h
@@ -86,6 +85,7 @@ SET(HEADERS rsb/Version.h
             rsb/patterns/MethodExistsException.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
+            rsb/eventprocessing/EventProcessingStrategy.h
             rsb/transport/Connector.h
             rsb/transport/Router.h
             rsb/transport/Converter.h

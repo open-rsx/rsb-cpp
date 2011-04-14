@@ -26,14 +26,14 @@
 
 #include <boost/thread.hpp>
 
-#include "rsb/EventProcessingStrategy.h"
+#include "rsb/eventprocessing/EventProcessingStrategy.h"
 #include "rsb/Subscription.h"
 #include "rsb/QueuePushHandler.h"
 #include "rsb/filter/ScopeFilter.h"
 
 using namespace std;
 using namespace rsb;
-using namespace rsb::internal;
+using namespace rsb::eventprocessing;
 using namespace testing;
 using namespace rsc::threading;
 using namespace rsb::filter;

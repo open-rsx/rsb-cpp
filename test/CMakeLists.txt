@@ -7,7 +7,7 @@ PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
                       PROTOFILES ${RSBPROTO_FILES}
                       PROTOROOT ${RSBPROTO_ROOT}
                       OUTPATH ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol)
-                      
+
 SET(TEST_RESULT_DIR ${CMAKE_BINARY_DIR}/testresults)
 
 INCLUDE_DIRECTORIES(BEFORE ../src
@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES(BEFORE ../src
                            ${GTEST_INCLUDE_DIR}
                            ${GMOCK_INCLUDE_DIR}
                            ${CMAKE_CURRENT_BINARY_DIR}
-                           ${CMAKE_CURRENT_SOURCE_DIR}) 
+                           ${CMAKE_CURRENT_SOURCE_DIR})
 
 # --- setup generic test infrastructure ---
 
@@ -43,10 +43,11 @@ ADD_TEST(${RSB_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${RSB_TEST_NAME} "--gtest_ou
 # --- core test ---
 
 SET(CORE_TEST_SOURCES rsbtest_core.cpp
-                      rsb/EventProcessingStrategyTest.cpp
+                      rsb/eventprocessing/EventProcessingStrategyTest.cpp
                       rsb/HandlerTest.cpp
                       rsb/QualityOfServiceSpecTest.cpp
-                      rsb/filter/FilterObserverTest.cpp)
+                      rsb/filter/FilterObserverTest.cpp
+		      rsb/transport/SimpleConverterTest.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}

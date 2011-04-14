@@ -23,7 +23,7 @@ using namespace std;
 
 namespace rsb {
 
-namespace internal {
+namespace eventprocessing {
 
 EventProcessingStrategy::EventProcessingStrategy() :
 	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")), pool(5,

@@ -24,13 +24,13 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/OrderedQueueDispatcherPool.h>
 
-#include "Event.h"
-#include "Subscription.h"
-#include "rsb/rsbexports.h"
+#include "../Event.h"
+#include "../Subscription.h"
+#include "../rsbexports.h"
 
 namespace rsb {
 
-namespace internal {
+namespace eventprocessing {
 
 // optimization brainstorming:
 // could a req-req condition even be a static map for one process?
@@ -74,4 +74,3 @@ typedef boost::shared_ptr<EventProcessingStrategy> EventProcessingStrategyPtr;
 }
 
 }
-
