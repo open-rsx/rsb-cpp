@@ -44,10 +44,10 @@ typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
  * @tparam WireFormat is the serialization format, uchar, string, binary, ...
  */
 template<class WireFormat>
-class AbstractConverter {
+class Converter {
 public:
 
-	virtual ~AbstractConverter() {
+	virtual ~Converter() {
 	}
 
 	/**
@@ -90,7 +90,7 @@ public:
 		return wireSchema;
 	}
 
-	typedef boost::shared_ptr<AbstractConverter<WireFormat> > Ptr;
+	typedef boost::shared_ptr<Converter<WireFormat> > Ptr;
 
 protected:
 
@@ -101,8 +101,7 @@ protected:
 	 * @param wireSchema wire schema this converter can deserialize
 	 * @todo this constructor cannot be called anymore for WireFormat string
 	 */
-	AbstractConverter(const std::string &dataType,
-			const std::string &wireSchema) :
+	Converter(const std::string &dataType, const std::string &wireSchema) :
 		dataType(dataType), wireSchema(wireSchema) {
 	}
 
@@ -117,7 +116,7 @@ protected:
 	 *                   (de)serialize.
 	 */
 	template<typename DataType>
-	AbstractConverter(const std::string &wireSchema, const DataType */*unused*/ = 0) :
+	Converter(const std::string &wireSchema, const DataType */*unused*/= 0) :
 		dataType(rsc::runtime::typeName<DataType>()), wireSchema(wireSchema) {
 	}
 

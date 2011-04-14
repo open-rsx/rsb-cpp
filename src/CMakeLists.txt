@@ -38,7 +38,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/protocol/ProtocolException.cpp
             rsb/transport/Connector.cpp
             rsb/transport/Router.cpp
-            rsb/transport/AbstractConverter.cpp
+            rsb/transport/Converter.cpp
             rsb/transport/ConverterCollection.cpp
             rsb/transport/SerializationException.cpp
             rsb/transport/converter/converters.cpp
@@ -88,7 +88,7 @@ SET(HEADERS rsb/Version.h
             rsb/protocol/ProtocolException.h
             rsb/transport/Connector.h
             rsb/transport/Router.h
-            rsb/transport/AbstractConverter.h
+            rsb/transport/Converter.h
             rsb/transport/ConverterCollection.h
             rsb/transport/SerializationException.h
             rsb/transport/converter/converters.h

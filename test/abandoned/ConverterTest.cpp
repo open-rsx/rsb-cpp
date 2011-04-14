@@ -11,14 +11,14 @@
 #include <exception>
 #include <boost/shared_ptr.hpp>
 
-#include "rsb/transport/AbstractConverter.h"
+#include "rsb/transport/Converter.h"
 #include "BTL2StringConverter.h"
 
 using namespace std;
 using namespace rsb;
 using namespace rsb::transport;
 
-typedef boost::shared_ptr<AbstractConverter <string> > StringConverterPtr;
+typedef boost::shared_ptr<Converter <string> > StringConverterPtr;
 
 int main(void) {
 	StringConverterPtr c(new BTL2StringConverter());

@@ -22,7 +22,7 @@
 #include <iostream>
 
 #include "../../protocol/Notification.h"
-#include "../AbstractConverter.h"
+#include "../Converter.h"
 #include "../../CommException.h"
 #include "SpreadConnection.h"
 
@@ -135,7 +135,7 @@ void ReceiverTask::execute() {
 				}
 				// TODO refactor converter handling and conversion
 				// TODO error handling
-				AbstractConverter<string>::Ptr c =
+				Converter<string>::Ptr c =
 						converters->getConverterByWireSchema(n->type_id());
 				transport::AnnotatedData deserialized = c->deserialize(
 						n->type_id(), *s);

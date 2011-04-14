@@ -35,7 +35,7 @@ void registerIntrospectionConverters() {
 	boost::mutex::scoped_lock lock(registrationMutex);
 	if (!registered) {
 		transport::stringConverterCollection()->registerConverter(
-				transport::AbstractConverter<std::string>::Ptr(
+				transport::Converter<std::string>::Ptr(
 						new IntrospectionConverter));
 		registered = true;
 	}

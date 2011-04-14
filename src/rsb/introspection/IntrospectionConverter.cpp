@@ -33,7 +33,7 @@ namespace introspection {
 const string IntrospectionConverter::TYPE = "portstatechange";
 
 IntrospectionConverter::IntrospectionConverter() :
-	rsb::transport::AbstractConverter<string>(TYPE, TYPE) {
+	rsb::transport::Converter<string>(TYPE, TYPE) {
 
 }
 

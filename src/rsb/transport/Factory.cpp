@@ -40,7 +40,7 @@ Factory::~Factory() {
 ConnectorPtr Factory::createConnector(ConnectorTypes type) {
 	ConnectorPtr p;
 	//		ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
-	//		AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
+	//		Converter ac = boost::shared_ptr<Converter>(new UCharConverter());
 	//		r->addConverter("uchar.person",ac);
 	switch (type) {
 	case LOCAL:

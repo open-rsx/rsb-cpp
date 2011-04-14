@@ -29,7 +29,7 @@
 #include "../ConverterCollection.h"
 #include "../../Event.h"
 #include "../Connector.h"
-#include "../AbstractConverter.h"
+#include "../Converter.h"
 #include "SpreadConnection.h"
 
 namespace rsb {

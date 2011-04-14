@@ -18,7 +18,7 @@
  * ============================================================ */
 
 
-#include "AbstractConverter.h"
+#include "Converter.h"
 
 namespace rsb {
 namespace transport {

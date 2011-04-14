@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../AbstractConverter.h"
+#include "../Converter.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -31,7 +31,7 @@ namespace transport {
  *
  * @author jwienke
  */
-class VoidConverter: public rsb::transport::AbstractConverter<std::string> {
+class VoidConverter: public rsb::transport::Converter<std::string> {
 public:
 	VoidConverter();
 	virtual ~VoidConverter();

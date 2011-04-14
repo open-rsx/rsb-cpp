@@ -29,7 +29,7 @@ namespace transport {
 const string VoidConverter::TYPE = "void";
 
 VoidConverter::VoidConverter() :
-	AbstractConverter<string> (TYPE, RSB_TYPE_TAG(void)) {
+	Converter<string> (TYPE, RSB_TYPE_TAG(void)) {
 }
 
 VoidConverter::~VoidConverter() {

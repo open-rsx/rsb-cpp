@@ -38,16 +38,16 @@ void registerDefaultConverters() {
 	boost::mutex::scoped_lock lock(registrationMutex);
 	if (!registered) {
 		transport::stringConverterCollection()->registerConverter(
-				transport::AbstractConverter<std::string>::Ptr(
+				transport::Converter<std::string>::Ptr(
 						new BoolConverter));
 		transport::stringConverterCollection()->registerConverter(
-				transport::AbstractConverter<std::string>::Ptr(
+				transport::Converter<std::string>::Ptr(
 						new StringConverter));
 		transport::stringConverterCollection()->registerConverter(
-				transport::AbstractConverter<std::string>::Ptr(
+				transport::Converter<std::string>::Ptr(
 						new Uint64Converter));
 		transport::stringConverterCollection()->registerConverter(
-				transport::AbstractConverter<std::string>::Ptr(
+				transport::Converter<std::string>::Ptr(
 						new VoidConverter));
 		registered = true;
 	}

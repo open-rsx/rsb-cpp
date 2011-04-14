@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../transport/AbstractConverter.h"
+#include "../transport/Converter.h"
 
 #include <string>
 
@@ -29,7 +29,7 @@ namespace introspection {
 /**
  * @author swrede
  */
-class IntrospectionConverter: public rsb::transport::AbstractConverter<
+class IntrospectionConverter: public rsb::transport::Converter<
 		std::string> {
 public:
 	IntrospectionConverter();

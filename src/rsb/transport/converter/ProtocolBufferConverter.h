@@ -25,7 +25,7 @@
 
 #include <rsc/runtime/TypeStringTools.h>
 
-#include "../AbstractConverter.h"
+#include "../Converter.h"
 
 namespace rsb {
 namespace transport {
@@ -58,8 +58,7 @@ std::string typeNameToDataTypeName(const std::string& type_name) {
 }
 
 template<typename ProtocolBuffer>
-class ProtocolBufferConverter: public rsb::transport::AbstractConverter<
-		std::string> {
+class ProtocolBufferConverter: public rsb::transport::Converter<std::string> {
 public:
 	ProtocolBufferConverter();
 	virtual
@@ -76,10 +75,9 @@ public:
 
 template<typename ProtocolBuffer>
 ProtocolBufferConverter<ProtocolBuffer>::ProtocolBufferConverter() :
-			AbstractConverter<std::string> (
-					rsc::runtime::typeName<ProtocolBuffer>(),
-					detail::typeNameToDataTypeName(
-							rsc::runtime::typeName<ProtocolBuffer>())) {
+	Converter<std::string> (rsc::runtime::typeName<ProtocolBuffer>(),
+			detail::typeNameToDataTypeName(rsc::runtime::typeName<
+					ProtocolBuffer>())) {
 }
 
 template<typename ProtocolBuffer>

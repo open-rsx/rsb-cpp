@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../AbstractConverter.h"
+#include "../Converter.h"
 
 #include <string>
 #include <boost/shared_ptr.hpp>
@@ -32,7 +32,7 @@ namespace transport {
  *
  * @author jwienke
  */
-class Uint64Converter: public rsb::transport::AbstractConverter<std::string> {
+class Uint64Converter: public rsb::transport::Converter<std::string> {
 public:
 	Uint64Converter();
 	virtual ~Uint64Converter();

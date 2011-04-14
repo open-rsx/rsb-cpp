@@ -29,7 +29,7 @@
 #include "InProcessConnector.h"
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
-#include "../AbstractConverter.h"
+#include "../Converter.h"
 
 using namespace std;
 using namespace rsc::logging;
@@ -73,7 +73,7 @@ void InProcessConnector::push(EventPtr e) {
 	// get matching converter -- can be skipped here
 	//	string s;
 	//	boost::shared_ptr<void> obj = boost::static_pointer_cast<void>(e->getData());
-	//	boost::shared_ptr<AbstractConverter<string> > c = boost::static_pointer_cast<AbstractConverter<string> >((*converters)["person"]);
+	//	boost::shared_ptr<Converter<string> > c = boost::static_pointer_cast<Converter<string> >((*converters)["person"]);
 	//	c->serialize("person",obj,s);
 	//	cout << "Result of serialize1 call: " << s << endl;
 

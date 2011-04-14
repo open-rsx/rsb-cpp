@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "rsb/transport/AbstractConverter.h"
+#include "rsb/transport/Converter.h"
 
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -23,7 +23,7 @@ public:
 
 typedef boost::shared_ptr<Person> PersonPtr;
 
-class BTL2StringConverter : public rsb::transport::AbstractConverter<std::string> {
+class BTL2StringConverter : public rsb::transport::Converter<std::string> {
 public:
 	BTL2StringConverter();
 	virtual ~BTL2StringConverter();

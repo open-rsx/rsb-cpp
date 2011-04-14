@@ -22,7 +22,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "AbstractConverter.h"
+#include "Converter.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -41,7 +41,7 @@ template<class WireFormat>
 class ConverterCollection {
 public:
 
-	typedef typename AbstractConverter<WireFormat>::Ptr Converter;
+	typedef typename Converter<WireFormat>::Ptr Converter;
 
 	/**
 	 * Registers the given converter in the collection.
