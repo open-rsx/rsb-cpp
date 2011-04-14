@@ -24,7 +24,7 @@
 
 #include <rsc/threading/RepetitiveTask.h>
 
-#include "rsb/transport/Port.h"
+#include "rsb/transport/Connector.h"
 
 namespace rsb {
 namespace test {
@@ -34,7 +34,7 @@ namespace test {
  */
 class InformerTask: public rsc::threading::RepetitiveTask {
 public:
-	InformerTask(rsb::transport::PortPtr p, const unsigned int &numEvents);
+	InformerTask(rsb::transport::ConnectorPtr p, const unsigned int &numEvents);
 	virtual ~InformerTask();
 
 	void execute();
@@ -44,7 +44,7 @@ public:
 private:
 	unsigned int numEvents;
 	unsigned int sentEvents;
-	rsb::transport::PortPtr port;
+	rsb::transport::ConnectorPtr port;
 	std::vector<EventPtr> events;
 
 };

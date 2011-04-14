@@ -29,8 +29,8 @@
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "rsb/transport/Router.h"
-#include "rsb/transport/Port.h"
-#include "rsb/transport/spread/SpreadPort.h"
+#include "rsb/transport/Connector.h"
+#include "rsb/transport/spread/SpreadConnector.h"
 #include "InformerTask.h"
 #include "rsb/Subscription.h"
 #include "rsb/filter/AbstractFilter.h"
@@ -69,7 +69,7 @@ TEST(RSBTest, testRoundtrip)
 	// domain objects
 	unsigned int numEvents = 10;
 	boost::shared_ptr<InformerTask> source(
-			new InformerTask(r->getOutPort(), 10));
+			new InformerTask(r->getOutConnector(), 10));
 	WaitingObserver observer(numEvents);
 	s->appendAction(boost::bind(&WaitingObserver::handler, &observer, _1));
 

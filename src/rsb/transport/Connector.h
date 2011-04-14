@@ -39,10 +39,10 @@ typedef boost::shared_ptr<std::map<void *, rsb::Action> > ActionListPtr;
 /**
  * @author swrede
  */
-class RSB_EXPORT Port: public rsb::filter::FilterObserver {
+class RSB_EXPORT Connector: public rsb::filter::FilterObserver {
 public:
-	Port();
-	virtual ~Port();
+	Connector();
+	virtual ~Connector();
 
 	virtual void activate() = 0;
 	virtual void deactivate() = 0;
@@ -73,7 +73,7 @@ protected:
 
 };
 
-typedef boost::shared_ptr<Port> PortPtr;
+typedef boost::shared_ptr<Connector> ConnectorPtr;
 
 }
 }

@@ -37,26 +37,26 @@ Factory::Factory() {
 Factory::~Factory() {
 }
 
-PortPtr Factory::createPort(PortTypes type) {
-	PortPtr p;
+ConnectorPtr Factory::createConnector(ConnectorTypes type) {
+	ConnectorPtr p;
 	//		ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
 	//		AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
 	//		r->addConverter("uchar.person",ac);
 	switch (type) {
 	case LOCAL:
-		RSCINFO(logger, "TransportFactory instantiating new InProcessPort")
+		RSCINFO(logger, "TransportFactory instantiating new InProcessConnector")
 		;
-		p = boost::shared_ptr<Port>(new rsb::inprocess::InProcessPort());
+		p = boost::shared_ptr<Connector>(new rsb::inprocess::InProcessConnector());
 		break;
 	case SPREAD:
-		RSCINFO(logger, "TransportFactory instantiating new SpreadPort")
+		RSCINFO(logger, "TransportFactory instantiating new SpreadConnector")
 		;
-		p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort());
+		p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector());
 		break;
 	case NONE:
-		RSCINFO(logger, "TransportFactory not instantiating any Port implementation")
+		RSCINFO(logger, "TransportFactory not instantiating any Connector implementation")
 		;
-		p = PortPtr();
+		p = ConnectorPtr();
 		break;
 	default:
 		RSCWARN(logger, "TransportType not supported by this TransportFactory implementation")

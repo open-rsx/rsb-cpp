@@ -25,7 +25,7 @@
 #include <rsc/threading/TaskExecutor.h>
 
 #include "../ConverterCollection.h"
-#include "../Port.h"
+#include "../Connector.h"
 #include "../../filter/ScopeFilter.h"
 #include "ReceiverTask.h"
 #include "MembershipManager.h"
@@ -39,12 +39,12 @@ namespace spread {
  * @author swrede
  * @todo do we really want to expose this through dlls only for the unit tests
  */
-class RSB_EXPORT SpreadPort: public rsb::transport::Port {
+class RSB_EXPORT SpreadConnector: public rsb::transport::Connector {
 public:
-	SpreadPort();
-	explicit SpreadPort(
+	SpreadConnector();
+	explicit SpreadConnector(
 			rsb::transport::ConverterCollection<std::string>::Ptr converters);
-	virtual ~SpreadPort();
+	virtual ~SpreadConnector();
 
 	void push(rsb::EventPtr e);
 

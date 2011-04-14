@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include "Port.h"
-#include "spread/SpreadPort.h"
-#include "inprocess/InProcessPort.h"
+#include "Connector.h"
+#include "spread/SpreadConnector.h"
+#include "inprocess/InProcessConnector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -33,7 +33,7 @@ namespace transport {
 class RSB_EXPORT Factory {
 public:
 
-	enum PortTypes {
+	enum ConnectorTypes {
 		LOCAL, SPREAD, NONE
 	};
 
@@ -43,7 +43,7 @@ public:
 	/**
 	 * @todo distinguish between in and out ports?
 	 */
-	static PortPtr createPort(PortTypes type);
+	static ConnectorPtr createConnector(ConnectorTypes type);
 };
 
 }

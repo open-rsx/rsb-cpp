@@ -26,7 +26,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
-#include "InProcessPort.h"
+#include "InProcessConnector.h"
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
 #include "../AbstractConverter.h"
@@ -45,31 +45,31 @@ LoggerPtr logger(Logger::getLogger("rsb.inprocess"));
 namespace rsb {
 namespace inprocess {
 
-InProcessPort::InProcessPort() :
+InProcessConnector::InProcessConnector() :
 	shutdown(false), exec(new ThreadedTaskExecutor),
 			st(new StatusTask(this, 500)) {
 	// TODO check if it makes sense and is possible to provide a weak_ptr to
 	// the ctr of StatusTask
 }
 
-InProcessPort::~InProcessPort() {
+InProcessConnector::~InProcessConnector() {
 	deactivate();
-	cout << "InProcessPort::~InProcessPort()" << endl;
+	cout << "InProcessConnector::~InProcessConnector()" << endl;
 }
 
-void InProcessPort::activate() {
+void InProcessConnector::activate() {
 	// (re-)start threads
 	exec->schedule(st);
 }
 
-void InProcessPort::deactivate() {
+void InProcessConnector::deactivate() {
 	shutdown = true;
 	cout << "stopping st task" << endl;
 	st->cancel();
-	cout << "InProcessPort::deactivate finished" << endl;
+	cout << "InProcessConnector::deactivate finished" << endl;
 }
 
-void InProcessPort::push(EventPtr e) {
+void InProcessConnector::push(EventPtr e) {
 	// get matching converter -- can be skipped here
 	//	string s;
 	//	boost::shared_ptr<void> obj = boost::static_pointer_cast<void>(e->getData());
@@ -85,18 +85,18 @@ void InProcessPort::push(EventPtr e) {
 	action(e);
 }
 
-void InProcessPort::setObserver(Action a) {
+void InProcessConnector::setObserver(Action a) {
 	action = a;
 }
 
-void InProcessPort::removeObserver(Action /*a*/) {
+void InProcessConnector::removeObserver(Action /*a*/) {
 	action.clear();
 }
 
 /**
  * @todo implement this!
  */
-void InProcessPort::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+void InProcessConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
 
 }
 

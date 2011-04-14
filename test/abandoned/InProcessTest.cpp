@@ -19,8 +19,8 @@
 
 #include "rsb/util/Task.h"
 #include "rsb/util/PeriodicTask.h"
-#include "rsb/transport/Port.h"
-#include "rsb/transport/inprocess/InProcessPort.h"
+#include "rsb/transport/Connector.h"
+#include "rsb/transport/inprocess/InProcessConnector.h"
 #include "BTL2StringConverter.h"
 #include "InformerTask.h"
 
@@ -41,7 +41,7 @@ int main(void) {
 	TaskExecutorVoidPtr exec(new TaskExecutor<void> ());
 
 	// in-process port
-	PortPtr p(new InProcessPort());
+	ConnectorPtr p(new InProcessConnector());
 
 	// domain objects
 	boost::shared_ptr<InformerTask> source(new InformerTask(p));

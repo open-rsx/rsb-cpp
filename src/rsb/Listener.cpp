@@ -33,7 +33,7 @@ Listener::Listener(const string &uri) :
 	activate();
 }
 
-Listener::Listener(transport::Factory::PortTypes in, const string &uri) :
+Listener::Listener(transport::Factory::ConnectorTypes in, const string &uri) :
 	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri), passive(
 			false) {
 	// TODO evaluate configuration

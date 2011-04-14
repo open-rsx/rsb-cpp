@@ -24,8 +24,8 @@
 namespace rsb {
 namespace inprocess {
 
-class InProcessPort;
-typedef boost::shared_ptr<InProcessPort> InProcessPortPtr;
+class InProcessConnector;
+typedef boost::shared_ptr<InProcessConnector> InProcessConnectorPtr;
 
 /**
  * @author swrede
@@ -33,7 +33,7 @@ typedef boost::shared_ptr<InProcessPort> InProcessPortPtr;
 class StatusTask: public rsc::threading::PeriodicTask {
 public:
 
-	StatusTask(InProcessPort* p, const unsigned int &ms);
+	StatusTask(InProcessConnector* p, const unsigned int &ms);
 
 	~StatusTask();
 
@@ -43,7 +43,7 @@ private:
 	/**
 	 * @todo how to replace this ptr by some kind of a smart ptr
 	 */
-	InProcessPort *port;
+	InProcessConnector *port;
 };
 
 }

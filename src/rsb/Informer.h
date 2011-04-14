@@ -27,7 +27,7 @@
 
 #include "Event.h"
 #include "transport/Router.h"
-#include "transport/Port.h"
+#include "transport/Connector.h"
 #include "QualityOfServiceSpec.h"
 
 namespace rsb {
@@ -83,7 +83,7 @@ public:
 		activate();
 	}
 
-	Informer(const transport::Factory::PortTypes &out,
+	Informer(const transport::Factory::ConnectorTypes &out,
 			const std::string &uri, const std::string &type) :
 		logger(rsc::logging::Logger::getLogger("rsb.Informer")), uri(uri),
 				passive(false), defaultType(type) {

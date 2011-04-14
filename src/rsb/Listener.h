@@ -28,7 +28,7 @@
 #include "Event.h"
 #include "Subscription.h"
 #include "transport/Router.h"
-#include "transport/Port.h"
+#include "transport/Connector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -60,7 +60,7 @@ public:
 
 	/**
 	 * Constructs a new Listener assigned to the specified uri. The Listener
-	 * opens a @ref rsb::transport::Router to PortType Spread and is activated after construction.
+	 * opens a @ref rsb::transport::Router to ConnectorType Spread and is activated after construction.
 	 *
 	 * @param uri the uri where the data is published.
 	 */
@@ -68,14 +68,14 @@ public:
 
 	/**
 	 * Constructs a new Listener assigned to the specified uri. The Listener
-	 * opens a @ref rsb::transport::Router to a PortType specified and is activated after
+	 * opens a @ref rsb::transport::Router to a ConnectorType specified and is activated after
 	 * construction.
 	 *
 	 * @param uri the uri where the data is published.
-	 * @param in the PortType (enum) to connect with, i.e.
+	 * @param in the ConnectorType (enum) to connect with, i.e.
 	 *           transport::TransportFactory::SPREAD
 	 */
-	Listener(transport::Factory::PortTypes in, const std::string &uri);
+	Listener(transport::Factory::ConnectorTypes in, const std::string &uri);
 
 	virtual ~Listener();
 

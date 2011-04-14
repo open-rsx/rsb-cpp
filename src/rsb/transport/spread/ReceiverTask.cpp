@@ -149,7 +149,7 @@ void ReceiverTask::execute() {
 		}
 	} catch (rsb::CommException &e) {
 		if (!isCancelRequested()) {
-			cout << "SpreadPort error: " << e.what() << endl;
+			cout << "SpreadConnector error: " << e.what() << endl;
 		} else {
 			// safely ignore, invalid mbox just signals in this context
 			// that the connection to spread was deactivated

@@ -17,7 +17,7 @@
  *
  * ============================================================ */
 
-#include "Port.h"
+#include "Connector.h"
 #include "../introspection/IntrospectionConverter.h"
 #include "../transport/converter/StringConverter.h"
 
@@ -25,16 +25,16 @@ namespace rsb {
 
 namespace transport {
 
-Port::Port() {
+Connector::Connector() {
 }
 
-Port::~Port() {
+Connector::~Connector() {
 }
 
-void Port::setObserver(rsb::Action a) {
+void Connector::setObserver(rsb::Action a) {
 	observer = a;
 }
-void Port::removeObserver(rsb::Action /*a*/) {
+void Connector::removeObserver(rsb::Action /*a*/) {
 	observer = NULL;
 }
 

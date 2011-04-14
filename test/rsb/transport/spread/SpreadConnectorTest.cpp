@@ -27,8 +27,8 @@
 
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
-#include "rsb/transport/Port.h"
-#include "rsb/transport/spread/SpreadPort.h"
+#include "rsb/transport/Connector.h"
+#include "rsb/transport/spread/SpreadConnector.h"
 #include "rsb/filter/AbstractFilter.h"
 
 #include "../../InformerTask.h"
@@ -44,24 +44,24 @@ using namespace rsb::spread;
 using namespace testing;
 using namespace rsc::threading;
 
-TEST(SpreadPortTest, testConstruction)
+TEST(SpreadConnectorTest, testConstruction)
 {
-	ASSERT_NO_THROW(PortPtr p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort()));
+	ASSERT_NO_THROW(ConnectorPtr p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector()));
 }
 
-TEST(SpreadPortTest, testConnnection)
+TEST(SpreadConnectorTest, testConnnection)
 {
-	PortPtr p = boost::shared_ptr<Port>(new rsb::spread::SpreadPort());
+	ConnectorPtr p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector());
 	ASSERT_NO_THROW(p->activate());
 }
 
-TEST(SpreadPortTest, testRoundtrip)
+TEST(SpreadConnectorTest, testRoundtrip)
 {
 	// task execution service
 	TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
 	// in-process port
-	PortPtr p(new SpreadPort());
+	ConnectorPtr p(new SpreadConnector());
 	ASSERT_NO_THROW(p->activate());
 
 	// filter for joining test group

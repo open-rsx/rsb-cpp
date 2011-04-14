@@ -19,7 +19,7 @@
 
 #include "rsb/util/Task.h"
 #include "rsb/util/PeriodicTask.h"
-#include "rsb/transport/inprocess/InProcessPort.h"
+#include "rsb/transport/inprocess/InProcessConnector.h"
 
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>

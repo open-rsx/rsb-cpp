@@ -59,7 +59,7 @@ ADD_TEST(${CORE_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${CORE_TEST_NAME} "--gtest_
 # --- spreadport test ---
 
 SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
-                            rsb/transport/spread/SpreadPortTest.cpp
+                            rsb/transport/spread/SpreadConnectorTest.cpp
                             rsb/transport/spread/MembershipManagerTest.cpp
                             rsb/InformerTask.cpp
                             rsb/InformerTask.h

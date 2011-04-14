@@ -24,7 +24,7 @@ using namespace std;
 namespace rsb {
 namespace inprocess {
 
-StatusTask::StatusTask(InProcessPort* p, const unsigned int &ms) :
+StatusTask::StatusTask(InProcessConnector* p, const unsigned int &ms) :
 	rsc::threading::PeriodicTask(ms), port(p) {
 }
 
@@ -33,7 +33,7 @@ StatusTask::~StatusTask() {
 }
 
 void StatusTask::execute() {
-	cout << "InProcessPort alive." << endl;
+	cout << "InProcessConnector alive." << endl;
 }
 
 }

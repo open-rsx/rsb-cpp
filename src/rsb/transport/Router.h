@@ -44,8 +44,8 @@ namespace transport {
  */
 class RSB_EXPORT Router { //: //public rsb::filter::FilterObservable {
 public:
-	Router(Factory::PortTypes inType = Factory::LOCAL,
-			Factory::PortTypes outType = Factory::LOCAL);
+	Router(Factory::ConnectorTypes inType = Factory::LOCAL,
+			Factory::ConnectorTypes outType = Factory::LOCAL);
 	virtual ~Router();
 
 	void activate();
@@ -87,8 +87,8 @@ public:
 	 * HACK for current tests.
 	 */
 	//@{
-	PortPtr getOutPort();
-	PortPtr getInPort();
+	ConnectorPtr getOutConnector();
+	ConnectorPtr getInConnector();
 	//@}
 
 protected:
@@ -96,12 +96,13 @@ protected:
 	 * Helper for port notification about subscription status changes.
 	 */
 	void
-	notifyPorts(rsb::SubscriptionPtr s, rsb::filter::FilterAction::Types a);
+			notifyConnectors(rsb::SubscriptionPtr s,
+					rsb::filter::FilterAction::Types a);
 
 private:
 	rsc::logging::LoggerPtr logger;
-	PortPtr inPort;
-	PortPtr outPort;
+	ConnectorPtr inConnector;
+	ConnectorPtr outConnector;
 	// ep for observation model
 	rsb::internal::EventProcessorPtr eventProcessor;
 	volatile bool shutdown;

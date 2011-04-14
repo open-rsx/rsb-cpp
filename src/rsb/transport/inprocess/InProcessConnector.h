@@ -25,7 +25,7 @@
 
 #include <rsc/threading/TaskExecutor.h>
 
-#include "../Port.h"
+#include "../Connector.h"
 #include "StatusTask.h"
 
 namespace rsb {
@@ -35,10 +35,10 @@ namespace inprocess {
  * @todo use logging instead of cout
  * @author swrede
  */
-class InProcessPort: public rsb::transport::Port {
+class InProcessConnector: public rsb::transport::Connector {
 public:
-	InProcessPort();
-	virtual ~InProcessPort();
+	InProcessConnector();
+	virtual ~InProcessConnector();
 
 	void activate();
 	void deactivate();

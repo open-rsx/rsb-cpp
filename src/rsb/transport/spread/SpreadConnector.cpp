@@ -26,7 +26,7 @@
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "../../protocol/Notification.h"
-#include "SpreadPort.h"
+#include "SpreadConnector.h"
 #include "SpreadConnection.h"
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
@@ -45,27 +45,27 @@ using namespace rsc::threading;
 namespace rsb {
 namespace spread {
 
-const SpreadPort::QoSMap SpreadPort::qosMapping = SpreadPort::buildQoSMapping();
+const SpreadConnector::QoSMap SpreadConnector::qosMapping = SpreadConnector::buildQoSMapping();
 
-SpreadPort::SpreadPort(
+SpreadConnector::SpreadConnector(
 		rsb::transport::ConverterCollection<std::string>::Ptr converters) :
 	converters(converters) {
 	init();
 }
 
-SpreadPort::SpreadPort() :
+SpreadConnector::SpreadConnector() :
 	converters(stringConverterCollection()) {
 	init();
 }
 
-void SpreadPort::init() {
-	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadPort");
-	RSCDEBUG(logger, "SpreadPort() entered, port id: " << id.getIdAsString());
+void SpreadConnector::init() {
+	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadConnector");
+	RSCDEBUG(logger, "SpreadConnector() entered, port id: " << id.getIdAsString());
 	shutdown = false;
 	exec = TaskExecutorPtr(new ThreadedTaskExecutor);
 	// TODO ConnectionPool for SpreadConnections?!?
 	// TODO Send Message over Managing / Introspection Channel
-	// TODO Generate Unique-IDs for SpreadPorts
+	// TODO Generate Unique-IDs for SpreadConnectors
 	con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString()));
 	// TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
 	//st = boost::shared_ptr<StatusTask>(new StatusTask(this));
@@ -75,7 +75,7 @@ void SpreadPort::init() {
 	setQualityOfServiceSpecs(QualityOfServiceSpec());
 }
 
-void SpreadPort::activate() {
+void SpreadConnector::activate() {
 	// connect to spread
 	con->activate();
 	// (re-)start threads
@@ -83,18 +83,17 @@ void SpreadPort::activate() {
 	//exec->schedule(st);
 }
 
-// TODO think about extracting qad functions into QADPort?!?
-void SpreadPort::setObserver(Action a) {
+void SpreadConnector::setObserver(Action a) {
 	observer = a;
 	rec->setAction(a);
 }
 
-void SpreadPort::removeObserver(Action /*a*/) {
+void SpreadConnector::removeObserver(Action /*a*/) {
 	observer.clear();
 	rec->setAction(Action());
 }
 
-void SpreadPort::deactivate() {
+void SpreadConnector::deactivate() {
 	shutdown = true;
 	RSCDEBUG(logger, "deactivate() entered"); // << *id);
 	rec->cancel();
@@ -108,13 +107,13 @@ void SpreadPort::deactivate() {
 	RSCTRACE(logger, "deactivate() finished"); // << *id);
 }
 
-SpreadPort::~SpreadPort() {
+SpreadConnector::~SpreadConnector() {
 	if (!shutdown) {
 		deactivate();
 	}
 }
 
-void SpreadPort::notify(rsb::filter::ScopeFilter* f,
+void SpreadConnector::notify(rsb::filter::ScopeFilter* f,
 		const rsb::filter::FilterAction::Types &at) {
 	// join or leave groups
 	// TODO evaluate success
@@ -134,14 +133,14 @@ void SpreadPort::notify(rsb::filter::ScopeFilter* f,
 		break;
 	default:
 		RSCWARN(logger,
-				"ScopeFilter Action not supported by this Port implementation")
+				"ScopeFilter Action not supported by this Connector implementation")
 		;
 		break;
 	}
 
 }
 
-void SpreadPort::push(EventPtr e) {
+void SpreadConnector::push(EventPtr e) {
 	// TODO Remove "data split" information from notification
 	// TODO Read max spread message len from config file
 	// get matching converter
@@ -219,7 +218,7 @@ void SpreadPort::push(EventPtr e) {
 	}
 }
 
-SpreadPort::QoSMap SpreadPort::buildQoSMapping() {
+SpreadConnector::QoSMap SpreadConnector::buildQoSMapping() {
 
 	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> unorderedMap;
 	unorderedMap.insert(
@@ -243,7 +242,7 @@ SpreadPort::QoSMap SpreadPort::buildQoSMapping() {
 
 }
 
-void SpreadPort::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+void SpreadConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
 
 	QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
 	if (orderMapIt == qosMapping.end()) {

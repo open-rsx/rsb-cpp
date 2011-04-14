@@ -36,7 +36,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/patterns/Server.cpp
             rsb/patterns/MethodExistsException.cpp
             rsb/protocol/ProtocolException.cpp
-            rsb/transport/Port.cpp
+            rsb/transport/Connector.cpp
             rsb/transport/Router.cpp
             rsb/transport/AbstractConverter.cpp
             rsb/transport/ConverterCollection.cpp
@@ -48,10 +48,10 @@ SET(SOURCES rsb/Exception.cpp
             rsb/transport/converter/VoidConverter.cpp
             rsb/transport/Factory.cpp
             rsb/transport/inprocess/StatusTask.cpp
-            rsb/transport/inprocess/InProcessPort.cpp
+            rsb/transport/inprocess/InProcessConnector.cpp
             rsb/transport/spread/SpreadGroup.cpp
             rsb/transport/spread/MembershipManager.cpp
-            rsb/transport/spread/SpreadPort.cpp
+            rsb/transport/spread/SpreadConnector.cpp
             rsb/transport/spread/SpreadMessage.cpp
             rsb/transport/spread/SpreadConnection.cpp
             rsb/transport/spread/ReceiverTask.cpp
@@ -86,7 +86,7 @@ SET(HEADERS rsb/Version.h
             rsb/patterns/MethodExistsException.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
-            rsb/transport/Port.h
+            rsb/transport/Connector.h
             rsb/transport/Router.h
             rsb/transport/AbstractConverter.h
             rsb/transport/ConverterCollection.h
@@ -98,11 +98,11 @@ SET(HEADERS rsb/Version.h
             rsb/transport/converter/VoidConverter.h
             rsb/transport/converter/ProtocolBufferConverter.h
             rsb/transport/inprocess/StatusTask.h
-            rsb/transport/inprocess/InProcessPort.h
+            rsb/transport/inprocess/InProcessConnector.h
             rsb/transport/Factory.h
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/MembershipManager.h
-            rsb/transport/spread/SpreadPort.h
+            rsb/transport/spread/SpreadConnector.h
             rsb/transport/spread/SpreadMessage.h
             rsb/transport/spread/SpreadConnection.h
             rsb/transport/spread/ReceiverTask.h
