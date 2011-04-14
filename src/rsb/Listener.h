@@ -42,7 +42,7 @@ namespace rsb {
  * @code
  * ListenerPtr s(new Listener("blub"));
  * SubscriptionPtr sub(new Subscription());
- * AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
+ * FilterPtr f(new ScopeFilter("rsb://example/informer"));
  * sub->appendFilter(f);
  * boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
  * sub->appendHandler(dh);

@@ -17,19 +17,19 @@
  *
  * ============================================================ */
 
-#include "AbstractFilter.h"
+#include "Filter.h"
 #include "FilterObserver.h"
 
 namespace rsb {
 namespace filter {
 
-AbstractFilter::AbstractFilter() {
+Filter::Filter() {
 }
 
-AbstractFilter::~AbstractFilter() {
+Filter::~Filter() {
 }
 
-void AbstractFilter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {
+void Filter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {
 	fo->notify(this,at);
 }
 

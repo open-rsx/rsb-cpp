@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "AbstractFilter.h"
+#include "Filter.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -28,7 +28,7 @@ namespace filter {
 /**
  * @author swrede
  */
-class RSB_EXPORT ScopeFilter : public AbstractFilter {
+class RSB_EXPORT ScopeFilter : public Filter {
 public:
 	ScopeFilter(const std::string &uri);
 	virtual ~ScopeFilter();

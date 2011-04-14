@@ -32,17 +32,17 @@ typedef boost::shared_ptr<FilterObserver> FilterObserverPtr;
 /**
  * @author swrede
  */
-class RSB_EXPORT AbstractFilter {
+class RSB_EXPORT Filter {
 public:
-	AbstractFilter();
-	virtual ~AbstractFilter();
+	Filter();
+	virtual ~Filter();
 
 	virtual bool match(EventPtr e) = 0;
 
 	virtual void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
 };
 
-typedef boost::shared_ptr<AbstractFilter> AbstractFilterPtr;
+typedef boost::shared_ptr<Filter> FilterPtr;
 
 }
 }

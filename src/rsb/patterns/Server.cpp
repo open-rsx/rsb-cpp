@@ -111,7 +111,7 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
 			+ methodName, callback->getReplyType()));
 
 	SubscriptionPtr subscription(new Subscription);
-	subscription->appendFilter(filter::AbstractFilterPtr(
+	subscription->appendFilter(filter::FilterPtr(
 			new filter::ScopeFilter(uri + "-request-" + methodName)));
 	subscription->appendHandler(HandlerPtr(new RequestHandler(methodName,
 			callback, informer)));

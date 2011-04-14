@@ -21,7 +21,7 @@
 
 #include <vector>
 
-#include "AbstractFilter.h"
+#include "Filter.h"
 #include "FilterObserver.h"
 #include "FilterActionTypes.h"
 #include "rsb/rsbexports.h"
@@ -37,7 +37,7 @@ public:
 	FilterObservable();
 	virtual ~FilterObservable();
 
-	void notifyObservers(AbstractFilterPtr af, FilterAction::Types at);
+	void notifyObservers(FilterPtr af, FilterAction::Types at);
 
 	void addObserver(FilterObserverPtr observer);
 

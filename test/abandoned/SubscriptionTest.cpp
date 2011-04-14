@@ -19,7 +19,7 @@
 
 #include "rsb/Subscription.h"
 #include "rsb/Event.h"
-#include "rsb/filter/AbstractFilter.h"
+#include "rsb/filter/Filter.h"
 #include "rsb/filter/ScopeFilter.h"
 
 #include <boost/bind.hpp>
@@ -44,7 +44,7 @@ int main(void) {
 
 	// create subscription
 	SubscriptionPtr s(new Subscription());
-	AbstractFilterPtr f(new ScopeFilter("xcf://blah"));
+	FilterPtr f(new ScopeFilter("xcf://blah"));
 	s->appendFilter(f);
 
 	// register event handler

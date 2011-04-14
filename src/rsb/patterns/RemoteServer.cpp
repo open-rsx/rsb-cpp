@@ -128,7 +128,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 		const string replyUri = uri + "-reply-" + methodName;
 		ListenerPtr listener(new Listener(replyUri));
 		SubscriptionPtr subscription(new Subscription);
-		subscription->appendFilter(filter::AbstractFilterPtr(
+		subscription->appendFilter(filter::FilterPtr(
 				new filter::ScopeFilter(replyUri)));
 		boost::shared_ptr<WaitingEventHandler> handler(new WaitingEventHandler(
 				logger));

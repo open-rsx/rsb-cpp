@@ -59,12 +59,12 @@ int main(int /*argc*/, char **/*argv*/) {
 		ListenerPtr listener2 = factory.createListener(uri2);
 
 		SubscriptionPtr sub1(new Subscription);
-		sub1->appendFilter(AbstractFilterPtr(new ScopeFilter(uri1)));
+		sub1->appendFilter(FilterPtr(new ScopeFilter(uri1)));
 		sub1->appendHandler(HandlerPtr(new PrintHandler("sub1")));
 		listener1->addSubscription(sub1);
 
 		SubscriptionPtr sub2(new Subscription);
-		sub2->appendFilter(AbstractFilterPtr(new ScopeFilter(uri2)));
+		sub2->appendFilter(FilterPtr(new ScopeFilter(uri2)));
 		sub2->appendHandler(HandlerPtr(new PrintHandler("sub2")));
 		listener2->addSubscription(sub2);
 

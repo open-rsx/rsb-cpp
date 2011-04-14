@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 	} else {
 		uri = "rsb://example/informer";
 	}
-	sub->appendFilter(AbstractFilterPtr(new ScopeFilter(uri)));
+	sub->appendFilter(FilterPtr(new ScopeFilter(uri)));
 
 	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
 

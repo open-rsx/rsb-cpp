@@ -55,7 +55,7 @@ Subscription::Subscription() :
 Subscription::~Subscription() {
 }
 
-void Subscription::appendFilter(rsb::filter::AbstractFilterPtr p) {
+void Subscription::appendFilter(rsb::filter::FilterPtr p) {
 	filters->push_back(p);
 }
 

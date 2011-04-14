@@ -48,7 +48,7 @@ TEST(EventProcessingStrategyTest, testProcessing)
 	HandlerPtr okHandler(new QueuePushHandler<string> (okQueue));
 	SubscriptionPtr okSubscription(new Subscription);
 	const string okScope = "OK";
-	okSubscription->appendFilter(AbstractFilterPtr(new ScopeFilter(okScope)));
+	okSubscription->appendFilter(FilterPtr(new ScopeFilter(okScope)));
 	okSubscription->appendHandler(okHandler);
 	processor.subscribe(okSubscription);
 
@@ -57,7 +57,7 @@ TEST(EventProcessingStrategyTest, testProcessing)
 	HandlerPtr wrongHandler(new QueuePushHandler<string> (wrongQueue));
 	SubscriptionPtr wrongSubscription(new Subscription);
 	const string wrongScope = "WRONG";
-	wrongSubscription->appendFilter(AbstractFilterPtr(new ScopeFilter(
+	wrongSubscription->appendFilter(FilterPtr(new ScopeFilter(
 			wrongScope)));
 	wrongSubscription->appendHandler(wrongHandler);
 	processor.subscribe(wrongSubscription);

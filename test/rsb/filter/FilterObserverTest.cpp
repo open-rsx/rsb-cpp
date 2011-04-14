@@ -17,7 +17,7 @@
  *
  * ============================================================ */
 
-#include "rsb/filter/AbstractFilter.h"
+#include "rsb/filter/Filter.h"
 #include "rsb/filter/ScopeFilter.h"
 #include "rsb/filter/FilterObserver.h"
 #include "rsb/filter/FilterObservable.h"
@@ -34,7 +34,7 @@ using namespace testing;
 
 class Observable: public FilterObservable {
 public:
-	void raise(AbstractFilterPtr f) {
+	void raise(FilterPtr f) {
 		// p AbstractPort implements FilterObserver
 		//		Sub s;
 		//		ep->register(s);
@@ -48,8 +48,8 @@ public:
 
 class Observer: public FilterObserver {
 public:
-	void notify(AbstractFilter */*f*/, const FilterAction::Types &/*at*/) {
-		ASSERT_FALSE(1)<< "notify AbstractFilter triggered";
+	void notify(Filter */*f*/, const FilterAction::Types &/*at*/) {
+		ASSERT_FALSE(1)<< "notify Filter triggered";
 	}
 
 	void notify(ScopeFilter *sf, const FilterAction::Types &/*at*/) {
@@ -62,7 +62,7 @@ TEST(FilterObserverTest, testDoubleDispatch)
 {
 	// ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
 	// AbstractConverter ac = boost::shared_ptr<AbstractConverter>(new UCharConverter());
-	AbstractFilterPtr f = AbstractFilterPtr(new ScopeFilter("xcf://blah"));
+	FilterPtr f = FilterPtr(new ScopeFilter("xcf://blah"));
 	boost::shared_ptr<Observable> observable = boost::shared_ptr<Observable>(
 			new Observable());
 	boost::shared_ptr<Observer> observer = boost::shared_ptr<Observer>(

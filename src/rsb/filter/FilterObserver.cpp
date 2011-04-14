@@ -33,9 +33,9 @@ FilterObserver::FilterObserver() :
 FilterObserver::~FilterObserver() {
 }
 
-void FilterObserver::notify(AbstractFilter */*filter*/,
+void FilterObserver::notify(Filter */*filter*/,
 		const FilterAction::Types &/*at*/) {
-	RSCDEBUG(logger, "FilterObserver::notify(AbstractFilterPtr a)");
+	RSCDEBUG(logger, "FilterObserver::notify(FilterPtr a)");
 }
 
 void FilterObserver::notify(ScopeFilter */*filter*/,

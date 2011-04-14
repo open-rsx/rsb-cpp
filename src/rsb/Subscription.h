@@ -26,7 +26,7 @@
 
 #include "Event.h"
 #include "Handler.h"
-#include "filter/AbstractFilter.h"
+#include "filter/Filter.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -34,11 +34,11 @@ namespace rsb {
 typedef boost::function<void(EventPtr)> Action;
 // Q: Does it make sense to wrap boost::function in a shared_ptr?
 
-typedef std::list<rsb::filter::AbstractFilterPtr> FilterChain;
+typedef std::list<rsb::filter::FilterPtr> FilterChain;
 typedef std::list<Action> Actions;
 
 /**
- * A Subscription, used by a @ref rsb::Listener. By appending an @ref rsb::filter::AbstractFilter to the
+ * A Subscription, used by a @ref rsb::Listener. By appending an @ref rsb::filter::Filter to the
  * Subscription, one makes sure only events of a certain types are recognized.
  * Appending a Handler is necessary to work with the data received.
  *
@@ -48,7 +48,7 @@ typedef std::list<Action> Actions;
  *
  * @code
  * Subscription subscription = new Subscription();
- * AbstractFilterPtr f(new ScopeFilter("rsb://example/informer"));
+ * FilterPtr f(new ScopeFilter("rsb://example/informer"));
  * subscription->appendFilter(f);
  * boost::shared_ptr<rsc::SynchronizedQueue<string> > myQueue(new rsc::SynchronizedQueue<string>);
  * boost::shared_ptr<rsb::QueuePushHandler<string> > qph(new QueuePushHandler<string> (myQueue));
@@ -72,7 +72,7 @@ public:
 	 *
 	 * @param p a Pointer to the Filter.
 	 */
-	virtual void appendFilter(rsb::filter::AbstractFilterPtr p);
+	virtual void appendFilter(rsb::filter::FilterPtr p);
 
 	virtual bool match(EventPtr e);
 

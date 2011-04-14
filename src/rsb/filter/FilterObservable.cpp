@@ -31,7 +31,7 @@ FilterObservable::FilterObservable() {
 FilterObservable::~FilterObservable() {
 }
 
-void FilterObservable::notifyObservers(AbstractFilterPtr af,
+void FilterObservable::notifyObservers(FilterPtr af,
 		FilterAction::Types at) {
 	for (unsigned int i = 0; i < observers->size(); ++i) {
 		af->notifyObserver((*observers)[i], at);

@@ -29,7 +29,7 @@
 
 #include "rsb/transport/Connector.h"
 #include "rsb/transport/spread/SpreadConnector.h"
-#include "rsb/filter/AbstractFilter.h"
+#include "rsb/filter/Filter.h"
 
 #include "../../InformerTask.h"
 
@@ -65,7 +65,7 @@ TEST(SpreadConnectorTest, testRoundtrip)
 	ASSERT_NO_THROW(p->activate());
 
 	// filter for joining test group
-	AbstractFilterPtr f = AbstractFilterPtr(new ScopeFilter("xcf://blah"));
+	FilterPtr f = FilterPtr(new ScopeFilter("xcf://blah"));
 	f->notifyObserver(p, FilterAction::ADD);
 
 	// domain objects
