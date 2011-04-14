@@ -75,7 +75,7 @@ public:
 	 * @param in the PortType (enum) to connect with, i.e.
 	 *           transport::TransportFactory::SPREAD
 	 */
-	Listener(transport::TransportFactory::PortTypes in, const std::string &uri);
+	Listener(transport::Factory::PortTypes in, const std::string &uri);
 
 	virtual ~Listener();
 

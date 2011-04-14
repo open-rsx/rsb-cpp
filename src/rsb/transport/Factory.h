@@ -30,17 +30,15 @@ namespace transport {
 /**
  * @author swrede
  */
-class RSB_EXPORT TransportFactory {
+class RSB_EXPORT Factory {
 public:
 
 	enum PortTypes {
-		LOCAL,
-		SPREAD,
-		NONE
+		LOCAL, SPREAD, NONE
 	};
 
-	TransportFactory();
-	virtual ~TransportFactory();
+	Factory();
+	virtual ~Factory();
 
 	/**
 	 * @todo distinguish between in and out ports?

@@ -23,7 +23,7 @@
 
 #include <rsc/logging/Logger.h>
 
-#include "TransportFactory.h"
+#include "Factory.h"
 #include "../filter/FilterObservable.h"
 #include "../EventProcessor.h"
 #include "../Subscription.h"
@@ -44,8 +44,8 @@ namespace transport {
  */
 class RSB_EXPORT Router { //: //public rsb::filter::FilterObservable {
 public:
-	Router(TransportFactory::PortTypes inType = TransportFactory::LOCAL,
-			TransportFactory::PortTypes outType = TransportFactory::LOCAL);
+	Router(Factory::PortTypes inType = Factory::LOCAL,
+			Factory::PortTypes outType = Factory::LOCAL);
 	virtual ~Router();
 
 	void activate();

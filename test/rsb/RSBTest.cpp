@@ -58,7 +58,7 @@ TEST(RSBTest, testRoundtrip)
 	TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
 	// router instantiation
-	RouterPtr r(new Router(TransportFactory::SPREAD, TransportFactory::SPREAD));
+	RouterPtr r(new Router(Factory::SPREAD, Factory::SPREAD));
 	r->activate();
 
 	// create subscription

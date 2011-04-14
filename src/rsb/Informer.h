@@ -78,18 +78,18 @@ public:
 				uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
 		router = transport::RouterPtr(new transport::Router(
-				transport::TransportFactory::NONE,
-				transport::TransportFactory::SPREAD));
+				transport::Factory::NONE,
+				transport::Factory::SPREAD));
 		activate();
 	}
 
-	Informer(const transport::TransportFactory::PortTypes &out,
+	Informer(const transport::Factory::PortTypes &out,
 			const std::string &uri, const std::string &type) :
 		logger(rsc::logging::Logger::getLogger("rsb.Informer")), uri(uri),
 				passive(false), defaultType(type) {
 		// TODO evaluate configuration
 		router = transport::RouterPtr(new transport::Router(
-				transport::TransportFactory::NONE, out));
+				transport::Factory::NONE, out));
 		activate();
 	}
 

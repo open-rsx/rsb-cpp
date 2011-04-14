@@ -31,11 +31,11 @@ using namespace rsb::transport;
 namespace rsb {
 namespace transport {
 
-Router::Router(TransportFactory::PortTypes inType,
-		TransportFactory::PortTypes outType) :
+Router::Router(Factory::PortTypes inType,
+		Factory::PortTypes outType) :
 	logger(Logger::getLogger("rsb.transport.Router")) {
-	inPort = TransportFactory::createPort(inType);
-	outPort = TransportFactory::createPort(outType);
+	inPort = Factory::createPort(inType);
+	outPort = Factory::createPort(outType);
 	if (inPort) {
 		eventProcessor = EventProcessorPtr(new EventProcessor());
 		// add event processor as observer to input port(s)

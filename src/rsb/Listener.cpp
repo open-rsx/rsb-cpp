@@ -28,17 +28,17 @@ Listener::Listener(const string &uri) :
 			false) {
 	// TODO evaluate configuration
 	router = transport::RouterPtr(new transport::Router(
-			transport::TransportFactory::SPREAD,
-			transport::TransportFactory::NONE));
+			transport::Factory::SPREAD,
+			transport::Factory::NONE));
 	activate();
 }
 
-Listener::Listener(transport::TransportFactory::PortTypes in, const string &uri) :
+Listener::Listener(transport::Factory::PortTypes in, const string &uri) :
 	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri), passive(
 			false) {
 	// TODO evaluate configuration
 	router = transport::RouterPtr(new transport::Router(in,
-			transport::TransportFactory::NONE));
+			transport::Factory::NONE));
 	activate();
 }
 
