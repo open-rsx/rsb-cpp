@@ -30,12 +30,12 @@ namespace rsb {
  * @author swrede
  * @todo implement stream operators to add variables to exception message
  */
-class RSB_EXPORT RSBException: public std::runtime_error {
+class RSB_EXPORT Exception: public std::runtime_error {
 public:
 
-	RSBException();
-	RSBException(const std::string &m);
-	virtual ~RSBException() throw ();
+	Exception();
+	Exception(const std::string &m);
+	virtual ~Exception() throw ();
 
 };
 

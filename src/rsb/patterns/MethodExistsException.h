@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../RSBException.h"
+#include "../Exception.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -30,7 +30,7 @@ namespace patterns {
  *
  * @author jwienke
  */
-class RSB_EXPORT MethodExistsException: public rsb::RSBException {
+class RSB_EXPORT MethodExistsException: public rsb::Exception {
 public:
 
 	/**

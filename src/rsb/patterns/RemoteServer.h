@@ -29,7 +29,7 @@
 #include "../Event.h"
 #include "../Informer.h"
 #include "../Listener.h"
-#include "../RSBException.h"
+#include "../Exception.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -50,7 +50,7 @@ public:
 	 *
 	 * @author jwienke
 	 */
-	class TimeoutException: public RSBException {
+	class TimeoutException: public Exception {
 	public:
 		explicit TimeoutException(const std::string &message);
 	};
@@ -60,7 +60,7 @@ public:
 	 *
 	 * @author jwienke
 	 */
-	class RemoteTargetInvocationException: public RSBException {
+	class RemoteTargetInvocationException: public Exception {
 	public:
 		explicit RemoteTargetInvocationException(const std::string &message);
 	};

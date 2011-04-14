@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "RSBException.h"
+#include "Exception.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -29,7 +29,7 @@ namespace rsb {
  *
  * @author: swrede
  */
-class RSB_EXPORT CommException: public rsb::RSBException {
+class RSB_EXPORT CommException: public rsb::Exception {
 public:
 	CommException(const std::string &m);
 	virtual ~CommException() throw ();

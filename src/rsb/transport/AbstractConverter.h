@@ -99,6 +99,7 @@ protected:
 	 *
 	 * @param dataType data type this converter can serialize
 	 * @param wireSchema wire schema this converter can deserialize
+	 * @todo this constructor cannot be called anymore for WireFormat string
 	 */
 	AbstractConverter(const std::string &dataType,
 			const std::string &wireSchema) :

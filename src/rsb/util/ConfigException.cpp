@@ -25,7 +25,7 @@ namespace rsb {
 namespace util {
 
 ConfigException::ConfigException(const string &m) :
-	RSBException(m) {
+	Exception(m) {
 }
 
 ConfigException::~ConfigException() throw () {

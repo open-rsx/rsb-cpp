@@ -13,7 +13,7 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATI
 
 CONFIGURE_FILE(rsb/RSBVersion.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp @ONLY)
 
-SET(SOURCES rsb/RSBException.cpp
+SET(SOURCES rsb/Exception.cpp
             rsb/CommException.cpp
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp
             rsb/Informer.cpp
@@ -61,7 +61,7 @@ SET(SOURCES rsb/RSBException.cpp
             ${INTERNAL_PROTO_SOURCES})
 
 SET(HEADERS rsb/RSBVersion.h
-            rsb/RSBException.h
+            rsb/Exception.h
             rsb/CommException.h
             rsb/util/Configuration.h
             rsb/util/ConfigException.h

@@ -26,7 +26,7 @@ namespace patterns {
 
 MethodExistsException::MethodExistsException(const string &methodName,
 		const string &server) :
-			RSBException(
+			Exception(
 					"Method '" + methodName + "' already exists for server '"
 							+ server + "'") {
 }

@@ -17,21 +17,21 @@
  *
  * ============================================================ */
 
-#include "RSBException.h"
+#include "Exception.h"
 
 using namespace std;
 
 namespace rsb {
 
-RSBException::RSBException() :
+Exception::Exception() :
 	runtime_error("Unspecified exception") {
 }
 
-RSBException::RSBException(const string &m) :
+Exception::Exception(const string &m) :
 	runtime_error(m) {
 }
 
-RSBException::~RSBException() throw () {
+Exception::~Exception() throw () {
 }
 
 }

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../RSBException.h"
+#include "../Exception.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -20,7 +20,7 @@ namespace util {
  *
  * @author: swrede
  */
-class RSB_EXPORT ConfigException: public rsb::RSBException {
+class RSB_EXPORT ConfigException: public rsb::Exception {
 public:
 	ConfigException(const std::string& m);
 	virtual ~ConfigException() throw ();

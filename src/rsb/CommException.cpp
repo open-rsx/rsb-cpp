@@ -24,7 +24,7 @@ using namespace std;
 namespace rsb {
 
 CommException::CommException(const string &m) :
-	RSBException(m) {
+	Exception(m) {
 }
 
 CommException::~CommException() throw () {

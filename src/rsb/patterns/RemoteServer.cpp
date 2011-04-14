@@ -98,12 +98,12 @@ public:
 };
 
 RemoteServer::TimeoutException::TimeoutException(const string &message) :
-	RSBException(message) {
+	Exception(message) {
 }
 
 RemoteServer::RemoteTargetInvocationException::RemoteTargetInvocationException(
 		const string &message) :
-	RSBException(message) {
+	Exception(message) {
 }
 
 RemoteServer::RemoteServer(const string &uri) :

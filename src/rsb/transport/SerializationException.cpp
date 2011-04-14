@@ -23,7 +23,7 @@ namespace rsb {
 namespace transport {
 
 SerializationException::SerializationException(const std::string &message) :
-	RSBException(message) {
+	Exception(message) {
 }
 
 }

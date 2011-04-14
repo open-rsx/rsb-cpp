@@ -23,7 +23,7 @@
 
 #include "QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
-#include "RSBException.h"
+#include "Exception.h"
 
 namespace rsb {
 
@@ -33,7 +33,7 @@ namespace rsb {
  *
  * @author jwienke
  */
-class RSB_EXPORT UnsupportedQualityOfServiceException: RSBException {
+class RSB_EXPORT UnsupportedQualityOfServiceException: Exception {
 public:
 
 	UnsupportedQualityOfServiceException(const std::string &message,

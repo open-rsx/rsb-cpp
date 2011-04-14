@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../RSBException.h"
+#include "../Exception.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -30,7 +30,7 @@ namespace transport {
  *
  * @author jwienke
  */
-class RSB_EXPORT SerializationException: public RSBException {
+class RSB_EXPORT SerializationException: public Exception {
 public:
 
 	explicit SerializationException(const std::string &message);
