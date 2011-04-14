@@ -29,7 +29,6 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace eventprocessing {
 
 // optimization brainstorming:
@@ -72,5 +71,5 @@ private:
 typedef boost::shared_ptr<EventProcessingStrategy> EventProcessingStrategyPtr;
 
 }
-
 }
+

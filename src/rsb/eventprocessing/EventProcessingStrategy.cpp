@@ -22,7 +22,6 @@
 using namespace std;
 
 namespace rsb {
-
 namespace eventprocessing {
 
 EventProcessingStrategy::EventProcessingStrategy() :
@@ -108,5 +107,4 @@ void EventProcessingStrategy::unsubscribe(SubscriptionPtr s) {
 }
 
 }
-
 }
