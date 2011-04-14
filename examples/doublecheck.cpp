@@ -22,7 +22,7 @@
 #include <rsb/Informer.h>
 #include <rsb/Listener.h>
 #include <rsb/Subscription.h>
-#include <rsb/RSBFactory.h>
+#include <rsb/Factory.h>
 
 using namespace std;
 using namespace rsb;
@@ -43,7 +43,7 @@ public:
 
 int main(int /*argc*/, char **/*argv*/) {
 
-	RSBFactory &factory = RSBFactory::getInstance();
+	Factory &factory = Factory::getInstance();
 
 	for (int i = 0; i < 3; ++i) {
 

@@ -41,10 +41,10 @@ namespace rsb {
  * @todo integrate model and validate requests against it
  * @todo port type selection missing
  */
-class RSB_EXPORT RSBFactory: public rsc::patterns::Singleton<RSBFactory> {
+class RSB_EXPORT Factory: public rsc::patterns::Singleton<Factory> {
 public:
 
-	virtual ~RSBFactory();
+	virtual ~Factory();
 
 	template<class DataType>
 	typename Informer<DataType>::Ptr createInformer(const std::string &uri,
@@ -59,14 +59,14 @@ public:
 
 	patterns::RemoteServerPtr createRemoteServer(const std::string &uri);
 
-	friend class rsc::patterns::Singleton<RSBFactory>;
+	friend class rsc::patterns::Singleton<Factory>;
 
 private:
 
 	/**
 	 * Singleton constructor.
 	 */
-	RSBFactory();
+	Factory();
 
 };
 

@@ -25,14 +25,14 @@
 #include <math.h>
 
 #include <rsb/Informer.h>
-#include <rsb/RSBFactory.h>
+#include <rsb/Factory.h>
 
 using namespace std;
 using namespace rsb;
 
 int main(int argc, char **argv) {
 
-	RSBFactory &factory = RSBFactory::getInstance();
+	Factory &factory = Factory::getInstance();
 
 	if (argc != 3) {
 		cerr << "Usage: " << argv[0] << " [uri] [file with contents]" << endl;

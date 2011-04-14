@@ -27,7 +27,7 @@
 #include <rsc/logging/Logger.h>
 
 #include <rsb/Informer.h>
-#include <rsb/RSBFactory.h>
+#include <rsb/Factory.h>
 
 using namespace std;
 using namespace rsc::logging;
@@ -36,7 +36,7 @@ using namespace rsb;
 
 int main(void) {
 
-	RSBFactory &factory = RSBFactory::getInstance();
+	Factory &factory = Factory::getInstance();
 
 	LoggerPtr l = Logger::getLogger("informer");
 

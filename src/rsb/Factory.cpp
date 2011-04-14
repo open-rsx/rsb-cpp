@@ -17,7 +17,7 @@
  *
  * ============================================================ */
 
-#include "RSBFactory.h"
+#include "Factory.h"
 
 #include "introspection/introspection.h"
 #include "transport/converter/converters.h"
@@ -26,23 +26,23 @@ using namespace std;
 
 namespace rsb {
 
-RSBFactory::RSBFactory() {
+Factory::Factory() {
 	introspection::registerIntrospectionConverters();
 	transport::registerDefaultConverters();
 }
 
-RSBFactory::~RSBFactory() {
+Factory::~Factory() {
 }
 
-ListenerPtr RSBFactory::createListener(const string &uri) {
+ListenerPtr Factory::createListener(const string &uri) {
 	return ListenerPtr(new Listener(uri));
 }
 
-patterns::ServerPtr RSBFactory::createServer(const string &uri) {
+patterns::ServerPtr Factory::createServer(const string &uri) {
 	return patterns::ServerPtr(new patterns::Server(uri));
 }
 
-patterns::RemoteServerPtr RSBFactory::createRemoteServer(const string &uri) {
+patterns::RemoteServerPtr Factory::createRemoteServer(const string &uri) {
 	return patterns::RemoteServerPtr(new patterns::RemoteServer(uri));
 }
 

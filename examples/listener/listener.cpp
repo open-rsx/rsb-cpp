@@ -32,7 +32,7 @@
 #include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
-#include <rsb/RSBFactory.h>
+#include <rsb/Factory.h>
 
 using namespace std;
 using namespace rsc::logging;
@@ -53,7 +53,7 @@ public:
 
 int main(int argc, char **argv) {
 
-	RSBFactory &factory = RSBFactory::getInstance();
+	Factory &factory = Factory::getInstance();
 
 	LoggerPtr l = Logger::getLogger("receiver");
 

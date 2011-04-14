@@ -19,7 +19,7 @@
 
 #include <rsb/patterns/RemoteServer.h>
 #include <rsb/patterns/Server.h>
-#include <rsb/RSBFactory.h>
+#include <rsb/Factory.h>
 
 #include <rsc/logging/LoggerFactory.h>
 
@@ -54,7 +54,7 @@ public:
 
 int main(int /*argc*/, char **/*argv*/) {
 
-	RSBFactory &factory = RSBFactory::getInstance();
+	Factory &factory = Factory::getInstance();
 
 	rsc::logging::LoggerFactory::getInstance()->reconfigure(
 			rsc::logging::Logger::FATAL);

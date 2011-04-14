@@ -27,7 +27,7 @@ SET(SOURCES rsb/RSBException.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
-            rsb/RSBFactory.cpp
+            rsb/Factory.cpp
             rsb/filter/AbstractFilter.cpp
             rsb/filter/ScopeFilter.cpp
             rsb/filter/FilterObservable.cpp
@@ -75,7 +75,7 @@ SET(HEADERS rsb/RSBVersion.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
             rsb/UnsupportedQualityOfServiceException.h
-            rsb/RSBFactory.h
+            rsb/Factory.h
             rsb/filter/FilterActionTypes.h
             rsb/filter/AbstractFilter.h
             rsb/filter/ScopeFilter.h

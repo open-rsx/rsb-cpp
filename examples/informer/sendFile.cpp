@@ -30,7 +30,7 @@
 #include <rsc/logging/Logger.h>
 
 #include <rsb/Informer.h>
-#include <rsb/RSBFactory.h>
+#include <rsb/Factory.h>
 
 using namespace std;
 using namespace rsc::logging;
@@ -40,7 +40,7 @@ using namespace boost::posix_time;
 
 int main(void) {
 
-	RSBFactory &factory = RSBFactory::getInstance();
+	Factory &factory = Factory::getInstance();
 	unsigned int numMsg;
 	string *bin_doc = new string();
 	string fileLoc;
