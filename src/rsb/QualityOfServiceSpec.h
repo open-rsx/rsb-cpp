@@ -38,7 +38,7 @@ class RSB_EXPORT QualityOfServiceSpec {
 public:
 
 	/**
-	 * Specifies the ordering of events for listeners on a publisher.
+	 * Specifies the ordering of events for listeners on a informer.
 	 *
 	 * @author jwienke
 	 */
@@ -48,9 +48,9 @@ public:
 		 */
 		UNORDERED = 10,
 		/**
-		 * Every listener receives the events of one publisher in the order
-		 * the publisher sent the events. No guarantees are given for events of
-		 * multiple publishers.
+		 * Every listener receives the events of one informer in the order
+		 * the informer sent the events. No guarantees are given for events of
+		 * multiple informers.
 		 */
 		ORDERED = 20
 	};
@@ -73,7 +73,7 @@ public:
 	};
 
 	/**
-	 * Constructs the default QoS specs for every publishers. Messages are
+	 * Constructs the default QoS specs for every informers. Messages are
 	 * unordered but reliably.
 	 */
 	QualityOfServiceSpec();

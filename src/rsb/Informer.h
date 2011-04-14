@@ -33,71 +33,71 @@
 namespace rsb {
 
 /**
- * A publisher to publish data of a specified default type expressed through the
+ * A informer to publish data of a specified default type expressed through the
  * template parameter. All data in RSB is maintained as shared pointers to avoid
  * unnecessary copy operations. Typedefs simplify the use of the pointer types.
  *
  * The basic usage pattern is explained with this example code:
  * @code
- * Publisher<string>::Ptr informer(new Publisher<string>("rsb://example/informer","string"));
- * Publisher<string>::DataPtr s(new string("blub"));
+ * Informer<string>::Ptr informer(new Informer<string>("rsb://example/informer","string"));
+ * Informer<string>::DataPtr s(new string("blub"));
  * informer->publish(s);
  * @endcode
  *
  * @author swrede
- * @tparam T default data type to send by this publisher
+ * @tparam T default data type to send by this informer
  *
  * @todo check thread-safety, e.g. setting router to active and setting the
  *       passive flag must be atomic
- * @todo does it make sense that publishers are copyable?
+ * @todo does it make sense that informers are copyable?
  */
 template<class T>
-class Publisher {
+class Informer {
 public:
 
 	/**
-	 * Shared pointer type for this publisher.
+	 * Shared pointer type for this informer.
 	 */
-	typedef boost::shared_ptr<Publisher<T> > Ptr;
+	typedef boost::shared_ptr<Informer<T> > Ptr;
 
 	/**
-	 * Shared pointer type for the default data published by this publisher.
+	 * Shared pointer type for the default data published by this informer.
 	 */
 	typedef boost::shared_ptr<T> DataPtr;
 
 	/**
-	 * Constructs a new publisher.
+	 * Constructs a new informer.
 	 *
 	 * @param uri the uri under which the data are published
 	 * @param type string describing the default type of data sent by this
-	 *             publisher. It is used to find a converter that can convert
+	 *             informer. It is used to find a converter that can convert
 	 *             these data to the port
 	 */
-	Publisher(const std::string &uri, const std::string &type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Publisher." + uri)),
-				uri(uri), passive(false), defaultType(type) {
+	Informer(const std::string &uri, const std::string &type) :
+		logger(rsc::logging::Logger::getLogger("rsb.Informer." + uri)), uri(
+				uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(
-				new transport::Router(transport::TransportFactory::NONE,
-						transport::TransportFactory::SPREAD));
+		router = transport::RouterPtr(new transport::Router(
+				transport::TransportFactory::NONE,
+				transport::TransportFactory::SPREAD));
 		activate();
 	}
 
-	Publisher(const transport::TransportFactory::PortTypes &out,
+	Informer(const transport::TransportFactory::PortTypes &out,
 			const std::string &uri, const std::string &type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Publisher")), uri(uri),
+		logger(rsc::logging::Logger::getLogger("rsb.Informer")), uri(uri),
 				passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(
-				new transport::Router(transport::TransportFactory::NONE, out));
+		router = transport::RouterPtr(new transport::Router(
+				transport::TransportFactory::NONE, out));
 		activate();
 	}
 
-	virtual ~Publisher() {
+	virtual ~Informer() {
 	}
 
 	/**
-	 * Defines the desired quality of service settings for this publishers.
+	 * Defines the desired quality of service settings for this informers.
 	 *
 	 * @param specs QoS specs
 	 * @throw UnsupportedQualityOfServiceException requirements cannot be met
@@ -107,7 +107,7 @@ public:
 	}
 
 	/**
-	 * Publishes the given data to the Publisher's uri.
+	 * Publishes the given data to the Informer's uri.
 	 *
 	 * @param data Pointer to the data to send.
 	 */
@@ -117,7 +117,7 @@ public:
 	}
 
 	/**
-	 * Publishes the given data to the Publisher's uri.
+	 * Publishes the given data to the Informer's uri.
 	 *
 	 * @param data Pointer to the data to send.
 	 * @param type string which defines the type of the data. I.e. "string"
@@ -130,7 +130,7 @@ public:
 	}
 
 	/**
-	 * Publishes the given event to the Publisher's uri with the ability to
+	 * Publishes the given event to the Informer's uri with the ability to
 	 * define additional meta data.
 	 *
 	 * @param event the event to publish.
@@ -145,7 +145,7 @@ public:
 	}
 
 	/**
-	 * Activates the Publisher and therefore the Router. Is considered being in
+	 * Activates the Informer and therefore the Router. Is considered being in
 	 * active mode afterwards.
 	 */
 	void activate() {
@@ -154,7 +154,7 @@ public:
 	}
 
 	/**
-	 * Deactivates the Publisher and therefore the Router. Is considered being
+	 * Deactivates the Informer and therefore the Router. Is considered being
 	 * in passive mode afterwards.
 	 */
 	void deactivate() {
@@ -166,7 +166,7 @@ public:
 
 protected:
 
-	Publisher() { /* forbidden */
+	Informer() { /* forbidden */
 	}
 
 	void publish(VoidPtr p, const std::string &type) {

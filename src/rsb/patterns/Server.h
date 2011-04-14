@@ -28,7 +28,7 @@
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
-#include "../Publisher.h"
+#include "../Informer.h"
 #include "../Listener.h"
 #include "rsb/rsbexports.h"
 
@@ -131,7 +131,7 @@ private:
 
 	ListenerPtr requestListener;
 
-	std::map<std::string, std::pair<SubscriptionPtr, Publisher<void>::Ptr> >
+	std::map<std::string, std::pair<SubscriptionPtr, Informer<void>::Ptr> >
 			methods;
 
 };

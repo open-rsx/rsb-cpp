@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <rsb/Publisher.h>
+#include <rsb/Informer.h>
 #include <rsb/RSBFactory.h>
 
 using namespace std;
@@ -57,10 +57,10 @@ int main(int argc, char **argv) {
 	in.close();
 
 	// publish
-	Publisher<string>::Ptr publisher = factory.createPublisher<string> (argv[1],
+	Informer<string>::Ptr informer = factory.createInformer<string> (argv[1],
 			"string");
-	publisher->publish(boost::shared_ptr<string>(new string(contents.str())));
-	publisher->deactivate();
+	informer->publish(boost::shared_ptr<string>(new string(contents.str())));
+	informer->deactivate();
 
 	return EXIT_SUCCESS;
 }

@@ -29,7 +29,7 @@
 
 #include <rsc/logging/Logger.h>
 
-#include <rsb/Publisher.h>
+#include <rsb/Informer.h>
 #include <rsb/RSBFactory.h>
 
 using namespace std;
@@ -69,10 +69,10 @@ int main(void) {
 		cerr << ex.what() << endl;
 	}
 
-	// Create Publisher and RSBEvent
-	Publisher<string>::Ptr informer = factory.createPublisher<string> (
+	// Create Informer and RSBEvent
+	Informer<string>::Ptr informer = factory.createInformer<string> (
 			"rsb://example/informer", "string");
-	Publisher<string>::DataPtr data(bin_doc);
+	Informer<string>::DataPtr data(bin_doc);
 
 	RSBEventPtr event = RSBEventPtr(
 			new RSBEvent("rsb://example/informer",

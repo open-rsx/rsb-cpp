@@ -17,10 +17,7 @@
  *
  * ============================================================ */
 
-#include "Publisher.h"
-
-using namespace rsc::logging;
-using namespace rsb::transport;
+#include "Informer.h"
 
 namespace rsb {
 

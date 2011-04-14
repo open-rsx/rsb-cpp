@@ -135,8 +135,8 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 		subscription->appendHandler(handler);
 		listener->addSubscription(subscription);
 
-		// publisher for requests
-		Publisher<void>::Ptr publisher(new Publisher<void> (uri + "-request-"
+		// informer for requests
+		Informer<void>::Ptr informer(new Informer<void> (uri + "-request-"
 				+ methodName, sendType));
 
 		MethodSet set;
@@ -145,7 +145,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 		set.handler = handler;
 		set.replyListener = listener;
 		set.replySubscription = subscription;
-		set.requestPublisher = publisher;
+		set.requestInformer = informer;
 
 		methodSets[methodName] = set;
 
@@ -174,7 +174,7 @@ RSBEventPtr RemoteServer::callMethod(const string &methodName, RSBEventPtr data)
 	MethodSet methodSet = getMethodSet(methodName, data->getType());
 	methodSet.handler->expectReply(requestId);
 
-	methodSet.requestPublisher->publish(data);
+	methodSet.requestInformer->publish(data);
 
 	// wait for the reply
 	RSBEventPtr result = methodSet.handler->getReply(requestId);

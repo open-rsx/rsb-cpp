@@ -27,7 +27,7 @@
 #include <rsc/patterns/Singleton.h>
 
 #include "rsb/rsbexports.h"
-#include "Publisher.h"
+#include "Informer.h"
 #include "Listener.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
@@ -47,9 +47,9 @@ public:
 	virtual ~RSBFactory();
 
 	template<class DataType>
-	typename Publisher<DataType>::Ptr createPublisher(const std::string &uri,
+	typename Informer<DataType>::Ptr createInformer(const std::string &uri,
 			const std::string &dataType = rsc::runtime::typeName<DataType>()) {
-		return typename Publisher<DataType>::Ptr(new Publisher<DataType> (uri,
+		return typename Informer<DataType>::Ptr(new Informer<DataType> (uri,
 				dataType));
 	}
 

@@ -27,7 +27,7 @@
 #include <rsc/logging/Logger.h>
 
 #include "../RSBEvent.h"
-#include "../Publisher.h"
+#include "../Informer.h"
 #include "../Listener.h"
 #include "../RSBException.h"
 #include "rsb/rsbexports.h"
@@ -83,7 +83,7 @@ private:
 		boost::shared_ptr<WaitingEventHandler> handler;
 		ListenerPtr replyListener;
 		SubscriptionPtr replySubscription;
-		Publisher<void>::Ptr requestPublisher;
+		Informer<void>::Ptr requestInformer;
 	};
 
 	boost::mutex methodSetMutex;

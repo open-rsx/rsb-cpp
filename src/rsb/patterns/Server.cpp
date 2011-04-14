@@ -37,15 +37,15 @@ private:
 
 	string methodName;
 	Server::CallbackPtr callback;
-	Publisher<void>::Ptr publisher;
+	Informer<void>::Ptr informer;
 
 public:
 
 	RequestHandler(const string &methodName, Server::CallbackPtr callback,
-			Publisher<void>::Ptr publisher) :
+			Informer<void>::Ptr informer) :
 		logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
 				+ methodName)), methodName(methodName), callback(callback),
-				publisher(publisher) {
+				informer(informer) {
 	}
 
 	void notify(RSBEventPtr event) {
@@ -75,7 +75,7 @@ public:
 			returnEvent->setData(returnData);
 			returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
 					requestIdKey));
-			publisher->publish(returnEvent);
+			informer->publish(returnEvent);
 		} catch (exception &e) {
 			RSBEventPtr returnEvent(new RSBEvent());
 			returnEvent->setType("string");
@@ -85,7 +85,7 @@ public:
 			returnEvent->addMetaInfo(requestIdKey, event->getMetaInfo(
 					requestIdKey));
 			returnEvent->addMetaInfo("isException", "");
-			publisher->publish(returnEvent);
+			informer->publish(returnEvent);
 		}
 
 	}
@@ -107,17 +107,17 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
 	}
 
 	// TODO check that the reply type is convertible
-	Publisher<void>::Ptr publisher(new Publisher<void> (uri + "-reply-"
+	Informer<void>::Ptr informer(new Informer<void> (uri + "-reply-"
 			+ methodName, callback->getReplyType()));
 
 	SubscriptionPtr subscription(new Subscription);
 	subscription->appendFilter(filter::AbstractFilterPtr(
 			new filter::ScopeFilter(uri + "-request-" + methodName)));
 	subscription->appendHandler(HandlerPtr(new RequestHandler(methodName,
-			callback, publisher)));
+			callback, informer)));
 	requestListener->addSubscription(subscription);
 
-	methods[methodName] = make_pair(subscription, publisher);
+	methods[methodName] = make_pair(subscription, informer);
 
 }
 

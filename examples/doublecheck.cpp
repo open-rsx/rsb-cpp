@@ -19,7 +19,7 @@
 
 #include <boost/thread.hpp>
 
-#include <rsb/Publisher.h>
+#include <rsb/Informer.h>
 #include <rsb/Listener.h>
 #include <rsb/Subscription.h>
 #include <rsb/RSBFactory.h>
@@ -50,9 +50,9 @@ int main(int /*argc*/, char **/*argv*/) {
 		string uri1 = "rsb;//test/dummy1";
 		string uri2 = "rsb;//test/dummy2";
 
-		Publisher<string>::Ptr publisher1 = factory.createPublisher<string> (
+		Informer<string>::Ptr informer1 = factory.createInformer<string> (
 				uri1, "string");
-		Publisher<string>::Ptr publisher2 = factory.createPublisher<string> (
+		Informer<string>::Ptr informer2 = factory.createInformer<string> (
 				uri2, "string");
 
 		ListenerPtr listener1 = factory.createListener(uri1);
@@ -68,15 +68,15 @@ int main(int /*argc*/, char **/*argv*/) {
 		sub2->appendHandler(HandlerPtr(new PrintHandler("sub2")));
 		listener2->addSubscription(sub2);
 
-		publisher1->publish(Publisher<string>::DataPtr(new string(
-				"publisher1 first message")));
-		publisher1->publish(Publisher<string>::DataPtr(new string(
-				"publisher1 second message")));
+		informer1->publish(Informer<string>::DataPtr(new string(
+				"informer1 first message")));
+		informer1->publish(Informer<string>::DataPtr(new string(
+				"informer1 second message")));
 
-		publisher2->publish(Publisher<string>::DataPtr(new string(
-				"publisher2 first message")));
-		publisher2->publish(Publisher<string>::DataPtr(new string(
-				"publisher2 second message")));
+		informer2->publish(Informer<string>::DataPtr(new string(
+				"informer2 first message")));
+		informer2->publish(Informer<string>::DataPtr(new string(
+				"informer2 second message")));
 
 		boost::this_thread::sleep(boost::posix_time::seconds(2));
 
