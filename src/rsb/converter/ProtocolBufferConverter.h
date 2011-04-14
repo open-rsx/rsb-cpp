@@ -58,7 +58,7 @@ std::string typeNameToDataTypeName(const std::string& type_name) {
 }
 
 template<typename ProtocolBuffer>
-class ProtocolBufferConverter: public rsb::transport::Converter<std::string> {
+class ProtocolBufferConverter: public Converter<std::string> {
 public:
 	ProtocolBufferConverter();
 	virtual
