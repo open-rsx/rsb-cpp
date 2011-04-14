@@ -93,6 +93,7 @@ SET(HEADERS rsb/Version.h
             rsb/converter/Repository.h
             rsb/converter/SerializationException.h
             rsb/converter/converters.h
+            rsb/converter/Converter.h
             rsb/converter/BoolConverter.h
             rsb/converter/StringConverter.h
             rsb/converter/Uint64Converter.h
