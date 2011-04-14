@@ -11,11 +11,11 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/r
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Notification.pb.h DESTINATION include/rsb/protocol)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATION include/rsb/protocol)
 
-CONFIGURE_FILE(rsb/RSBVersion.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp @ONLY)
+CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @ONLY)
 
 SET(SOURCES rsb/Exception.cpp
             rsb/CommException.cpp
-            ${CMAKE_CURRENT_BINARY_DIR}/rsb/RSBVersion.cpp
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
             rsb/Informer.cpp
             rsb/Listener.cpp
             rsb/util/Configuration.cpp
@@ -60,7 +60,7 @@ SET(SOURCES rsb/Exception.cpp
             ${PROTO_SOURCES}
             ${INTERNAL_PROTO_SOURCES})
 
-SET(HEADERS rsb/RSBVersion.h
+SET(HEADERS rsb/Version.h
             rsb/Exception.h
             rsb/CommException.h
             rsb/util/Configuration.h

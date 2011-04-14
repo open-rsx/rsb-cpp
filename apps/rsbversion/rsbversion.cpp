@@ -21,15 +21,15 @@
 
 #include <stdlib.h>
 
-#include <rsb/RSBVersion.h>
+#include <rsb/Version.h>
 
 using namespace std;
 using namespace rsb;
 
 int main(int /*argc*/, char **/*argv*/) {
 
-	cout << "RSBVersion: " << RSBVersion::string() << ", build "
-			<< RSBVersion::buildString() << ", abi " << RSBVersion::abi()
+	cout << "Version: " << Version::string() << ", build "
+			<< Version::buildString() << ", abi " << Version::abi()
 			<< endl;
 
 	return EXIT_SUCCESS;

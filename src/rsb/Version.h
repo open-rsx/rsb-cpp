@@ -25,7 +25,7 @@
 
 namespace rsb {
 
-class RSB_EXPORT RSBVersion {
+class RSB_EXPORT Version {
 public:
 
 	static unsigned int major();
@@ -42,7 +42,7 @@ public:
 	static std::string buildString();
 
 private:
-	RSBVersion();
+	Version();
 
 };
 

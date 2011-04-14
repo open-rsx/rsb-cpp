@@ -45,7 +45,7 @@
 #include <string.h>
 
 #include "mongoose.h"
-#include <rsb/RSBVersion.h>
+#include <rsb/Version.h>
 
 /*
  * This callback function is attached to the "/" and "/abc.html" URIs,
@@ -85,8 +85,8 @@ show_index(struct mg_connection *conn,
 	mg_printf(conn, "%s",
 		"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
 		"<html><body><h3>Welcome to RSB Monitor</h3>");
-	mg_printf(conn, "<p>Running RSB Version: %s ", (rsb::RSBVersion::string() + "</p>").c_str());
-	mg_printf(conn, "%s",("<p>RSB Build information: Nr. " + rsb::RSBVersion::buildString() + "</p>").c_str());
+	mg_printf(conn, "<p>Running RSB Version: %s ", (rsb::Version::string() + "</p>").c_str());
+	mg_printf(conn, "%s",("<p>RSB Build information: Nr. " + rsb::Version::buildString() + "</p>").c_str());
 
 	mg_printf(conn, "<ul>");
 
