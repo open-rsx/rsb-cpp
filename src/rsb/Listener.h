@@ -55,12 +55,12 @@ namespace rsb {
  * @todo how to deal with IDs of listeners? (it must be possible to reference them internally somehow
  * @todo use templates in subscriptions only? (however, they need the event info)
  */
-class RSB_EXPORT Listener {
+class RSB_EXPORT Listener : public Participant {
 public:
 
 	/**
 	 * Constructs a new Listener assigned to the specified uri. The Listener
-	 * opens a @ref rsb::transport::Router to ConnectorType Spread and is activated after construction.
+	 * opens a @ref rsb::eventprocessing::Router to ConnectorType Spread and is activated after construction.
 	 *
 	 * @param uri the uri where the data is published.
 	 */
@@ -68,12 +68,12 @@ public:
 
 	/**
 	 * Constructs a new Listener assigned to the specified uri. The Listener
-	 * opens a @ref rsb::transport::Router to a ConnectorType specified and is activated after
+	 * opens a @ref rsb::eventprocessing::Router to a ConnectorType specified and is activated after
 	 * construction.
 	 *
 	 * @param uri the uri where the data is published.
 	 * @param in the ConnectorType (enum) to connect with, i.e.
-	 *           transport::TransportFactory::SPREAD
+	 *           transport::Factory::SPREAD
 	 */
 	Listener(transport::Factory::ConnectorTypes in, const std::string &uri);
 
@@ -122,5 +122,13 @@ private:
 
 typedef boost::shared_ptr<Listener> ListenerPtr;
 
+template <typename Ch,
+	  typename Tr>
+std::basic_ostream<Ch, Tr>&
+operator<<(std::basic_ostream<Ch, Tr>& stream,
+	   const Listener&             listener) {
+	stream << "Listener[id=" << listener.getUUID() << "]";
+	return stream;
 }
 
+}

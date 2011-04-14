@@ -16,6 +16,7 @@ CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @O
 SET(SOURCES rsb/Exception.cpp
             rsb/CommException.cpp
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
+            rsb/Participant.cpp
             rsb/Informer.cpp
             rsb/Listener.cpp
             rsb/util/Configuration.cpp
@@ -66,6 +67,7 @@ SET(HEADERS rsb/Version.h
             rsb/util/Configuration.h
             rsb/util/ConfigException.h
             rsb/Event.h
+            rsb/Participant.h
             rsb/Informer.h
             rsb/Listener.h
             rsb/Action.h

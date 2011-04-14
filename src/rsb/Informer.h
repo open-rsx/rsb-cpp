@@ -26,6 +26,7 @@
 #include <rsc/logging/Logger.h>
 
 #include "Event.h"
+#include "Participant.h"
 #include "eventprocessing/Router.h"
 #include "transport/Connector.h"
 #include "transport/Factory.h"
@@ -53,7 +54,7 @@ namespace rsb {
  * @todo does it make sense that informers are copyable?
  */
 template<class T>
-class Informer {
+class Informer : public Participant {
 public:
 
 	/**
@@ -189,5 +190,15 @@ private:
 
 };
 
+
+template <typename Ch,
+          typename Tr,
+          typename T>
+std::basic_ostream<Ch, Tr>&
+operator<<(std::basic_ostream<Ch, Tr>& stream,
+           const Informer<T>&          informer) {
+        stream << "Informer[id=" << informer.getUUID() << "]";
+        return stream;
 }
 
+}
