@@ -21,7 +21,7 @@
 
 #include <rsc/misc/UUID.h>
 
-#include "rsbexports.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
