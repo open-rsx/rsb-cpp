@@ -28,7 +28,7 @@
 #include <rsc/subprocess/Subprocess.h>
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
-#include "rsb/transport/Router.h"
+#include "rsb/eventprocessing/Router.h"
 #include "rsb/transport/Connector.h"
 #include "rsb/transport/spread/SpreadConnector.h"
 #include "InformerTask.h"
@@ -44,6 +44,7 @@ using namespace rsb;
 using namespace rsb::test;
 using namespace rsb::filter;
 using namespace rsb::transport;
+using namespace rsb::eventprocessing;
 using namespace rsb::spread;
 using namespace rsc::subprocess;
 using namespace testing;

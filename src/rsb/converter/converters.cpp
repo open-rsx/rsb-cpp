@@ -21,14 +21,14 @@
 
 #include <boost/thread.hpp>
 
-#include "../Repository.h"
+#include "Repository.h"
 #include "BoolConverter.h"
 #include "StringConverter.h"
 #include "Uint64Converter.h"
 #include "VoidConverter.h"
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 static bool registered = false;
 static boost::mutex registrationMutex;
@@ -37,18 +37,14 @@ void registerDefaultConverters() {
 
 	boost::mutex::scoped_lock lock(registrationMutex);
 	if (!registered) {
-		transport::stringConverterRepository()->registerConverter(
-				transport::Converter<std::string>::Ptr(
-						new BoolConverter));
-		transport::stringConverterRepository()->registerConverter(
-				transport::Converter<std::string>::Ptr(
-						new StringConverter));
-		transport::stringConverterRepository()->registerConverter(
-				transport::Converter<std::string>::Ptr(
-						new Uint64Converter));
-		transport::stringConverterRepository()->registerConverter(
-				transport::Converter<std::string>::Ptr(
-						new VoidConverter));
+		stringConverterRepository()->registerConverter(
+				Converter<std::string>::Ptr(new BoolConverter));
+		stringConverterRepository()->registerConverter(
+				Converter<std::string>::Ptr(new StringConverter));
+		stringConverterRepository()->registerConverter(
+				Converter<std::string>::Ptr(new Uint64Converter));
+		stringConverterRepository()->registerConverter(
+				Converter<std::string>::Ptr(new VoidConverter));
 		registered = true;
 	}
 

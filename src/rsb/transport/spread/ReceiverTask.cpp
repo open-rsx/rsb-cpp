@@ -22,7 +22,7 @@
 #include <iostream>
 
 #include "../../protocol/Notification.h"
-#include "../Converter.h"
+#include "../../converter/Converter.h"
 #include "../../CommException.h"
 #include "SpreadConnection.h"
 
@@ -55,8 +55,7 @@ unsigned int DataStore::add(rsb::protocol::NotificationPtr n) {
 }
 
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
-		transport::Repository<string>::Ptr converters,
-		const Action &action) :
+		converter::Repository<string>::Ptr converters, const Action &action) :
 	logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
 			cancelRequested(false), con(s), converters(converters),
 			action(action) {
@@ -135,9 +134,9 @@ void ReceiverTask::execute() {
 				}
 				// TODO refactor converter handling and conversion
 				// TODO error handling
-				Converter<string>::Ptr c =
+				converter::Converter<string>::Ptr c =
 						converters->getConverterByWireSchema(n->type_id());
-				transport::AnnotatedData deserialized = c->deserialize(
+				converter::AnnotatedData deserialized = c->deserialize(
 						n->type_id(), *s);
 				e->setType(deserialized.first);
 				e->setData(deserialized.second);

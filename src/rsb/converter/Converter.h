@@ -32,7 +32,7 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
 

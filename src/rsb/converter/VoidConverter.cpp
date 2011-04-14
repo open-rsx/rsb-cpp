@@ -17,37 +17,33 @@
  *
  * ============================================================ */
 
-#pragma once
+#include "VoidConverter.h"
 
-#include "../Converter.h"
+#include <rsc/misc/Registry.h>
 
-#include <string>
-#include <boost/shared_ptr.hpp>
+using namespace std;
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
-/**
- * Converter for bool.
- *
- * @author jwienke
- */
-class BoolConverter: public rsb::transport::Converter<std::string> {
-public:
+const string VoidConverter::TYPE = "void";
 
-	BoolConverter();
-	virtual ~BoolConverter();
+VoidConverter::VoidConverter() :
+	Converter<string> (TYPE, RSB_TYPE_TAG(void)) {
+}
 
-	std::string serialize(const AnnotatedData &data, std::string &wire);
-	AnnotatedData deserialize(const std::string &wireSchema,
-			const std::string &wire);
+VoidConverter::~VoidConverter() {
+}
 
-private:
-	static const std::string WIRE_SCHEMA;
+string VoidConverter::serialize(const AnnotatedData &/*data*/, string &wire) {
+	wire.clear();
+	return TYPE;
+}
 
-};
-
-typedef boost::shared_ptr<BoolConverter> BoolConverterPtr;
+AnnotatedData VoidConverter::deserialize(const std::string &/*wireType*/,
+		const string &/*wire*/) {
+	return make_pair(getDataType(), boost::shared_ptr<void>());
+}
 
 }
 }

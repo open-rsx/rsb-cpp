@@ -19,20 +19,20 @@
 
 #pragma once
 
-#include "../Converter.h"
+#include "Converter.h"
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 /**
  * Converter for uint64 types.
  *
  * @author jwienke
  */
-class Uint64Converter: public rsb::transport::Converter<std::string> {
+class Uint64Converter: public Converter<std::string> {
 public:
 	Uint64Converter();
 	virtual ~Uint64Converter();

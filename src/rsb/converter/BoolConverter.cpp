@@ -17,55 +17,48 @@
  *
  * ============================================================ */
 
-#include "Uint64Converter.h"
+#include "BoolConverter.h"
 
 #include <sstream>
 
-#include <boost/cstdint.hpp>
-#include <boost/lexical_cast.hpp>
-
-#include "../SerializationException.h"
+#include "SerializationException.h"
 
 using namespace std;
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
-const string Uint64Converter::WIRE_SCHEMA = "uint64";
+const string BoolConverter::WIRE_SCHEMA = "bool";
 
-Uint64Converter::Uint64Converter() :
-	Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(boost::uint64_t)) {
+BoolConverter::BoolConverter() :
+	Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(bool)) {
 }
 
-Uint64Converter::~Uint64Converter() {
+BoolConverter::~BoolConverter() {
 }
 
-string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
+string BoolConverter::serialize(const AnnotatedData &data, string &wire) {
 	assert(data.first == this->getDataType());
 
-	boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
-			boost::uint64_t>(data.second);
-	stringstream s;
-	s << *number;
-	wire = s.str();
+	boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data.second);
+	if (*s) {
+		wire = "t";
+	} else {
+		wire.clear();
+	}
 	return WIRE_SCHEMA;
 }
 
-AnnotatedData Uint64Converter::deserialize(const string &wireSchema,
+AnnotatedData BoolConverter::deserialize(const std::string &wireSchema,
 		const string &wire) {
 	assert(wireSchema == WIRE_SCHEMA);
 
-	try {
-		return make_pair(
-				getDataType(),
-				boost::shared_ptr<boost::uint64_t>(
-						new boost::uint64_t(
-								boost::lexical_cast<boost::uint64_t>(wire))));
-	} catch (boost::bad_lexical_cast &e) {
-		throw SerializationException(
-				string("Unable to cast wire contents to number: ") + e.what());
+	if (wire.empty()) {
+		return make_pair(getDataType(),
+				boost::shared_ptr<bool>(new bool(false)));
+	} else {
+		return make_pair(getDataType(), boost::shared_ptr<bool>(new bool(true)));
 	}
-
 }
 
 }

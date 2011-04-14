@@ -29,7 +29,7 @@
 #include "InProcessConnector.h"
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
-#include "../Converter.h"
+#include "../../converter/Converter.h"
 
 using namespace std;
 using namespace rsc::logging;

@@ -20,7 +20,7 @@
 #include "Factory.h"
 
 #include "introspection/introspection.h"
-#include "transport/converter/converters.h"
+#include "converter/converters.h"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ namespace rsb {
 
 Factory::Factory() {
 	introspection::registerIntrospectionConverters();
-	transport::registerDefaultConverters();
+	converter::registerDefaultConverters();
 }
 
 Factory::~Factory() {

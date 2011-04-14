@@ -26,7 +26,7 @@
 #include "testhelpers.h"
 
 #include "rsb/introspection/introspection.h"
-#include "rsb/transport/converter/converters.h"
+#include "rsb/converter/converters.h"
 
 using namespace std;
 using namespace testing;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 	boost::this_thread::sleep(boost::posix_time::seconds(2));
 
 	rsb::introspection::registerIntrospectionConverters();
-	rsb::transport::registerDefaultConverters();
+	rsb::converter::registerDefaultConverters();
 
 	InitGoogleMock(&argc, argv);
 	return RUN_ALL_TESTS();

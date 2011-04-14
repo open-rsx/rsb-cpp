@@ -21,7 +21,7 @@
 
 #include "PortStateChange.h"
 #include "../protocol/ProtocolException.h"
-#include "../transport/SerializationException.h"
+#include "../converter/SerializationException.h"
 
 using namespace std;
 using namespace rsb::protocol;
@@ -33,7 +33,7 @@ namespace introspection {
 const string IntrospectionConverter::TYPE = "portstatechange";
 
 IntrospectionConverter::IntrospectionConverter() :
-	rsb::transport::Converter<string>(TYPE, TYPE) {
+	rsb::converter::Converter<string>(TYPE, TYPE) {
 
 }
 
@@ -41,25 +41,25 @@ IntrospectionConverter::~IntrospectionConverter() {
 }
 
 string IntrospectionConverter::serialize(
-		const rsb::transport::AnnotatedData &data, string &wire) {
+		const rsb::converter::AnnotatedData &data, string &wire) {
 	assert(data.first == TYPE);
 	PortStateChangePtr psc = boost::static_pointer_cast<PortStateChange>(
 			data.second);
 	// extremely simple here as so far directly the pbuf objects are used as domain objects
 	if (!psc->SerializeToString(&wire)) {
-		throw transport::SerializationException(
+		throw converter::SerializationException(
 				"Failed to write notification to stream");
 	}
 	return TYPE;
 }
 
-rsb::transport::AnnotatedData IntrospectionConverter::deserialize(
+rsb::converter::AnnotatedData IntrospectionConverter::deserialize(
 		const std::string &wireType, const string &wire) {
 	assert(wireType == TYPE);
 
 	PortStateChangePtr psc(new PortStateChange());
 	if (!psc->ParseFromString(wire)) {
-		throw transport::SerializationException(
+		throw converter::SerializationException(
 				"Failed to parse notification in pbuf format");
 	}
 

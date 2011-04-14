@@ -35,17 +35,17 @@ SET(SOURCES rsb/Exception.cpp
             rsb/patterns/Server.cpp
             rsb/patterns/MethodExistsException.cpp
             rsb/protocol/ProtocolException.cpp
-	    rsb/eventprocessing/EventProcessingStrategy.cpp
+            rsb/eventprocessing/EventProcessingStrategy.cpp
+            rsb/eventprocessing/Router.cpp
             rsb/transport/Connector.cpp
-            rsb/transport/Router.cpp
-            rsb/transport/Converter.cpp
-            rsb/transport/Repository.cpp
-            rsb/transport/SerializationException.cpp
-            rsb/transport/converter/converters.cpp
-            rsb/transport/converter/BoolConverter.cpp
-            rsb/transport/converter/StringConverter.cpp
-            rsb/transport/converter/Uint64Converter.cpp
-            rsb/transport/converter/VoidConverter.cpp
+            rsb/converter/Repository.cpp
+            rsb/converter/SerializationException.cpp
+            rsb/converter/Converter.cpp
+            rsb/converter/converters.cpp
+            rsb/converter/BoolConverter.cpp
+            rsb/converter/StringConverter.cpp
+            rsb/converter/Uint64Converter.cpp
+            rsb/converter/VoidConverter.cpp
             rsb/transport/Factory.cpp
             rsb/transport/inprocess/StatusTask.cpp
             rsb/transport/inprocess/InProcessConnector.cpp
@@ -86,17 +86,16 @@ SET(HEADERS rsb/Version.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
             rsb/eventprocessing/EventProcessingStrategy.h
+            rsb/eventprocessing/Router.h
             rsb/transport/Connector.h
-            rsb/transport/Router.h
-            rsb/transport/Converter.h
-            rsb/transport/Repository.h
-            rsb/transport/SerializationException.h
-            rsb/transport/converter/converters.h
-            rsb/transport/converter/BoolConverter.h
-            rsb/transport/converter/StringConverter.h
-            rsb/transport/converter/Uint64Converter.h
-            rsb/transport/converter/VoidConverter.h
-            rsb/transport/converter/ProtocolBufferConverter.h
+            rsb/converter/Repository.h
+            rsb/converter/SerializationException.h
+            rsb/converter/converters.h
+            rsb/converter/BoolConverter.h
+            rsb/converter/StringConverter.h
+            rsb/converter/Uint64Converter.h
+            rsb/converter/VoidConverter.h
+            rsb/converter/ProtocolBufferConverter.h
             rsb/transport/inprocess/StatusTask.h
             rsb/transport/inprocess/InProcessConnector.h
             rsb/transport/Factory.h

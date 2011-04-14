@@ -25,10 +25,10 @@
 
 #include <rsc/runtime/TypeStringTools.h>
 
-#include "../Converter.h"
+#include "Converter.h"
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 namespace detail {
 

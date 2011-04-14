@@ -2,7 +2,7 @@
  *
  * This file is a part of the RSB project
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,33 +17,35 @@
  *
  * ============================================================ */
 
-#include "VoidConverter.h"
+#pragma once
 
-#include <rsc/misc/Registry.h>
+#include "Converter.h"
 
-using namespace std;
+#include <string>
+#include <boost/shared_ptr.hpp>
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
-const string VoidConverter::TYPE = "void";
+/**
+ * Converts any string into any string serializing content to a string.
+ *
+ * @author swrede
+ */
+class StringConverter: public Converter<std::string> {
+public:
 
-VoidConverter::VoidConverter() :
-	Converter<string> (TYPE, RSB_TYPE_TAG(void)) {
-}
+	StringConverter();
+	virtual ~StringConverter();
 
-VoidConverter::~VoidConverter() {
-}
+	std::string serialize(const AnnotatedData &data, std::string &wire);
+	AnnotatedData deserialize(const std::string &wireSchema,
+			const std::string &wire);
 
-string VoidConverter::serialize(const AnnotatedData &/*data*/, string &wire) {
-	wire.clear();
-	return TYPE;
-}
+private:
+	static const std::string WIRE_SCHEMA;
 
-AnnotatedData VoidConverter::deserialize(const std::string &/*wireType*/,
-		const string &/*wire*/) {
-	return make_pair(getDataType(), boost::shared_ptr<void>());
-}
+};
 
 }
 }

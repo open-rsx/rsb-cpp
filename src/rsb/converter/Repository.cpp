@@ -22,7 +22,7 @@
 using namespace std;
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 Repository<string>::Ptr stringConverterRepository() {
 	static Repository<string>::Ptr collection(new Repository<

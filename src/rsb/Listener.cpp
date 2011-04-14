@@ -24,21 +24,21 @@ using namespace std;
 namespace rsb {
 
 Listener::Listener(const string &uri) :
-	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri), passive(
-			false) {
+	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri),
+			passive(false) {
 	// TODO evaluate configuration
-	router = transport::RouterPtr(new transport::Router(
-			transport::Factory::SPREAD,
-			transport::Factory::NONE));
+	router = eventprocessing::RouterPtr(
+			new eventprocessing::Router(transport::Factory::SPREAD,
+					transport::Factory::NONE));
 	activate();
 }
 
 Listener::Listener(transport::Factory::ConnectorTypes in, const string &uri) :
-	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri), passive(
-			false) {
+	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri),
+			passive(false) {
 	// TODO evaluate configuration
-	router = transport::RouterPtr(new transport::Router(in,
-			transport::Factory::NONE));
+	router = eventprocessing::RouterPtr(
+			new eventprocessing::Router(in, transport::Factory::NONE));
 	activate();
 }
 

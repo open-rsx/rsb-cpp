@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../transport/Converter.h"
+#include "../converter/Converter.h"
 
 #include <string>
 
@@ -29,15 +29,15 @@ namespace introspection {
 /**
  * @author swrede
  */
-class IntrospectionConverter: public rsb::transport::Converter<
+class IntrospectionConverter: public rsb::converter::Converter<
 		std::string> {
 public:
 	IntrospectionConverter();
 	virtual ~IntrospectionConverter();
 
-	std::string serialize(const rsb::transport::AnnotatedData &data,
+	std::string serialize(const rsb::converter::AnnotatedData &data,
 			std::string &wire);
-	rsb::transport::AnnotatedData deserialize(const std::string &wireType,
+	rsb::converter::AnnotatedData deserialize(const std::string &wireType,
 			const std::string &wire);
 
 private:

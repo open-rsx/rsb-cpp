@@ -27,7 +27,7 @@
 
 #include "Event.h"
 #include "Subscription.h"
-#include "transport/Router.h"
+#include "eventprocessing/Router.h"
 #include "transport/Connector.h"
 #include "rsb/rsbexports.h"
 
@@ -116,7 +116,7 @@ private:
 	rsc::logging::LoggerPtr logger;
 	std::string uri;
 	volatile bool passive;
-	rsb::transport::RouterPtr router;
+	eventprocessing::RouterPtr router;
 
 };
 

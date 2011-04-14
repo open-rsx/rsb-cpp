@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is a part of the RSB project.
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,11 +17,14 @@
  *
  * ============================================================ */
 
+#pragma once
 
-#include "Converter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace transport {
+namespace converter {
+
+RSB_EXPORT void registerDefaultConverters();
 
 }
 }

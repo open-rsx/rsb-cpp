@@ -2,7 +2,7 @@
  *
  * This file is a part of the RSB project
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -19,33 +19,34 @@
 
 #pragma once
 
-#include "../Converter.h"
+#include "Converter.h"
 
-#include <string>
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 /**
- * Converts any string into any string serializing content to a string.
+ * Fulfill the interface... Converts nothing to nothing. ;)
  *
- * @author swrede
+ * @author jwienke
  */
-class StringConverter: public rsb::transport::Converter<std::string> {
+class VoidConverter: public Converter<std::string> {
 public:
-
-	StringConverter();
-	virtual ~StringConverter();
+	VoidConverter();
+	virtual ~VoidConverter();
 
 	std::string serialize(const AnnotatedData &data, std::string &wire);
-	AnnotatedData deserialize(const std::string &wireSchema,
+	AnnotatedData deserialize(const std::string &wireType,
 			const std::string &wire);
 
 private:
-	static const std::string WIRE_SCHEMA;
+	static const std::string TYPE;
 
 };
 
+typedef boost::shared_ptr<VoidConverter> VoidConverterPtr;
+
 }
 }
+

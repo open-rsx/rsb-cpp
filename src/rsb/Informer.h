@@ -26,8 +26,9 @@
 #include <rsc/logging/Logger.h>
 
 #include "Event.h"
-#include "transport/Router.h"
+#include "eventprocessing/Router.h"
 #include "transport/Connector.h"
+#include "transport/Factory.h"
 #include "QualityOfServiceSpec.h"
 
 namespace rsb {
@@ -74,12 +75,12 @@ public:
 	 *             these data to the port
 	 */
 	Informer(const std::string &uri, const std::string &type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Informer." + uri)), uri(
-				uri), passive(false), defaultType(type) {
+		logger(rsc::logging::Logger::getLogger("rsb.Informer." + uri)),
+				uri(uri), passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(
-				transport::Factory::NONE,
-				transport::Factory::SPREAD));
+		router = eventprocessing::RouterPtr(
+				new eventprocessing::Router(transport::Factory::NONE,
+						transport::Factory::SPREAD));
 		activate();
 	}
 
@@ -88,8 +89,8 @@ public:
 		logger(rsc::logging::Logger::getLogger("rsb.Informer")), uri(uri),
 				passive(false), defaultType(type) {
 		// TODO evaluate configuration
-		router = transport::RouterPtr(new transport::Router(
-				transport::Factory::NONE, out));
+		router = eventprocessing::RouterPtr(
+				new eventprocessing::Router(transport::Factory::NONE, out));
 		activate();
 	}
 
@@ -184,7 +185,7 @@ private:
 	std::string uri;
 	volatile bool passive;
 	std::string defaultType;
-	rsb::transport::RouterPtr router;
+	eventprocessing::RouterPtr router;
 
 };
 

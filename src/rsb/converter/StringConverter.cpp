@@ -24,7 +24,7 @@
 using namespace std;
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 const string StringConverter::WIRE_SCHEMA = "string";
 

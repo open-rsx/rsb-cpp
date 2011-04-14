@@ -30,7 +30,7 @@
 #include "SpreadConnection.h"
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
-#include "../Converter.h"
+#include "../../converter/Converter.h"
 #include "../../protocol/ProtocolException.h"
 #include "../../UnsupportedQualityOfServiceException.h"
 
@@ -48,13 +48,13 @@ namespace spread {
 const SpreadConnector::QoSMap SpreadConnector::qosMapping = SpreadConnector::buildQoSMapping();
 
 SpreadConnector::SpreadConnector(
-		rsb::transport::Repository<std::string>::Ptr converters) :
+		rsb::converter::Repository<std::string>::Ptr converters) :
 	converters(converters) {
 	init();
 }
 
 SpreadConnector::SpreadConnector() :
-	converters(stringConverterRepository()) {
+	converters(converter::stringConverterRepository()) {
 	init();
 }
 
@@ -149,7 +149,7 @@ void SpreadConnector::push(EventPtr e) {
 
 	boost::shared_ptr<void> obj = e->getData();
 	// TODO exception handling if converter is not available
-	boost::shared_ptr<Converter<string> > c =
+	boost::shared_ptr<converter::Converter<string> > c =
 			converters->getConverterByDataType(e->getType());
 	string wireType = c->serialize(make_pair(e->getType(), obj), wire);
 

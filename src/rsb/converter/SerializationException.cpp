@@ -17,26 +17,14 @@
  *
  * ============================================================ */
 
-#pragma once
-
-#include "../Exception.h"
-#include "rsb/rsbexports.h"
+#include "SerializationException.h"
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
-/**
- * An exception indicating a serialization or deserialization problem for data.
- *
- * @author jwienke
- */
-class RSB_EXPORT SerializationException: public Exception {
-public:
-
-	explicit SerializationException(const std::string &message);
-
-};
+SerializationException::SerializationException(const std::string &message) :
+	Exception(message) {
+}
 
 }
 }
-

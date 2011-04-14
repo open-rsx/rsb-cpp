@@ -18,11 +18,8 @@
  * ============================================================ */
 
 #include "Connector.h"
-#include "../introspection/IntrospectionConverter.h"
-#include "../transport/converter/StringConverter.h"
 
 namespace rsb {
-
 namespace transport {
 
 Connector::Connector() {

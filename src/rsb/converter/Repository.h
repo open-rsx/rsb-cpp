@@ -26,7 +26,7 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 /**
  * Maintains a collection of converters for a specific wire format. Each

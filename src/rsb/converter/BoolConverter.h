@@ -19,34 +19,35 @@
 
 #pragma once
 
-#include "../Converter.h"
+#include "Converter.h"
 
+#include <string>
 #include <boost/shared_ptr.hpp>
 
 namespace rsb {
-namespace transport {
+namespace converter {
 
 /**
- * Fulfill the interface... Converts nothing to nothing. ;)
+ * Converter for bool.
  *
  * @author jwienke
  */
-class VoidConverter: public rsb::transport::Converter<std::string> {
+class BoolConverter: public Converter<std::string> {
 public:
-	VoidConverter();
-	virtual ~VoidConverter();
+
+	BoolConverter();
+	virtual ~BoolConverter();
 
 	std::string serialize(const AnnotatedData &data, std::string &wire);
-	AnnotatedData deserialize(const std::string &wireType,
+	AnnotatedData deserialize(const std::string &wireSchema,
 			const std::string &wire);
 
 private:
-	static const std::string TYPE;
+	static const std::string WIRE_SCHEMA;
 
 };
 
-typedef boost::shared_ptr<VoidConverter> VoidConverterPtr;
+typedef boost::shared_ptr<BoolConverter> BoolConverterPtr;
 
 }
 }
-
