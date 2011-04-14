@@ -26,6 +26,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "Event.h"
+#include "Participant.h"
 #include "Subscription.h"
 #include "eventprocessing/Router.h"
 #include "transport/Connector.h"
