@@ -41,7 +41,7 @@ int main(void) {
 	LoggerPtr l = Logger::getLogger("informer");
 
 	Informer<string>::Ptr informer = factory.createInformer<string> (
-			"rsb://example/informer", "string");
+			"rsb://example/informer");
 	Informer<string>::DataPtr s(new string("blub"));
 
 	boost::timer t;
@@ -55,4 +55,3 @@ int main(void) {
 
 	return EXIT_SUCCESS;
 }
-
