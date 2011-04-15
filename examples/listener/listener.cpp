@@ -40,44 +40,29 @@ using namespace rsc::misc;
 using namespace rsb;
 using namespace rsb::filter;
 
-class MyDataHandler: public DataHandler<string> {
-public:
-	MyDataHandler() {
-	}
-
-	void notify(boost::shared_ptr<string> e) {
-		cout << *e << endl;
-	}
-
-};
+void printData(boost::shared_ptr<string> e) {
+        cout << *e << endl;
+}
 
 int main(int argc, char **argv) {
 
-	Factory &factory = Factory::getInstance();
+        Factory &factory = Factory::getInstance();
 
 	LoggerPtr l = Logger::getLogger("receiver");
 
 	boost::timer t;
 
-	ListenerPtr s = factory.createListener("blub");
-	SubscriptionPtr sub(new Subscription());
 	string uri;
 	if (argc > 1) {
 		uri = argv[1];
 	} else {
 		uri = "rsb://example/informer";
 	}
-	sub->appendFilter(FilterPtr(new ScopeFilter(uri)));
-
-	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
-
-	// register event handler
-	sub->appendHandler(dh);
-
-	s->addSubscription(sub);
+	ListenerPtr s = factory.createListener(uri);
+	s->appendHandler(HandlerPtr(new DataFunctionHandler<string>(&printData)));
 
 	cerr << "Listener setup finished. Waiting for messages on uri " << uri
-			<< endl;
+	     << endl;
 
 	while (true) {
 		boost::this_thread::sleep(boost::posix_time::seconds(1000));

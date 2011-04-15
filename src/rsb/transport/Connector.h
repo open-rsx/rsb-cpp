@@ -19,22 +19,18 @@
 
 #pragma once
 
-#include <map>
-
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/misc/UUID.h>
 
 #include "../Event.h"
-#include "../Action.h"
+#include "../Handler.h"
 #include "../filter/FilterObserver.h"
 #include "../QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
-
-typedef boost::shared_ptr<std::map<void *, rsb::Action> > ActionListPtr;
 
 /**
  * @author swrede
@@ -47,15 +43,11 @@ public:
 	virtual void activate() = 0;
 	virtual void deactivate() = 0;
 
-	virtual void push(rsb::EventPtr e) = 0;
+	virtual void push(EventPtr e) = 0;
 
 	// Observer may implement complex event matching
 	// or be just directly the user-level event handlers
-	virtual void setObserver(rsb::Action a);
-	/**
-	 * @todo add impl for mutiple observers
-	 */
-	virtual void removeObserver(rsb::Action a);
+	virtual void setObserver(HandlerPtr observer);
 
 	/**
 	 * Requests new QoS settings for publishing events. Does not influence the
@@ -68,13 +60,10 @@ public:
 
 protected:
 	rsc::misc::UUID id;
-	rsb::Action observer;
-	//ActionListPtr actions;
-
+	HandlerPtr observer;
 };
 
 typedef boost::shared_ptr<Connector> ConnectorPtr;
 
 }
 }
-

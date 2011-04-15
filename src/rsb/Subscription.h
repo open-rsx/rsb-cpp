@@ -31,21 +31,20 @@
 
 namespace rsb {
 
-typedef boost::function<void(EventPtr)> Action;
-// Q: Does it make sense to wrap boost::function in a shared_ptr?
-
 typedef std::list<rsb::filter::FilterPtr> FilterChain;
-typedef std::list<Action> Actions;
 
 /**
- * A Subscription, used by a @ref rsb::Listener. By appending an @ref rsb::filter::Filter to the
- * Subscription, one makes sure only events of a certain types are recognized.
- * Appending a Handler is necessary to work with the data received.
+ * Each Subscription object is associated to a @ref
+ * rsb::Listener. Appending a @ref rsb::filter::Filter to the
+ * subscription restricts received events to those matching the new
+ * filter in addition to all already installed filters.
  *
- * The following example shows using a Subscription using a ScopeFilter (assume
- * the same uri is used as for the Listener) and a QueuePushHandler as a
- * Handler which pushes the received events to a given queue:
+ * The following example shows using a Subscription using a @ref
+ * rsb::filter::ScopeFilter (assume the same uri is used as for the
+ * Listener) and a @ref rsb::QueuePushHandler as a @ref rsb::Handler
+ * which pushes the received events to a given queue:
  *
+ * @todo update this
  * @code
  * Subscription subscription = new Subscription();
  * FilterPtr f(new ScopeFilter("rsb://example/informer"));
@@ -77,28 +76,9 @@ public:
 	virtual bool match(EventPtr e);
 
 	/**
-	 * Registers a function bound with boost::bind as a handler.
-	 *
-	 * @param a boost::bind function to use as a handler
-	 */
-	virtual void appendAction(Action a);
-
-	/**
-	 * Appends a Handler to the Subscription. After events are filtered, all
-	 * handlers of a subscription are informed about the event.
-	 *
-	 * @param h a Pointer to the Handler.
-	 */
-	virtual void appendHandler(HandlerPtr h);
-
-	/**
 	 * @todo check if it is generally better to return iterators?!
 	 */
 	boost::shared_ptr<FilterChain> getFilters();
-
-	boost::shared_ptr<std::set<HandlerPtr> > getHandlers();
-
-	void removeHandler(HandlerPtr h);
 
 	bool isEnabled();
 
@@ -111,8 +91,6 @@ private:
 	volatile bool enabled;
 	rsc::misc::UUID id;
 	boost::shared_ptr<FilterChain> filters;
-	boost::shared_ptr<std::set<HandlerPtr> > handlers;
-
 };
 
 typedef boost::shared_ptr<Subscription> SubscriptionPtr;
@@ -124,4 +102,3 @@ RSB_EXPORT std::ostream
 &operator<<(std::ostream &stream, const Subscription &subscription);
 
 }
-

@@ -82,21 +82,13 @@ void InProcessConnector::push(EventPtr e) {
 	// localize dispatching in matching subsystem, don't make these ports here to complicated...
 	// decide this based on considerations of pattern implementation / configuration examples
 
-	action(e);
-}
-
-void InProcessConnector::setObserver(Action a) {
-	action = a;
-}
-
-void InProcessConnector::removeObserver(Action /*a*/) {
-	action.clear();
+	this->observer->handle(e);
 }
 
 /**
  * @todo implement this!
  */
-void InProcessConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+void InProcessConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
 
 }
 

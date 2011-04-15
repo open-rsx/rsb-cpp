@@ -28,6 +28,7 @@
 #include "Event.h"
 #include "Participant.h"
 #include "Subscription.h"
+#include "Handler.h"
 #include "eventprocessing/Router.h"
 #include "transport/Connector.h"
 #include "rsb/rsbexports.h"
@@ -35,24 +36,22 @@
 namespace rsb {
 
 /**
- * A Listener subscribes to published events by a @ref rsb::Informer by maintaining
- * several @ref rsb::Subscription instances. Subscriptions must at least provide a @ref rsb::filter::ScopeFilter
- * to inform the listener about the desired events to receive.
+ * A Listener receives events published by @ref rsb::Informer objects
+ * by participating in a channel with a suitable scope. The filters
+ * can be added to the associated @ref rsb::Subscription object to
+ * reduce the set of events received by a listener. @ref Handler
+ * objects have to be added to the listener to actually process
+ * received events.
  *
  * Usage example:
  * @code
- * ListenerPtr s(new Listener("blub"));
- * SubscriptionPtr sub(new Subscription());
- * FilterPtr f(new ScopeFilter("rsb://example/informer"));
- * sub->appendFilter(f);
+ * ListenerPtr s(new Listener("rsb://example/informer"));
  * boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
- * sub->appendHandler(dh);
- * s->addSubscription(sub);
+ * s->appendHandler(dh);
  * @endcode
  *
  * @author swrede
  *
- * @todo refactor commonalities of participants into a participant ?!? class
  * @todo how to deal with IDs of listeners? (it must be possible to reference them internally somehow
  * @todo use templates in subscriptions only? (however, they need the event info)
  */
@@ -60,16 +59,19 @@ class RSB_EXPORT Listener : public Participant {
 public:
 
 	/**
-	 * Constructs a new Listener assigned to the specified uri. The Listener
-	 * opens a @ref rsb::eventprocessing::Router to ConnectorType Spread and is activated after construction.
+	 * Constructs a new Listener assigned to the specified
+	 * uri. The Listener opens a @ref rsb::eventprocessing::Router
+	 * to ConnectorType Spread and is activated after
+	 * construction.
 	 *
 	 * @param uri the uri where the data is published.
 	 */
 	Listener(const std::string &uri);
 
 	/**
-	 * Constructs a new Listener assigned to the specified uri. The Listener
-	 * opens a @ref rsb::eventprocessing::Router to a ConnectorType specified and is activated after
+	 * Constructs a new Listener assigned to the specified
+	 * uri. The Listener opens a @ref rsb::eventprocessing::Router
+	 * to a ConnectorType specified and is activated after
 	 * construction.
 	 *
 	 * @param uri the uri where the data is published.
@@ -93,19 +95,38 @@ public:
 	void deactivate();
 
 	/**
-	 * Adds a Subscription to the Listener.
-	 *
-	 * @param s a Pointer to the Subscription added.
+	 * Return the associated @ref rsb::Subscription of the
+	 * listener.
+         *
+         * @todo the return value should be immutable or a copy
 	 */
-	void addSubscription(SubscriptionPtr s);
+        SubscriptionPtr
+        getSubscription();
+
+        /**
+         * Replace the associated @ref rsb::Subscription of the listener.
+         *
+         * @param subscription the new subscription.
+         */
+        void
+        setSubscription(SubscriptionPtr subscription);
+
+        /**
+         * @note modifying the returned set object does not affect the
+         * listener's actual set of handlers.
+         */
+        std::set<HandlerPtr> getHandlers() const;
 
 	/**
-	 * Removes a Subscription to the Listener.
+	 * Appends a @ref rsb::Handler to the Listener. Events which
+	 * match the restrictions described by the associated
+         * @ref rsb::Subscription are passed to all handlers.
 	 *
-	 * @param s a Pointer to the Subscription removed.
+	 * @param h a Pointer to the Handler.
 	 */
-	void removeSubscription(SubscriptionPtr s);
+	virtual void appendHandler(HandlerPtr h);
 
+	void removeHandler(HandlerPtr h);
 protected:
 
 	/**
@@ -114,11 +135,16 @@ protected:
 	Listener();
 
 private:
-	rsc::logging::LoggerPtr logger;
-	std::string uri;
-	volatile bool passive;
+	rsc::logging::LoggerPtr    logger;
+	std::string                uri;
+	volatile bool              passive;
+        SubscriptionPtr            subscription;
+        std::set<HandlerPtr>       handlers;
 	eventprocessing::RouterPtr router;
 
+        void
+        initialize(transport::Factory::ConnectorTypes in,
+                   const std::string& scope);
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;

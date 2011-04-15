@@ -83,14 +83,9 @@ void SpreadConnector::activate() {
 	//exec->schedule(st);
 }
 
-void SpreadConnector::setObserver(Action a) {
-	observer = a;
-	rec->setAction(a);
-}
-
-void SpreadConnector::removeObserver(Action /*a*/) {
-	observer.clear();
-	rec->setAction(Action());
+void SpreadConnector::setObserver(HandlerPtr observer) {
+	this->observer = observer;
+	rec->setHandler(observer);
 }
 
 void SpreadConnector::deactivate() {

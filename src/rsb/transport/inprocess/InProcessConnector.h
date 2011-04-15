@@ -44,22 +44,14 @@ public:
 	void deactivate();
 	void push(rsb::EventPtr e);
 
-	// Observer may implement complex event matching
-	// or be just directly the user-level event handlers
-	void setObserver(Action a);
-	void removeObserver(Action a);
-
 	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
 private:
 	volatile bool shutdown;
 
 	rsc::threading::TaskExecutorPtr exec;
-	boost::shared_ptr<StatusTask> st;
-	Action action;
-
+	boost::shared_ptr<StatusTask>	st;
 };
 
 }
 }
-

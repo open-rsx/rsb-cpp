@@ -44,13 +44,13 @@ using namespace rsb;
 using namespace rsb::filter;
 using namespace boost::posix_time;
 
-class MyDataHandler: public EventHandler {
+class MyDataHandler: public Handler {
 public:
 	MyDataHandler() {
 		counter = 0;
 	}
 
-	void notify(EventPtr e) {
+	void handle(EventPtr e) {
 
 		counter++;
 		ptime receiveTime = microsec_clock::local_time();
@@ -78,33 +78,26 @@ public:
 
 int main(int argc, char **argv) {
 
-	Factory &factory = Factory::getInstance();
+        Factory &factory = Factory::getInstance();
 
 	LoggerPtr l = Logger::getLogger("receiver");
 
 	boost::timer t;
 
-	ListenerPtr s = factory.createListener("blub");
-	SubscriptionPtr sub(new Subscription());
-	string uri;
-	if (argc > 1) {
-		uri = argv[1];
-	} else {
-		uri = "rsb://example/informer";
-	}
-	sub->appendFilter(FilterPtr(new ScopeFilter(uri)));
+        string uri;
+        if (argc > 1) {
+                uri = argv[1];
+        } else {
+                uri = "rsb://example/informer";
+        }
+        ListenerPtr s = factory.createListener(uri);
+        s->appendHandler(HandlerPtr(new MyDataHandler()));
 
-	boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
-
-	// register event handler
-	sub->appendHandler(dh);
-	s->addSubscription(sub);
-
-	cout << "Listener setup finished. Waiting for messages on uri " << uri
-			<< endl;
-	while (true) {
-		boost::this_thread::sleep(boost::posix_time::seconds(1000));
-	}
+        cout << "Listener setup finished. Waiting for messages on uri " << uri
+             << endl;
+        while (true) {
+                boost::this_thread::sleep(boost::posix_time::seconds(1000));
+        }
 
 	return (EXIT_SUCCESS);
 }

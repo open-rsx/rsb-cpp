@@ -18,7 +18,6 @@
  * ============================================================ */
 
 #include "rsb/Handler.h"
-#include "rsb/Action.h"
 
 #include <boost/bind.hpp>
 #include <iostream>
@@ -29,33 +28,24 @@ using namespace std;
 using namespace rsb;
 using namespace testing;
 
-class MyEventHandler: public EventHandler {
-public:
+void printEvent(EventPtr e) {
+        cout << "Event received: " << e->getUUID().getIdAsString() << endl;
+}
 
-	void notify(EventPtr e) {
-		cout << "Event received: " << e->getUUID().getIdAsString() << endl;
-	}
-};
-
-class MyDataHandler: public DataHandler<string> {
-public:
-
-	void notify(boost::shared_ptr<string> e) {
-		cout << "Data received: " << *e << endl;
-	}
-};
+void printData(boost::shared_ptr<string> e) {
+        cout << "Data received: " << *e << endl;
+}
 
 TEST(HandlerTest, testDispatch)
 {
-	EventHandler* eh = new MyEventHandler();
-	DataHandler<string>* dh = new MyDataHandler();
-	rsb::Action ea = boost::bind(&Handler::internal_notify, eh, _1);
-	rsb::Action da = boost::bind(&Handler::internal_notify, dh, _1);
+	HandlerPtr eh(new EventFunctionHandler(boost::bind(&printEvent, _1)));
+        HandlerPtr dh(new DataFunctionHandler<string>(boost::bind(&printData, _1)));
+
 	EventPtr e(new Event());
 	e->setData(boost::shared_ptr<string>(new string("blub")));
 	e->setURI("blah");
 	// TODO Check that exception is thrown if no converter available!
 	e->setType("string");
-	ea(e);
-	da(e);
+	eh->handle(e);
+	dh->handle(e);
 }

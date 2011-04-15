@@ -33,13 +33,12 @@ namespace eventprocessing {
 Router::Router(Factory::ConnectorTypes inType,
 		Factory::ConnectorTypes outType) :
 	logger(Logger::getLogger("rsb.transport.Router")) {
-	inConnector = Factory::createConnector(inType);
-	outConnector = Factory::createConnector(outType);
+	inConnector = transport::Factory::createConnector(inType);
+	outConnector = transport::Factory::createConnector(outType);
 	if (inConnector) {
 		eventProcessingStrategy = EventProcessingStrategyPtr(new EventProcessingStrategy());
 		// add event processor as observer to input port(s)
-		inConnector->setObserver(
-				boost::bind(&EventProcessingStrategy::process, eventProcessingStrategy, _1));
+		inConnector->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&EventProcessingStrategy::process, eventProcessingStrategy, _1))));
 	}
 	shutdown = false;
 }
@@ -81,11 +80,11 @@ void Router::notifyConnectors(rsb::SubscriptionPtr s,
 	}
 }
 
-void Router::subscribe(rsb::SubscriptionPtr s) {
+void Router::subscribe(rsb::SubscriptionPtr s, set<HandlerPtr> handlers) {
 	// notify ports about new subscription
 	notifyConnectors(s, rsb::filter::FilterAction::ADD);
 	// TODO missing check if there really is an inport and ep
-	eventProcessingStrategy->subscribe(s);
+	eventProcessingStrategy->subscribe(s, handlers);
 }
 
 void Router::unsubscribe(rsb::SubscriptionPtr s) {
@@ -116,4 +115,3 @@ ConnectorPtr Router::getInConnector() {
 
 }
 }
-

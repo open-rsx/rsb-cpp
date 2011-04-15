@@ -74,7 +74,7 @@ TEST(SpreadConnectorTest, testRoundtrip)
 	const unsigned int numEvents = 1;
 	boost::shared_ptr<InformerTask> source(new InformerTask(p, numEvents));
 	WaitingObserver observer(numEvents);
-	p->setObserver(boost::bind(&WaitingObserver::handler, &observer, _1));
+	p->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
 	// activate port and schedule informer
 	p->activate();

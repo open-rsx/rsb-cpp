@@ -25,70 +25,72 @@ namespace rsb {
 namespace eventprocessing {
 
 EventProcessingStrategy::EventProcessingStrategy() :
-	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")), pool(5,
-			boost::bind(&EventProcessingStrategy::deliver, this, _1, _2), boost::bind(
-					&EventProcessingStrategy::filter, this, _1, _2)) {
+	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")),
+	pool(5,
+	     boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
+	     boost::bind(&EventProcessingStrategy::filter,  this, _1, _2)) {
 	pool.start();
 }
 
 EventProcessingStrategy::EventProcessingStrategy(unsigned int num_threads) :
-	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")), pool(
-			num_threads, boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
-			boost::bind(&EventProcessingStrategy::filter, this, _1, _2)) {
+	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")),
+        pool(num_threads,
+             boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
+             boost::bind(&EventProcessingStrategy::filter,  this, _1, _2)) {
 	pool.start();
 }
 
 EventProcessingStrategy::~EventProcessingStrategy() {
 }
 
-bool EventProcessingStrategy::filter(SubscriptionPtr sub, EventPtr e) {
-	RSCDEBUG(logger, "Matching event " << *e << " for subscription " << *sub);
+bool EventProcessingStrategy::filter(DispatchUnitPtr dispatch, EventPtr e) {
+	RSCDEBUG(logger, "Matching event " << *e << " for subscription " << *dispatch->first);
 
-	if (!sub->isEnabled()) {
+	if (!dispatch->first->isEnabled()) {
 		return false;
 	}
 
 	bool match = false;
 	// match event
 	try {
-		match = sub->match(e);
+		match = dispatch->first->match(e);
 	} catch (const exception& ex) {
 		// TODO probably disable this subscription
 		RSCFATAL(logger, "Exception matching event " << *e
-				<< " for subscription " << *sub << ":" << ex.what());
+				<< " for subscription " << *dispatch->first << ":" << ex.what());
 	} catch (...) {
 		RSCFATAL(logger, "Catch-all exception matching event " << *e
-				<< " for subscription " << *sub);
+				<< " for subscription " << *dispatch->first);
 	}
 
 	return match;
 
 }
 
-void EventProcessingStrategy::deliver(SubscriptionPtr sub, EventPtr e) {
-	RSCDEBUG(logger, "Delivering event " << *e << " for subscription " << *sub);
+void EventProcessingStrategy::deliver(DispatchUnitPtr dispatch, EventPtr e) {
+	RSCDEBUG(logger, "Delivering event " << *e << " for subscription " << *dispatch->first);
 
-	if (!sub->isEnabled()) {
+	if (!dispatch->first->isEnabled()) {
 		return;
 	}
 
 	try {
 
-		boost::shared_ptr<set<HandlerPtr> > handlers = sub->getHandlers();
+		const set<HandlerPtr>& handlers = dispatch->second;
 		RSCTRACE(logger, "Match and subscriber is enabled, dispatching to "
-				<< handlers->size() << " handlers");
-		for (set<HandlerPtr>::iterator handlerIt = handlers->begin(); handlerIt
-				!= handlers->end(); ++handlerIt) {
-			(*handlerIt)->internal_notify(e);
+				<< handlers.size() << " handlers");
+		for (set<HandlerPtr>::const_iterator handlerIt = handlers.begin(); handlerIt
+				!= handlers.end(); ++handlerIt) {
+			(*handlerIt)->handle(e);
 		}
 
 	} catch (const exception& ex) {
 		// TODO probably disable this subscription
 		RSCFATAL(logger, "Exception delivering event " << *e
-				<< " to subscription " << *sub << ":" << ex.what());
+                         << " to subscription " << *dispatch->first << ":" << ex.what());
 	} catch (...) {
 		RSCFATAL(logger, "Catch-all exception delivering event " << *e
-				<< " to subscription " << *sub);
+                         << " to subscription " << *dispatch->first);
 	}
 
 }
@@ -97,13 +99,15 @@ void EventProcessingStrategy::process(EventPtr e) {
 	pool.push(e);
 }
 
-void EventProcessingStrategy::subscribe(SubscriptionPtr s) {
-	pool.registerReceiver(s);
+void EventProcessingStrategy::subscribe(SubscriptionPtr s,
+                                        set<HandlerPtr> handlers) {
+	pool.registerReceiver(DispatchUnitPtr(new DispatchUnit(s, handlers)));
 }
 void EventProcessingStrategy::unsubscribe(SubscriptionPtr s) {
 	// TODO subscriptions need to be made thread-safe
 	s->disable();
-	pool.unregisterReceiver(s);
+	//pool.unregisterReceiver(s); // FIXME fix this
+        throw std::runtime_error("not implemented");
 }
 
 }

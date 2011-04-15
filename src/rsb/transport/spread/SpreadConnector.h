@@ -51,8 +51,7 @@ public:
 	void activate();
 	void deactivate();
 
-	void setObserver(rsb::Action a);
-	void removeObserver(rsb::Action a);
+	void setObserver(HandlerPtr handler);
 
 	void notify(rsb::filter::ScopeFilter* f,
 			const rsb::filter::FilterAction::Types &at);
@@ -91,11 +90,9 @@ private:
 
 	static QoSMap buildQoSMapping();
 
-	Action observer;
-
+	HandlerPtr observer;
 };
 
 }
 
 }
-

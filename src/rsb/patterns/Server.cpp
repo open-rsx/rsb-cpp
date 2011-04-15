@@ -23,6 +23,7 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "../Factory.h"
 #include "MethodExistsException.h"
 
 using namespace std;
@@ -30,7 +31,7 @@ using namespace std;
 namespace rsb {
 namespace patterns {
 
-class RequestHandler: public EventHandler {
+class RequestHandler: public Handler {
 private:
 
 	rsc::logging::LoggerPtr logger;
@@ -48,7 +49,7 @@ public:
 				informer(informer) {
 	}
 
-	void notify(EventPtr event) {
+	void handle(EventPtr event) {
 
 		const string requestIdKey = "ServerRequestId";
 
@@ -93,7 +94,7 @@ public:
 };
 
 Server::Server(const std::string &uri) :
-	uri(uri), requestListener(new Listener(uri + "-request")) {
+        uri(uri) {
 }
 
 Server::~Server() {
@@ -110,15 +111,11 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
 	Informer<void>::Ptr informer(new Informer<void> (uri + "-reply-"
 			+ methodName, callback->getReplyType()));
 
-	SubscriptionPtr subscription(new Subscription);
-	subscription->appendFilter(filter::FilterPtr(
-			new filter::ScopeFilter(uri + "-request-" + methodName)));
-	subscription->appendHandler(HandlerPtr(new RequestHandler(methodName,
-			callback, informer)));
-	requestListener->addSubscription(subscription);
+	ListenerPtr listener(Factory::getInstance().createListener(uri + "-request-" + methodName));
+	listener->appendHandler(HandlerPtr(new RequestHandler(methodName, callback, informer)));
+	this->requestListeners.insert(listener);
 
-	methods[methodName] = make_pair(subscription, informer);
-
+	methods[methodName] = make_pair(listener->getSubscription(), informer);
 }
 
 }

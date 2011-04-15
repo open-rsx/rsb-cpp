@@ -49,18 +49,23 @@ TEST(EventProcessingStrategyTest, testProcessing)
 	SubscriptionPtr okSubscription(new Subscription);
 	const string okScope = "OK";
 	okSubscription->appendFilter(FilterPtr(new ScopeFilter(okScope)));
-	okSubscription->appendHandler(okHandler);
-	processor.subscribe(okSubscription);
+        {
+                set<HandlerPtr> handlers;
+                handlers.insert(okHandler);
+                processor.subscribe(okSubscription, handlers);
+        }
 
 	boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > >
 			wrongQueue(new SynchronizedQueue<boost::shared_ptr<string> > );
 	HandlerPtr wrongHandler(new QueuePushHandler<string> (wrongQueue));
 	SubscriptionPtr wrongSubscription(new Subscription);
 	const string wrongScope = "WRONG";
-	wrongSubscription->appendFilter(FilterPtr(new ScopeFilter(
-			wrongScope)));
-	wrongSubscription->appendHandler(wrongHandler);
-	processor.subscribe(wrongSubscription);
+	wrongSubscription->appendFilter(FilterPtr(new ScopeFilter(wrongScope)));
+	{
+                set<HandlerPtr> handlers;
+                handlers.insert(wrongHandler);
+                processor.subscribe(wrongSubscription, handlers);
+	}
 
 	EventPtr event(new Event);
 	event->setURI(okScope);

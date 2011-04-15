@@ -26,12 +26,14 @@
 
 #include <rsc/misc/UUID.h>
 
+#include "../Handler.h"
+
 using namespace std;
 
 namespace rsb {
 namespace patterns {
 
-class WaitingEventHandler: public EventHandler {
+class WaitingEventHandler: public Handler {
 private:
 
 	rsc::logging::LoggerPtr logger;
@@ -48,7 +50,7 @@ public:
 		logger(logger) {
 	}
 
-	void notify(EventPtr event) {
+	void handle(EventPtr event) {
 		{
 			boost::mutex::scoped_lock lock(mutex);
 			if (event && event->hasMetaInfo("ServerRequestId")
@@ -127,13 +129,9 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 		// start a listener to wait for the reply
 		const string replyUri = uri + "-reply-" + methodName;
 		ListenerPtr listener(new Listener(replyUri));
-		SubscriptionPtr subscription(new Subscription);
-		subscription->appendFilter(filter::FilterPtr(
-				new filter::ScopeFilter(replyUri)));
 		boost::shared_ptr<WaitingEventHandler> handler(new WaitingEventHandler(
 				logger));
-		subscription->appendHandler(handler);
-		listener->addSubscription(subscription);
+		listener->appendHandler(handler);
 
 		// informer for requests
 		Informer<void>::Ptr informer(new Informer<void> (uri + "-request-"
@@ -144,7 +142,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 		set.sendType = sendType;
 		set.handler = handler;
 		set.replyListener = listener;
-		set.replySubscription = subscription;
+		set.replySubscription = listener->getSubscription();
 		set.requestInformer = informer;
 
 		methodSets[methodName] = set;

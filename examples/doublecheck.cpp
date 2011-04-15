@@ -28,60 +28,41 @@ using namespace std;
 using namespace rsb;
 using namespace rsb::filter;
 
-class PrintHandler: public DataHandler<string> {
-private:
-	string name;
-public:
-	PrintHandler(const string &name) :
-		name(name) {
-	}
-
-	void notify(boost::shared_ptr<string> e) {
-		cout << "[" << name << "] received: " << *e << endl;
-	}
-};
+void printData(const std::string&        name,
+	       boost::shared_ptr<string> e) {
+  cout << "[" << name << "] received: " << *e << endl;
+}
 
 int main(int /*argc*/, char **/*argv*/) {
 
-	Factory &factory = Factory::getInstance();
+        Factory &factory = Factory::getInstance();
 
-	for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 3; ++i) {
 
-		string uri1 = "rsb;//test/dummy1";
-		string uri2 = "rsb;//test/dummy2";
+                string uri1 = "rsb;//test/dummy1";
+                string uri2 = "rsb;//test/dummy2";
 
-		Informer<string>::Ptr informer1 = factory.createInformer<string> (
-				uri1);
-		Informer<string>::Ptr informer2 = factory.createInformer<string> (
-				uri2);
+                Informer<string>::Ptr informer1 = factory.createInformer<string> (
+                        uri1);
+                Informer<string>::Ptr informer2 = factory.createInformer<string> (
+                        uri2);
 
-		ListenerPtr listener1 = factory.createListener(uri1);
-		ListenerPtr listener2 = factory.createListener(uri2);
+                ListenerPtr listener1 = factory.createListener(uri1);
+                listener1->appendHandler(HandlerPtr(new DataFunctionHandler<string>(boost::bind(&printData, "sub1", _1))));
 
-		SubscriptionPtr sub1(new Subscription);
-		sub1->appendFilter(FilterPtr(new ScopeFilter(uri1)));
-		sub1->appendHandler(HandlerPtr(new PrintHandler("sub1")));
-		listener1->addSubscription(sub1);
+                ListenerPtr listener2 = factory.createListener(uri2);
+                listener2->appendHandler(HandlerPtr(new DataFunctionHandler<string>(boost::bind(&printData, "sub2", _1))));
 
-		SubscriptionPtr sub2(new Subscription);
-		sub2->appendFilter(FilterPtr(new ScopeFilter(uri2)));
-		sub2->appendHandler(HandlerPtr(new PrintHandler("sub2")));
-		listener2->addSubscription(sub2);
+                informer1->publish(Informer<string>::DataPtr(new string("informer1 first message")));
+                informer1->publish(Informer<string>::DataPtr(new string("informer1 second message")));
 
-		informer1->publish(Informer<string>::DataPtr(new string(
-				"informer1 first message")));
-		informer1->publish(Informer<string>::DataPtr(new string(
-				"informer1 second message")));
+                informer2->publish(Informer<string>::DataPtr(new string("informer2 first message")));
+                informer2->publish(Informer<string>::DataPtr(new string("informer2 second message")));
 
-		informer2->publish(Informer<string>::DataPtr(new string(
-				"informer2 first message")));
-		informer2->publish(Informer<string>::DataPtr(new string(
-				"informer2 second message")));
+                boost::this_thread::sleep(boost::posix_time::seconds(2));
 
-		boost::this_thread::sleep(boost::posix_time::seconds(2));
+        }
 
-	}
-
-	return EXIT_SUCCESS;
+        return EXIT_SUCCESS;
 
 }

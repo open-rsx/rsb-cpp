@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <set>
 #include <map>
 #include <string>
 
@@ -129,7 +130,7 @@ private:
 
 	std::string uri;
 
-	ListenerPtr requestListener;
+        std::set<ListenerPtr> requestListeners;
 
 	std::map<std::string, std::pair<SubscriptionPtr, Informer<void>::Ptr> >
 			methods;
@@ -140,4 +141,3 @@ typedef boost::shared_ptr<Server> ServerPtr;
 
 }
 }
-

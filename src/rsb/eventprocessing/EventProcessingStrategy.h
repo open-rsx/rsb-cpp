@@ -50,26 +50,27 @@ public:
 	virtual ~EventProcessingStrategy();
 
 	// if invoked, the event is dispatched to listeners, typically called by ports
-    void process(rsb::EventPtr e);
+        void process(rsb::EventPtr e);
 
-    // add a subscription
-    void subscribe(rsb::SubscriptionPtr s);
+        // add a subscription and associated handlers
+        void subscribe(rsb::SubscriptionPtr s,
+                       std::set<HandlerPtr> handlers);
 
-    // unsubscribe a subscription
-    void unsubscribe(rsb::SubscriptionPtr s);
-
+        // unsubscribe a subscription
+        void unsubscribe(rsb::SubscriptionPtr s);
 private:
+        typedef std::pair< rsb::SubscriptionPtr, std::set<HandlerPtr> > DispatchUnit;
+        typedef boost::shared_ptr<DispatchUnit>                         DispatchUnitPtr;
 
-    bool filter(SubscriptionPtr sub, EventPtr e);
-    void deliver(SubscriptionPtr sub, EventPtr e);
+        bool filter(DispatchUnitPtr  dispatch, EventPtr event);
+        void deliver(DispatchUnitPtr dispatch, EventPtr event);
 
-    // TODO make list subscriptions
-    rsc::logging::LoggerPtr logger;
-	rsc::threading::OrderedQueueDispatcherPool<EventPtr, Subscription> pool;
+        // TODO make list subscriptions
+        rsc::logging::LoggerPtr logger;
+        rsc::threading::OrderedQueueDispatcherPool<EventPtr, DispatchUnit> pool;
 };
 
 typedef boost::shared_ptr<EventProcessingStrategy> EventProcessingStrategyPtr;
 
 }
 }
-

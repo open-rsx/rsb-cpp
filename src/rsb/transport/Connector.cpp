@@ -28,11 +28,8 @@ Connector::Connector() {
 Connector::~Connector() {
 }
 
-void Connector::setObserver(rsb::Action a) {
-	observer = a;
-}
-void Connector::removeObserver(rsb::Action /*a*/) {
-	observer = NULL;
+void Connector::setObserver(HandlerPtr observer) {
+	this->observer = observer;
 }
 
 }

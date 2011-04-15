@@ -18,63 +18,31 @@
  * ============================================================ */
 
 #include "Subscription.h"
-#include <boost/bind.hpp>
 
 using namespace std;
 
 namespace rsb {
 
-/**
- * Adapter from function-based Action to EventHandler.
- *
- * @author jwienke
- */
-class ActionAdapter: public EventHandler {
-private:
-
-	Action a;
-
-public:
-
-	ActionAdapter(Action a) :
-		a(a) {
-	}
-
-	void notify(EventPtr event) {
-		a(event);
-	}
-
-};
-
 Subscription::Subscription() :
 	enabled(true) {
 	filters = boost::shared_ptr<FilterChain>(new FilterChain());
-	handlers = boost::shared_ptr<set<HandlerPtr> >(new set<HandlerPtr> ());
 }
 
 Subscription::~Subscription() {
 }
 
 void Subscription::appendFilter(rsb::filter::FilterPtr p) {
-	filters->push_back(p);
-}
-
-void Subscription::appendHandler(HandlerPtr h) {
-	handlers->insert(h);
-}
-
-void Subscription::appendAction(Action a) {
-	handlers->insert(HandlerPtr(new ActionAdapter(a)));
+        filters->push_back(p);
 }
 
 bool Subscription::match(EventPtr e) {
-	try {
-		// call actions
-		for (FilterChain::iterator f = filters->begin(); f != filters->end(); ++f) {
-			if (!(*f)->match(e)) {
-				return false;
-			}
-		}
+        try {
+                // call actions
+                for (FilterChain::iterator f = filters->begin(); f != filters->end(); ++f) {
+                        if (!(*f)->match(e)) {
+                                return false;
+                        }
+                }
 
 	} catch (exception &e) {
 		throw e;
@@ -87,14 +55,6 @@ bool Subscription::match(EventPtr e) {
 
 boost::shared_ptr<FilterChain> Subscription::getFilters() {
 	return filters;
-}
-
-boost::shared_ptr<std::set<HandlerPtr> > Subscription::getHandlers() {
-	return handlers;
-}
-
-void Subscription::removeHandler(HandlerPtr h) {
-	handlers->erase(h);
 }
 
 bool Subscription::isEnabled() {

@@ -70,7 +70,6 @@ SET(HEADERS rsb/Version.h
             rsb/Participant.h
             rsb/Informer.h
             rsb/Listener.h
-            rsb/Action.h
             rsb/Handler.h
             rsb/Subscription.h
             rsb/QualityOfServiceSpec.h

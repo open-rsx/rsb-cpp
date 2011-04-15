@@ -65,8 +65,10 @@ public:
 	 * Add a subscription.
 	 *
 	 * @param s subscription to add
+         * @param handlers associated handlers
 	 */
-	void subscribe(rsb::SubscriptionPtr s);
+	void subscribe(rsb::SubscriptionPtr s,
+                       std::set<HandlerPtr> handlers);
 
 	/**
 	 * Unsubscribe a subscription.
@@ -116,4 +118,3 @@ typedef boost::shared_ptr<Router> RouterPtr;
 
 }
 }
-

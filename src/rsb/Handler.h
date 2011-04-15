@@ -20,6 +20,7 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
 
 #include "Event.h"
 #include "rsb/rsbexports.h"
@@ -27,89 +28,61 @@
 namespace rsb {
 
 /**
- * @author swrede
- */
-class RSB_EXPORT Handlers {
-public:
-	enum Type {
-		DATA, EVENT
-	};
-};
-
-/**
- * A handler is a "callback object" invoked by a @ref rsb::Listener when new data
- * is available that matches the @ref rsb::Subscription this handler is attached to.
+ * A handler is a "callback object" invoked by a @ref rsb::Listener
+ * when new data is available that matches the @ref rsb::Subscription
+ * associated to the listener.
  *
  * @author swrede
  */
 class RSB_EXPORT Handler {
 public:
+        virtual ~Handler();
 
-	Handler(const Handlers::Type &t);
-
-	virtual ~Handler();
-
-	// TODO make subscription a friend to hide this method from public API
-	virtual void internal_notify(EventPtr) = 0;
-
-protected:
-	Handlers::Type type;
+        virtual void handle(EventPtr) = 0;
 };
 
 typedef boost::shared_ptr<Handler> HandlerPtr;
 
+typedef boost::function<void(EventPtr)> EventFunction;
+
 /**
- * @author swrede
- * @todo makes even more sense if Event would be a template type
+ * A utility class to simplify event handling in ordinary functions or
+ * member functions. This class is primarily intended for use with
+ * Boost.Bind.
  */
-class RSB_EXPORT EventHandler: public Handler {
+class RSB_EXPORT EventFunctionHandler : public Handler {
 public:
+        EventFunctionHandler(const EventFunction& function);
 
-	EventHandler();
-	virtual ~EventHandler();
-
-	virtual void internal_notify(EventPtr e);
-
-	virtual void notify(EventPtr) = 0;
-
+        void handle(EventPtr event);
+protected:
+        EventFunction function;
 };
 
 /**
- * A utility class to simplify data handling by automatically passing the data
- * of the desired type to the notify() method.
+ * A utility class to simplify data handling by automatically passing
+ * the data of the desired type to a function. This class is primarily
+ * intended for use with Boost.Bind.
  *
  * @tparam T desired data type to retrieve from the listeners
+ *
  * @author swrede
  */
-template<class T>
-class DataHandler: public Handler {
+template <typename T>
+class DataFunctionHandler : public Handler {
 public:
+        typedef boost::shared_ptr<T>           DataPtr;
+        typedef boost::function<void(DataPtr)> DataFunction;
 
-	/**
-	 * Shared pointer of the target type.
-	 */
-	typedef boost::shared_ptr<T> DataPtr;
-
-	DataHandler() :
-		Handler(Handlers::DATA) {
+        DataFunctionHandler(const DataFunction& function)
+                : function(function) {
 	}
 
-	virtual ~DataHandler() {
+	void handle(EventPtr event) {
+                this->function(boost::static_pointer_cast<T>(event->getData()));
 	}
-
-	virtual void internal_notify(EventPtr e) {
-		boost::shared_ptr<T> d = boost::static_pointer_cast<T>(e->getData());
-		notify(d);
-	}
-
-	/**
-	 * Called if new data is available.
-	 *
-	 * @param data data of the desired type
-	 */
-	virtual void notify(DataPtr data) = 0;
-
+protected:
+	DataFunction function;
 };
 
 }
-

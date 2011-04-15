@@ -55,10 +55,11 @@ unsigned int DataStore::add(rsb::protocol::NotificationPtr n) {
 }
 
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
-		converter::Repository<string>::Ptr converters, const Action &action) :
+                           converter::Repository<string>::Ptr converters,
+                           HandlerPtr handler) :
 	logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
 			cancelRequested(false), con(s), converters(converters),
-			action(action) {
+			handler(handler) {
 	// Verify that the version of the library that we linked against is
 	// compatible with the version of the headers we compiled against.
 	//RSBINFO(logger, "Times (last cycle = " << timer->getElapsed()-timestamp << "ms)");
@@ -140,8 +141,8 @@ void ReceiverTask::execute() {
 						n->type_id(), *s);
 				e->setType(deserialized.first);
 				e->setData(deserialized.second);
-				if (action) {
-					action(e);
+				if (this->handler) {
+					this->handler->handle(e);
 				}
 				bigMsgComplete = false;
 			}
@@ -157,8 +158,8 @@ void ReceiverTask::execute() {
 
 }
 
-void ReceiverTask::setAction(const Action &action) {
-	this->action = action;
+void ReceiverTask::setHandler(HandlerPtr handler) {
+	this->handler = handler;
 }
 
 }

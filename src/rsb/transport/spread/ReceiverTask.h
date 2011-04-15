@@ -28,6 +28,7 @@
 #include "../../protocol/Notification.h"
 #include "../../converter/Repository.h"
 #include "../../Event.h"
+#include "../../Handler.h"
 #include "../Connector.h"
 #include "../../converter/Converter.h"
 #include "SpreadConnection.h"
@@ -66,19 +67,19 @@ class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
 	ReceiverTask(SpreadConnectionPtr s,
-			converter::Repository<std::string>::Ptr converters,
-			const Action &action);
+                     converter::Repository<std::string>::Ptr converters,
+                     HandlerPtr handler);
 	virtual ~ReceiverTask();
 
 	void execute();
-	void setAction(const Action &action);
+	void setHandler(HandlerPtr handler);
 
 private:
 	rsc::logging::LoggerPtr logger;
 	volatile bool cancelRequested;
 	SpreadConnectionPtr con;
 	converter::Repository<std::string>::Ptr converters;
-	Action action;
+	HandlerPtr handler;
 	std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
 	std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;
 
@@ -86,4 +87,3 @@ private:
 
 }
 }
-

@@ -21,22 +21,16 @@
 
 namespace rsb {
 
-Handler::Handler(const Handlers::Type &t) :
-	type(t) {
-}
-
 Handler::~Handler() {
 }
 
-EventHandler::EventHandler() :
-	Handler(Handlers::EVENT) {
+EventFunctionHandler::EventFunctionHandler(const EventFunction& function)
+        : function(function) {
 }
 
-EventHandler::~EventHandler() {
-}
-
-void EventHandler::internal_notify(EventPtr e) {
-	notify(e);
+void
+EventFunctionHandler::handle(EventPtr event) {
+        this->function(event);
 }
 
 }

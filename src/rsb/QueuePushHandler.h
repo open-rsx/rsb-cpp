@@ -28,16 +28,16 @@
 namespace rsb {
 
 /**
- * A DataHandler for RSB Subscriptions that pushes all received data on a
- * rsc::SynchronizedQueue. This queue must handle shared pointers of the data
- * type.
+ * A @ref rsb::Handler for @ref rsb::Listener s that pushes all
+ * received data on a @ref rsc::SynchronizedQueue. This queue must
+ * handle shared pointers of the data type.
  *
  * @author jwienke
  * @tparam T data type received by the handler. All data is handeled as a shared
  *           pointer of this type
  */
 template<class T>
-class QueuePushHandler: public DataHandler<T> {
+class QueuePushHandler: public Handler {
 private:
 	boost::shared_ptr<rsc::threading::SynchronizedQueue<boost::shared_ptr<T> > >
 			queue;
@@ -53,10 +53,9 @@ public:
 		queue(queue) {
 	}
 
-	void notify(boost::shared_ptr<T> e) {
-		queue->push(e);
+	void handle(EventPtr event) {
+		queue->push(boost::static_pointer_cast<T>(event->getData()));
 	}
 };
 
 }
-
