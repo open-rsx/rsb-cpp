@@ -51,9 +51,9 @@ int main(int /*argc*/, char **/*argv*/) {
 		string uri2 = "rsb;//test/dummy2";
 
 		Informer<string>::Ptr informer1 = factory.createInformer<string> (
-				uri1, "string");
+				uri1);
 		Informer<string>::Ptr informer2 = factory.createInformer<string> (
-				uri2, "string");
+				uri2);
 
 		ListenerPtr listener1 = factory.createListener(uri1);
 		ListenerPtr listener2 = factory.createListener(uri2);
@@ -85,4 +85,3 @@ int main(int /*argc*/, char **/*argv*/) {
 	return EXIT_SUCCESS;
 
 }
-
