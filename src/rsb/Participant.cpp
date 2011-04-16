@@ -21,13 +21,11 @@
 
 namespace rsb {
 
-Participant::Participant()
-        : uuid(rsc::misc::UUID::UUID()) {
+Participant::Participant() {
 }
 
-rsc::misc::UUID
-Participant::getUUID() const {
-        return this->uuid;
+rsc::misc::UUID Participant::getUUID() const {
+	return this->uuid;
 }
 
 }
