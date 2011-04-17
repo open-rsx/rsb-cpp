@@ -47,10 +47,12 @@ public:
 	virtual ~Factory();
 
 	template<class DataType>
-	typename Informer<DataType>::Ptr createInformer(const std::string &uri,
-			const std::string &dataType = rsc::runtime::typeName<DataType>()) {
-		return typename Informer<DataType>::Ptr(new Informer<DataType> (uri,
-				dataType));
+	typename Informer<DataType>::Ptr createInformer(
+			const std::string &uri,
+			const std::string &dataType = rsc::runtime::typeName(
+					typeid(DataType))) {
+		return typename Informer<DataType>::Ptr(
+				new Informer<DataType> (uri, dataType));
 	}
 
 	ListenerPtr createListener(const std::string &uri);
