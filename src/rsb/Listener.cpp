@@ -31,13 +31,13 @@ namespace rsb {
 Listener::Listener(const string &uri) :
 	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri),
 			passive(false) {
-        this->initialize(transport::Factory::SPREAD, uri);
+	this->initialize(transport::Factory::SPREAD, uri);
 }
 
 Listener::Listener(transport::Factory::ConnectorTypes in, const string &uri) :
 	logger(rsc::logging::Logger::getLogger("rsb.Listener")), uri(uri),
-        passive(false) {
-        this->initialize(in, uri);
+			passive(false) {
+	this->initialize(in, uri);
 }
 
 Listener::~Listener() {
@@ -46,15 +46,15 @@ Listener::~Listener() {
 	}
 }
 
-void
-Listener::initialize(transport::Factory::ConnectorTypes in,
-                     const std::string& scope) {
-        // TODO evaluate configuration
-        this->router = eventprocessing::RouterPtr(
-                new eventprocessing::Router(in, transport::Factory::NONE));
-        this->subscription.reset(new Subscription());
-        this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(scope)));
-        this->activate();
+void Listener::initialize(transport::Factory::ConnectorTypes in,
+		const std::string& scope) {
+	// TODO evaluate configuration
+	this->router = eventprocessing::RouterPtr(
+			new eventprocessing::Router(in, transport::Factory::NONE));
+	this->subscription.reset(new Subscription());
+	this->subscription->appendFilter(
+			filter::FilterPtr(new filter::ScopeFilter(scope)));
+	this->activate();
 }
 
 void Listener::activate() {
@@ -69,41 +69,41 @@ void Listener::deactivate() {
 	passive = true;
 }
 
-SubscriptionPtr
-Listener::getSubscription() {
+SubscriptionPtr Listener::getSubscription() {
 	return this->subscription;
 }
 
 void Listener::setSubscription(SubscriptionPtr s) {
 	this->router->unsubscribe(this->subscription);
-        this->subscription = s;
-        this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(this->uri)));
-        if (!this->handlers.empty()) {
-                this->router->subscribe(this->subscription, this->handlers);
-        }
+	this->subscription = s;
+	this->subscription->appendFilter(
+			filter::FilterPtr(new filter::ScopeFilter(this->uri)));
+	if (!this->handlers.empty()) {
+		this->router->subscribe(this->subscription, this->handlers);
+	}
 }
 
 set<HandlerPtr> Listener::getHandlers() const {
-        set<HandlerPtr> result;
-        copy(this->handlers.begin(), this->handlers.end(),
-             inserter(result, result.begin()));
+	set<HandlerPtr> result;
+	copy(this->handlers.begin(), this->handlers.end(),
+			inserter(result, result.begin()));
 	return result;
 }
 
 void Listener::appendHandler(HandlerPtr h) {
-        if (!this->handlers.empty()) {
-                this->router->unsubscribe(this->subscription);
-        }
+	if (!this->handlers.empty()) {
+		this->router->unsubscribe(this->subscription);
+	}
 	this->handlers.insert(h);
-        this->router->subscribe(this->subscription, this->handlers);
+	this->router->subscribe(this->subscription, this->handlers);
 }
 
 void Listener::removeHandler(HandlerPtr h) {
-        if (!this->handlers.empty()) {
-                this->router->unsubscribe(this->subscription);
-        }
+	if (!this->handlers.empty()) {
+		this->router->unsubscribe(this->subscription);
+	}
 	this->handlers.erase(h);
-        this->router->subscribe(this->subscription, this->handlers);
+	this->router->subscribe(this->subscription, this->handlers);
 }
 
 Listener::Listener() {
