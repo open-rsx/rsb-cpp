@@ -55,7 +55,7 @@ namespace rsb {
  * @todo how to deal with IDs of listeners? (it must be possible to reference them internally somehow
  * @todo use templates in subscriptions only? (however, they need the event info)
  */
-class RSB_EXPORT Listener : public Participant {
+class RSB_EXPORT Listener: public Participant {
 public:
 
 	/**
@@ -97,30 +97,30 @@ public:
 	/**
 	 * Return the associated @ref rsb::Subscription of the
 	 * listener.
-         *
-         * @todo the return value should be immutable or a copy
+	 *
+	 * @todo the return value should be immutable or a copy
 	 */
-        SubscriptionPtr
-        getSubscription();
+	SubscriptionPtr
+	getSubscription();
 
-        /**
-         * Replace the associated @ref rsb::Subscription of the listener.
-         *
-         * @param subscription the new subscription.
-         */
-        void
-        setSubscription(SubscriptionPtr subscription);
+	/**
+	 * Replace the associated @ref rsb::Subscription of the listener.
+	 *
+	 * @param subscription the new subscription.
+	 */
+	void
+	setSubscription(SubscriptionPtr subscription);
 
-        /**
-         * @note modifying the returned set object does not affect the
-         * listener's actual set of handlers.
-         */
-        std::set<HandlerPtr> getHandlers() const;
+	/**
+	 * @note modifying the returned set object does not affect the
+	 * listener's actual set of handlers.
+	 */
+	std::set<HandlerPtr> getHandlers() const;
 
 	/**
 	 * Appends a @ref rsb::Handler to the Listener. Events which
 	 * match the restrictions described by the associated
-         * @ref rsb::Subscription are passed to all handlers.
+	 * @ref rsb::Subscription are passed to all handlers.
 	 *
 	 * @param h a Pointer to the Handler.
 	 */
@@ -135,25 +135,22 @@ protected:
 	Listener();
 
 private:
-	rsc::logging::LoggerPtr    logger;
-	std::string                uri;
-	volatile bool              passive;
-        SubscriptionPtr            subscription;
-        std::set<HandlerPtr>       handlers;
+	rsc::logging::LoggerPtr logger;
+	std::string uri;
+	volatile bool passive;
+	SubscriptionPtr subscription;
+	std::set<HandlerPtr> handlers;
 	eventprocessing::RouterPtr router;
 
-        void
-        initialize(transport::Factory::ConnectorTypes in,
-                   const std::string& scope);
+	void
+	initialize(transport::Factory::ConnectorTypes in, const std::string& scope);
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;
 
-template <typename Ch,
-	  typename Tr>
+template<typename Ch, typename Tr>
 std::basic_ostream<Ch, Tr>&
-operator<<(std::basic_ostream<Ch, Tr>& stream,
-	   const Listener&             listener) {
+operator<<(std::basic_ostream<Ch, Tr>& stream, const Listener& listener) {
 	stream << "Listener[id=" << listener.getUUID() << "]";
 	return stream;
 }
