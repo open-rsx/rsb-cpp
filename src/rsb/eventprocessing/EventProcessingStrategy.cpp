@@ -25,18 +25,24 @@ namespace rsb {
 namespace eventprocessing {
 
 EventProcessingStrategy::EventProcessingStrategy() :
-	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")),
-	pool(5,
-	     boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
-	     boost::bind(&EventProcessingStrategy::filter,  this, _1, _2)) {
+			logger(
+					rsc::logging::Logger::getLogger(
+							"rsb.EventProcessingStrategy")),
+			pool(
+					5,
+					boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
+					boost::bind(&EventProcessingStrategy::filter, this, _1, _2)) {
 	pool.start();
 }
 
 EventProcessingStrategy::EventProcessingStrategy(unsigned int num_threads) :
-	logger(rsc::logging::Logger::getLogger("rsb.EventProcessingStrategy")),
-        pool(num_threads,
-             boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
-             boost::bind(&EventProcessingStrategy::filter,  this, _1, _2)) {
+			logger(
+					rsc::logging::Logger::getLogger(
+							"rsb.EventProcessingStrategy")),
+			pool(
+					num_threads,
+					boost::bind(&EventProcessingStrategy::deliver, this, _1, _2),
+					boost::bind(&EventProcessingStrategy::filter, this, _1, _2)) {
 	pool.start();
 }
 
@@ -87,10 +93,10 @@ void EventProcessingStrategy::deliver(DispatchUnitPtr dispatch, EventPtr e) {
 	} catch (const exception& ex) {
 		// TODO probably disable this subscription
 		RSCFATAL(logger, "Exception delivering event " << *e
-                         << " to subscription " << *dispatch->first << ":" << ex.what());
+				<< " to subscription " << *dispatch->first << ":" << ex.what());
 	} catch (...) {
 		RSCFATAL(logger, "Catch-all exception delivering event " << *e
-                         << " to subscription " << *dispatch->first);
+				<< " to subscription " << *dispatch->first);
 	}
 
 }
@@ -100,14 +106,14 @@ void EventProcessingStrategy::process(EventPtr e) {
 }
 
 void EventProcessingStrategy::subscribe(SubscriptionPtr s,
-                                        set<HandlerPtr> handlers) {
+		set<HandlerPtr> handlers) {
 	pool.registerReceiver(DispatchUnitPtr(new DispatchUnit(s, handlers)));
 }
 void EventProcessingStrategy::unsubscribe(SubscriptionPtr s) {
 	// TODO subscriptions need to be made thread-safe
 	s->disable();
 	//pool.unregisterReceiver(s); // FIXME fix this
-        throw std::runtime_error("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 }
