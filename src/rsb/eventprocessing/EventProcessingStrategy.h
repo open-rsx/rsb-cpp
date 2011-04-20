@@ -67,6 +67,9 @@ private:
 	// TODO make list subscriptions
 	rsc::logging::LoggerPtr logger;
 	rsc::threading::OrderedQueueDispatcherPool<EventPtr, DispatchUnit> pool;
+
+	std::map<SubscriptionPtr, DispatchUnitPtr> dispatchUnitsBySubscription;
+
 };
 
 typedef boost::shared_ptr<EventProcessingStrategy> EventProcessingStrategyPtr;

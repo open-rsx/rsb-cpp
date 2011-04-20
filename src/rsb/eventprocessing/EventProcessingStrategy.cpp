@@ -107,13 +107,15 @@ void EventProcessingStrategy::process(EventPtr e) {
 
 void EventProcessingStrategy::subscribe(SubscriptionPtr s,
 		set<HandlerPtr> handlers) {
-	pool.registerReceiver(DispatchUnitPtr(new DispatchUnit(s, handlers)));
+	DispatchUnitPtr unit(new DispatchUnit(s, handlers));
+	pool.registerReceiver(unit);
+	dispatchUnitsBySubscription[s] = unit;
 }
 void EventProcessingStrategy::unsubscribe(SubscriptionPtr s) {
 	// TODO subscriptions need to be made thread-safe
 	s->disable();
-	//pool.unregisterReceiver(s); // FIXME fix this
-	throw std::runtime_error("not implemented");
+	assert(dispatchUnitsBySubscription.find(s) != dispatchUnitsBySubscription.end());
+	pool.unregisterReceiver(dispatchUnitsBySubscription[s]);
 }
 
 }
