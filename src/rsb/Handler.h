@@ -38,7 +38,7 @@ class RSB_EXPORT Handler {
 public:
 	virtual ~Handler();
 
-	virtual void handle(EventPtr) = 0;
+	virtual void handle(EventPtr event) = 0;
 };
 
 typedef boost::shared_ptr<Handler> HandlerPtr;
@@ -83,6 +83,27 @@ public:
 	}
 protected:
 	DataFunction function;
+};
+
+/**
+ * A Handler that automatically performs the desired type casting.
+ *
+ * @author jwienke
+ * @tparam DataType type of the data received by this handler, omitting the
+ *                  shared pointer
+ */
+template<class DataType>
+class DataHandler: public Handler {
+public:
+	virtual ~DataHandler() {
+	}
+
+	void handle(EventPtr event) {
+		notify(boost::static_pointer_cast<DataType>(event->getData()));
+	}
+
+	virtual void notify(boost::shared_ptr<DataType> data) = 0;
+
 };
 
 }
