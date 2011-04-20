@@ -36,9 +36,9 @@ namespace rsb {
  */
 class RSB_EXPORT Handler {
 public:
-        virtual ~Handler();
+	virtual ~Handler();
 
-        virtual void handle(EventPtr) = 0;
+	virtual void handle(EventPtr) = 0;
 };
 
 typedef boost::shared_ptr<Handler> HandlerPtr;
@@ -50,13 +50,13 @@ typedef boost::function<void(EventPtr)> EventFunction;
  * member functions. This class is primarily intended for use with
  * Boost.Bind.
  */
-class RSB_EXPORT EventFunctionHandler : public Handler {
+class RSB_EXPORT EventFunctionHandler: public Handler {
 public:
-        EventFunctionHandler(const EventFunction& function);
+	EventFunctionHandler(const EventFunction& function);
 
-        void handle(EventPtr event);
+	void handle(EventPtr event);
 protected:
-        EventFunction function;
+	EventFunction function;
 };
 
 /**
@@ -68,18 +68,18 @@ protected:
  *
  * @author swrede
  */
-template <typename T>
-class DataFunctionHandler : public Handler {
+template<typename T>
+class DataFunctionHandler: public Handler {
 public:
-        typedef boost::shared_ptr<T>           DataPtr;
-        typedef boost::function<void(DataPtr)> DataFunction;
+	typedef boost::shared_ptr<T> DataPtr;
+	typedef boost::function<void(DataPtr)> DataFunction;
 
-        DataFunctionHandler(const DataFunction& function)
-                : function(function) {
+	DataFunctionHandler(const DataFunction& function) :
+		function(function) {
 	}
 
 	void handle(EventPtr event) {
-                this->function(boost::static_pointer_cast<T>(event->getData()));
+		this->function(boost::static_pointer_cast<T>(event->getData()));
 	}
 protected:
 	DataFunction function;
