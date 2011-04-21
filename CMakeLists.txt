@@ -72,10 +72,10 @@ OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
 
 # --- project settings ---
 
-SET(GTEST_DIR ${CMAKE_SOURCE_DIR}/3rdparty/gtest-1.5.0)
-SET(GTEST_INCLUDE_DIR ${GTEST_DIR}/include)
-SET(GMOCK_DIR ${CMAKE_SOURCE_DIR}/3rdparty/gmock-1.5.0)
-SET(GMOCK_INCLUDE_DIR ${GMOCK_DIR}/include)
+SET(GTEST_DIR "${CMAKE_SOURCE_DIR}/3rdparty/gmock/gtest")
+SET(GTEST_INCLUDE_DIR "${GTEST_DIR}/include")
+SET(GMOCK_DIR "${CMAKE_SOURCE_DIR}/3rdparty/gmock")
+SET(GMOCK_INCLUDE_DIR "${GMOCK_DIR}/include")
 SET(GMOCK_LIBRARY_NAME "gmock")
 
 # --- dependency handling ---

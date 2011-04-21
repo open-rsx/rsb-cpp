@@ -1,11 +1,12 @@
+
 IF(BUILD_TESTS)
 
-    INCLUDE_DIRECTORIES(BEFORE gtest-1.5.0
-                               gtest-1.5.0/include
-                               gmock-1.5.0
-                               gmock-1.5.0/include)
+    INCLUDE_DIRECTORIES(BEFORE ${GMOCK_DIR}
+                               ${GMOCK_INCLUDE_DIR}
+                               ${GTEST_DIR}
+                               ${GTEST_INCLUDE_DIR})
 
-    ADD_LIBRARY(${GMOCK_LIBRARY_NAME} STATIC gtest-1.5.0/src/gtest-all.cc
-                                             gmock-1.5.0/src/gmock-all.cc)
+    ADD_LIBRARY(${GMOCK_LIBRARY_NAME} STATIC gmock/gtest/src/gtest-all.cc
+                                             gmock/src/gmock-all.cc)
 
 ENDIF(BUILD_TESTS)
