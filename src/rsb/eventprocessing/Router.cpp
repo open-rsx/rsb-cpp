@@ -21,6 +21,8 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "ParallelEventProcessingStrategy.h"
+
 using namespace std;
 using namespace rsc::logging;
 using namespace rsb;
@@ -36,7 +38,7 @@ Router::Router(Factory::ConnectorTypes inType,
 	inConnector = transport::Factory::createConnector(inType);
 	outConnector = transport::Factory::createConnector(outType);
 	if (inConnector) {
-		eventProcessingStrategy = EventProcessingStrategyPtr(new EventProcessingStrategy());
+		eventProcessingStrategy = EventProcessingStrategyPtr(new ParallelEventProcessingStrategy());
 		// add event processor as observer to input port(s)
 		inConnector->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&EventProcessingStrategy::process, eventProcessingStrategy, _1))));
 	}

@@ -37,6 +37,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/patterns/MethodExistsException.cpp
             rsb/protocol/ProtocolException.cpp
             rsb/eventprocessing/EventProcessingStrategy.cpp
+            rsb/eventprocessing/ParallelEventProcessingStrategy.cpp
             rsb/eventprocessing/Router.cpp
             rsb/transport/Connector.cpp
             rsb/converter/Repository.cpp
@@ -87,6 +88,7 @@ SET(HEADERS rsb/Version.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
             rsb/eventprocessing/EventProcessingStrategy.h
+            rsb/eventprocessing/ParallelEventProcessingStrategy.h
             rsb/eventprocessing/Router.h
             rsb/transport/Connector.h
             rsb/converter/Repository.h

@@ -21,9 +21,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <rsc/logging/Logger.h>
-#include <rsc/threading/OrderedQueueDispatcherPool.h>
-
 #include "../Event.h"
 #include "../Subscription.h"
 #include "rsb/rsbexports.h"
@@ -31,45 +28,22 @@
 namespace rsb {
 namespace eventprocessing {
 
-// optimization brainstorming:
-// could a req-req condition even be a static map for one process?
-// and matching something like [cid]->invoke?!?
-// could even be contained in the specific condition class like a ReplyCondition or a TopicCondition
-// -> dtm or some other subscription language?!? maybe this is already too much
-// router config may then allow very specific and optimized configurations for
-// certain patterns using specific condition classes and ports
-
 /**
  * @author swrede
  */
 class RSB_EXPORT EventProcessingStrategy {
 public:
-	EventProcessingStrategy();
-	// TODO make threadpool size configurable
-	EventProcessingStrategy(unsigned int num_threads);
 	virtual ~EventProcessingStrategy();
 
 	// if invoked, the event is dispatched to listeners, typically called by ports
-	void process(rsb::EventPtr e);
+        virtual void process(rsb::EventPtr e) = 0;
 
-	// add a subscription and associated handlers
-	void subscribe(rsb::SubscriptionPtr s, std::set<HandlerPtr> handlers);
+        // add a subscription and associated handlers
+        virtual void subscribe(rsb::SubscriptionPtr s,
+                               std::set<HandlerPtr> handlers) = 0;
 
-	// unsubscribe a subscription
-	void unsubscribe(rsb::SubscriptionPtr s);
-private:
-	typedef std::pair<rsb::SubscriptionPtr, std::set<HandlerPtr> > DispatchUnit;
-	typedef boost::shared_ptr<DispatchUnit> DispatchUnitPtr;
-
-	bool filter(DispatchUnitPtr dispatch, EventPtr event);
-	void deliver(DispatchUnitPtr dispatch, EventPtr event);
-
-	// TODO make list subscriptions
-	rsc::logging::LoggerPtr logger;
-	rsc::threading::OrderedQueueDispatcherPool<EventPtr, DispatchUnit> pool;
-
-	std::map<SubscriptionPtr, DispatchUnitPtr> dispatchUnitsBySubscription;
-
+        // unsubscribe a subscription
+        virtual void unsubscribe(rsb::SubscriptionPtr s) = 0;
 };
 
 typedef boost::shared_ptr<EventProcessingStrategy> EventProcessingStrategyPtr;
