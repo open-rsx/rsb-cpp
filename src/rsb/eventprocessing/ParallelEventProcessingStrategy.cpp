@@ -41,6 +41,7 @@ ParallelEventProcessingStrategy::ParallelEventProcessingStrategy(unsigned int nu
 }
 
 ParallelEventProcessingStrategy::~ParallelEventProcessingStrategy() {
+	pool.stop();
 }
 
 bool ParallelEventProcessingStrategy::filter(DispatchUnitPtr dispatch, EventPtr e) {
