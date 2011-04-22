@@ -63,7 +63,7 @@ private:
 
 	void init();
 
-	volatile bool shutdown;
+	volatile bool activated;
 	SpreadConnectionPtr con;
 
 	rsc::threading::TaskExecutorPtr exec;

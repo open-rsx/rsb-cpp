@@ -84,6 +84,10 @@ TEST(RSBTest, testRoundtrip)
 
 	// port is deactivated through dtr
 	cerr << "RSBTest finished" << endl;
+
+	source->cancel();
+	source->waitDone();
+
 }
 
 int main(int argc, char* argv[]) {

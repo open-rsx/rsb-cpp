@@ -67,8 +67,8 @@ class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
 	ReceiverTask(SpreadConnectionPtr s,
-                     converter::Repository<std::string>::Ptr converters,
-                     HandlerPtr handler);
+			converter::Repository<std::string>::Ptr converters,
+			HandlerPtr handler);
 	virtual ~ReceiverTask();
 
 	void execute();

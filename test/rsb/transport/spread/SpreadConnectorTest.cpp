@@ -94,4 +94,8 @@ TEST(SpreadConnectorTest, testRoundtrip)
 
 	// port is deactivated through dtr
 	cerr << "SpreadProcessTest finished" << endl;
+
+	source->cancel();
+	source->waitDone();
+
 }

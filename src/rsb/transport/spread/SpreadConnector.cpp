@@ -61,7 +61,7 @@ SpreadConnector::SpreadConnector() :
 void SpreadConnector::init() {
 	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadConnector");
 	RSCDEBUG(logger, "SpreadConnector() entered, port id: " << id.getIdAsString());
-	shutdown = false;
+	activated = false;
 	exec = TaskExecutorPtr(new ThreadedTaskExecutor);
 	// TODO ConnectionPool for SpreadConnections?!?
 	// TODO Send Message over Managing / Introspection Channel
@@ -81,6 +81,7 @@ void SpreadConnector::activate() {
 	// (re-)start threads
 	exec->schedule(rec);
 	//exec->schedule(st);
+	activated = true;
 }
 
 void SpreadConnector::setObserver(HandlerPtr observer) {
@@ -89,21 +90,19 @@ void SpreadConnector::setObserver(HandlerPtr observer) {
 }
 
 void SpreadConnector::deactivate() {
-	shutdown = true;
-	RSCDEBUG(logger, "deactivate() entered"); // << *id);
+	RSCDEBUG(logger, "deactivate() entered");
 	rec->cancel();
 	// killing spread connection, exception thrown to rec thread which
 	// should be handled specifically as the cancel flag was set
 	// memberships->leaveAll();
 	con->deactivate();
-	RSCDEBUG(logger, "deactivate() stopping qad task object");
-	//	cout << "stopping st task" << endl;
-	//	st->cancel();
+	rec->waitDone();
 	RSCTRACE(logger, "deactivate() finished"); // << *id);
+	activated = false;
 }
 
 SpreadConnector::~SpreadConnector() {
-	if (!shutdown) {
+	if (activated) {
 		deactivate();
 	}
 }
