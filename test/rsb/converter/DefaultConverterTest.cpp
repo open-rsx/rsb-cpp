@@ -32,6 +32,7 @@
 #include "rsb/converter/BoolConverter.h"
 #include "rsb/converter/StringConverter.h"
 #include "rsb/converter/Uint64Converter.h"
+#include "rsb/converter/VoidConverter.h"
 
 using namespace std;
 using namespace rsb;
@@ -109,3 +110,17 @@ TEST_P(Uint64ConverterTest, testRoundtrip)
 INSTANTIATE_TEST_CASE_P(DefaultConverterTest, Uint64ConverterTest,
 		::testing::Values(0, -1, 1, 12342423439))
 ;
+
+TEST(VoidConverterTest, testRoundtrip)
+{
+
+	VoidConverter c;
+	string wire;
+	string schema =
+			c.serialize(
+					make_pair(rsc::runtime::typeName<void>(),
+							boost::shared_ptr<void>()), wire);
+	AnnotatedData result = c.deserialize(schema, wire);
+	EXPECT_EQ(rsc::runtime::typeName<void>(), result.first);
+
+}
