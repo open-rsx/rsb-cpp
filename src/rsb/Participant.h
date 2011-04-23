@@ -33,15 +33,17 @@ namespace rsb {
  * since zero, one or more of these can participate in the exchange of
  * any given scope. For this reason, each @ref rsb::Participant has a
  * unique id.
+ *
+ *  @author jmoringe
  */
 class RSB_EXPORT Participant {
 public:
-        rsc::misc::UUID
-        getUUID() const;
+    rsc::misc::UUID
+    getUUID() const;
 protected:
-        rsc::misc::UUID uuid;
+    rsc::misc::UUID uuid;
 
-        Participant();
+    Participant();
 };
 
 }
