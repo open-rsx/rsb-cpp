@@ -101,10 +101,22 @@ public:
      */
     bool isSuperScopeOf(const Scope &other) const;
 
+    /**
+     * Generates all super scopes of this scope including the root scope "/".
+     * The returned list of scopes is ordered by hierarchy with "/" being the
+     * first entry.
+     *
+     * @return list of all super scopes excluding this scope ordered by
+     *         hierarchy, "/" being first
+     */
+    std::vector<Scope> superScopes() const;
+
     bool operator==(const Scope &other) const;
     bool operator<(const Scope &other) const;
 
 private:
+
+    Scope();
 
     std::vector<std::string> components;
 

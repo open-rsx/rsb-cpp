@@ -61,6 +61,9 @@ Scope::Scope(const string &s) {
 
 }
 
+Scope::Scope() {
+}
+
 Scope::~Scope() {
 }
 
@@ -116,6 +119,30 @@ bool Scope::isSuperScopeOf(const Scope &other) const {
     }
 
     return true;
+
+}
+
+vector<Scope> Scope::superScopes() const {
+
+    vector<Scope> result;
+
+    if (components.empty()) {
+        return result;
+    }
+
+    // this math only works for scopes that are not the root scope
+    for (size_t requiredComponents = 0; requiredComponents <= components.size()
+            - 1; ++requiredComponents) {
+
+        Scope super;
+        for (size_t i = 0; i < requiredComponents; ++i) {
+            super.components.push_back(components[i]);
+        }
+        result.push_back(super);
+
+    }
+
+    return result;
 
 }
 

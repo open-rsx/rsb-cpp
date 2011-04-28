@@ -125,3 +125,17 @@ TEST(ScopeTest, testHierarchyComparison)
     EXPECT_FALSE(Scope("/b/").isSuperScopeOf(Scope("/a/b/c/")));
 
 }
+
+TEST(ScopeTest, testSuperScopes)
+{
+
+    EXPECT_TRUE(Scope("/").superScopes().empty());
+
+    vector<Scope> supers = Scope("/this/is/a/test/").superScopes();
+    ASSERT_EQ(size_t(4), supers.size());
+    EXPECT_EQ(Scope("/"), supers[0]);
+    EXPECT_EQ(Scope("/this/"), supers[1]);
+    EXPECT_EQ(Scope("/this/is/"), supers[2]);
+    EXPECT_EQ(Scope("/this/is/a/"), supers[3]);
+
+}
