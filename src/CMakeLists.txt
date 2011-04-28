@@ -23,6 +23,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/util/ConfigException.cpp
             rsb/Event.cpp
             rsb/Handler.cpp
+            rsb/Scope.cpp
             rsb/Subscription.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
@@ -73,6 +74,7 @@ SET(HEADERS rsb/Version.h
             rsb/Informer.h
             rsb/Listener.h
             rsb/Handler.h
+            rsb/Scope.h
             rsb/Subscription.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
