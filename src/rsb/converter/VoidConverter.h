@@ -19,9 +19,10 @@
 
 #pragma once
 
-#include "Converter.h"
-
 #include <boost/shared_ptr.hpp>
+
+#include "Converter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace converter {
@@ -31,17 +32,17 @@ namespace converter {
  *
  * @author jwienke
  */
-class VoidConverter: public Converter<std::string> {
+class RSB_EXPORT VoidConverter: public Converter<std::string> {
 public:
-	VoidConverter();
-	virtual ~VoidConverter();
+    VoidConverter();
+    virtual ~VoidConverter();
 
-	std::string serialize(const AnnotatedData &data, std::string &wire);
-	AnnotatedData deserialize(const std::string &wireType,
-			const std::string &wire);
+    std::string serialize(const AnnotatedData &data, std::string &wire);
+    AnnotatedData deserialize(const std::string &wireType,
+            const std::string &wire);
 
 private:
-	static const std::string TYPE;
+    static const std::string TYPE;
 
 };
 

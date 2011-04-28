@@ -19,10 +19,12 @@
 
 #pragma once
 
-#include "Converter.h"
-
 #include <string>
+
 #include <boost/shared_ptr.hpp>
+
+#include "Converter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace converter {
@@ -32,7 +34,7 @@ namespace converter {
  *
  * @author jwienke
  */
-class Uint64Converter: public Converter<std::string> {
+class RSB_EXPORT Uint64Converter: public Converter<std::string> {
 public:
 	Uint64Converter();
 	virtual ~Uint64Converter();

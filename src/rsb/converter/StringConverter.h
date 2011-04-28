@@ -19,10 +19,12 @@
 
 #pragma once
 
-#include "Converter.h"
-
 #include <string>
+
 #include <boost/shared_ptr.hpp>
+
+#include "Converter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace converter {
@@ -32,18 +34,18 @@ namespace converter {
  *
  * @author swrede
  */
-class StringConverter: public Converter<std::string> {
+class RSB_EXPORT StringConverter: public Converter<std::string> {
 public:
 
-	StringConverter();
-	virtual ~StringConverter();
+    StringConverter();
+    virtual ~StringConverter();
 
-	std::string serialize(const AnnotatedData &data, std::string &wire);
-	AnnotatedData deserialize(const std::string &wireSchema,
-			const std::string &wire);
+    std::string serialize(const AnnotatedData &data, std::string &wire);
+    AnnotatedData deserialize(const std::string &wireSchema,
+            const std::string &wire);
 
 private:
-	static const std::string WIRE_SCHEMA;
+    static const std::string WIRE_SCHEMA;
 
 };
 
