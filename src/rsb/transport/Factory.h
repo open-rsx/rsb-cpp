@@ -19,9 +19,11 @@
 
 #pragma once
 
+#include <string>
+
+#include <rsc/patterns/Factory.h>
+
 #include "Connector.h"
-#include "spread/SpreadConnector.h"
-#include "inprocess/InProcessConnector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -30,9 +32,8 @@ namespace transport {
 /**
  * @author swrede
  */
-class RSB_EXPORT Factory {
+class RSB_EXPORT Factory  {
 public:
-
 	enum ConnectorTypes {
 		LOCAL, SPREAD, NONE
 	};
@@ -46,7 +47,10 @@ public:
 	static ConnectorPtr createConnector(ConnectorTypes type);
 };
 
-}
+typedef rsc::patterns::SingletonFactory<std::string, Connector> InFactory;
+
+typedef rsc::patterns::SingletonFactory<std::string, Connector> OutFactory;
 
 }
 
+}

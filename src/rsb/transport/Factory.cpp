@@ -21,6 +21,9 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "spread/SpreadConnector.h"
+#include "inprocess/InProcessConnector.h"
+
 using namespace rsc::logging;
 
 // TODO wtf? Why no class member
