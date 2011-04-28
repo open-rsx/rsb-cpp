@@ -34,7 +34,7 @@ namespace test {
  */
 class InformerTask: public rsc::threading::RepetitiveTask {
 public:
-	InformerTask(rsb::transport::ConnectorPtr p, const unsigned int &numEvents);
+	InformerTask(rsb::transport::OutConnectorPtr p, const unsigned int &numEvents);
 	virtual ~InformerTask();
 
 	void execute();
@@ -44,7 +44,7 @@ public:
 private:
 	unsigned int numEvents;
 	unsigned int sentEvents;
-	rsb::transport::ConnectorPtr port;
+	rsb::transport::OutConnectorPtr port;
 	std::vector<EventPtr> events;
 
 };
@@ -75,4 +75,3 @@ private:
 
 }
 }
-

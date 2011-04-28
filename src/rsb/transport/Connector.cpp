@@ -22,13 +22,10 @@
 namespace rsb {
 namespace transport {
 
-Connector::Connector() {
-}
-
 Connector::~Connector() {
 }
 
-void Connector::setObserver(HandlerPtr observer) {
+void InConnector::setObserver(HandlerPtr observer) {
 	this->observer = observer;
 }
 

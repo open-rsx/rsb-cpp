@@ -106,8 +106,8 @@ protected:
 
 private:
 	rsc::logging::LoggerPtr logger;
-	transport::ConnectorPtr inConnector;
-	transport::ConnectorPtr outConnector;
+	transport::InConnectorPtr inConnector;
+	transport::OutConnectorPtr outConnector;
 	// ep for observation model
 	EventProcessingStrategyPtr eventProcessingStrategy;
 	volatile bool shutdown;

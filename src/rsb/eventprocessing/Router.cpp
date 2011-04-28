@@ -35,8 +35,8 @@ namespace eventprocessing {
 Router::Router(Factory::ConnectorTypes inType,
 		Factory::ConnectorTypes outType) :
 	logger(Logger::getLogger("rsb.transport.Router")) {
-	inConnector = transport::Factory::createConnector(inType);
-	outConnector = transport::Factory::createConnector(outType);
+        inConnector = boost::dynamic_pointer_cast<InConnector>(transport::Factory::createConnector(inType));
+	outConnector = boost::dynamic_pointer_cast<OutConnector>(transport::Factory::createConnector(outType));
 	if (inConnector) {
 		eventProcessingStrategy = EventProcessingStrategyPtr(new ParallelEventProcessingStrategy());
 		// add event processor as observer to input port(s)

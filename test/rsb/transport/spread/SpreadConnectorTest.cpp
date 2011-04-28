@@ -61,7 +61,7 @@ TEST(SpreadConnectorTest, testRoundtrip)
 	TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
 	// in-process port
-	ConnectorPtr p(new SpreadConnector());
+	InConnectorPtr p(new SpreadConnector());
 	ASSERT_NO_THROW(p->activate());
 
 	// filter for joining test group
@@ -72,7 +72,7 @@ TEST(SpreadConnectorTest, testRoundtrip)
 	// send only one event. Otherwise we need to do a correlation because
 	// ordering may change
 	const unsigned int numEvents = 1;
-	boost::shared_ptr<InformerTask> source(new InformerTask(p, numEvents));
+	boost::shared_ptr<InformerTask> source(new InformerTask(boost::dynamic_pointer_cast<OutConnector>(p), numEvents));
 	WaitingObserver observer(numEvents);
 	p->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 

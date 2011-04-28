@@ -36,7 +36,8 @@ namespace inprocess {
  * @todo use logging instead of cout
  * @author swrede
  */
-class InProcessConnector: public rsb::transport::Connector {
+class InProcessConnector: public rsb::transport::InConnector,
+			  public rsb::transport::OutConnector {
 public:
 	InProcessConnector();
 	virtual ~InProcessConnector();

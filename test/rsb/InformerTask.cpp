@@ -31,7 +31,7 @@ namespace rsb {
 
 namespace test {
 
-InformerTask::InformerTask(ConnectorPtr p, const unsigned int &numEvents) :
+InformerTask::InformerTask(OutConnectorPtr p, const unsigned int &numEvents) :
 	numEvents(numEvents), sentEvents(0), port(p) {
 }
 

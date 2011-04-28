@@ -69,7 +69,7 @@ TEST(RSBTest, testRoundtrip)
 
 	// domain objects
 	unsigned int numEvents = 10;
-	boost::shared_ptr<InformerTask> source(new InformerTask(r->getOutConnector(), 10));
+	boost::shared_ptr<InformerTask> source(new InformerTask(boost::dynamic_pointer_cast<OutConnector>(r->getOutConnector()), 10));
 	WaitingObserver observer(numEvents);
 	set<HandlerPtr> handlers;
 	handlers.insert(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));

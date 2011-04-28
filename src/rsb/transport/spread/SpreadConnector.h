@@ -40,7 +40,8 @@ namespace spread {
  * @author swrede
  * @todo do we really want to expose this through dlls only for the unit tests
  */
-class RSB_EXPORT SpreadConnector: public rsb::transport::Connector {
+class RSB_EXPORT SpreadConnector: public rsb::transport::InConnector,
+                                  public rsb::transport::OutConnector {
 public:
         SpreadConnector(const std::string& host = defaultHost(),
                         unsigned int port = defaultPort());
