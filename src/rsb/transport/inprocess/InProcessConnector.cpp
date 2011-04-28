@@ -32,6 +32,7 @@
 #include "../../converter/Converter.h"
 
 using namespace std;
+using namespace rsc::runtime;
 using namespace rsc::logging;
 using namespace rsb;
 using namespace rsb::util;
@@ -50,6 +51,13 @@ InProcessConnector::InProcessConnector() :
 			st(new StatusTask(this, 500)) {
 	// TODO check if it makes sense and is possible to provide a weak_ptr to
 	// the ctr of StatusTask
+}
+
+rsb::transport::Connector* InProcessConnector::create(const Properties& args) {
+        LoggerPtr logger = rsc::logging::Logger::getLogger("rsb.inprocess.InProcessConnector");
+	RSCDEBUG(logger, "creating connector with properties " << args);
+
+        return new InProcessConnector();
 }
 
 InProcessConnector::~InProcessConnector() {

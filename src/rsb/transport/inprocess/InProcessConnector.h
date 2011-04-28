@@ -23,6 +23,7 @@
 #include <boost/weak_ptr.hpp>
 #include <boost/thread.hpp>
 
+#include <rsc/runtime/Properties.h>
 #include <rsc/threading/TaskExecutor.h>
 
 #include "../Connector.h"
@@ -46,6 +47,7 @@ public:
 
 	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
+	static rsb::transport::Connector* create(const rsc::runtime::Properties& args);
 private:
 	volatile bool shutdown;
 
