@@ -46,11 +46,40 @@ public:
      */
     explicit Scope(const std::string &scope);
 
+    /**
+     * Destructor.
+     */
     virtual ~Scope();
 
+    /**
+     * Returns all components of the scope as an ordered list. Components are
+     * the names between the separator character '/'. The first entry in the
+     * list is the highest level of hierarchy. The scope '/' returns an empty
+     * list.
+     *
+     * @return components of the represented scope as ordered list with highest
+     *         level as first entry
+     */
     std::vector<std::string> getComponents() const;
 
+    /**
+     * Reconstructs a fully formal string representation of the scope with
+     * leading an trailing slashes.
+     *
+     * @return string representation of the scope
+     */
     std::string toString() const;
+
+    /**
+     * Creates a new scope that is a subscope of this one with the subordinated
+     * scope described by the given argument. E.g. "/this/is/".concat("/a/test/")
+     * results in "/this/is/a/test".
+     *
+     * @param childScope child to concatenate to the current scope for forming a
+     *                   subscope
+     * @return new scope instance representing the created subscope
+     */
+    Scope concat(const Scope &childScope) const;
 
     bool operator==(const Scope &other) const;
     bool operator<(const Scope &other) const;

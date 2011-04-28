@@ -78,6 +78,15 @@ string Scope::toString() const {
     return s.str();
 }
 
+Scope Scope::concat(const Scope &childScope) const {
+    Scope result = *this;
+    for (vector<string>::const_iterator it = childScope.components.begin(); it
+            != childScope.components.end(); ++it) {
+        result.components.push_back(*it);
+    }
+    return result;
+}
+
 bool Scope::operator==(const Scope &other) const {
     return components == other.components;
 }

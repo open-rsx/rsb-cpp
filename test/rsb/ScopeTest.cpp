@@ -96,3 +96,13 @@ TEST(ScopeTest, testComparison)
     EXPECT_TRUE(Scope("/c/") >= Scope("/c/"));
 
 }
+
+TEST(ScopeTest, testConcat)
+{
+
+    EXPECT_EQ(Scope("/"), Scope("/").concat(Scope("/")));
+    EXPECT_EQ(Scope("/a/test/"), Scope("/").concat(Scope("/a/test/")));
+    EXPECT_EQ(Scope("/a/test/"), Scope("/a/test/").concat(Scope("/")));
+    EXPECT_EQ(Scope("/a/test/example"), Scope("/a/test/").concat(Scope("/example/")));
+
+}
