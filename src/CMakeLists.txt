@@ -39,6 +39,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/eventprocessing/EventProcessingStrategy.cpp
             rsb/eventprocessing/ParallelEventProcessingStrategy.cpp
             rsb/eventprocessing/Router.cpp
+            rsb/transport/transports.cpp
             rsb/transport/Connector.cpp
             rsb/converter/Repository.cpp
             rsb/converter/SerializationException.cpp
@@ -90,6 +91,7 @@ SET(HEADERS rsb/Version.h
             rsb/eventprocessing/EventProcessingStrategy.h
             rsb/eventprocessing/ParallelEventProcessingStrategy.h
             rsb/eventprocessing/Router.h
+            rsb/transport/transports.h
             rsb/transport/Connector.h
             rsb/converter/Repository.h
             rsb/converter/SerializationException.h

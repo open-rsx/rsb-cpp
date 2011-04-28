@@ -21,6 +21,8 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "../Factory.h"
+
 #include "spread/SpreadConnector.h"
 #include "inprocess/InProcessConnector.h"
 
@@ -34,13 +36,11 @@ LoggerPtr logger(Logger::getLogger("rsb.transport.Factory"));
 namespace rsb {
 namespace transport {
 
-Factory::Factory() {
-}
-
-Factory::~Factory() {
-}
-
 ConnectorPtr Factory::createConnector(ConnectorTypes type) {
+        // FIXME this forces init of RSB factory which triggers registration
+        // of transport implementations.
+        rsb::Factory::getInstance();
+
 	ConnectorPtr p;
 	//		ConverterRegistryPtr r = boost::shared_ptr<ConverterRegistry>();
 	//		Converter ac = boost::shared_ptr<Converter>(new UCharConverter());
@@ -49,12 +49,12 @@ ConnectorPtr Factory::createConnector(ConnectorTypes type) {
 	case LOCAL:
 		RSCINFO(logger, "TransportFactory instantiating new InProcessConnector")
 		;
-		p = boost::shared_ptr<Connector>(new rsb::inprocess::InProcessConnector());
+		p = boost::shared_ptr<Connector>(InFactory::getInstance().createInst("local"));
 		break;
 	case SPREAD:
 		RSCINFO(logger, "TransportFactory instantiating new SpreadConnector")
 		;
-		p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector());
+		p = boost::shared_ptr<Connector>(InFactory::getInstance().createInst("spread"));
 		break;
 	case NONE:
 		RSCINFO(logger, "TransportFactory not instantiating any Connector implementation")

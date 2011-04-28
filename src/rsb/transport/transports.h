@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is part of the RSB project
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -19,35 +19,12 @@
 
 #pragma once
 
-#include <string>
-
-#include <rsc/patterns/Factory.h>
-
-#include "Connector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
 
-/**
- * @author swrede
- */
-class RSB_EXPORT Factory  {
-public:
-	enum ConnectorTypes {
-		LOCAL, SPREAD, NONE
-	};
-
-	/**
-	 * @todo distinguish between in and out ports?
-	 */
-	static ConnectorPtr createConnector(ConnectorTypes type);
-};
-
-typedef rsc::patterns::SingletonFactory<std::string, Connector> InFactory;
-
-typedef rsc::patterns::SingletonFactory<std::string, Connector> OutFactory;
+RSB_EXPORT void registerDefaultTransports();
 
 }
-
 }

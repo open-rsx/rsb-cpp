@@ -21,14 +21,16 @@
 
 #include "introspection/introspection.h"
 #include "converter/converters.h"
+#include "transport/transports.h"
 
 using namespace std;
 
 namespace rsb {
 
 Factory::Factory() {
-	introspection::registerIntrospectionConverters();
-	converter::registerDefaultConverters();
+        introspection::registerIntrospectionConverters();
+        converter::registerDefaultConverters();
+        transport::registerDefaultTransports();
 }
 
 Factory::~Factory() {
