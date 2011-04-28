@@ -127,8 +127,8 @@ void ReceiverTask::execute() {
 			if ((n->num_data_parts() == 0) || bigMsgComplete) {
 				// Send message as single spread event
 				EventPtr e(new Event());
-				e->setUUID(rsc::misc::UUID(n->eid()));
-				e->setURI(n->uri());
+				e->setId(rsc::misc::UUID(n->eid()));
+				e->setScope(Scope(n->uri()));
 				for (int i = 0; i < n->metainfos_size(); ++i) {
 					e->addMetaInfo(n->metainfos(i).key(),
 							n->metainfos(i).value());

@@ -46,56 +46,57 @@ using namespace rsc::threading;
 
 TEST(SpreadConnectorTest, testConstruction)
 {
-	ASSERT_NO_THROW(ConnectorPtr p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector()));
+    ASSERT_NO_THROW(ConnectorPtr p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector()));
 }
 
 TEST(SpreadConnectorTest, testConnnection)
 {
-	ConnectorPtr p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector());
-	ASSERT_NO_THROW(p->activate());
+    ConnectorPtr p = boost::shared_ptr<Connector>(
+            new rsb::spread::SpreadConnector());
+    ASSERT_NO_THROW(p->activate());
 }
 
 TEST(SpreadConnectorTest, testRoundtrip)
 {
-	// task execution service
-	TaskExecutorPtr exec(new ThreadedTaskExecutor);
+    // task execution service
+    TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
-	// in-process port
-	InConnectorPtr p(new SpreadConnector());
-	ASSERT_NO_THROW(p->activate());
+    // in-process port
+    InConnectorPtr p(new SpreadConnector());
+    ASSERT_NO_THROW(p->activate());
 
-	// filter for joining test group
-	FilterPtr f = FilterPtr(new ScopeFilter("xcf://blah"));
-	f->notifyObserver(p, FilterAction::ADD);
+    // filter for joining test group
+    FilterPtr f = FilterPtr(new ScopeFilter(Scope("/blah")));
+    f->notifyObserver(p, FilterAction::ADD);
 
-	// domain objects
-	// send only one event. Otherwise we need to do a correlation because
-	// ordering may change
-	const unsigned int numEvents = 1;
-	boost::shared_ptr<InformerTask> source(new InformerTask(boost::dynamic_pointer_cast<OutConnector>(p), numEvents));
-	WaitingObserver observer(numEvents);
-	p->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
+    // domain objects
+    // send only one event. Otherwise we need to do a correlation because
+    // ordering may change
+    const unsigned int numEvents = 1;
+    boost::shared_ptr<InformerTask> source(new InformerTask(boost::dynamic_pointer_cast<OutConnector>(p), numEvents));
+    WaitingObserver observer(numEvents);
+    p->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
-	// activate port and schedule informer
-	p->activate();
-	exec->schedule(source);
+    // activate port and schedule informer
+    p->activate();
+    exec->schedule(source);
 
-	observer.waitReceived();
+    observer.waitReceived();
 
-	// compare sent and received events
-	ASSERT_EQ(source->getEvents().size(), observer.getEvents().size());
-	for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
-		EventPtr sent = source->getEvents()[i];
-		EventPtr received = observer.getEvents()[i];
-		EXPECT_EQ(sent->getUUID(), received->getUUID());
-		EXPECT_EQ(sent->getType(), received->getType());
-		EXPECT_EQ(sent->getURI(), received->getURI());
-	}
+    // compare sent and received events
+    ASSERT_EQ(source->getEvents().size(), observer.getEvents().size());
+    for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
+        EventPtr sent = source->getEvents()[i];
+        EventPtr received = observer.getEvents()[i];
+        EXPECT_EQ(sent->getId(), received->getId());
+        EXPECT_EQ(sent->getType(), received->getType());
+        EXPECT_EQ(sent->getScope(), received->getScope());
+    }
 
-	// port is deactivated through dtr
-	cerr << "SpreadProcessTest finished" << endl;
+    // port is deactivated through dtr
+    cerr << "SpreadProcessTest finished" << endl;
 
-	source->cancel();
-	source->waitDone();
+    source->cancel();
+    source->waitDone();
 
 }

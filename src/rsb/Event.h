@@ -28,6 +28,7 @@
 #include <rsc/misc/UUID.h>
 
 #include "rsb/rsbexports.h"
+#include "Scope.h"
 
 // base / interface class for all events
 // data is set via static_cast:
@@ -47,54 +48,53 @@ typedef boost::shared_ptr<void> VoidPtr;
 class RSB_EXPORT Event {
 public:
 
-	Event();
+    Event();
 
-	/**
-	 * Constructor.
-	 *
-	 * @param uri uri of the event
-	 * @param payload payload of the event
-	 * @param type type identifier to serialize / deserialize the event payload
-	 */
-	Event(const std::string &uri, boost::shared_ptr<void> payload,
-			const std::string &type);
+    /**
+     * Constructor.
+     *
+     * @param scope scope of the event
+     * @param payload payload of the event
+     * @param type type identifier to serialize / deserialize the event payload
+     */
+    Event(const Scope &scope, boost::shared_ptr<void> payload,
+            const std::string &type);
 
-	virtual ~Event();
+    virtual ~Event();
 
-	void setUUID(const rsc::misc::UUID &id);
-	rsc::misc::UUID getUUID();
+    void setId(const rsc::misc::UUID &id);
+    rsc::misc::UUID getId();
 
-	// TODO REFACTOR: introduce domain object URI
-	std::string getURI();
-	void setURI(std::string);
+    Scope getScope();
+    void setScope(const Scope &scope);
 
-	// TODO REFACTOR: introduce domain object for type (hierarchy?)
-	std::string getType();
-	void setType(std::string);
+    // TODO REFACTOR: introduce domain object for type (hierarchy?)
+    std::string getType();
+    void setType(const std::string &type);
 
-	VoidPtr getData();
-	void setData(VoidPtr d);
+    VoidPtr getData();
+    void setData(VoidPtr d);
 
-	bool hasMetaInfo(const std::string &key) const;
-	std::string getMetaInfo(const std::string &key) const;
-	void addMetaInfo(const std::string &key, const std::string &value,
-			bool override = false);
-	std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
-	std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
+    bool hasMetaInfo(const std::string &key) const;
+    std::string getMetaInfo(const std::string &key) const;
+    void addMetaInfo(const std::string &key, const std::string &value,
+            bool override = false);
+    std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
+    std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
 
-	friend RSB_EXPORT std::ostream &operator<<(std::ostream& out,
-			const Event &e);
+    friend RSB_EXPORT std::ostream &operator<<(std::ostream& out,
+            const Event &e);
 
 private:
-	rsc::misc::UUID id;
-	std::string uri;
+    rsc::misc::UUID id;
+    Scope scope;
 
-	VoidPtr content;
+    VoidPtr content;
 
-	// is this a single type, a hierarchy or a set?
-	std::string type;
+    // is this a single type, a hierarchy or a set?
+    std::string type;
 
-	std::map<std::string, std::string> metaInfos;
+    std::map<std::string, std::string> metaInfos;
 
 };
 

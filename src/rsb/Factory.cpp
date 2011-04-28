@@ -28,24 +28,24 @@ using namespace std;
 namespace rsb {
 
 Factory::Factory() {
-        introspection::registerIntrospectionConverters();
-        converter::registerDefaultConverters();
-        transport::registerDefaultTransports();
+    introspection::registerIntrospectionConverters();
+    converter::registerDefaultConverters();
+    transport::registerDefaultTransports();
 }
 
 Factory::~Factory() {
 }
 
-ListenerPtr Factory::createListener(const string &uri) {
-	return ListenerPtr(new Listener(uri));
+ListenerPtr Factory::createListener(const Scope &scope) {
+    return ListenerPtr(new Listener(scope));
 }
 
-patterns::ServerPtr Factory::createServer(const string &uri) {
-	return patterns::ServerPtr(new patterns::Server(uri));
+patterns::ServerPtr Factory::createServer(const Scope &scope) {
+    return patterns::ServerPtr(new patterns::Server(scope));
 }
 
-patterns::RemoteServerPtr Factory::createRemoteServer(const string &uri) {
-	return patterns::RemoteServerPtr(new patterns::RemoteServer(uri));
+patterns::RemoteServerPtr Factory::createRemoteServer(const Scope &scope) {
+    return patterns::RemoteServerPtr(new patterns::RemoteServer(scope));
 }
 
 }

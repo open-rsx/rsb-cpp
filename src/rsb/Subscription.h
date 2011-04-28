@@ -40,7 +40,7 @@ typedef std::list<rsb::filter::FilterPtr> FilterChain;
  * filter in addition to all already installed filters.
  *
  * The following example shows using a Subscription using a @ref
- * rsb::filter::ScopeFilter (assume the same uri is used as for the
+ * rsb::filter::ScopeFilter (assume the same scope is used as for the
  * Listener) and a @ref rsb::QueuePushHandler as a @ref rsb::Handler
  * which pushes the received events to a given queue:
  *

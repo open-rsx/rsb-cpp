@@ -28,41 +28,52 @@ using namespace std;
 using namespace rsb;
 using namespace rsb::filter;
 
-void printData(const std::string&        name,
-	       boost::shared_ptr<string> e) {
-  cout << "[" << name << "] received: " << *e << endl;
+void printData(const std::string& name, boost::shared_ptr<string> e) {
+    cout << "[" << name << "] received: " << *e << endl;
 }
 
 int main(int /*argc*/, char **/*argv*/) {
 
-        Factory &factory = Factory::getInstance();
+    Factory &factory = Factory::getInstance();
 
-        for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) {
 
-                string uri1 = "rsb;//test/dummy1";
-                string uri2 = "rsb;//test/dummy2";
+        Scope scope1("/test/dummy1");
+        Scope scope2("/test/dummy2");
 
-                Informer<string>::Ptr informer1 = factory.createInformer<string> (
-                        uri1);
-                Informer<string>::Ptr informer2 = factory.createInformer<string> (
-                        uri2);
+        Informer<string>::Ptr informer1 = factory.createInformer<string> (
+                scope1);
+        Informer<string>::Ptr informer2 = factory.createInformer<string> (
+                scope2);
 
-                ListenerPtr listener1 = factory.createListener(uri1);
-                listener1->appendHandler(HandlerPtr(new DataFunctionHandler<string>(boost::bind(&printData, "sub1", _1))));
+        ListenerPtr listener1 = factory.createListener(scope1);
+        listener1->appendHandler(
+                HandlerPtr(
+                        new DataFunctionHandler<string> (
+                                boost::bind(&printData, "sub1", _1))));
 
-                ListenerPtr listener2 = factory.createListener(uri2);
-                listener2->appendHandler(HandlerPtr(new DataFunctionHandler<string>(boost::bind(&printData, "sub2", _1))));
+        ListenerPtr listener2 = factory.createListener(scope2);
+        listener2->appendHandler(
+                HandlerPtr(
+                        new DataFunctionHandler<string> (
+                                boost::bind(&printData, "sub2", _1))));
 
-                informer1->publish(Informer<string>::DataPtr(new string("informer1 first message")));
-                informer1->publish(Informer<string>::DataPtr(new string("informer1 second message")));
+        informer1->publish(
+                Informer<string>::DataPtr(new string("informer1 first message")));
+        informer1->publish(
+                Informer<string>::DataPtr(
+                        new string("informer1 second message")));
 
-                informer2->publish(Informer<string>::DataPtr(new string("informer2 first message")));
-                informer2->publish(Informer<string>::DataPtr(new string("informer2 second message")));
+        informer2->publish(
+                Informer<string>::DataPtr(new string("informer2 first message")));
+        informer2->publish(
+                Informer<string>::DataPtr(
+                        new string("informer2 second message")));
 
-                boost::this_thread::sleep(boost::posix_time::seconds(2));
+        boost::this_thread::sleep(boost::posix_time::seconds(2));
 
-        }
+    }
 
-        return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 
 }

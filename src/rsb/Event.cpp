@@ -28,82 +28,81 @@ namespace rsb {
 Event::Event() {
 }
 
-Event::Event(const string &uri, boost::shared_ptr<void> payload,
-		const string &type) :
-	uri(uri), content(payload), type(type) {
+Event::Event(const Scope &scope, boost::shared_ptr<void> payload,
+        const string &type) :
+    scope(scope), content(payload), type(type) {
 }
 
 Event::~Event() {
 }
 
-void Event::setUUID(const rsc::misc::UUID &id) {
-	this->id = id;
+void Event::setId(const rsc::misc::UUID &id) {
+    this->id = id;
 }
 
-rsc::misc::UUID Event::getUUID() {
-	return id;
+rsc::misc::UUID Event::getId() {
+    return id;
 }
 
-void Event::setURI(string s) {
-	uri = s;
+void Event::setScope(const Scope &s) {
+    scope = s;
 }
 
-string Event::getURI() {
-	return uri;
+Scope Event::getScope() {
+    return scope;
 }
 
 void Event::setData(VoidPtr d) {
-	content = d;
+    content = d;
 }
 
 VoidPtr Event::getData() {
-	return content;
+    return content;
 }
 
 string Event::getType() {
-	return type;
+    return type;
 }
 
-void Event::setType(string t) {
-	type = t;
+void Event::setType(const string &t) {
+    type = t;
 }
 
 bool Event::hasMetaInfo(const string &key) const {
-	return metaInfos.count(key);
+    return metaInfos.count(key);
 }
 
 string Event::getMetaInfo(const string &key) const {
-	if (metaInfos.count(key)) {
-		return metaInfos.find(key)->second;
-	} else {
-		throw runtime_error("No meta info registered under key '" + key + "'");
-	}
+    if (metaInfos.count(key)) {
+        return metaInfos.find(key)->second;
+    } else {
+        throw runtime_error("No meta info registered under key '" + key + "'");
+    }
 }
 
-void Event::addMetaInfo(const string &key, const string &value,
-		bool override) {
+void Event::addMetaInfo(const string &key, const string &value, bool override) {
 
-	if (metaInfos.count(key) && !override) {
-		throw runtime_error(
-				"There already is meta info registered under key '" + key + "'");
-	}
-	metaInfos[key] = value;
+    if (metaInfos.count(key) && !override) {
+        throw runtime_error(
+                "There already is meta info registered under key '" + key + "'");
+    }
+    metaInfos[key] = value;
 
 }
 
 map<string, string>::const_iterator Event::metaInfoBegin() const {
-	return metaInfos.begin();
+    return metaInfos.begin();
 }
 
 map<string, string>::const_iterator Event::metaInfoEnd() const {
-	return metaInfos.end();
+    return metaInfos.end();
 }
 
 ostream& operator<<(ostream& out, const Event& e) {
-	//out.precision(3);
-	out << "Event[id=" << e.id.getIdAsString() << " type=" << e.type
-			<< " uri=" << e.uri << "] ";
-	return out;
+    //out.precision(3);
+    out << "Event[id=" << e.id.getIdAsString() << " type=" << e.type
+            << " scope=" << e.scope << "] ";
+    return out;
 }
 
 }

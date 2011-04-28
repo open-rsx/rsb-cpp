@@ -36,154 +36,162 @@ namespace patterns {
 class WaitingEventHandler: public Handler {
 private:
 
-	rsc::logging::LoggerPtr logger;
+    rsc::logging::LoggerPtr logger;
 
-	boost::mutex mutex;
-	boost::condition condition;
+    boost::mutex mutex;
+    boost::condition condition;
 
-	set<string> waitForEvents;
-	map<string, EventPtr> storedEvents;
+    set<string> waitForEvents;
+    map<string, EventPtr> storedEvents;
 
 public:
 
-	WaitingEventHandler(rsc::logging::LoggerPtr logger) :
-		logger(logger) {
-	}
+    WaitingEventHandler(rsc::logging::LoggerPtr logger) :
+        logger(logger) {
+    }
 
-	void handle(EventPtr event) {
-		{
-			boost::mutex::scoped_lock lock(mutex);
-			if (event && event->hasMetaInfo("ServerRequestId")
-					&& waitForEvents.count(
-							event->getMetaInfo("ServerRequestId"))) {
-				RSCDEBUG(logger, "Received reply event " << *event);
-				waitForEvents.erase(event->getMetaInfo("ServerRequestId"));
-				storedEvents[event->getMetaInfo("ServerRequestId")] = event;
-			} else {
-				RSCTRACE(logger, "Received uninteresting event " << *event);
-			}
-		}
-		condition.notify_all();
-	}
+    void handle(EventPtr event) {
+        {
+            boost::mutex::scoped_lock lock(mutex);
+            if (event && event->hasMetaInfo("ServerRequestId")
+                    && waitForEvents.count(
+                            event->getMetaInfo("ServerRequestId"))) {
+                RSCDEBUG(logger, "Received reply event " << *event);
+                waitForEvents.erase(event->getMetaInfo("ServerRequestId"));
+                storedEvents[event->getMetaInfo("ServerRequestId")] = event;
+            } else {
+                RSCTRACE(logger, "Received uninteresting event " << *event);
+            }
+        }
+        condition.notify_all();
+    }
 
-	void expectReply(const string &requestId) {
-		boost::mutex::scoped_lock lock(mutex);
-		waitForEvents.insert(requestId);
-	}
+    void expectReply(const string &requestId) {
+        boost::mutex::scoped_lock lock(mutex);
+        waitForEvents.insert(requestId);
+    }
 
-	EventPtr getReply(const string &requestId) {
+    EventPtr getReply(const string &requestId) {
 
-		RSCTRACE(logger, "Waiting for reply with id " << requestId);
+        RSCTRACE(logger, "Waiting for reply with id " << requestId);
 
-		boost::mutex::scoped_lock lock(mutex);
-		// TODO duplicated string with Server
-		while (!storedEvents.count(requestId)) {
-			boost::xtime xt;
-			xtime_get(&xt, boost::TIME_UTC);
-			// TODO make max time a configuration property
-			xt.sec += 25;
-			if (!condition.timed_wait(lock, xt)) {
-				RSCERROR(logger, "Timeout while waiting");
-				throw RemoteServer::TimeoutException(
-						"Error calling method and waiting for reply with id "
-								+ requestId + ". Waited 25 seconds.");
-			}
-		}
+        boost::mutex::scoped_lock lock(mutex);
+        // TODO duplicated string with Server
+        while (!storedEvents.count(requestId)) {
+            boost::xtime xt;
+            xtime_get(&xt, boost::TIME_UTC);
+            // TODO make max time a configuration property
+            xt.sec += 25;
+            if (!condition.timed_wait(lock, xt)) {
+                RSCERROR(logger, "Timeout while waiting");
+                throw RemoteServer::TimeoutException(
+                        "Error calling method and waiting for reply with id "
+                                + requestId + ". Waited 25 seconds.");
+            }
+        }
 
-		EventPtr reply = storedEvents[requestId];
-		storedEvents.erase(requestId);
+        EventPtr reply = storedEvents[requestId];
+        storedEvents.erase(requestId);
 
-		RSCDEBUG(logger, "Received correct reply event " << *reply);
-		return reply;
-	}
+        RSCDEBUG(logger, "Received correct reply event " << *reply);
+        return reply;
+    }
 
 };
 
 RemoteServer::TimeoutException::TimeoutException(const string &message) :
-	Exception(message) {
+    Exception(message) {
 }
 
 RemoteServer::RemoteTargetInvocationException::RemoteTargetInvocationException(
-		const string &message) :
-	Exception(message) {
+        const string &message) :
+    Exception(message) {
 }
 
-RemoteServer::RemoteServer(const string &uri) :
-			logger(rsc::logging::Logger::getLogger("rsc.patterns.RemoteServer."
-					+ uri)), uri(uri) {
-	// TODO check that this server is alive...
-	// TODO probably it would be a good idea to request some method infos from
-	//      the server, e.g. for type checking
+RemoteServer::RemoteServer(const Scope &scope) :
+            logger(
+                    rsc::logging::Logger::getLogger(
+                            "rsc.patterns.RemoteServer." + scope.toString())),
+            scope(scope) {
+    // TODO check that this server is alive...
+    // TODO probably it would be a good idea to request some method infos from
+    //      the server, e.g. for type checking
 }
 
 RemoteServer::~RemoteServer() {
 }
 
 RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
-		const string &sendType) {
+        const string &sendType) {
 
-	boost::mutex::scoped_lock lock(methodSetMutex);
+    boost::mutex::scoped_lock lock(methodSetMutex);
 
-	if (!methodSets.count(methodName)) {
+    if (!methodSets.count(methodName)) {
 
-		// start a listener to wait for the reply
-		const string replyUri = uri + "-reply-" + methodName;
-		ListenerPtr listener(new Listener(replyUri));
-		boost::shared_ptr<WaitingEventHandler> handler(new WaitingEventHandler(
-				logger));
-		listener->appendHandler(handler);
+        // start a listener to wait for the reply
+        const Scope replyScope = scope.concat(Scope("reply")).concat(
+                Scope(methodName));
+        ListenerPtr listener(new Listener(replyScope));
+        boost::shared_ptr<WaitingEventHandler> handler(
+                new WaitingEventHandler(logger));
+        listener->appendHandler(handler);
 
-		// informer for requests
-		Informer<void>::Ptr informer(new Informer<void> (uri + "-request-"
-				+ methodName, sendType));
+        // informer for requests
+        Informer<void>::Ptr
+                informer(
+                        new Informer<void> (
+                                scope.concat(Scope("request")).concat(
+                                        Scope(methodName)), sendType));
 
-		MethodSet set;
-		set.methodName = methodName;
-		set.sendType = sendType;
-		set.handler = handler;
-		set.replyListener = listener;
-		set.replySubscription = listener->getSubscription();
-		set.requestInformer = informer;
+        MethodSet set;
+        set.methodName = methodName;
+        set.sendType = sendType;
+        set.handler = handler;
+        set.replyListener = listener;
+        set.replySubscription = listener->getSubscription();
+        set.requestInformer = informer;
 
-		methodSets[methodName] = set;
+        methodSets[methodName] = set;
 
-	}
+    }
 
-	if (methodSets[methodName].sendType != sendType) {
-		throw runtime_error("Illegal send type. Method previously accepted "
-				+ methodSets[methodName].sendType + " but now " + sendType
-				+ " was requested");
-	}
+    if (methodSets[methodName].sendType != sendType) {
+        throw runtime_error(
+                "Illegal send type. Method previously accepted "
+                        + methodSets[methodName].sendType + " but now "
+                        + sendType + " was requested");
+    }
 
-	return methodSets[methodName];
+    return methodSets[methodName];
 
 }
 
 EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
 
-	RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
+    RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
-	// TODO check that the desired method exists
+    // TODO check that the desired method exists
 
-	string requestId = rsc::misc::UUID().getIdAsString();
-	// TODO duplicated string from Server
-	data->addMetaInfo("ServerRequestId", requestId, true);
+    string requestId = rsc::misc::UUID().getIdAsString();
+    // TODO duplicated string from Server
+    data->addMetaInfo("ServerRequestId", requestId, true);
 
-	MethodSet methodSet = getMethodSet(methodName, data->getType());
-	methodSet.handler->expectReply(requestId);
+    MethodSet methodSet = getMethodSet(methodName, data->getType());
+    methodSet.handler->expectReply(requestId);
 
-	methodSet.requestInformer->publish(data);
+    methodSet.requestInformer->publish(data);
 
-	// wait for the reply
-	EventPtr result = methodSet.handler->getReply(requestId);
-	if (result->hasMetaInfo("isException")) {
-		assert(result->getType() == "string");
-		throw RemoteTargetInvocationException("Error calling remote method '"
-				+ methodName + "': " + *(boost::static_pointer_cast<string>(
-				result->getData())));
-	} else {
-		return result;
-	}
+    // wait for the reply
+    EventPtr result = methodSet.handler->getReply(requestId);
+    if (result->hasMetaInfo("isException")) {
+        assert(result->getType() == "string");
+        throw RemoteTargetInvocationException(
+                "Error calling remote method '" + methodName + "': "
+                        + *(boost::static_pointer_cast<string>(
+                                result->getData())));
+    } else {
+        return result;
+    }
 
 }
 

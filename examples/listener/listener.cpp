@@ -41,32 +41,32 @@ using namespace rsb;
 using namespace rsb::filter;
 
 void printData(boost::shared_ptr<string> e) {
-        cout << *e << endl;
+    cout << *e << endl;
 }
 
 int main(int argc, char **argv) {
 
-        Factory &factory = Factory::getInstance();
+    Factory &factory = Factory::getInstance();
 
-	LoggerPtr l = Logger::getLogger("receiver");
+    LoggerPtr l = Logger::getLogger("receiver");
 
-	boost::timer t;
+    boost::timer t;
 
-	string uri;
-	if (argc > 1) {
-		uri = argv[1];
-	} else {
-		uri = "rsb://example/informer";
-	}
-	ListenerPtr s = factory.createListener(uri);
-	s->appendHandler(HandlerPtr(new DataFunctionHandler<string>(&printData)));
+    Scope scope;
+    if (argc > 1) {
+        scope = Scope(argv[1]);
+    } else {
+        scope = Scope("/example/informer");
+    }
+    ListenerPtr s = factory.createListener(scope);
+    s->appendHandler(HandlerPtr(new DataFunctionHandler<string> (&printData)));
 
-	cerr << "Listener setup finished. Waiting for messages on uri " << uri
-	     << endl;
+    cerr << "Listener setup finished. Waiting for messages on scope " << scope
+            << endl;
 
-	while (true) {
-		boost::this_thread::sleep(boost::posix_time::seconds(1000));
-	}
+    while (true) {
+        boost::this_thread::sleep(boost::posix_time::seconds(1000));
+    }
 
-	return (EXIT_SUCCESS);
+    return (EXIT_SUCCESS);
 }

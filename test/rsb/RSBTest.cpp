@@ -53,51 +53,58 @@ using namespace rsc::threading;
 TEST(RSBTest, testRoundtrip)
 {
 
-	introspection::registerIntrospectionConverters();
+    introspection::registerIntrospectionConverters();
 
-	// task execution service
-	TaskExecutorPtr exec(new ThreadedTaskExecutor);
+    // task execution service
+    TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
-	// router instantiation
-	RouterPtr r(new Router(Factory::SPREAD, Factory::SPREAD));
-	r->activate();
+    // router instantiation
+    RouterPtr r(new Router(Factory::SPREAD, Factory::SPREAD));
+    r->activate();
 
-	// create subscription
-	SubscriptionPtr s(new Subscription());
-	FilterPtr f(new ScopeFilter("xcf://blah"));
-	s->appendFilter(f);
+    // create subscription
+    SubscriptionPtr s(new Subscription());
+    FilterPtr f(new ScopeFilter(Scope("/blah")));
+    s->appendFilter(f);
 
-	// domain objects
-	unsigned int numEvents = 10;
-	boost::shared_ptr<InformerTask> source(new InformerTask(boost::dynamic_pointer_cast<OutConnector>(r->getOutConnector()), 10));
-	WaitingObserver observer(numEvents);
-	set<HandlerPtr> handlers;
-	handlers.insert(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
+    // domain objects
+    unsigned int numEvents = 10;
+    boost::shared_ptr<InformerTask> source(
+            new InformerTask(
+                    boost::dynamic_pointer_cast<OutConnector>(
+                            r->getOutConnector()), 10));
+    WaitingObserver observer(numEvents);
+    set<HandlerPtr> handlers;
+    handlers.insert(
+            HandlerPtr(
+                    new EventFunctionHandler(
+                            boost::bind(&WaitingObserver::handler, &observer,
+                                    _1))));
 
-	// add subscription to router
-	r->subscribe(s, handlers);
+    // add subscription to router
+    r->subscribe(s, handlers);
 
-	// activate port and schedule informer
-	exec->schedule(source);
+    // activate port and schedule informer
+    exec->schedule(source);
 
-	observer.waitReceived();
+    observer.waitReceived();
 
-	// port is deactivated through dtr
-	cerr << "RSBTest finished" << endl;
+    // port is deactivated through dtr
+    cerr << "RSBTest finished" << endl;
 
-	source->cancel();
-	source->waitDone();
+    source->cancel();
+    source->waitDone();
 
 }
 
 int main(int argc, char* argv[]) {
 
-	setupLogging();
+    setupLogging();
 
-	SubprocessPtr spread = startSpread();
-	boost::this_thread::sleep(boost::posix_time::seconds(2));
+    SubprocessPtr spread = startSpread();
+    boost::this_thread::sleep(boost::posix_time::seconds(2));
 
-	InitGoogleMock(&argc, argv);
-	return RUN_ALL_TESTS();
+    InitGoogleMock(&argc, argv);
+    return RUN_ALL_TESTS();
 
 }

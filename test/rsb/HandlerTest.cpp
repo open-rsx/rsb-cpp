@@ -29,23 +29,24 @@ using namespace rsb;
 using namespace testing;
 
 void printEvent(EventPtr e) {
-        cout << "Event received: " << e->getUUID().getIdAsString() << endl;
+    cout << "Event received: " << e->getId().getIdAsString() << endl;
 }
 
 void printData(boost::shared_ptr<string> e) {
-        cout << "Data received: " << *e << endl;
+    cout << "Data received: " << *e << endl;
 }
 
 TEST(HandlerTest, testDispatch)
 {
-	HandlerPtr eh(new EventFunctionHandler(boost::bind(&printEvent, _1)));
-        HandlerPtr dh(new DataFunctionHandler<string>(boost::bind(&printData, _1)));
+    HandlerPtr eh(new EventFunctionHandler(boost::bind(&printEvent, _1)));
+    HandlerPtr
+            dh(new DataFunctionHandler<string> (boost::bind(&printData, _1)));
 
-	EventPtr e(new Event());
-	e->setData(boost::shared_ptr<string>(new string("blub")));
-	e->setURI("blah");
-	// TODO Check that exception is thrown if no converter available!
-	e->setType("string");
-	eh->handle(e);
-	dh->handle(e);
+    EventPtr e(new Event());
+    e->setData(boost::shared_ptr<string>(new string("blub")));
+    e->setScope(Scope("/blah"));
+    // TODO Check that exception is thrown if no converter available!
+    e->setType("string");
+    eh->handle(e);
+    dh->handle(e);
 }

@@ -54,151 +54,149 @@ namespace rsb {
  * @todo does it make sense that informers are copyable?
  */
 template<class T>
-class Informer : public Participant {
+class Informer: public Participant {
 public:
 
-	/**
-	 * Shared pointer type for this informer.
-	 */
-	typedef boost::shared_ptr<Informer<T> > Ptr;
+    /**
+     * Shared pointer type for this informer.
+     */
+    typedef boost::shared_ptr<Informer<T> > Ptr;
 
-	/**
-	 * Shared pointer type for the default data published by this informer.
-	 */
-	typedef boost::shared_ptr<T> DataPtr;
+    /**
+     * Shared pointer type for the default data published by this informer.
+     */
+    typedef boost::shared_ptr<T> DataPtr;
 
-	/**
-	 * Constructs a new informer.
-	 *
-	 * @param uri the uri under which the data are published
-	 * @param type string describing the default type of data sent by this
-	 *             informer. It is used to find a converter that can convert
-	 *             these data to the port
-	 */
-	Informer(const std::string &uri, const std::string &type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Informer." + uri)),
-				uri(uri), passive(false), defaultType(type) {
-		// TODO evaluate configuration
-		router = eventprocessing::RouterPtr(
-				new eventprocessing::Router(transport::Factory::NONE,
-						transport::Factory::SPREAD));
-		activate();
-	}
+    /**
+     * Constructs a new informer.
+     *
+     * @param scope the scope under which the data are published
+     * @param type string describing the default type of data sent by this
+     *             informer. It is used to find a converter that can convert
+     *             these data to the port
+     */
+    Informer(const Scope &scope, const std::string &type) :
+                logger(
+                        rsc::logging::Logger::getLogger(
+                                "rsb.Informer." + scope.toString())),
+                scope(scope), passive(false), defaultType(type) {
+        // TODO evaluate configuration
+        router = eventprocessing::RouterPtr(
+                new eventprocessing::Router(transport::Factory::NONE,
+                        transport::Factory::SPREAD));
+        activate();
+    }
 
-	Informer(const transport::Factory::ConnectorTypes &out,
-			const std::string &uri, const std::string &type) :
-		logger(rsc::logging::Logger::getLogger("rsb.Informer")), uri(uri),
-				passive(false), defaultType(type) {
-		// TODO evaluate configuration
-		router = eventprocessing::RouterPtr(
-				new eventprocessing::Router(transport::Factory::NONE, out));
-		activate();
-	}
+    Informer(const transport::Factory::ConnectorTypes &out, const Scope &scope,
+            const std::string &type) :
+        logger(rsc::logging::Logger::getLogger("rsb.Informer")), scope(scope),
+                passive(false), defaultType(type) {
+        // TODO evaluate configuration
+        router = eventprocessing::RouterPtr(
+                new eventprocessing::Router(transport::Factory::NONE, out));
+        activate();
+    }
 
-	virtual ~Informer() {
-	}
+    virtual ~Informer() {
+    }
 
-	/**
-	 * Defines the desired quality of service settings for this informers.
-	 *
-	 * @param specs QoS specs
-	 * @throw UnsupportedQualityOfServiceException requirements cannot be met
-	 */
-	void setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
-		router->setQualityOfServiceSpecs(specs);
-	}
+    /**
+     * Defines the desired quality of service settings for this informers.
+     *
+     * @param specs QoS specs
+     * @throw UnsupportedQualityOfServiceException requirements cannot be met
+     */
+    void setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
+        router->setQualityOfServiceSpecs(specs);
+    }
 
-	/**
-	 * Publishes the given data to the Informer's uri.
-	 *
-	 * @param data Pointer to the data to send.
-	 */
-	void publish(boost::shared_ptr<T> data) {
-		VoidPtr p = boost::static_pointer_cast<void>(data);
-		publish(p, defaultType);
-	}
+    /**
+     * Publishes the given data to the Informer's scope.
+     *
+     * @param data Pointer to the data to send.
+     */
+    void publish(boost::shared_ptr<T> data) {
+        VoidPtr p = boost::static_pointer_cast<void>(data);
+        publish(p, defaultType);
+    }
 
-	/**
-	 * Publishes the given data to the Informer's uri.
-	 *
-	 * @param data Pointer to the data to send.
-	 * @param type string which defines the type of the data. I.e. "string"
-	 *        for strings.
-	 */
-	template<class T1>
-	void publish(boost::shared_ptr<T1> data, std::string type) {
-		VoidPtr p = boost::static_pointer_cast<void>(data);
-		publish(p, type);
-	}
+    /**
+     * Publishes the given data to the Informer's scope.
+     *
+     * @param data Pointer to the data to send.
+     * @param type string which defines the type of the data. I.e. "string"
+     *        for strings.
+     */
+    template<class T1>
+    void publish(boost::shared_ptr<T1> data, std::string type) {
+        VoidPtr p = boost::static_pointer_cast<void>(data);
+        publish(p, type);
+    }
 
-	/**
-	 * Publishes the given event to the Informer's uri with the ability to
-	 * define additional meta data.
-	 *
-	 * @param event the event to publish.
-	 * @todo assumption is that data and type field already set externally
-	 *       throw exception if not the case
-	 */
-	void publish(EventPtr event) {
-		// TODO Check that exception is thrown if no converter available!
-		event->setURI(uri);
-		RSCDEBUG(logger, "Publishing event");
-		router->publish(event);
-	}
+    /**
+     * Publishes the given event to the Informer's scope with the ability to
+     * define additional meta data.
+     *
+     * @param event the event to publish.
+     * @todo assumption is that data and type field already set externally
+     *       throw exception if not the case
+     */
+    void publish(EventPtr event) {
+        // TODO Check that exception is thrown if no converter available!
+        event->setScope(scope);
+        RSCDEBUG(logger, "Publishing event");
+        router->publish(event);
+    }
 
-	/**
-	 * Activates the Informer and therefore the Router. Is considered being in
-	 * active mode afterwards.
-	 */
-	void activate() {
-		router->activate();
-		passive = false;
-	}
+    /**
+     * Activates the Informer and therefore the Router. Is considered being in
+     * active mode afterwards.
+     */
+    void activate() {
+        router->activate();
+        passive = false;
+    }
 
-	/**
-	 * Deactivates the Informer and therefore the Router. Is considered being
-	 * in passive mode afterwards.
-	 */
-	void deactivate() {
-		if (!passive) {
-			router->deactivate();
-		}
-		passive = true;
-	}
+    /**
+     * Deactivates the Informer and therefore the Router. Is considered being
+     * in passive mode afterwards.
+     */
+    void deactivate() {
+        if (!passive) {
+            router->deactivate();
+        }
+        passive = true;
+    }
 
 protected:
 
-	Informer() { /* forbidden */
-	}
+    Informer() { /* forbidden */
+    }
 
-	void publish(VoidPtr p, const std::string &type) {
-		EventPtr e(new Event());
-		e->setData(p);
-		e->setURI(uri);
-		// TODO Check that exception is thrown if no converter available!
-		e->setType(type);
-		RSCDEBUG(logger, "Publishing event");
-		router->publish(e);
-	}
+    void publish(VoidPtr p, const std::string &type) {
+        EventPtr e(new Event());
+        e->setData(p);
+        e->setScope(scope);
+        // TODO Check that exception is thrown if no converter available!
+        e->setType(type);
+        RSCDEBUG(logger, "Publishing event");
+        router->publish(e);
+    }
 
 private:
-	rsc::logging::LoggerPtr logger;
-	std::string uri;
-	volatile bool passive;
-	std::string defaultType;
-	eventprocessing::RouterPtr router;
+    rsc::logging::LoggerPtr logger;
+    Scope scope;
+    volatile bool passive;
+    std::string defaultType;
+    eventprocessing::RouterPtr router;
 
 };
 
-
-template <typename Ch,
-          typename Tr,
-          typename T>
+template<typename Ch, typename Tr, typename T>
 std::basic_ostream<Ch, Tr>&
-operator<<(std::basic_ostream<Ch, Tr>& stream,
-           const Informer<T>&          informer) {
-        stream << "Informer[id=" << informer.getUUID() << "]";
-        return stream;
+operator<<(std::basic_ostream<Ch, Tr>& stream, const Informer<T>& informer) {
+    stream << "Informer[id=" << informer.getUUID() << "]";
+    return stream;
 }
 
 }

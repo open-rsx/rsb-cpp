@@ -32,16 +32,16 @@ namespace transport {
 /**
  * @author swrede
  */
-class RSB_EXPORT Factory  {
+class RSB_EXPORT Factory {
 public:
-	enum ConnectorTypes {
-		LOCAL, SPREAD, NONE
-	};
+    enum ConnectorTypes {
+        LOCAL, SPREAD, NONE
+    };
 
-	/**
-	 * @todo distinguish between in and out ports?
-	 */
-	static ConnectorPtr createConnector(ConnectorTypes type);
+    /**
+     * @todo distinguish between in and out ports?
+     */
+    static ConnectorPtr createConnector(ConnectorTypes type);
 };
 
 typedef rsc::patterns::SingletonFactory<std::string, Connector> InFactory;

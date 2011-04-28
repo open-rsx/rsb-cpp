@@ -34,67 +34,69 @@ namespace patterns {
 class RequestHandler: public Handler {
 private:
 
-	rsc::logging::LoggerPtr logger;
+    rsc::logging::LoggerPtr logger;
 
-	string methodName;
-	Server::CallbackPtr callback;
-	Informer<void>::Ptr informer;
+    string methodName;
+    Server::CallbackPtr callback;
+    Informer<void>::Ptr informer;
 
 public:
 
-	RequestHandler(const string &methodName, Server::CallbackPtr callback,
-			Informer<void>::Ptr informer) :
-		logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
-				+ methodName)), methodName(methodName), callback(callback),
-				informer(informer) {
-	}
+    RequestHandler(const string &methodName, Server::CallbackPtr callback,
+            Informer<void>::Ptr informer) :
+                logger(
+                        rsc::logging::Logger::getLogger(
+                                "rsb.patterns.RequestHandler." + methodName)),
+                methodName(methodName), callback(callback), informer(informer) {
+    }
 
-	void handle(EventPtr event) {
+    void handle(EventPtr event) {
 
-		const string requestIdKey = "ServerRequestId";
+        const string requestIdKey = "ServerRequestId";
 
-		if (event->getType() != callback->getRequestType()) {
-			RSCERROR(logger, "Request type '" << event->getType()
-					<< "' does not match expected request type '"
-					<< callback->getRequestType() << "' of method '"
-					<< methodName << "'");
-			return;
-		}
+        if (event->getType() != callback->getRequestType()) {
+            RSCERROR(logger, "Request type '" << event->getType()
+                    << "' does not match expected request type '"
+                    << callback->getRequestType() << "' of method '"
+                    << methodName << "'");
+            return;
+        }
 
-		if (!event->hasMetaInfo(requestIdKey)) {
-			RSCERROR(logger,
-					"Request event does not contain a valid request ID "
-					<< "to answer to.");
-			return;
-		}
+        if (!event->hasMetaInfo(requestIdKey)) {
+            RSCERROR(logger,
+                    "Request event does not contain a valid request ID "
+                    << "to answer to.");
+            return;
+        }
 
-		try {
-			VoidPtr returnData = callback->intlCall(methodName,
-					event->getData());
-			EventPtr returnEvent(new Event());
-			returnEvent->setType(callback->getReplyType());
-			returnEvent->setData(returnData);
-			returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
-					requestIdKey));
-			informer->publish(returnEvent);
-		} catch (exception &e) {
-			EventPtr returnEvent(new Event());
-			returnEvent->setType("string");
-			string exceptionType = typeid(e).name();
-			returnEvent->setData(boost::shared_ptr<string>(new string(
-					exceptionType + ": " + e.what())));
-			returnEvent->addMetaInfo(requestIdKey, event->getMetaInfo(
-					requestIdKey));
-			returnEvent->addMetaInfo("isException", "");
-			informer->publish(returnEvent);
-		}
+        try {
+            VoidPtr returnData = callback->intlCall(methodName,
+                    event->getData());
+            EventPtr returnEvent(new Event());
+            returnEvent->setType(callback->getReplyType());
+            returnEvent->setData(returnData);
+            returnEvent ->addMetaInfo(requestIdKey,
+                    event->getMetaInfo(requestIdKey));
+            informer->publish(returnEvent);
+        } catch (exception &e) {
+            EventPtr returnEvent(new Event());
+            returnEvent->setType("string");
+            string exceptionType = typeid(e).name();
+            returnEvent->setData(
+                    boost::shared_ptr<string>(
+                            new string(exceptionType + ": " + e.what())));
+            returnEvent->addMetaInfo(requestIdKey,
+                    event->getMetaInfo(requestIdKey));
+            returnEvent->addMetaInfo("isException", "");
+            informer->publish(returnEvent);
+        }
 
-	}
+    }
 
 };
 
-Server::Server(const std::string &uri) :
-        uri(uri) {
+Server::Server(const Scope &scope) :
+    scope(scope) {
 }
 
 Server::~Server() {
@@ -102,20 +104,25 @@ Server::~Server() {
 
 void Server::registerMethod(const std::string &methodName, CallbackPtr callback) {
 
-	// check that method does not exist
-	if (methods.count(methodName)) {
-		throw MethodExistsException(methodName, uri);
-	}
+    // check that method does not exist
+    if (methods.count(methodName)) {
+        throw MethodExistsException(methodName, scope.toString());
+    }
 
-	// TODO check that the reply type is convertible
-	Informer<void>::Ptr informer(new Informer<void> (uri + "-reply-"
-			+ methodName, callback->getReplyType()));
+    // TODO check that the reply type is convertible
+    Informer<void>::Ptr informer(
+            new Informer<void> (
+                    scope.concat(Scope("reply")).concat(Scope(methodName)),
+                    callback->getReplyType()));
 
-	ListenerPtr listener(Factory::getInstance().createListener(uri + "-request-" + methodName));
-	listener->appendHandler(HandlerPtr(new RequestHandler(methodName, callback, informer)));
-	this->requestListeners.insert(listener);
+    ListenerPtr listener(
+            Factory::getInstance().createListener(
+                    scope.concat(Scope("request")).concat(Scope(methodName))));
+    listener->appendHandler(
+            HandlerPtr(new RequestHandler(methodName, callback, informer)));
+    this->requestListeners.insert(listener);
 
-	methods[methodName] = make_pair(listener->getSubscription(), informer);
+    methods[methodName] = make_pair(listener->getSubscription(), informer);
 }
 
 }

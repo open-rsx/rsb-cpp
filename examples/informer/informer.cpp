@@ -36,22 +36,22 @@ using namespace rsb;
 
 int main(void) {
 
-	Factory &factory = Factory::getInstance();
+    Factory &factory = Factory::getInstance();
 
-	LoggerPtr l = Logger::getLogger("informer");
+    LoggerPtr l = Logger::getLogger("informer");
 
-	Informer<string>::Ptr informer = factory.createInformer<string> (
-			"rsb://example/informer");
-	Informer<string>::DataPtr s(new string("blub"));
+    Informer<string>::Ptr informer = factory.createInformer<string> (
+            Scope("/example/informer"));
+    Informer<string>::DataPtr s(new string("blub"));
 
-	boost::timer t;
+    boost::timer t;
 
-	for (int j = 0; j < 1200; j++) {
-		informer->publish(s);
-	}
+    for (int j = 0; j < 1200; j++) {
+        informer->publish(s);
+    }
 
-	cout << "Elapsed time for " << 1200 << " messages sent: " << t.elapsed()
-			<< " s" << endl;
+    cout << "Elapsed time for " << 1200 << " messages sent: " << t.elapsed()
+            << " s" << endl;
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

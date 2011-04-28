@@ -47,6 +47,11 @@ public:
     explicit Scope(const std::string &scope);
 
     /**
+     * Creates a scope representing "/". Use this wisely!
+     */
+    Scope();
+
+    /**
      * Destructor.
      */
     virtual ~Scope();
@@ -116,8 +121,6 @@ public:
     bool operator<(const Scope &other) const;
 
 private:
-
-    Scope();
 
     std::vector<std::string> components;
 

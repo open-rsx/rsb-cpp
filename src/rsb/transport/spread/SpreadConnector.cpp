@@ -44,223 +44,224 @@ using namespace rsc::threading;
 namespace rsb {
 namespace spread {
 
-const SpreadConnector::QoSMap SpreadConnector::qosMapping = SpreadConnector::buildQoSMapping();
+const SpreadConnector::QoSMap SpreadConnector::qosMapping =
+        SpreadConnector::buildQoSMapping();
 
 SpreadConnector::SpreadConnector(
-		rsb::converter::Repository<std::string>::Ptr converters) :
-	converters(converters) {
-        init(defaultHost(), defaultPort());
+        rsb::converter::Repository<std::string>::Ptr converters) :
+    converters(converters) {
+    init(defaultHost(), defaultPort());
 }
 
-SpreadConnector::SpreadConnector(const std::string& host,
-                                 unsigned int port) :
-	converters(converter::stringConverterRepository()) {
-        init(host, port);
+SpreadConnector::SpreadConnector(const std::string& host, unsigned int port) :
+    converters(converter::stringConverterRepository()) {
+    init(host, port);
 }
 
 Connector* SpreadConnector::create(const Properties& args) {
-	LoggerPtr logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadConnector");
-	RSCDEBUG(logger, "creating connector with properties " << args);
+    LoggerPtr logger = rsc::logging::Logger::getLogger(
+            "rsb.spread.SpreadConnector");
+    RSCDEBUG(logger, "creating connector with properties " << args);
 
-        return new SpreadConnector(args.get<string>      ("host", defaultHost()),
-                                   args.get<unsigned int>("port", defaultPort()));
+    return new SpreadConnector(args.get<string> ("host", defaultHost()),
+            args.get<unsigned int> ("port", defaultPort()));
 }
 
-
-void SpreadConnector::init(const std::string& host,
-                           unsigned int port) {
-	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadConnector");
-	RSCDEBUG(logger, "SpreadConnector() entered, port id: " << id.getIdAsString());
-	activated = false;
-	exec = TaskExecutorPtr(new ThreadedTaskExecutor);
-	// TODO ConnectionPool for SpreadConnections?!?
-	// TODO Send Message over Managing / Introspection Channel
-	// TODO Generate Unique-IDs for SpreadConnectors
-	con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString(), host, port));
-	// TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
-	//st = boost::shared_ptr<StatusTask>(new StatusTask(this));
-	rec = boost::shared_ptr<ReceiverTask>(
-			new ReceiverTask(con, converters, observer));
-	memberships = MembershipManagerPtr(new MembershipManager());
-	setQualityOfServiceSpecs(QualityOfServiceSpec());
+void SpreadConnector::init(const std::string& host, unsigned int port) {
+    logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadConnector");
+    RSCDEBUG(logger, "SpreadConnector() entered, port id: " << id.getIdAsString());
+    activated = false;
+    exec = TaskExecutorPtr(new ThreadedTaskExecutor);
+    // TODO ConnectionPool for SpreadConnections?!?
+    // TODO Send Message over Managing / Introspection Channel
+    // TODO Generate Unique-IDs for SpreadConnectors
+    con = SpreadConnectionPtr(
+            new SpreadConnection(id.getIdAsString(), host, port));
+    // TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
+    //st = boost::shared_ptr<StatusTask>(new StatusTask(this));
+    rec = boost::shared_ptr<ReceiverTask>(
+            new ReceiverTask(con, converters, observer));
+    memberships = MembershipManagerPtr(new MembershipManager());
+    setQualityOfServiceSpecs(QualityOfServiceSpec());
 }
 
 void SpreadConnector::activate() {
-	// connect to spread
-	con->activate();
-	// (re-)start threads
-	exec->schedule(rec);
-	//exec->schedule(st);
-	activated = true;
+    // connect to spread
+    con->activate();
+    // (re-)start threads
+    exec->schedule(rec);
+    //exec->schedule(st);
+    activated = true;
 }
 
 void SpreadConnector::setObserver(HandlerPtr observer) {
-	this->observer = observer;
-	rec->setHandler(observer);
+    this->observer = observer;
+    rec->setHandler(observer);
 }
 
 void SpreadConnector::deactivate() {
-	RSCDEBUG(logger, "deactivate() entered");
-	rec->cancel();
-	// killing spread connection, exception thrown to rec thread which
-	// should be handled specifically as the cancel flag was set
-	// memberships->leaveAll();
-	con->deactivate();
-	rec->waitDone();
-	RSCTRACE(logger, "deactivate() finished"); // << *id);
-	activated = false;
+    RSCDEBUG(logger, "deactivate() entered");
+    rec->cancel();
+    // killing spread connection, exception thrown to rec thread which
+    // should be handled specifically as the cancel flag was set
+    // memberships->leaveAll();
+    con->deactivate();
+    rec->waitDone();
+    RSCTRACE(logger, "deactivate() finished"); // << *id);
+    activated = false;
 }
 
 SpreadConnector::~SpreadConnector() {
-	if (activated) {
-		deactivate();
-	}
+    if (activated) {
+        deactivate();
+    }
 }
 
 void SpreadConnector::notify(rsb::filter::ScopeFilter* f,
-		const rsb::filter::FilterAction::Types &at) {
-	// join or leave groups
-	// TODO evaluate success
-	RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);
-	switch (at) {
-	case rsb::filter::FilterAction::ADD:
-		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
-				<< " ,now going to join Spread group")
-		;
-		memberships->join(f->getURI(), con);
-		break;
-	case rsb::filter::FilterAction::REMOVE:
-		RSCINFO(logger, "ScopeFilter URI is " << f->getURI()
-				<< " ,now going to leave Spread group")
-		;
-		memberships->leave(f->getURI(), con);
-		break;
-	default:
-		RSCWARN(logger,
-				"ScopeFilter Action not supported by this Connector implementation")
-		;
-		break;
-	}
+        const rsb::filter::FilterAction::Types &at) {
+    // join or leave groups
+    // TODO evaluate success
+    RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered"); // << *id);
+    switch (at) {
+    case rsb::filter::FilterAction::ADD:
+        RSCINFO(logger, "ScopeFilter Scope is " << f->getScope()
+                << " ,now going to join Spread group")
+        ;
+        memberships->join(f->getScope().toString(), con);
+        break;
+    case rsb::filter::FilterAction::REMOVE:
+        RSCINFO(logger, "ScopeFilter Scope is " << f->getScope()
+                << " ,now going to leave Spread group")
+        ;
+        memberships->leave(f->getScope().toString(), con);
+        break;
+    default:
+        RSCWARN(logger,
+                "ScopeFilter Action not supported by this Connector implementation")
+        ;
+        break;
+    }
 
 }
 
 void SpreadConnector::push(EventPtr e) {
-	// TODO Remove "data split" information from notification
-	// TODO Read max spread message len from config file
-	// get matching converter
-	string wire;
-	int spreadMaxLen = 100000;
+    // TODO Remove "data split" information from notification
+    // TODO Read max spread message len from config file
+    // get matching converter
+    string wire;
+    int spreadMaxLen = 100000;
 
-	boost::shared_ptr<void> obj = e->getData();
-	// TODO exception handling if converter is not available
-	boost::shared_ptr<converter::Converter<string> > c =
-			converters->getConverterByDataType(e->getType());
-	string wireType = c->serialize(make_pair(e->getType(), obj), wire);
+    boost::shared_ptr<void> obj = e->getData();
+    // TODO exception handling if converter is not available
+    boost::shared_ptr<converter::Converter<string> > c =
+            converters->getConverterByDataType(e->getType());
+    string wireType = c->serialize(make_pair(e->getType(), obj), wire);
 
-	// ---- Begin split message implementation ----
-	unsigned int numDataParts = 0;
-	RSCDEBUG(logger, "Whole message size (data only): " << wire.size());
-	numDataParts = wire.size() / spreadMaxLen;
-	RSCDEBUG(logger, "Number of message parts (data only): " << numDataParts+1);
+    // ---- Begin split message implementation ----
+    unsigned int numDataParts = 0;
+    RSCDEBUG(logger, "Whole message size (data only): " << wire.size());
+    numDataParts = wire.size() / spreadMaxLen;
+    RSCDEBUG(logger, "Number of message parts (data only): " << numDataParts+1);
 
-	string dataPart;
-	size_t curPos = 0;
-	size_t maxPartSize = 100000;
-	for (unsigned int i = 0; i <= numDataParts; i++) {
+    string dataPart;
+    size_t curPos = 0;
+    size_t maxPartSize = 100000;
+    for (unsigned int i = 0; i <= numDataParts; i++) {
 
-		Notification n;
-		n.set_eid(e->getUUID().getIdAsString());
-		n.set_sequence_length(0);
-		n.set_standalone(false);
-		n.set_uri(e->getURI());
-		n.set_type_id(wireType);
-		for (map<string, string>::const_iterator it = e->metaInfoBegin(); it
-				!= e->metaInfoEnd(); ++it) {
-			MetaInfo *info = n.mutable_metainfos()->Add();
-			info->set_key(it->first);
-			info->set_value(it->second);
-		}
-		n.set_num_data_parts(numDataParts);
-		n.set_data_part(i);
+        Notification n;
+        n.set_eid(e->getId().getIdAsString());
+        n.set_sequence_length(0);
+        n.set_standalone(false);
+        n.set_uri(e->getScope().toString());
+        n.set_type_id(wireType);
+        for (map<string, string>::const_iterator it = e->metaInfoBegin(); it
+                != e->metaInfoEnd(); ++it) {
+            MetaInfo *info = n.mutable_metainfos()->Add();
+            info->set_key(it->first);
+            info->set_value(it->second);
+        }
+        n.set_num_data_parts(numDataParts);
+        n.set_data_part(i);
 
-		if (curPos < (wire.size() - (wire.size() % maxPartSize))) {
-			dataPart = wire.substr(curPos, maxPartSize);
-			curPos = (i * maxPartSize) + maxPartSize;
-		} else {
-			dataPart = wire.substr(curPos, wire.size() % maxPartSize);
-		}
+        if (curPos < (wire.size() - (wire.size() % maxPartSize))) {
+            dataPart = wire.substr(curPos, maxPartSize);
+            curPos = (i * maxPartSize) + maxPartSize;
+        } else {
+            dataPart = wire.substr(curPos, wire.size() % maxPartSize);
+        }
 
-		n.mutable_data()->set_binary(dataPart);
-		n.mutable_data()->set_length(dataPart.size());
-		RSCTRACE(logger, "Size of message[" << i << "] (data only): " << dataPart.size());
+        n.mutable_data()->set_binary(dataPart);
+        n.mutable_data()->set_length(dataPart.size());
+        RSCTRACE(logger, "Size of message[" << i << "] (data only): " << dataPart.size());
 
-		string sm;
-		if (!n.SerializeToString(&sm)) {
-			throw ProtocolException("Failed to write notification to stream");
-		}
+        string sm;
+        if (!n.SerializeToString(&sm)) {
+            throw ProtocolException("Failed to write notification to stream");
+        }
 
-		SpreadMessage msg(sm);
+        SpreadMessage msg(sm);
 
-		// TODO convert URI to group name
-		// TODO check if it is necessary to join spread groups when only sending to them
+        // TODO convert URI to group name
+        // TODO check if it is necessary to join spread groups when only sending to them
 
-		msg.addGroup(e->getURI());
-		msg.setQOS(messageQoS);
+        msg.addGroup(e->getScope().toString());
+        msg.setQOS(messageQoS);
 
-		RSCTRACE(logger, "This is the serialized message size before send: " << msg.getSize());
+        RSCTRACE(logger, "This is the serialized message size before send: " << msg.getSize());
 
-		if (!con->send(msg)) {
-			//        for (list<string>::const_iterator n = msg->getGroupsBegin(); n != msg->getGroupsEnd(); ++n) {
-			//           cout << "Sending msg to following groups: " << *n << endl;
-			//        }
-			// TODO implement queing or throw messages away?
-			// TODO maybe return exception with msg that was not sent
-			RSCWARN(logger, "Spread Connection inactive -> could not send message");
-		} else {
-			RSCDEBUG(logger, "event sent to spread");
-		}
-	}
+        if (!con->send(msg)) {
+            //        for (list<string>::const_iterator n = msg->getGroupsBegin(); n != msg->getGroupsEnd(); ++n) {
+            //           cout << "Sending msg to following groups: " << *n << endl;
+            //        }
+            // TODO implement queing or throw messages away?
+            // TODO maybe return exception with msg that was not sent
+            RSCWARN(logger, "Spread Connection inactive -> could not send message");
+        } else {
+            RSCDEBUG(logger, "event sent to spread");
+        }
+    }
 }
 
 SpreadConnector::QoSMap SpreadConnector::buildQoSMapping() {
 
-	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> unorderedMap;
-	unorderedMap.insert(
-			make_pair(QualityOfServiceSpec::UNRELIABLE,
-					SpreadMessage::UNRELIABLE));
-	unorderedMap.insert(
-			make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::RELIABLE));
+    map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> unorderedMap;
+    unorderedMap.insert(
+            make_pair(QualityOfServiceSpec::UNRELIABLE,
+                    SpreadMessage::UNRELIABLE));
+    unorderedMap.insert(
+            make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::RELIABLE));
 
-	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> orderedMap;
-	orderedMap.insert(
-			make_pair(QualityOfServiceSpec::UNRELIABLE, SpreadMessage::FIFO));
-	orderedMap.insert(
-			make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::FIFO));
+    map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> orderedMap;
+    orderedMap.insert(
+            make_pair(QualityOfServiceSpec::UNRELIABLE, SpreadMessage::FIFO));
+    orderedMap.insert(
+            make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::FIFO));
 
-	map<QualityOfServiceSpec::Ordering, map<QualityOfServiceSpec::Reliability,
-			SpreadMessage::QOS> > table;
-	table.insert(make_pair(QualityOfServiceSpec::UNORDERED, unorderedMap));
-	table.insert(make_pair(QualityOfServiceSpec::ORDERED, orderedMap));
+    map<QualityOfServiceSpec::Ordering, map<QualityOfServiceSpec::Reliability,
+            SpreadMessage::QOS> > table;
+    table.insert(make_pair(QualityOfServiceSpec::UNORDERED, unorderedMap));
+    table.insert(make_pair(QualityOfServiceSpec::ORDERED, orderedMap));
 
-	return table;
+    return table;
 
 }
 
-void SpreadConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+void SpreadConnector::setQualityOfServiceSpecs(
+        const QualityOfServiceSpec &specs) {
 
-	QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
-	if (orderMapIt == qosMapping.end()) {
-		throw UnsupportedQualityOfServiceException("Unknown ordering", specs);
-	}
-	map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS>::const_iterator
-			mapIt = orderMapIt->second.find(specs.getReliability());
-	if (mapIt == orderMapIt->second.end()) {
-		throw UnsupportedQualityOfServiceException("Unknown reliability", specs);
-	}
+    QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
+    if (orderMapIt == qosMapping.end()) {
+        throw UnsupportedQualityOfServiceException("Unknown ordering", specs);
+    }
+    map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS>::const_iterator
+            mapIt = orderMapIt->second.find(specs.getReliability());
+    if (mapIt == orderMapIt->second.end()) {
+        throw UnsupportedQualityOfServiceException("Unknown reliability", specs);
+    }
 
-	messageQoS = mapIt->second;
+    messageQoS = mapIt->second;
 
-	RSCDEBUG(logger, "Selected new message type " << messageQoS);
+    RSCDEBUG(logger, "Selected new message type " << messageQoS);
 
 }
 

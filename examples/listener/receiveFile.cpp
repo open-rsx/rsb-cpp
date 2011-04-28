@@ -46,58 +46,58 @@ using namespace boost::posix_time;
 
 class MyDataHandler: public Handler {
 public:
-	MyDataHandler() {
-		counter = 0;
-	}
+    MyDataHandler() {
+        counter = 0;
+    }
 
-	void handle(EventPtr e) {
+    void handle(EventPtr e) {
 
-		counter++;
-		ptime receiveTime = microsec_clock::local_time();
-		string file = e->getMetaInfo("file");
-		string fileLoc = "/tmp/" + file;
+        counter++;
+        ptime receiveTime = microsec_clock::local_time();
+        string file = e->getMetaInfo("file");
+        string fileLoc = "/tmp/" + file;
 
-		boost::shared_ptr<string> data = boost::static_pointer_cast<string>(
-				e->getData());
-		ptime sendTime = from_iso_string(e->getMetaInfo("startTime"));
-		cout << "Received message [" << counter << "] - " << file << endl;
-		cout << "... elapsed time between SEND -> RECEIVE: "
-				<< to_simple_string(receiveTime - sendTime) << endl;
+        boost::shared_ptr<string> data = boost::static_pointer_cast<string>(
+                e->getData());
+        ptime sendTime = from_iso_string(e->getMetaInfo("startTime"));
+        cout << "Received message [" << counter << "] - " << file << endl;
+        cout << "... elapsed time between SEND -> RECEIVE: "
+                << to_simple_string(receiveTime - sendTime) << endl;
 
-		ofstream out(fileLoc.c_str(), ios::binary);
-		for (it = data->begin(); it < data->end(); ++it) {
-			out << *it;
-		}
-		out.close();
-	}
+        ofstream out(fileLoc.c_str(), ios::binary);
+        for (it = data->begin(); it < data->end(); ++it) {
+            out << *it;
+        }
+        out.close();
+    }
 
-	long counter;
-	string::iterator it;
+    long counter;
+    string::iterator it;
 
 };
 
 int main(int argc, char **argv) {
 
-        Factory &factory = Factory::getInstance();
+    Factory &factory = Factory::getInstance();
 
-	LoggerPtr l = Logger::getLogger("receiver");
+    LoggerPtr l = Logger::getLogger("receiver");
 
-	boost::timer t;
+    boost::timer t;
 
-        string uri;
-        if (argc > 1) {
-                uri = argv[1];
-        } else {
-                uri = "rsb://example/informer";
-        }
-        ListenerPtr s = factory.createListener(uri);
-        s->appendHandler(HandlerPtr(new MyDataHandler()));
+    Scope scope;
+    if (argc > 1) {
+        scope = Scope(argv[1]);
+    } else {
+        scope = Scope("/example/informer");
+    }
+    ListenerPtr s = factory.createListener(scope);
+    s->appendHandler(HandlerPtr(new MyDataHandler()));
 
-        cout << "Listener setup finished. Waiting for messages on uri " << uri
-             << endl;
-        while (true) {
-                boost::this_thread::sleep(boost::posix_time::seconds(1000));
-        }
+    cout << "Listener setup finished. Waiting for messages on scope " << scope
+            << endl;
+    while (true) {
+        boost::this_thread::sleep(boost::posix_time::seconds(1000));
+    }
 
-	return (EXIT_SUCCESS);
+    return (EXIT_SUCCESS);
 }

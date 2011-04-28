@@ -30,94 +30,92 @@ using namespace rsb::patterns;
 class TestCallback: public Server::Callback<string, string> {
 public:
 
-	string methodName;
+    string methodName;
 
-	TestCallback(const string &methodName) :
-		methodName(methodName) {
-	}
+    TestCallback(const string &methodName) :
+        methodName(methodName) {
+    }
 
-	string getRequestType() const {
-		return "string";
-	}
+    string getRequestType() const {
+        return "string";
+    }
 
-	string getReplyType() const {
-		return "string";
-	}
+    string getReplyType() const {
+        return "string";
+    }
 
-	boost::shared_ptr<string> call(const string &/*methodName*/,
-			boost::shared_ptr<string> input) {
-		return boost::shared_ptr<string>(
-				new string("reply to '" + *input + "'"));
-	}
+    boost::shared_ptr<string> call(const string &/*methodName*/,
+            boost::shared_ptr<string> input) {
+        return boost::shared_ptr<string>(
+                new string("reply to '" + *input + "'"));
+    }
 
 };
 
 int main(int /*argc*/, char **/*argv*/) {
 
-	Factory &factory = Factory::getInstance();
+    Factory &factory = Factory::getInstance();
 
-	rsc::logging::LoggerFactory::getInstance()->reconfigure(
-			rsc::logging::Logger::FATAL);
+    rsc::logging::LoggerFactory::getInstance()->reconfigure(
+            rsc::logging::Logger::FATAL);
 
-	const string uri = "rsb://sxy";
-	ServerPtr server = factory.createServer(uri);
+    const Scope scope("/sxy");
+    ServerPtr server = factory.createServer(scope);
 
-	const string methodName1 = "methodOne";
-	Server::CallbackPtr m1(new TestCallback(methodName1));
+    const string methodName1 = "methodOne";
+    Server::CallbackPtr m1(new TestCallback(methodName1));
 
-	const string methodName2 = "methodTwo";
-	Server::CallbackPtr m2(new TestCallback(methodName2));
+    const string methodName2 = "methodTwo";
+    Server::CallbackPtr m2(new TestCallback(methodName2));
 
-	server->registerMethod(methodName1, m1);
-	server->registerMethod(methodName2, m2);
+    server->registerMethod(methodName1, m1);
+    server->registerMethod(methodName2, m2);
 
-	RemoteServerPtr remoteServer = factory.createRemoteServer(uri);
+    RemoteServerPtr remoteServer = factory.createRemoteServer(scope);
 
-	int iteration = 1;
-	while (true) {
-		//usleep(500000);
+    int iteration = 1;
+    while (true) {
+        //usleep(500000);
 
-		cout << "++++++++++++ new iteration" << endl;
+        cout << "++++++++++++ new iteration" << endl;
 
-		EventPtr request1(new Event);
-		request1->setType("string");
-		stringstream s1;
-		s1 << "This is request 1 in iteration " << iteration;
-		request1->setData(VoidPtr(new string(s1.str())));
-		cout << "+++ Calling method " << methodName1 << endl;
-		try {
-			EventPtr result =
-					remoteServer->callMethod(methodName1, request1);
-			cout << "+++ got result: " << *result << ": "
-					<< *(boost::static_pointer_cast<string>(result->getData()))
-					<< endl;
-		} catch (exception &e) {
-			cerr << "+++ Error calling method: " << e.what() << endl;
-		}
+        EventPtr request1(new Event);
+        request1->setType("string");
+        stringstream s1;
+        s1 << "This is request 1 in iteration " << iteration;
+        request1->setData(VoidPtr(new string(s1.str())));
+        cout << "+++ Calling method " << methodName1 << endl;
+        try {
+            EventPtr result = remoteServer->callMethod(methodName1, request1);
+            cout << "+++ got result: " << *result << ": "
+                    << *(boost::static_pointer_cast<string>(result->getData()))
+                    << endl;
+        } catch (exception &e) {
+            cerr << "+++ Error calling method: " << e.what() << endl;
+        }
 
-		EventPtr request2(new Event);
-		request2->setType("string");
-		stringstream s2;
-		s2 << "This is request 2 in iteration " << iteration;
-		request2->setData(VoidPtr(new string(s2.str())));
-		cout << "+++ Calling method " << methodName2 << endl;
-		try {
-			EventPtr result =
-					remoteServer->callMethod(methodName2, request2);
-			cout << "+++ got result: " << *result << ": "
-					<< *(boost::static_pointer_cast<string>(result->getData()))
-					<< endl;
-		} catch (exception &e) {
-			cerr << "+++ Error calling method: " << e.what() << endl;
-		}
+        EventPtr request2(new Event);
+        request2->setType("string");
+        stringstream s2;
+        s2 << "This is request 2 in iteration " << iteration;
+        request2->setData(VoidPtr(new string(s2.str())));
+        cout << "+++ Calling method " << methodName2 << endl;
+        try {
+            EventPtr result = remoteServer->callMethod(methodName2, request2);
+            cout << "+++ got result: " << *result << ": "
+                    << *(boost::static_pointer_cast<string>(result->getData()))
+                    << endl;
+        } catch (exception &e) {
+            cerr << "+++ Error calling method: " << e.what() << endl;
+        }
 
-		++iteration;
+        ++iteration;
 
-		if (iteration == 10000) {
-			break;
-		}
+        if (iteration == 10000) {
+            break;
+        }
 
-	}
+    }
 
 }
 

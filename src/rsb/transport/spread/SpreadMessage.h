@@ -37,51 +37,51 @@ namespace spread {
 class SpreadMessage {
 public:
 
-	enum Type {
-		REGULAR = 0x0001, MEMBERSHIP = 0x0002, OTHER = 0xFFFF,
-	};
+    enum Type {
+        REGULAR = 0x0001, MEMBERSHIP = 0x0002, OTHER = 0xFFFF,
+    };
 
-	/**
-	 * Message reliability and QoS types. For some strange reasons the int
-	 * values directly resemble the sp.h defines. ;)
-	 *
-	 * @author jwienke
-	 */
-	enum QOS {
-		UNRELIABLE = 0x00000001,
-		RELIABLE = 0x00000002,
-		FIFO = 0x00000004,
-		CASUAL = 0x00000008,
-		AGREED = 0x00000010,
-		SAFE = 0x00000020
-	};
+    /**
+     * Message reliability and QoS types. For some strange reasons the int
+     * values directly resemble the sp.h defines. ;)
+     *
+     * @author jwienke
+     */
+    enum QOS {
+        UNRELIABLE = 0x00000001,
+        RELIABLE = 0x00000002,
+        FIFO = 0x00000004,
+        CASUAL = 0x00000008,
+        AGREED = 0x00000010,
+        SAFE = 0x00000020
+    };
 
-	SpreadMessage();
-	SpreadMessage(const Type &mt);
-	SpreadMessage(const std::string &d);
-	SpreadMessage(const char *d);
-	virtual ~SpreadMessage();
+    SpreadMessage();
+    SpreadMessage(const Type &mt);
+    SpreadMessage(const std::string &d);
+    SpreadMessage(const char *d);
+    virtual ~SpreadMessage();
 
-	void setData(const std::string &doc);
-	void setData(const char* d);
-	std::string getDataAsString() const;
-	const char *getData() const;
-	int getSize() const;
-	SpreadMessage::Type getType() const;
-	void setType(Type mt);
-	QOS getQOS() const;
-	void setQOS(const QOS &qos);
+    void setData(const std::string &doc);
+    void setData(const char* d);
+    std::string getDataAsString() const;
+    const char *getData() const;
+    int getSize() const;
+    SpreadMessage::Type getType() const;
+    void setType(Type mt);
+    QOS getQOS() const;
+    void setQOS(const QOS &qos);
 
-	void addGroup(const std::string& name);
-	int getGroupCount() const;
-	std::list<std::string>::const_iterator getGroupsBegin() const;
-	std::list<std::string>::const_iterator getGroupsEnd() const;
+    void addGroup(const std::string &name);
+    int getGroupCount() const;
+    std::list<std::string>::const_iterator getGroupsBegin() const;
+    std::list<std::string>::const_iterator getGroupsEnd() const;
 
 private:
-	std::string data;
-	std::list<std::string> groups;
-	Type type;
-	QOS qos;
+    std::string data;
+    std::list<std::string> groups;
+    Type type;
+    QOS qos;
 };
 
 typedef boost::shared_ptr<SpreadMessage> SpreadMessagePtr;

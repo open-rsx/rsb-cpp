@@ -28,19 +28,19 @@ namespace filter {
 /**
  * @author swrede
  */
-class RSB_EXPORT ScopeFilter : public Filter {
+class RSB_EXPORT ScopeFilter: public Filter {
 public:
-	ScopeFilter(const std::string &uri);
-	virtual ~ScopeFilter();
+    ScopeFilter(const Scope &scope);
+    virtual ~ScopeFilter();
 
-	bool match(EventPtr e);
+    bool match(EventPtr e);
 
-	std::string getURI();
+    Scope getScope();
 
-	void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
+    void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
 
 private:
-	std::string scope;
+    Scope scope;
 };
 
 }

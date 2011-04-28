@@ -38,37 +38,35 @@ namespace rsb {
  * Factory for RSB user-level domain objects for communication patterns.
  *
  * @author jwienke
- * @todo integrate model and validate requests against it
- * @todo port type selection missing
  */
 class RSB_EXPORT Factory: public rsc::patterns::Singleton<Factory> {
 public:
 
-	virtual ~Factory();
+    virtual ~Factory();
 
-	template<class DataType>
-	typename Informer<DataType>::Ptr createInformer(
-			const std::string &uri,
-			const std::string &dataType = rsc::runtime::typeName(
-					typeid(DataType))) {
-		return typename Informer<DataType>::Ptr(
-				new Informer<DataType> (uri, dataType));
-	}
+    template<class DataType>
+    typename Informer<DataType>::Ptr createInformer(
+            const Scope &scope,
+            const std::string &dataType = rsc::runtime::typeName(
+                    typeid(DataType))) {
+        return typename Informer<DataType>::Ptr(
+                new Informer<DataType> (scope, dataType));
+    }
 
-	ListenerPtr createListener(const std::string &uri);
+    ListenerPtr createListener(const Scope &scope);
 
-	patterns::ServerPtr createServer(const std::string &uri);
+    patterns::ServerPtr createServer(const Scope &scope);
 
-	patterns::RemoteServerPtr createRemoteServer(const std::string &uri);
+    patterns::RemoteServerPtr createRemoteServer(const Scope &scope);
 
-	friend class rsc::patterns::Singleton<Factory>;
+    friend class rsc::patterns::Singleton<Factory>;
 
 private:
 
-	/**
-	 * Singleton constructor.
-	 */
-	Factory();
+    /**
+     * Singleton constructor.
+     */
+    Factory();
 
 };
 

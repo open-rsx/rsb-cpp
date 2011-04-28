@@ -25,32 +25,32 @@ using namespace std;
 namespace rsb {
 namespace filter {
 
-ScopeFilter::ScopeFilter(const string &uri) {
-	scope = uri;
+ScopeFilter::ScopeFilter(const Scope &scope) :
+    scope(scope) {
 }
 
 ScopeFilter::~ScopeFilter() {
 }
 
 bool ScopeFilter::match(EventPtr e) {
-	// TODO implement whitelisting
-	// TODO implement removal of pointers in whitelist
-	//      after dispatching of event notification, needs to be done by EventProcessingStrategy
-	// TODO whitelist must be specific for each filter, but handled globally
-	//if (whitelist[e] || (e->getURI()==scope)) {
-	if (e->getURI() == scope) {
-		return true;
-	} else {
-		return false;
-	}
+    // TODO implement whitelisting
+    // TODO implement removal of pointers in whitelist
+    //      after dispatching of event notification, needs to be done by EventProcessingStrategy
+    // TODO whitelist must be specific for each filter, but handled globally
+    //if (whitelist[e] || (e->getScope()==scope)) {
+    if (e->getScope() == scope) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void ScopeFilter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {
-	fo->notify(this, at);
+    fo->notify(this, at);
 }
 
-string ScopeFilter::getURI() {
-	return scope;
+Scope ScopeFilter::getScope() {
+    return scope;
 }
 
 }

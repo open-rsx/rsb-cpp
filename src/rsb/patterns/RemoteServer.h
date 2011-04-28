@@ -66,7 +66,7 @@ public:
 		explicit RemoteTargetInvocationException(const std::string &message);
 	};
 
-	RemoteServer(const std::string &uri);
+	RemoteServer(const Scope &scope);
 	virtual ~RemoteServer();
 
 	EventPtr callMethod(const std::string &methodName, EventPtr data);
@@ -75,7 +75,7 @@ private:
 
 	rsc::logging::LoggerPtr logger;
 
-	std::string uri;
+	Scope scope;
 
 	class MethodSet {
 	public:
