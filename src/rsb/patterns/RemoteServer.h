@@ -23,6 +23,7 @@
 #include <string>
 
 #include <boost/noncopyable.hpp>
+#include <boost/thread/mutex.hpp>
 
 #include <rsc/logging/Logger.h>
 
@@ -98,4 +99,3 @@ typedef boost::shared_ptr<RemoteServer> RemoteServerPtr;
 
 }
 }
-
