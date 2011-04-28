@@ -87,6 +87,38 @@ Scope Scope::concat(const Scope &childScope) const {
     return result;
 }
 
+bool Scope::isSubScopeOf(const Scope &other) const {
+
+    if (components.size() <= other.components.size()) {
+        return false;
+    }
+
+    for (size_t i = 0; i < other.components.size(); ++i) {
+        if (components[i] != other.components[i]) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
+bool Scope::isSuperScopeOf(const Scope &other) const {
+
+    if (components.size() >= other.components.size()) {
+        return false;
+    }
+
+    for (size_t i = 0; i < components.size(); ++i) {
+        if (components[i] != other.components[i]) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
 bool Scope::operator==(const Scope &other) const {
     return components == other.components;
 }

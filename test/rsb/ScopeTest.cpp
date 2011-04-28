@@ -106,3 +106,20 @@ TEST(ScopeTest, testConcat)
     EXPECT_EQ(Scope("/a/test/example"), Scope("/a/test/").concat(Scope("/example/")));
 
 }
+
+TEST(ScopeTest, testHierarchyComparison)
+{
+
+    EXPECT_TRUE(Scope("/a/").isSubScopeOf(Scope("/")));
+    EXPECT_TRUE(Scope("/a/b/c/").isSubScopeOf(Scope("/")));
+    EXPECT_TRUE(Scope("/a/b/c/").isSubScopeOf(Scope("/a/b/")));
+    EXPECT_FALSE(Scope("/a/b/c/").isSubScopeOf(Scope("/a/b/c/")));
+    EXPECT_FALSE(Scope("/a/x/c/").isSubScopeOf(Scope("/a/b/")));
+
+    EXPECT_TRUE(Scope("/").isSuperScopeOf(Scope("/a/")));
+    EXPECT_TRUE(Scope("/").isSuperScopeOf(Scope("/a/b/c/")));
+    EXPECT_TRUE(Scope("/a/b/").isSuperScopeOf(Scope("/a/b/c/")));
+    EXPECT_FALSE(Scope("/a/b/c/").isSuperScopeOf(Scope("/a/b/c/")));
+    EXPECT_FALSE(Scope("/b/").isSuperScopeOf(Scope("/a/b/c/")));
+
+}

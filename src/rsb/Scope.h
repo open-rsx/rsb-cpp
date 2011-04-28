@@ -71,15 +71,35 @@ public:
     std::string toString() const;
 
     /**
-     * Creates a new scope that is a subscope of this one with the subordinated
+     * Creates a new scope that is a sub-scope of this one with the subordinated
      * scope described by the given argument. E.g. "/this/is/".concat("/a/test/")
      * results in "/this/is/a/test".
      *
      * @param childScope child to concatenate to the current scope for forming a
-     *                   subscope
-     * @return new scope instance representing the created subscope
+     *                   sub-scope
+     * @return new scope instance representing the created sub-scope
      */
     Scope concat(const Scope &childScope) const;
+
+    /**
+     * Tests whether this scope is a sub-scope of the given other scope, which
+     * means that the other scope is a prefix of this scope. E.g. "/a/b/" is a
+     * sub-scope of "/a/".
+     *
+     * @param other other scope to test
+     * @return @c true if this is a sub-scope of the other scope, equality gives
+     *         @c false, too
+     */
+    bool isSubScopeOf(const Scope &other) const;
+
+    /**
+     * Inverse operation of #isSubScopeOf.
+     *
+     * @param other other scope to test
+     * @return @c true if this scope is a strict super scope of the other scope.
+     *         equality also gives @c false.
+     */
+    bool isSuperScopeOf(const Scope &other) const;
 
     bool operator==(const Scope &other) const;
     bool operator<(const Scope &other) const;
