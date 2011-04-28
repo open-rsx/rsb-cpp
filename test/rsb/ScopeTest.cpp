@@ -78,3 +78,21 @@ TEST(ScopeTest, testToString)
     EXPECT_EQ("/foo/bar/", Scope("/foo/bar").toString());
 
 }
+
+TEST(ScopeTest, testComparison)
+{
+
+    EXPECT_TRUE(Scope("/") == Scope("/"));
+    EXPECT_FALSE(Scope("/") != Scope("/"));
+    EXPECT_FALSE(Scope("/") == Scope("/foo/"));
+    EXPECT_TRUE(Scope("/") != Scope("/foo/"));
+
+    EXPECT_TRUE(Scope("/a/") < Scope("/c/"));
+    EXPECT_TRUE(Scope("/a/") <= Scope("/c/"));
+    EXPECT_TRUE(Scope("/a/") <= Scope("/a"));
+    EXPECT_FALSE(Scope("/a/") > Scope("/c/"));
+    EXPECT_TRUE(Scope("/c/") > Scope("/a/"));
+    EXPECT_TRUE(Scope("/c/") >= Scope("/a/"));
+    EXPECT_TRUE(Scope("/c/") >= Scope("/c/"));
+
+}

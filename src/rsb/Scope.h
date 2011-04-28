@@ -23,6 +23,8 @@
 #include <vector>
 #include <ostream>
 
+#include <boost/operators.hpp>
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -33,7 +35,7 @@ namespace rsb {
  *
  * @author jwienke
  */
-class RSB_EXPORT Scope {
+class RSB_EXPORT Scope: boost::totally_ordered<Scope> {
 public:
 
     /**
@@ -49,6 +51,9 @@ public:
     std::vector<std::string> getComponents() const;
 
     std::string toString() const;
+
+    bool operator==(const Scope &other) const;
+    bool operator<(const Scope &other) const;
 
 private:
 

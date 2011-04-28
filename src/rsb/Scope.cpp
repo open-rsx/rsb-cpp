@@ -42,8 +42,8 @@ Scope::Scope(const string &s) {
     }
 
     // validate fully formal scope syntax
-    boost::regex expression(COMPONENT_SEPARATOR + "([a-zA-Z]+"
-            + COMPONENT_SEPARATOR + ")*");
+    boost::regex expression(
+            COMPONENT_SEPARATOR + "([a-zA-Z]+" + COMPONENT_SEPARATOR + ")*");
     if (!boost::regex_match(scope, expression)) {
         throw invalid_argument("Invalid scope syntax for '" + scope + "'");
     }
@@ -55,8 +55,8 @@ Scope::Scope(const string &s) {
     // splitting an empty string would result in one component, which we do not
     // want to have
     if (!withoutSlahses.empty()) {
-        boost::split(components, withoutSlahses, boost::is_any_of(
-                COMPONENT_SEPARATOR));
+        boost::split(components, withoutSlahses,
+                boost::is_any_of(COMPONENT_SEPARATOR));
     }
 
 }
@@ -70,12 +70,20 @@ vector<string> Scope::getComponents() const {
 
 string Scope::toString() const {
     stringstream s;
-    s << "/";
+    s << COMPONENT_SEPARATOR;
     for (vector<string>::const_iterator it = components.begin(); it
             != components.end(); ++it) {
-        s << *it << "/";
+        s << *it << COMPONENT_SEPARATOR;
     }
     return s.str();
+}
+
+bool Scope::operator==(const Scope &other) const {
+    return components == other.components;
+}
+
+bool Scope::operator<(const Scope &other) const {
+    return toString() < other.toString();
 }
 
 ostream &operator<<(ostream &stream, const Scope &scope) {
