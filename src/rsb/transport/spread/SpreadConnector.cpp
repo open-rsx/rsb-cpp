@@ -28,7 +28,6 @@
 #include "../../protocol/Notification.h"
 #include "SpreadConnector.h"
 #include "SpreadConnection.h"
-#include "../../util/Configuration.h"
 #include "../../CommException.h"
 #include "../../converter/Converter.h"
 #include "../../protocol/ProtocolException.h"
@@ -36,8 +35,8 @@
 
 using namespace std;
 using namespace rsc::logging;
+using namespace rsc::runtime;
 using namespace rsb;
-using namespace rsb::util;
 using namespace rsb::transport;
 using namespace rsb::protocol;
 using namespace rsc::threading;
@@ -50,15 +49,26 @@ const SpreadConnector::QoSMap SpreadConnector::qosMapping = SpreadConnector::bui
 SpreadConnector::SpreadConnector(
 		rsb::converter::Repository<std::string>::Ptr converters) :
 	converters(converters) {
-	init();
+        init(defaultHost(), defaultPort());
 }
 
-SpreadConnector::SpreadConnector() :
+SpreadConnector::SpreadConnector(const std::string& host,
+                                 unsigned int port) :
 	converters(converter::stringConverterRepository()) {
-	init();
+        init(host, port);
 }
 
-void SpreadConnector::init() {
+Connector* SpreadConnector::create(const Properties& args) {
+	LoggerPtr logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadConnector");
+	RSCDEBUG(logger, "creating connector with properties " << args);
+
+        return new SpreadConnector(args.get<string>      ("host", defaultHost()),
+                                   args.get<unsigned int>("port", defaultPort()));
+}
+
+
+void SpreadConnector::init(const std::string& host,
+                           unsigned int port) {
 	logger = rsc::logging::Logger::getLogger("rsb.spread.SpreadConnector");
 	RSCDEBUG(logger, "SpreadConnector() entered, port id: " << id.getIdAsString());
 	activated = false;
@@ -66,7 +76,7 @@ void SpreadConnector::init() {
 	// TODO ConnectionPool for SpreadConnections?!?
 	// TODO Send Message over Managing / Introspection Channel
 	// TODO Generate Unique-IDs for SpreadConnectors
-	con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString()));
+	con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString(), host, port));
 	// TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
 	//st = boost::shared_ptr<StatusTask>(new StatusTask(this));
 	rec = boost::shared_ptr<ReceiverTask>(

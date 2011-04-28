@@ -22,13 +22,20 @@
 #include <iostream>
 #include <string.h>
 
+#include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+
 #include <sp.h>
 
 #include "../../util/Configuration.h"
 #include "../../CommException.h"
 
 using namespace std;
+
+using namespace boost;
+
 using namespace rsc::logging;
+
 using namespace rsb::util;
 
 namespace rsb {
@@ -37,29 +44,22 @@ namespace spread {
 #define SPREAD_MAX_GROUPS   100
 #define SPREAD_MAX_MESSLEN  180000
 
-// TODO make port a numerical attribute
-SpreadConnection::SpreadConnection(const string &id, const string &h,
-		const string &p) :
+SpreadConnection::SpreadConnection(const string &id, const string &host,
+		unsigned int port) :
 	logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
-			host(h), port(p), spreadhost(port + "@" + host), conId(id),
+        host(host), port(port),
+        spreadhost((port == 0)
+                   ? host
+                   : str(format("%1%@%2%") % port % host)), conId(id),
 			msgCount(0) {
 	RSCDEBUG(logger, "instantiated spread connection with id " << conId
 			<< " to spread daemon at " << spreadhost);
 }
 
-SpreadConnection::SpreadConnection(const string &id) :
-	logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
-			conId(id), msgCount(0) {
-	host = Configuration::getInstance()->getProperty("Spread.Host");
-	port = Configuration::getInstance()->getProperty("Spread.Port");
-	spreadhost = port + "@" + host;
-	RSCDEBUG(logger, "instantiated spread connection with id " << conId
-			<< " to spread daemon at " << spreadhost);
-}
 
 SpreadConnection::~SpreadConnection() {
 	// this does not work with XcfAppender...
-	RSCDEBUG(logger, "destroying SpreadConnection object");
+        RSCDEBUG(logger, "destroying SpreadConnection object");
 }
 
 void SpreadConnection::activate() {
@@ -315,6 +315,14 @@ unsigned long SpreadConnection::getMsgCount() {
 
 mailbox *SpreadConnection::getMailbox() {
 	return &con;
+}
+
+string defaultHost() {
+        return Configuration::getInstance()->getProperty("Spread.Host");
+}
+
+unsigned int defaultPort() {
+        return lexical_cast<unsigned int>(Configuration::getInstance()->getProperty("Spread.Port"));
 }
 
 }

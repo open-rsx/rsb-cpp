@@ -33,16 +33,20 @@ typedef int mailbox;
 namespace rsb {
 namespace spread {
 
+std::string defaultHost();
+
+unsigned int defaultPort();
+
 /**
  * @author swrede
  * @todo really expose this through dlls only for the unit tests?
  */
 class RSB_EXPORT SpreadConnection {
 public:
-	SpreadConnection(const std::string &prefix, const std::string &host,
-			const std::string& port);
-	SpreadConnection(const std::string &prefix);
-	virtual ~SpreadConnection();
+	SpreadConnection(const std::string &prefix,
+                         const std::string &host = defaultHost(),
+                         unsigned int port = defaultPort());
+        virtual ~SpreadConnection();
 
 	// connection state management
 	// CHECK: this is similar to the other active objects, but is it
@@ -67,15 +71,14 @@ private:
 	std::string generateId(const std::string &prefix);
 
 	rsc::logging::LoggerPtr logger;
-	bool connected; // flag to indicate whether we are connected to spread
-	mailbox con; // Handle to the returned spread connection
-	std::string host; // host
-	std::string port; // and port
-	std::string spreadhost; // and name of spread daemon, e.g., 4803@localhost
-	std::string spreadpg; // private name of this connection
-	std::string conId; // user name to be used for spread connection
-	unsigned long msgCount; // nr of message sent via this connection
-
+	bool                    connected; // flag to indicate whether we are connected to spread
+	mailbox                 con; // Handle to the returned spread connection
+	std::string             host; // host
+	unsigned int            port; // and port
+	std::string             spreadhost; // and name of spread daemon, e.g., 4803@localhost
+	std::string             spreadpg; // private name of this connection
+	std::string             conId; // user name to be used for spread connection
+	unsigned long           msgCount; // nr of message sent via this connection
 };
 
 typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;
@@ -83,4 +86,3 @@ typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;
 }
 
 }
-

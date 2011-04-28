@@ -21,6 +21,7 @@
 
 #include <map>
 
+#include <rsc/runtime/Properties.h>
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/TaskExecutor.h>
 
@@ -41,7 +42,8 @@ namespace spread {
  */
 class RSB_EXPORT SpreadConnector: public rsb::transport::Connector {
 public:
-	SpreadConnector();
+        SpreadConnector(const std::string& host = defaultHost(),
+                        unsigned int port = defaultPort());
 	explicit SpreadConnector(
 			rsb::converter::Repository<std::string>::Ptr converters);
 	virtual ~SpreadConnector();
@@ -58,10 +60,12 @@ public:
 
 	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
+	static rsb::transport::Connector*
+        create(const rsc::runtime::Properties& args);
 private:
 	rsc::logging::LoggerPtr logger;
 
-	void init();
+	void init(const std::string& host, unsigned int port);
 
 	volatile bool activated;
 	SpreadConnectionPtr con;
