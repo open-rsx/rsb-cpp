@@ -24,6 +24,7 @@
 #include <math.h>
 #include <ctime>
 
+#include <boost/thread.hpp>
 #include <boost/timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -89,4 +90,3 @@ int main(void) {
 	cout << "READY" << endl;
 	return EXIT_SUCCESS;
 }
-
