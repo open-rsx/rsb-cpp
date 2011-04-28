@@ -33,9 +33,9 @@ typedef int mailbox;
 namespace rsb {
 namespace spread {
 
-std::string defaultHost();
+RSB_EXPORT std::string defaultHost();
 
-unsigned int defaultPort();
+RSB_EXPORT unsigned int defaultPort();
 
 /**
  * @author swrede
@@ -43,42 +43,42 @@ unsigned int defaultPort();
  */
 class RSB_EXPORT SpreadConnection {
 public:
-	SpreadConnection(const std::string &prefix,
-                         const std::string &host = defaultHost(),
-                         unsigned int port = defaultPort());
-        virtual ~SpreadConnection();
+    SpreadConnection(const std::string &prefix,
+            const std::string &host = defaultHost(),
+            unsigned int port = defaultPort());
+    virtual ~SpreadConnection();
 
-	// connection state management
-	// CHECK: this is similar to the other active objects, but is it
-	// really necessary in the spread case?
-	void activate();
-	void deactivate();
+    // connection state management
+    // CHECK: this is similar to the other active objects, but is it
+    // really necessary in the spread case?
+    void activate();
+    void deactivate();
 
-	// fundamental message exchange
-	bool send(const SpreadMessage &msg);
-	void receive(SpreadMessagePtr sm);
+    // fundamental message exchange
+    bool send(const SpreadMessage &msg);
+    void receive(SpreadMessagePtr sm);
 
-	// is connected to spread daemon
-	bool isActive();
+    // is connected to spread daemon
+    bool isActive();
 
-	// return number of message sent
-	unsigned long getMsgCount();
+    // return number of message sent
+    unsigned long getMsgCount();
 
-	// return mailbox for other low-level functions
-	mailbox *getMailbox();
+    // return mailbox for other low-level functions
+    mailbox *getMailbox();
 
 private:
-	std::string generateId(const std::string &prefix);
+    std::string generateId(const std::string &prefix);
 
-	rsc::logging::LoggerPtr logger;
-	bool                    connected; // flag to indicate whether we are connected to spread
-	mailbox                 con; // Handle to the returned spread connection
-	std::string             host; // host
-	unsigned int            port; // and port
-	std::string             spreadhost; // and name of spread daemon, e.g., 4803@localhost
-	std::string             spreadpg; // private name of this connection
-	std::string             conId; // user name to be used for spread connection
-	unsigned long           msgCount; // nr of message sent via this connection
+    rsc::logging::LoggerPtr logger;
+    bool connected; // flag to indicate whether we are connected to spread
+    mailbox con; // Handle to the returned spread connection
+    std::string host; // host
+    unsigned int port; // and port
+    std::string spreadhost; // and name of spread daemon, e.g., 4803@localhost
+    std::string spreadpg; // private name of this connection
+    std::string conId; // user name to be used for spread connection
+    unsigned long msgCount; // nr of message sent via this connection
 };
 
 typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;
