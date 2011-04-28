@@ -106,10 +106,11 @@ public:
      * The returned list of scopes is ordered by hierarchy with "/" being the
      * first entry.
      *
-     * @return list of all super scopes excluding this scope ordered by
-     *         hierarchy, "/" being first
+     * @param includeSelf if set to @true, this scope is also included as last
+     *                    element of the returned list
+     * @return list of all super scopes ordered by hierarchy, "/" being first
      */
-    std::vector<Scope> superScopes() const;
+    std::vector<Scope> superScopes(const bool &includeSelf = false) const;
 
     bool operator==(const Scope &other) const;
     bool operator<(const Scope &other) const;

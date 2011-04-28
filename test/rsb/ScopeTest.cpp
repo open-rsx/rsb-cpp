@@ -138,4 +138,16 @@ TEST(ScopeTest, testSuperScopes)
     EXPECT_EQ(Scope("/this/is/"), supers[2]);
     EXPECT_EQ(Scope("/this/is/a/"), supers[3]);
 
+    supers = Scope("/").superScopes(true);
+    ASSERT_EQ(size_t(1), supers.size());
+    EXPECT_EQ(Scope("/"), supers[0]);
+
+    supers = Scope("/this/is/a/test/").superScopes(true);
+    ASSERT_EQ(size_t(5), supers.size());
+    EXPECT_EQ(Scope("/"), supers[0]);
+    EXPECT_EQ(Scope("/this/"), supers[1]);
+    EXPECT_EQ(Scope("/this/is/"), supers[2]);
+    EXPECT_EQ(Scope("/this/is/a/"), supers[3]);
+    EXPECT_EQ(Scope("/this/is/a/test/"), supers[4]);
+
 }

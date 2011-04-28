@@ -122,24 +122,28 @@ bool Scope::isSuperScopeOf(const Scope &other) const {
 
 }
 
-vector<Scope> Scope::superScopes() const {
+vector<Scope> Scope::superScopes(const bool &includeSelf) const {
 
     vector<Scope> result;
 
-    if (components.empty()) {
-        return result;
+    if (!components.empty()) {
+
+        // this math only works for scopes that are not the root scope
+        for (size_t requiredComponents = 0; requiredComponents
+                <= components.size() - 1; ++requiredComponents) {
+
+            Scope super;
+            for (size_t i = 0; i < requiredComponents; ++i) {
+                super.components.push_back(components[i]);
+            }
+            result.push_back(super);
+
+        }
+
     }
 
-    // this math only works for scopes that are not the root scope
-    for (size_t requiredComponents = 0; requiredComponents <= components.size()
-            - 1; ++requiredComponents) {
-
-        Scope super;
-        for (size_t i = 0; i < requiredComponents; ++i) {
-            super.components.push_back(components[i]);
-        }
-        result.push_back(super);
-
+    if (includeSelf) {
+        result.push_back(*this);
     }
 
     return result;
