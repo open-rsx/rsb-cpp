@@ -28,18 +28,12 @@ using namespace std;
 
 namespace rsb {
 
-Listener::Listener(const Scope &scope) :
+Listener::Listener(const vector<transport::InConnectorPtr> &connectors,
+                   const Scope &scope) :
     Participant(scope),
             logger(rsc::logging::Logger::getLogger("rsb.Listener")), passive(
                     false) {
-    this->initialize("spread", scope);
-}
-
-Listener::Listener(const string &in, const Scope &scope) :
-    Participant(scope),
-            logger(rsc::logging::Logger::getLogger("rsb.Listener")), passive(
-                    false) {
-    this->initialize(in, scope);
+    this->initialize(connectors, scope);
 }
 
 Listener::~Listener() {
@@ -48,9 +42,11 @@ Listener::~Listener() {
     }
 }
 
-void Listener::initialize(const string &in, const Scope &scope) {
+void Listener::initialize(const vector<transport::InConnectorPtr> &connectors,
+                          const Scope &scope) {
     // TODO evaluate configuration
-    this->router = eventprocessing::RouterPtr(new eventprocessing::Router(in, ""));
+    assert(connectors.size() == 1);
+    this->router = eventprocessing::RouterPtr(new eventprocessing::Router(connectors[0], transport::OutConnectorPtr()));
     this->subscription.reset(new Subscription());
     this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
             scope)));

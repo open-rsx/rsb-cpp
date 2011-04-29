@@ -57,28 +57,16 @@ namespace rsb {
  */
 class RSB_EXPORT Listener: public Participant {
 public:
-
     /**
-     * Constructs a new Listener assigned to the specified
-     * scope. The Listener opens a @ref rsb::eventprocessing::Router
-     * to ConnectorType Spread and is activated after
-     * construction.
+     * Constructs a new Listener assigned to the specified scope. The
+     * Listener connects to the bus using the supplied connectors.
      *
+     * @param connectors a list of connectors that the listener should
+     *                   use to communicate with the bus.
      * @param scope the scope where the data is received from.
      */
-    Listener(const Scope &scope);
-
-    /**
-     * Constructs a new Listener assigned to the specified
-     * scope. The Listener opens a @ref rsb::eventprocessing::Router
-     * to a ConnectorType specified and is activated after
-     * construction.
-     *
-     * @param scope the scope where the data is received from.
-     * @param in the connector type to connect with, i.e.
-     *           "spread"
-     */
-    Listener(const std::string &in, const Scope &scope);
+    Listener(const std::vector<transport::InConnectorPtr> &connectors,
+             const Scope &scope);
 
     virtual ~Listener();
 
@@ -134,7 +122,8 @@ private:
     std::set<HandlerPtr> handlers;
     eventprocessing::RouterPtr router;
 
-    void initialize(const std::string &in, const Scope &scope);
+    void initialize(const std::vector<transport::InConnectorPtr> &connectors,
+                    const Scope &scope);
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;

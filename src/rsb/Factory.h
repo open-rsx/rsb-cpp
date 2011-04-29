@@ -20,6 +20,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <boost/shared_ptr.hpp>
 
@@ -31,6 +32,7 @@
 #include "Listener.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
+#include "transport/Connector.h"
 
 namespace rsb {
 
@@ -46,14 +48,20 @@ public:
 
     template<class DataType>
     typename Informer<DataType>::Ptr createInformer(
-            const Scope &scope,
-            const std::string &dataType = rsc::runtime::typeName(
-                    typeid(DataType))) {
-        return typename Informer<DataType>::Ptr(
-                new Informer<DataType> (scope, dataType));
+        const Scope &scope,
+        const std::string &dataType = rsc::runtime::typeName(typeid(DataType)),
+        const std::string &connectorType = "spread") {
+        // Create requested connectors
+        std::vector<transport::OutConnectorPtr> connectors;
+        if (!connectorType.empty()) {
+            connectors.push_back(transport::OutConnectorPtr(transport::OutFactory::getInstance().createInst(connectorType)));
+        }
+
+        return typename Informer<DataType>::Ptr(new Informer<DataType> (connectors, scope, dataType));
     }
 
-    ListenerPtr createListener(const Scope &scope);
+    ListenerPtr createListener(const Scope &scope,
+                               const std::string &connectorType = "spread");
 
     patterns::ServerPtr createServer(const Scope &scope);
 

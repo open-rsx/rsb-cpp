@@ -25,7 +25,7 @@
 
 #include <rsc/logging/Logger.h>
 
-#include "../transport/Factory.h"
+#include "../transport/Connector.h"
 #include "../filter/FilterObservable.h"
 #include "EventProcessingStrategy.h"
 #include "../Subscription.h"
@@ -46,8 +46,7 @@ namespace eventprocessing {
  */
 class RSB_EXPORT Router { //: //public rsb::filter::FilterObservable {
 public:
-    Router(const std::string &inType = "inprocess",
-           const std::string &outType = "inprocess");
+    Router(transport::InConnectorPtr in, transport::OutConnectorPtr out);
     virtual ~Router();
 
     void activate();
@@ -84,17 +83,6 @@ public:
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
-
-    /**
-     * @name unit testing interface
-     *
-     * HACK for current tests.
-     */
-    //@{
-    transport::ConnectorPtr getOutConnector();
-    transport::ConnectorPtr getInConnector();
-    //@}
-
 protected:
     /**
      * Helper for port notification about subscription status changes.

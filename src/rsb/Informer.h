@@ -70,25 +70,19 @@ public:
     /**
      * Constructs a new informer.
      *
+     * @param connectors A list of connectors the informer should use
+     *                   to connect to the bus
      * @param scope the scope under which the data are published
      * @param type string describing the default type of data sent by this
      *             informer. It is used to find a converter that can convert
      *             these data to the port
      */
-    Informer(const Scope &scope, const std::string &type) :
-        Participant(scope), logger(rsc::logging::Logger::getLogger(
-                "rsb.Informer." + scope.toString())), passive(false),
-                defaultType(type) {
-        // TODO evaluate configuration
-        router = eventprocessing::RouterPtr(new eventprocessing::Router("", "spread"));
-        activate();
-    }
-
-    Informer(const std::string &out, const Scope &scope, const std::string &type) :
+    Informer(const std::vector<transport::OutConnectorPtr> &connectors, const Scope &scope, const std::string &type) :
         Participant(scope), logger(rsc::logging::Logger::getLogger(
                 "rsb.Informer")), passive(false), defaultType(type) {
         // TODO evaluate configuration
-        router = eventprocessing::RouterPtr(new eventprocessing::Router("", out));
+        assert(connectors.size() == 1);
+        router = eventprocessing::RouterPtr(new eventprocessing::Router(transport::InConnectorPtr(), connectors[0]));
         activate();
     }
 

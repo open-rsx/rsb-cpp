@@ -36,8 +36,14 @@ Factory::Factory() {
 Factory::~Factory() {
 }
 
-ListenerPtr Factory::createListener(const Scope &scope) {
-    return ListenerPtr(new Listener(scope));
+ListenerPtr Factory::createListener(const Scope &scope, const string &connectorType) {
+    // Create requested connectors
+    std::vector<transport::InConnectorPtr> connectors;
+    if (!connectorType.empty()) {
+        connectors.push_back(transport::InConnectorPtr(transport::InFactory::getInstance().createInst(connectorType)));
+    }
+
+    return ListenerPtr(new Listener(connectors, scope));
 }
 
 patterns::ServerPtr Factory::createServer(const Scope &scope) {

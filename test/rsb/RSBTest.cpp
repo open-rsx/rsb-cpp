@@ -29,8 +29,9 @@
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "rsb/eventprocessing/Router.h"
+#include "rsb/transport/Factory.h"
 #include "rsb/transport/Connector.h"
-#include "rsb/transport/spread/SpreadConnector.h"
+#include "rsb/transport/transports.h"
 #include "InformerTask.h"
 #include "rsb/Subscription.h"
 #include "rsb/filter/Filter.h"
@@ -45,7 +46,6 @@ using namespace rsb::test;
 using namespace rsb::filter;
 using namespace rsb::transport;
 using namespace rsb::eventprocessing;
-using namespace rsb::spread;
 using namespace rsc::subprocess;
 using namespace testing;
 using namespace rsc::threading;
@@ -54,12 +54,16 @@ TEST(RSBTest, testRoundtrip)
 {
 
     introspection::registerIntrospectionConverters();
+    registerDefaultTransports();
 
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
+    InConnectorPtr in(InFactory::getInstance().createInst("spread"));
+    OutConnectorPtr out(OutFactory::getInstance().createInst("spread"));
+
     // router instantiation
-    RouterPtr r(new Router("spread", "spread"));
+    RouterPtr r(new Router(in, out));
     r->activate();
 
     // create subscription
@@ -69,10 +73,7 @@ TEST(RSBTest, testRoundtrip)
 
     // domain objects
     unsigned int numEvents = 10;
-    boost::shared_ptr<InformerTask> source(
-            new InformerTask(
-                    boost::dynamic_pointer_cast<OutConnector>(
-                            r->getOutConnector()), 10));
+    boost::shared_ptr<InformerTask> source(new InformerTask(out, 10));
     WaitingObserver observer(numEvents);
     set<HandlerPtr> handlers;
     handlers.insert(

@@ -26,6 +26,7 @@
 
 #include <rsc/misc/UUID.h>
 
+#include "../Factory.h"
 #include "../Handler.h"
 
 using namespace std;
@@ -131,17 +132,16 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
         // start a listener to wait for the reply
         const Scope replyScope = scope.concat(Scope("reply")).concat(
                 Scope(methodName));
-        ListenerPtr listener(new Listener(replyScope));
+        ListenerPtr listener = Factory::getInstance().createListener(replyScope);
+
         boost::shared_ptr<WaitingEventHandler> handler(
                 new WaitingEventHandler(logger));
         listener->addHandler(handler);
 
         // informer for requests
         Informer<void>::Ptr
-                informer(
-                        new Informer<void> (
-                                scope.concat(Scope("request")).concat(
-                                        Scope(methodName)), sendType));
+          informer = Factory::getInstance().createInformer<void> (
+          scope.concat(Scope("request")).concat(Scope(methodName)), sendType);
 
         MethodSet set;
         set.methodName = methodName;
