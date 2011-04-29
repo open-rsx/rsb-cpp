@@ -13,126 +13,142 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATI
 
 CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @ONLY)
 
-SET(SOURCES rsb/Exception.cpp
-            rsb/CommException.cpp
-            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
-            rsb/Participant.cpp
+SET(SOURCES rsb/CommException.cpp
+            rsb/Event.cpp
+            rsb/Exception.cpp
+            rsb/Factory.cpp
+            rsb/Handler.cpp
             rsb/Informer.cpp
             rsb/Listener.cpp
-            rsb/util/Configuration.cpp
-            rsb/util/ConfigException.cpp
-            rsb/Event.cpp
-            rsb/Handler.cpp
-            rsb/Scope.cpp
-            rsb/Service.cpp
-            rsb/Subscription.cpp
+            rsb/Participant.cpp
             rsb/ParticipantConfig.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
+            rsb/Scope.cpp
+            rsb/Service.cpp
+            rsb/Subscription.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
-            rsb/Factory.cpp
-            rsb/filter/Filter.cpp
-            rsb/filter/ScopeFilter.cpp
-            rsb/filter/FilterObservable.cpp
-            rsb/filter/FilterObserver.cpp
-            rsb/patterns/RemoteServer.cpp
-            rsb/patterns/Server.cpp
-            rsb/patterns/MethodExistsException.cpp
-            rsb/protocol/ProtocolException.cpp
-            rsb/eventprocessing/EventProcessingStrategy.cpp
-            rsb/eventprocessing/ParallelEventProcessingStrategy.cpp
-            rsb/eventprocessing/Router.cpp
-            rsb/transport/transports.cpp
-            rsb/transport/Connector.cpp
+            
+            rsb/converter/BoolConverter.cpp
+            rsb/converter/Converter.cpp
             rsb/converter/Repository.cpp
             rsb/converter/SerializationException.cpp
-            rsb/converter/Converter.cpp
-            rsb/converter/converters.cpp
-            rsb/converter/BoolConverter.cpp
             rsb/converter/StringConverter.cpp
             rsb/converter/Uint64Converter.cpp
             rsb/converter/VoidConverter.cpp
+            rsb/converter/converters.cpp
+            
+            rsb/eventprocessing/EventProcessingStrategy.cpp
+            rsb/eventprocessing/ParallelEventProcessingStrategy.cpp
+            rsb/eventprocessing/Router.cpp
+            
+            rsb/filter/Filter.cpp
+            rsb/filter/FilterObservable.cpp
+            rsb/filter/FilterObserver.cpp
+            rsb/filter/ScopeFilter.cpp
+            
+            rsb/introspection/IntrospectionConverter.cpp
+            rsb/introspection/introspection.cpp
+            
+            rsb/patterns/MethodExistsException.cpp
+            rsb/patterns/RemoteServer.cpp
+            rsb/patterns/Server.cpp
+            
+            rsb/protocol/ProtocolException.cpp
+            
+            rsb/transport/Connector.cpp
+            rsb/transport/transports.cpp
 
-#            rsb/transport/inprocess/StatusTask.cpp
             rsb/transport/inprocess/Bus.cpp
             rsb/transport/inprocess/InConnector.cpp
             rsb/transport/inprocess/OutConnector.cpp
+#            rsb/transport/inprocess/StatusTask.cpp
 
-            rsb/transport/spread/SpreadGroup.cpp
-            rsb/transport/spread/MembershipManager.cpp
-            rsb/transport/spread/SpreadConnector.cpp
             rsb/transport/spread/InConnector.cpp
+            rsb/transport/spread/MembershipManager.cpp
             rsb/transport/spread/OutConnector.cpp
-            rsb/transport/spread/SpreadMessage.cpp
-            rsb/transport/spread/SpreadConnection.cpp
             rsb/transport/spread/ReceiverTask.cpp
+            rsb/transport/spread/SpreadConnection.cpp
+            rsb/transport/spread/SpreadConnector.cpp
+            rsb/transport/spread/SpreadGroup.cpp
+            rsb/transport/spread/SpreadMessage.cpp
+            
+            rsb/util/ConfigException.cpp
+            rsb/util/Configuration.cpp
 
-            rsb/introspection/IntrospectionConverter.cpp
-            rsb/introspection/introspection.cpp
-            ${PROTO_SOURCES}
-            ${INTERNAL_PROTO_SOURCES})
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
+            
+            ${INTERNAL_PROTO_SOURCES}
+            ${PROTO_SOURCES})
 
-SET(HEADERS rsb/Version.h
-            rsb/Exception.h
-            rsb/CommException.h
-            rsb/util/Configuration.h
-            rsb/util/ConfigException.h
+SET(HEADERS rsb/CommException.h
             rsb/Event.h
-            rsb/Participant.h
+            rsb/Exception.h
+            rsb/Factory.h
+            rsb/Handler.h
             rsb/Informer.h
             rsb/Listener.h
-            rsb/Handler.h
-            rsb/Scope.h
-            rsb/Service.h
-            rsb/Subscription.h
+            rsb/Participant.h
             rsb/ParticipantConfig.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
+            rsb/Scope.h
+            rsb/Service.h
+            rsb/Subscription.h
             rsb/UnsupportedQualityOfServiceException.h
-            rsb/Factory.h
-            rsb/filter/FilterActionTypes.h
-            rsb/filter/Filter.h
-            rsb/filter/ScopeFilter.h
-            rsb/filter/FilterObservable.h
-            rsb/filter/FilterObserver.h
-            rsb/patterns/RemoteServer.h
-            rsb/patterns/Server.h
-            rsb/patterns/MethodExistsException.h
-            rsb/protocol/Notification.h
-            rsb/protocol/ProtocolException.h
-            rsb/eventprocessing/EventProcessingStrategy.h
-            rsb/eventprocessing/ParallelEventProcessingStrategy.h
-            rsb/eventprocessing/Router.h
-            rsb/transport/transports.h
-            rsb/transport/Connector.h
+            rsb/Version.h
+            
+            rsb/converter/BoolConverter.h
+            rsb/converter/Converter.h
+            rsb/converter/ProtocolBufferConverter.h
             rsb/converter/Repository.h
             rsb/converter/SerializationException.h
-            rsb/converter/converters.h
-            rsb/converter/Converter.h
-            rsb/converter/BoolConverter.h
             rsb/converter/StringConverter.h
             rsb/converter/Uint64Converter.h
             rsb/converter/VoidConverter.h
-            rsb/converter/ProtocolBufferConverter.h
+            rsb/converter/converters.h
+            
+            rsb/eventprocessing/EventProcessingStrategy.h
+            rsb/eventprocessing/ParallelEventProcessingStrategy.h
+            rsb/eventprocessing/Router.h
+            
+            rsb/filter/Filter.h
+            rsb/filter/FilterActionTypes.h
+            rsb/filter/FilterObservable.h
+            rsb/filter/FilterObserver.h
+            rsb/filter/ScopeFilter.h
+            
+            rsb/introspection/IntrospectionConverter.h
+            rsb/introspection/PortStateChange.h
+            rsb/introspection/introspection.h
+            
+            rsb/patterns/MethodExistsException.h
+            rsb/patterns/RemoteServer.h
+            rsb/patterns/Server.h
+            
+            rsb/protocol/Notification.h
+            rsb/protocol/ProtocolException.h
+            
+            rsb/transport/Connector.h
             rsb/transport/Factory.h
+            rsb/transport/transports.h
 
-#            rsb/transport/inprocess/StatusTask.h
             rsb/transport/inprocess/Bus.h
             rsb/transport/inprocess/InConnector.h
             rsb/transport/inprocess/OutConnector.h
+#            rsb/transport/inprocess/StatusTask.h
 
-            rsb/transport/spread/SpreadGroup.h
-            rsb/transport/spread/MembershipManager.h
-            rsb/transport/spread/SpreadConnector.h
             rsb/transport/spread/InConnector.h
+            rsb/transport/spread/MembershipManager.h
             rsb/transport/spread/OutConnector.h
-            rsb/transport/spread/SpreadMessage.h
-            rsb/transport/spread/SpreadConnection.h
             rsb/transport/spread/ReceiverTask.h
-
-            rsb/introspection/PortStateChange.h
-            rsb/introspection/IntrospectionConverter.h
-            rsb/introspection/introspection.h)
+            rsb/transport/spread/SpreadConnection.h
+            rsb/transport/spread/SpreadConnector.h
+            rsb/transport/spread/SpreadGroup.h
+            rsb/transport/spread/SpreadMessage.h
+            
+            rsb/util/ConfigException.h
+            rsb/util/Configuration.h)
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
