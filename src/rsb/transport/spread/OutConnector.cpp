@@ -31,8 +31,9 @@ using namespace rsb::protocol;
 namespace rsb {
 namespace spread {
 
-OutConnector::OutConnector(const string& host, unsigned int port)
-: logger(Logger::getLogger("rsb.spread.OutConnector")),
+OutConnector::OutConnector(const string& host, unsigned int port) :
+    logger(Logger::getLogger("rsb.spread.OutConnector")),
+    active(false),
     connector(new SpreadConnector(host, port)) {
 }
 
@@ -42,6 +43,12 @@ rsb::transport::OutConnector* OutConnector::create(const Properties& args) {
 
     return new OutConnector(args.get<string>      ("host", defaultHost()),
                             args.get<unsigned int>("port", defaultPort()));
+}
+
+OutConnector::~OutConnector() {
+    if (this->active) {
+        deactivate();
+    }
 }
 
 void OutConnector::activate() {

@@ -40,6 +40,8 @@ public:
     InConnector(const std::string &host = defaultHost(),
                 unsigned int port = defaultPort());
 
+    virtual ~InConnector();
+
     void activate();
     void deactivate();
 
@@ -53,6 +55,8 @@ public:
     static rsb::transport::InConnector* create(const rsc::runtime::Properties &args);
 private:
     rsc::logging::LoggerPtr logger;
+
+    bool active;
 
     SpreadConnectorPtr connector;
 

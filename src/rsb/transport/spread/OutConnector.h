@@ -38,6 +38,8 @@ public:
         OutConnector(const std::string& host = defaultHost(),
                      unsigned int port = defaultPort());
 
+        virtual ~OutConnector();
+
         void push(rsb::EventPtr e);
 
         void activate();
@@ -48,6 +50,8 @@ public:
         static rsb::transport::OutConnector* create(const rsc::runtime::Properties& args);
 private:
 	rsc::logging::LoggerPtr logger;
+
+        bool active;
 
         SpreadConnectorPtr connector;
 };

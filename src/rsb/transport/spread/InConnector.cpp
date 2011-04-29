@@ -32,6 +32,7 @@ namespace spread {
 
 InConnector::InConnector(const string &host, unsigned int port) :
     logger(Logger::getLogger("rsb.spread.InConnector")),
+    active(false),
     connector(new SpreadConnector(host, port)) {
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
     // TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
@@ -48,6 +49,12 @@ rsb::transport::InConnector* InConnector::create(const Properties& args) {
 
     return new InConnector(args.get<string>      ("host", defaultHost()),
                            args.get<unsigned int>("port", defaultPort()));
+}
+
+InConnector::~InConnector() {
+    if (this->active) {
+        deactivate();
+    }
 }
 
 void InConnector::activate() {
