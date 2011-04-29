@@ -24,6 +24,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/Event.cpp
             rsb/Handler.cpp
             rsb/Scope.cpp
+            rsb/Service.cpp
             rsb/Subscription.cpp
             rsb/ParticipantConfig.cpp
             rsb/QualityOfServiceSpec.cpp
@@ -82,6 +83,7 @@ SET(HEADERS rsb/Version.h
             rsb/Listener.h
             rsb/Handler.h
             rsb/Scope.h
+            rsb/Service.h
             rsb/Subscription.h
             rsb/ParticipantConfig.h
             rsb/QualityOfServiceSpec.h

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
+
 #include <rsc/misc/UUID.h>
 
 #include "rsb/rsbexports.h"
@@ -73,5 +75,7 @@ private:
     ParticipantConfig config;
 
 };
+
+typedef boost::shared_ptr<Participant> ParticipantPtr;
 
 }
