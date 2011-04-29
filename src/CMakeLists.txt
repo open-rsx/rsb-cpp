@@ -53,7 +53,9 @@ SET(SOURCES rsb/Exception.cpp
             rsb/converter/VoidConverter.cpp
 
 #            rsb/transport/inprocess/StatusTask.cpp
-#            rsb/transport/inprocess/InProcessConnector.cpp
+            rsb/transport/inprocess/Bus.cpp
+            rsb/transport/inprocess/InConnector.cpp
+            rsb/transport/inprocess/OutConnector.cpp
 
             rsb/transport/spread/SpreadGroup.cpp
             rsb/transport/spread/MembershipManager.cpp
@@ -113,7 +115,9 @@ SET(HEADERS rsb/Version.h
             rsb/transport/Factory.h
 
 #            rsb/transport/inprocess/StatusTask.h
-#            rsb/transport/inprocess/InProcessConnector.h
+            rsb/transport/inprocess/Bus.h
+            rsb/transport/inprocess/InConnector.h
+            rsb/transport/inprocess/OutConnector.h
 
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/MembershipManager.h
