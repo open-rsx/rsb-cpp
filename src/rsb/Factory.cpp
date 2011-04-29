@@ -31,16 +31,25 @@ Factory::Factory() {
     introspection::registerIntrospectionConverters();
     converter::registerDefaultConverters();
     transport::registerDefaultTransports();
+
+    // setup default participant config
+    // TODO later this should be inprocess
+    defaultConfig.addTransport(ParticipantConfig::Transport("spread"));
+
 }
 
 Factory::~Factory() {
 }
 
-ListenerPtr Factory::createListener(const Scope &scope, const string &connectorType) {
+ListenerPtr Factory::createListener(const Scope &scope,
+        const string &connectorType) {
     // Create requested connectors
     std::vector<transport::InConnectorPtr> connectors;
     if (!connectorType.empty()) {
-        connectors.push_back(transport::InConnectorPtr(transport::InFactory::getInstance().createInst(connectorType)));
+        connectors.push_back(
+                transport::InConnectorPtr(
+                        transport::InFactory::getInstance().createInst(
+                                connectorType)));
     }
 
     return ListenerPtr(new Listener(connectors, scope));
@@ -52,6 +61,16 @@ patterns::ServerPtr Factory::createServer(const Scope &scope) {
 
 patterns::RemoteServerPtr Factory::createRemoteServer(const Scope &scope) {
     return patterns::RemoteServerPtr(new patterns::RemoteServer(scope));
+}
+
+ParticipantConfig Factory::getDefaultParticipantConfig() const {
+    boost::recursive_mutex::scoped_lock lock(configMutex);
+    return defaultConfig;
+}
+
+void Factory::setDefaultParticipantConfig(const ParticipantConfig &config) {
+    boost::recursive_mutex::scoped_lock lock(configMutex);
+    this->defaultConfig = config;
 }
 
 }

@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/patterns/Singleton.h>
@@ -33,6 +34,7 @@
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
 #include "transport/Connector.h"
+#include "ParticipantConfig.h"
 
 namespace rsb {
 
@@ -53,32 +55,54 @@ public:
      * @param scope the scope of the informer
      * @param dataType the string representation of the data type used to select
      *                 converters
+     * @return new informer instance
      */
     template<class DataType>
     typename Informer<DataType>::Ptr createInformer(
-        const Scope &scope,
-        const std::string &dataType = rsc::runtime::typeName(typeid(DataType)),
-        const std::string &connectorType = "spread") {
+            const Scope &scope,
+            const std::string &dataType = rsc::runtime::typeName(
+                    typeid(DataType)),
+            const std::string &connectorType = "spread") {
         // Create requested connectors
         std::vector<transport::OutConnectorPtr> connectors;
         if (!connectorType.empty()) {
-            connectors.push_back(transport::OutConnectorPtr(transport::OutFactory::getInstance().createInst(connectorType)));
+            connectors.push_back(
+                    transport::OutConnectorPtr(
+                            transport::OutFactory::getInstance().createInst(
+                                    connectorType)));
         }
 
-        return typename Informer<DataType>::Ptr(new Informer<DataType> (connectors, scope, dataType));
+        return typename Informer<DataType>::Ptr(
+                new Informer<DataType> (connectors, scope, dataType));
     }
 
     /**
      * Creates a new listener for the specified scope.
      *
      * @param scope the scope of the new listener
+     * @return new listener instance
      */
     ListenerPtr createListener(const Scope &scope,
-                               const std::string &connectorType = "spread");
+            const std::string &connectorType = "spread");
 
     patterns::ServerPtr createServer(const Scope &scope);
 
     patterns::RemoteServerPtr createRemoteServer(const Scope &scope);
+
+    /**
+     * Returns the default configuration for new participants.
+     *
+     * @return copy of the default configuration
+     */
+    ParticipantConfig getDefaultParticipantConfig() const;
+
+    /**
+     * Sets the default config for participants that will be used for every new
+     * participant that is created after this call.
+     *
+     * @param config new config
+     */
+    void setDefaultParticipantConfig(const ParticipantConfig &config);
 
     friend class rsc::patterns::Singleton<Factory>;
 
@@ -88,6 +112,12 @@ private:
      * Singleton constructor.
      */
     Factory();
+
+    /**
+     * Always acquire configMutex before reading or writing the config.
+     */
+    ParticipantConfig defaultConfig;
+    mutable boost::recursive_mutex configMutex;
 
 };
 

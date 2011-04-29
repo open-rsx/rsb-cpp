@@ -43,12 +43,13 @@ ADD_TEST(${RSB_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${RSB_TEST_NAME} "--gtest_ou
 # --- core test ---
 
 SET(CORE_TEST_SOURCES rsbtest_core.cpp
-                      rsb/converter/DefaultConverterTest.cpp
-                      rsb/eventprocessing/ParallelEventProcessingStrategyTest.cpp
+                      rsb/FactoryTest.cpp
                       rsb/HandlerTest.cpp
                       rsb/ParticipantConfigTest.cpp
                       rsb/QualityOfServiceSpecTest.cpp
                       rsb/ScopeTest.cpp
+                      rsb/converter/DefaultConverterTest.cpp
+                      rsb/eventprocessing/ParallelEventProcessingStrategyTest.cpp
                       rsb/filter/FilterObserverTest.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
