@@ -19,8 +19,11 @@
 
 #include "Factory.h"
 
-#include "inprocess/InProcessConnector.h"
-#include "spread/SpreadConnector.h"
+//#include "inprocess/InConnector.h"
+//#include "inprocess/OutConnector.h"
+
+#include "spread/InConnector.h"
+#include "spread/OutConnector.h"
 
 #include "transports.h"
 
@@ -28,11 +31,18 @@ namespace rsb {
 namespace transport {
 
 void registerDefaultTransports() {
-        InFactory& factory = InFactory::getInstance();
-        factory.impls().register_("inprocess", &rsb::inprocess::InProcessConnector::create);
-        factory.impls().register_("spread",    &rsb::spread::SpreadConnector::create);
+    {
+        InFactory &factory = InFactory::getInstance();
+        //factory.impls().register_("inprocess", &rsb::inprocess::InConnector::create);
+        factory.impls().register_("spread", &rsb::spread::InConnector::create);
+    }
+
+    {
+        OutFactory &factory = OutFactory::getInstance();
+        //factory.impls().register_("inprocess", &rsb::inprocess::OutConnector::create);
+        factory.impls().register_("spread", &rsb::spread::OutConnector::create);
+    }
 }
 
 }
-
 }

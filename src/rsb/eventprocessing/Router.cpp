@@ -21,6 +21,7 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "../Factory.h"
 #include "ParallelEventProcessingStrategy.h"
 
 using namespace std;
@@ -32,17 +33,37 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-Router::Router(Factory::ConnectorTypes inType,
-		Factory::ConnectorTypes outType) :
-	logger(Logger::getLogger("rsb.transport.Router")) {
-        inConnector = boost::dynamic_pointer_cast<InConnector>(transport::Factory::createConnector(inType));
-	outConnector = boost::dynamic_pointer_cast<OutConnector>(transport::Factory::createConnector(outType));
-	if (inConnector) {
-		eventProcessingStrategy = EventProcessingStrategyPtr(new ParallelEventProcessingStrategy());
-		// add event processor as observer to input port(s)
-		inConnector->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&EventProcessingStrategy::process, eventProcessingStrategy, _1))));
-	}
-	shutdown = false;
+Router::Router(transport::Factory::ConnectorTypes inType,
+               transport::Factory::ConnectorTypes outType) :
+logger(Logger::getLogger("rsb.transport.Router")) {
+    // TODO workaround until Router gets refactored
+    rsb::Factory::getInstance();
+    switch (inType) {
+    case transport::Factory::LOCAL:
+      this->inConnector.reset(transport::InFactory::getInstance().createInst("inprocess"));
+      break;
+    case transport::Factory::SPREAD:
+      this->inConnector.reset(transport::InFactory::getInstance().createInst("spread"));
+      break;
+    case transport::Factory::NONE:
+      break;
+    }
+    switch (outType) {
+    case transport::Factory::LOCAL:
+      this->outConnector.reset(transport::OutFactory::getInstance().createInst("inprocess"));
+      break;
+    case transport::Factory::SPREAD:
+      this->outConnector.reset(transport::OutFactory::getInstance().createInst("spread"));
+      break;
+    case transport::Factory::NONE:
+      break;
+    }
+    if (this->inConnector) {
+      eventProcessingStrategy = EventProcessingStrategyPtr(new ParallelEventProcessingStrategy());
+      // add event processor as observer to input port(s)
+      inConnector->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&EventProcessingStrategy::process, eventProcessingStrategy, _1))));
+    }
+    shutdown = false;
 }
 
 void Router::activate() {

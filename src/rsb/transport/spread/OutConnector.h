@@ -21,28 +21,36 @@
 
 #include <string>
 
-#include <rsc/patterns/Factory.h>
+#include <rsc/runtime/Properties.h>
 
-#include "Connector.h"
+#include "../Connector.h"
+#include "SpreadConnector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace transport {
+namespace spread {
 
 /**
- * @author swrede
+ * @author jmoringe
  */
-class RSB_EXPORT Factory {
+class RSB_EXPORT OutConnector : public rsb::transport::OutConnector {
 public:
-    enum ConnectorTypes {
-        LOCAL, SPREAD, NONE
-    };
+        OutConnector(const std::string& host = defaultHost(),
+                     unsigned int port = defaultPort());
+
+        void push(rsb::EventPtr e);
+
+        void activate();
+        void deactivate();
+
+        void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+
+        static rsb::transport::OutConnector* create(const rsc::runtime::Properties& args);
+private:
+	rsc::logging::LoggerPtr logger;
+
+        SpreadConnectorPtr connector;
 };
 
-typedef rsc::patterns::SingletonFactory<std::string, InConnector> InFactory;
-
-typedef rsc::patterns::SingletonFactory<std::string, OutConnector> OutFactory;
-
 }
-
 }

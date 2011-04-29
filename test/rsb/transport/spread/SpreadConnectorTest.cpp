@@ -29,6 +29,8 @@
 
 #include "rsb/transport/Connector.h"
 #include "rsb/transport/spread/SpreadConnector.h"
+#include "rsb/transport/spread/InConnector.h"
+#include "rsb/transport/spread/OutConnector.h"
 #include "rsb/filter/Filter.h"
 
 #include "../../InformerTask.h"
@@ -46,39 +48,43 @@ using namespace rsc::threading;
 
 TEST(SpreadConnectorTest, testConstruction)
 {
-    ASSERT_NO_THROW(ConnectorPtr p = boost::shared_ptr<Connector>(new rsb::spread::SpreadConnector()));
+    ASSERT_NO_THROW(SpreadConnectorPtr p(new rsb::spread::SpreadConnector()));
+    ASSERT_NO_THROW(InConnectorPtr in(new rsb::spread::InConnector()));
+    ASSERT_NO_THROW(OutConnectorPtr out(new rsb::spread::OutConnector()));
 }
 
 TEST(SpreadConnectorTest, testConnnection)
 {
-    ConnectorPtr p = boost::shared_ptr<Connector>(
-            new rsb::spread::SpreadConnector());
+    SpreadConnectorPtr p(new rsb::spread::SpreadConnector());
     ASSERT_NO_THROW(p->activate());
 }
 
 TEST(SpreadConnectorTest, testRoundtrip)
 {
+
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
     // in-process port
-    InConnectorPtr p(new SpreadConnector());
-    ASSERT_NO_THROW(p->activate());
+    InConnectorPtr in(new rsb::spread::InConnector());
+    ASSERT_NO_THROW(in->activate());
+
+    OutConnectorPtr out(new rsb::spread::OutConnector());
+    ASSERT_NO_THROW(out->activate());
 
     // filter for joining test group
     FilterPtr f = FilterPtr(new ScopeFilter(Scope("/blah")));
-    f->notifyObserver(p, FilterAction::ADD);
+    f->notifyObserver(in, FilterAction::ADD);
 
     // domain objects
     // send only one event. Otherwise we need to do a correlation because
     // ordering may change
     const unsigned int numEvents = 1;
-    boost::shared_ptr<InformerTask> source(new InformerTask(boost::dynamic_pointer_cast<OutConnector>(p), numEvents));
+    boost::shared_ptr<InformerTask> source(new InformerTask(out, numEvents));
     WaitingObserver observer(numEvents);
-    p->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
+    in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
     // activate port and schedule informer
-    p->activate();
     exec->schedule(source);
 
     observer.waitReceived();
@@ -98,5 +104,4 @@ TEST(SpreadConnectorTest, testRoundtrip)
 
     source->cancel();
     source->waitDone();
-
 }

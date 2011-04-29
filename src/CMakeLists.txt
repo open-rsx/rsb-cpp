@@ -50,15 +50,19 @@ SET(SOURCES rsb/Exception.cpp
             rsb/converter/StringConverter.cpp
             rsb/converter/Uint64Converter.cpp
             rsb/converter/VoidConverter.cpp
-            rsb/transport/Factory.cpp
-            rsb/transport/inprocess/StatusTask.cpp
-            rsb/transport/inprocess/InProcessConnector.cpp
+
+#            rsb/transport/inprocess/StatusTask.cpp
+#            rsb/transport/inprocess/InProcessConnector.cpp
+
             rsb/transport/spread/SpreadGroup.cpp
             rsb/transport/spread/MembershipManager.cpp
             rsb/transport/spread/SpreadConnector.cpp
+            rsb/transport/spread/InConnector.cpp
+            rsb/transport/spread/OutConnector.cpp
             rsb/transport/spread/SpreadMessage.cpp
             rsb/transport/spread/SpreadConnection.cpp
             rsb/transport/spread/ReceiverTask.cpp
+
             rsb/introspection/IntrospectionConverter.cpp
             rsb/introspection/introspection.cpp
             ${PROTO_SOURCES}
@@ -104,15 +108,20 @@ SET(HEADERS rsb/Version.h
             rsb/converter/Uint64Converter.h
             rsb/converter/VoidConverter.h
             rsb/converter/ProtocolBufferConverter.h
-            rsb/transport/inprocess/StatusTask.h
-            rsb/transport/inprocess/InProcessConnector.h
             rsb/transport/Factory.h
+
+#            rsb/transport/inprocess/StatusTask.h
+#            rsb/transport/inprocess/InProcessConnector.h
+
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/MembershipManager.h
             rsb/transport/spread/SpreadConnector.h
+            rsb/transport/spread/InConnector.h
+            rsb/transport/spread/OutConnector.h
             rsb/transport/spread/SpreadMessage.h
             rsb/transport/spread/SpreadConnection.h
             rsb/transport/spread/ReceiverTask.h
+
             rsb/introspection/PortStateChange.h
             rsb/introspection/IntrospectionConverter.h
             rsb/introspection/introspection.h)

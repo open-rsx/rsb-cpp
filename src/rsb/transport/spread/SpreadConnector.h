@@ -19,15 +19,16 @@
 
 #pragma once
 
+#include <string>
 #include <map>
 
-#include <rsc/runtime/Properties.h>
+#include <boost/shared_ptr.hpp>
+
 #include <rsc/logging/Logger.h>
-#include <rsc/threading/TaskExecutor.h>
+#include <rsc/misc/UUID.h>
 
 #include "../../converter/Repository.h"
 #include "../Connector.h"
-#include "../../filter/ScopeFilter.h"
 #include "ReceiverTask.h"
 #include "MembershipManager.h"
 #include "SpreadConnection.h"
@@ -40,64 +41,59 @@ namespace spread {
  * @author swrede
  * @todo do we really want to expose this through dlls only for the unit tests
  */
-class RSB_EXPORT SpreadConnector: public rsb::transport::InConnector,
-                                  public rsb::transport::OutConnector {
+class RSB_EXPORT SpreadConnector {
 public:
-        SpreadConnector(const std::string& host = defaultHost(),
-                        unsigned int port = defaultPort());
-	explicit SpreadConnector(
-			rsb::converter::Repository<std::string>::Ptr converters);
-	virtual ~SpreadConnector();
+    SpreadConnector(const std::string &host, unsigned int port);
+    explicit SpreadConnector(rsb::converter::Repository<std::string>::Ptr converters = converter::stringConverterRepository());
+    virtual ~SpreadConnector();
 
-	void push(rsb::EventPtr e);
+    void activate();
+    void deactivate();
 
-	void activate();
-	void deactivate();
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-	void setObserver(HandlerPtr handler);
+    void join(const std::string &name);
+    void leave(const std::string &name);
 
-	void notify(rsb::filter::ScopeFilter* f,
-			const rsb::filter::FilterAction::Types &at);
+    bool send(const SpreadMessage &msg);
 
-	void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void init(const std::string& host, unsigned int port);
 
-	static rsb::transport::Connector*
-        create(const rsc::runtime::Properties& args);
+    SpreadConnectionPtr getConnection();
+
+    rsb::converter::Repository<std::string>::Ptr getConverters();
+
+    SpreadMessage::QOS getMessageQoS() const;
 private:
-	rsc::logging::LoggerPtr logger;
+    rsc::logging::LoggerPtr logger;
 
-	void init(const std::string& host, unsigned int port);
+    rsc::misc::UUID id;
 
-	volatile bool activated;
-	SpreadConnectionPtr con;
+    volatile bool activated;
+    SpreadConnectionPtr con;
 
-	rsc::threading::TaskExecutorPtr exec;
-	//   boost::shared_ptr<StatusTask> st;
-	boost::shared_ptr<ReceiverTask> rec;
+    MembershipManagerPtr memberships;
 
-	MembershipManagerPtr memberships;
+    rsb::converter::Repository<std::string>::Ptr converters;
 
-	rsb::converter::Repository<std::string>::Ptr converters;
+    /**
+     * The message type applied to every outgoing message.
+     */
+    SpreadMessage::QOS messageQoS;
 
-	/**
-	 * The message type applied to every outgoing message.
-	 */
-	SpreadMessage::QOS messageQoS;
+    typedef std::map<QualityOfServiceSpec::Ordering, std::map<
+        QualityOfServiceSpec::Reliability, SpreadMessage::QOS> > QoSMap;
 
-	typedef std::map<QualityOfServiceSpec::Ordering, std::map<
-			QualityOfServiceSpec::Reliability, SpreadMessage::QOS> > QoSMap;
+    /**
+     * Map from 2D input space defined in QualitOfServiceSpec to 1D spread message
+     * types. First dimension is ordering, second is reliability.
+     */
+    static const QoSMap qosMapping;
 
-	/**
-	 * Map from 2D input space defined in QualitOfServiceSpec to 1D spread message
-	 * types. First dimension is ordering, second is reliability.
-	 */
-	static const QoSMap qosMapping;
-
-	static QoSMap buildQoSMapping();
-
-	HandlerPtr observer;
+    static QoSMap buildQoSMapping();
 };
 
-}
+typedef boost::shared_ptr<SpreadConnector> SpreadConnectorPtr;
 
+}
 }
