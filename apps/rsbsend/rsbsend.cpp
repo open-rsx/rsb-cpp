@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 
     // publish
     Informer<string>::Ptr informer = factory.createInformer<string> (
-            Scope(argv[1]), "string");
+            Scope(argv[1]));
     informer->publish(boost::shared_ptr<string>(new string(contents.str())));
     informer->deactivate();
 

@@ -21,8 +21,8 @@
 
 namespace rsb {
 
-Participant::Participant(const Scope &scope) :
-    scope(scope) {
+Participant::Participant(const Scope &scope, const ParticipantConfig &config) :
+    scope(scope), config(config) {
 }
 
 rsc::misc::UUID Participant::getId() const {
@@ -31,6 +31,10 @@ rsc::misc::UUID Participant::getId() const {
 
 Scope Participant::getScope() const {
     return scope;
+}
+
+ParticipantConfig Participant::getConfig() const {
+    return config;
 }
 
 }

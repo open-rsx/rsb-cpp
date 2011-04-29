@@ -60,20 +60,27 @@ public:
     template<class DataType>
     typename Informer<DataType>::Ptr createInformer(
             const Scope &scope,
+            const ParticipantConfig &config =
+                    Factory::getInstance().getDefaultParticipantConfig(),
             const std::string &dataType = rsc::runtime::typeName(
-                    typeid(DataType)),
-            const std::string &connectorType = "spread") {
+                    typeid(DataType))) {
         // Create requested connectors
         std::vector<transport::OutConnectorPtr> connectors;
-        if (!connectorType.empty()) {
+        std::set<ParticipantConfig::Transport> configuredTransports =
+                config.getTransports();
+        for (std::set<ParticipantConfig::Transport>::const_iterator
+                transportIt = configuredTransports.begin(); transportIt
+                != configuredTransports.end(); ++transportIt) {
             connectors.push_back(
                     transport::OutConnectorPtr(
                             transport::OutFactory::getInstance().createInst(
-                                    connectorType)));
+                                    transportIt->getName(),
+                                    transportIt->getOptions())));
         }
 
         return typename Informer<DataType>::Ptr(
-                new Informer<DataType> (connectors, scope, dataType));
+                new Informer<DataType> (connectors, scope, defaultConfig,
+                        dataType));
     }
 
     /**
@@ -82,8 +89,10 @@ public:
      * @param scope the scope of the new listener
      * @return new listener instance
      */
-    ListenerPtr createListener(const Scope &scope,
-            const std::string &connectorType = "spread");
+    ListenerPtr createListener(
+            const Scope &scope,
+            const ParticipantConfig &config =
+                    Factory::getInstance().getDefaultParticipantConfig());
 
     patterns::ServerPtr createServer(const Scope &scope);
 

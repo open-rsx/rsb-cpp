@@ -72,7 +72,7 @@ int main(void) {
 
     // Create Informer and Event
     Informer<string>::Ptr informer = factory.createInformer<string> (
-            Scope("/example/informer"), "string");
+            Scope("/example/informer"));
     Informer<string>::DataPtr data(bin_doc);
 
     EventPtr event = EventPtr(

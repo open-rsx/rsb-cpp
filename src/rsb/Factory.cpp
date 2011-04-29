@@ -42,17 +42,22 @@ Factory::~Factory() {
 }
 
 ListenerPtr Factory::createListener(const Scope &scope,
-        const string &connectorType) {
+        const ParticipantConfig &config) {
     // Create requested connectors
     std::vector<transport::InConnectorPtr> connectors;
-    if (!connectorType.empty()) {
+    set<ParticipantConfig::Transport> configuredTransports =
+            config.getTransports();
+    for (set<ParticipantConfig::Transport>::const_iterator transportIt =
+            configuredTransports.begin(); transportIt
+            != configuredTransports.end(); ++transportIt) {
         connectors.push_back(
                 transport::InConnectorPtr(
                         transport::InFactory::getInstance().createInst(
-                                connectorType)));
+                                transportIt->getName(),
+                                transportIt->getOptions())));
     }
 
-    return ListenerPtr(new Listener(connectors, scope));
+    return ListenerPtr(new Listener(connectors, scope, defaultConfig));
 }
 
 patterns::ServerPtr Factory::createServer(const Scope &scope) {

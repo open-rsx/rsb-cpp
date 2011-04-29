@@ -57,6 +57,7 @@ namespace rsb {
  */
 class RSB_EXPORT Listener: public Participant {
 public:
+
     /**
      * Constructs a new Listener assigned to the specified scope. The
      * Listener connects to the bus using the supplied connectors.
@@ -64,9 +65,10 @@ public:
      * @param connectors a list of connectors that the listener should
      *                   use to communicate with the bus.
      * @param scope the scope where the data is received from.
+     * @param config the configuration that was used to setup this listener
      */
     Listener(const std::vector<transport::InConnectorPtr> &connectors,
-             const Scope &scope);
+             const Scope &scope, const ParticipantConfig &config);
 
     virtual ~Listener();
 

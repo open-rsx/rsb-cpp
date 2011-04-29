@@ -23,6 +23,7 @@
 
 #include "rsb/rsbexports.h"
 #include "Scope.h"
+#include "ParticipantConfig.h"
 
 namespace rsb {
 
@@ -54,14 +55,22 @@ public:
      */
     Scope getScope() const;
 
+    /**
+     * Returns a copy of the participant's configuration.
+     *
+     * @return copy of this participant's config
+     */
+    ParticipantConfig getConfig() const;
+
 protected:
 
-    Participant(const Scope &scope);
+    Participant(const Scope &scope, const ParticipantConfig &config);
 
 private:
 
     rsc::misc::UUID id;
     Scope scope;
+    ParticipantConfig config;
 
 };
 
