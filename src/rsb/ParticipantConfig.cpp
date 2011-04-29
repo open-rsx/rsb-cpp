@@ -40,6 +40,15 @@ string ParticipantConfig::Transport::getName() const {
     return name;
 }
 
+rsc::runtime::Properties ParticipantConfig::Transport::getOptions() const {
+    return options;
+}
+
+void ParticipantConfig::Transport::setOptions(
+        const rsc::runtime::Properties &options) {
+    this->options = options;
+}
+
 bool ParticipantConfig::Transport::operator==(const Transport &other) const {
     return name == other.name;
 }
@@ -77,6 +86,14 @@ void ParticipantConfig::removeTransport(const Transport &transport) {
 
 void ParticipantConfig::setTransports(const set<Transport> &transports) {
     this->transports = transports;
+}
+
+rsc::runtime::Properties ParticipantConfig::getOptions() const {
+    return options;
+}
+
+void ParticipantConfig::setOptions(const rsc::runtime::Properties &options) {
+    this->options = options;
 }
 
 ostream &operator<<(ostream &stream,

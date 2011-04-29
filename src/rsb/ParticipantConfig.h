@@ -25,6 +25,8 @@
 
 #include <boost/operators.hpp>
 
+#include <rsc/runtime/Properties.h>
+
 #include "QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
 
@@ -65,12 +67,27 @@ public:
          */
         std::string getName() const;
 
+        /**
+         * Returns the specified options for the transport.
+         *
+         * @return copy of options for the transport
+         */
+        rsc::runtime::Properties getOptions() const;
+
+        /**
+         * Sets the options for the transport.
+         *
+         * @param options new options replacing all old ones
+         */
+        void setOptions(const rsc::runtime::Properties &options);
+
         bool operator==(const Transport &other) const;
         bool operator<(const Transport &other) const;
 
     private:
 
         std::string name;
+        rsc::runtime::Properties options;
 
     };
 
@@ -122,6 +139,20 @@ public:
      */
     void setTransports(const std::set<Transport> &transports);
 
+    /**
+     * Returns additional options besides the transport-specific ones.
+     *
+     * @return copy of additional options
+     */
+    rsc::runtime::Properties getOptions() const;
+
+    /**
+     * Sets the additional options besides the transport-specific ones.
+     *
+     * @param options new options replacing all old ones
+     */
+    void setOptions(const rsc::runtime::Properties &options);
+
     friend std::ostream &operator<<(std::ostream &stream,
             const ParticipantConfig &config);
 
@@ -129,6 +160,7 @@ private:
 
     QualityOfServiceSpec qosSpec;
     std::set<Transport> transports;
+    rsc::runtime::Properties options;
 
 };
 

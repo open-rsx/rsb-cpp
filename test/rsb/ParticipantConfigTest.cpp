@@ -33,6 +33,19 @@ TEST(TransportTest, testCreation)
 
     EXPECT_THROW(ParticipantConfig::Transport(""), invalid_argument);
     EXPECT_EQ("a test", ParticipantConfig::Transport("a test").getName());
+    EXPECT_TRUE(ParticipantConfig::Transport("a test").getOptions().empty());
+
+}
+
+TEST(TransportTest, testOptions)
+{
+
+    ParticipantConfig::Transport transport("a test");
+    rsc::runtime::Properties options;
+    options.insert(make_pair("key", "value"));
+    EXPECT_FALSE(transport.getOptions().has("key"));
+    transport.setOptions(options);
+    EXPECT_TRUE(transport.getOptions().has("key"));
 
 }
 
@@ -85,5 +98,17 @@ TEST(ParticipantConfigTest, testTransportManipulation)
     newSet.insert(ParticipantConfig::Transport("foo"));
     config.setTransports(newSet);
     EXPECT_EQ(newSet, config.getTransports());
+
+}
+
+TEST(ParticipantConfigTest, testOptions)
+{
+
+    ParticipantConfig config;
+    rsc::runtime::Properties options;
+    options.insert(make_pair("key", "value"));
+    EXPECT_FALSE(config.getOptions().has("key"));
+    config.setOptions(options);
+    EXPECT_TRUE(config.getOptions().has("key"));
 
 }
