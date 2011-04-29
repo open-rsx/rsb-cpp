@@ -48,7 +48,7 @@ public:
      *
      * @author jwienke
      */
-    class Transport: boost::totally_ordered<Transport> {
+    class RSB_EXPORT Transport: boost::totally_ordered<Transport> {
     public:
 
         /**
