@@ -134,7 +134,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
         ListenerPtr listener(new Listener(replyScope));
         boost::shared_ptr<WaitingEventHandler> handler(
                 new WaitingEventHandler(logger));
-        listener->appendHandler(handler);
+        listener->addHandler(handler);
 
         // informer for requests
         Informer<void>::Ptr

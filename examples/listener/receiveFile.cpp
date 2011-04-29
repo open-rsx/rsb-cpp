@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
         scope = Scope("/example/informer");
     }
     ListenerPtr s = factory.createListener(scope);
-    s->appendHandler(HandlerPtr(new MyDataHandler()));
+    s->addHandler(HandlerPtr(new MyDataHandler()));
 
     cout << "Listener setup finished. Waiting for messages on scope " << scope
             << endl;

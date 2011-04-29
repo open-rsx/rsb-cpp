@@ -92,7 +92,7 @@ set<HandlerPtr> Listener::getHandlers() const {
     return result;
 }
 
-void Listener::appendHandler(HandlerPtr h) {
+void Listener::addHandler(HandlerPtr h) {
     if (!this->handlers.empty()) {
         this->router->unsubscribe(this->subscription);
     }

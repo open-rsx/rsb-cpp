@@ -47,13 +47,13 @@ int main(int /*argc*/, char **/*argv*/) {
                 scope2);
 
         ListenerPtr listener1 = factory.createListener(scope1);
-        listener1->appendHandler(
+        listener1->addHandler(
                 HandlerPtr(
                         new DataFunctionHandler<string> (
                                 boost::bind(&printData, "sub1", _1))));
 
         ListenerPtr listener2 = factory.createListener(scope2);
-        listener2->appendHandler(
+        listener2->addHandler(
                 HandlerPtr(
                         new DataFunctionHandler<string> (
                                 boost::bind(&printData, "sub2", _1))));

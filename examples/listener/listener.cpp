@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
         scope = Scope("/example/informer");
     }
     ListenerPtr s = factory.createListener(scope);
-    s->appendHandler(HandlerPtr(new DataFunctionHandler<string> (&printData)));
+    s->addHandler(HandlerPtr(new DataFunctionHandler<string> (&printData)));
 
     cerr << "Listener setup finished. Waiting for messages on scope " << scope
             << endl;

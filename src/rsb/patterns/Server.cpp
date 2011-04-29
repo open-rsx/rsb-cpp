@@ -118,7 +118,7 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
     ListenerPtr listener(
             Factory::getInstance().createListener(
                     scope.concat(Scope("request")).concat(Scope(methodName))));
-    listener->appendHandler(
+    listener->addHandler(
             HandlerPtr(new RequestHandler(methodName, callback, informer)));
     this->requestListeners.insert(listener);
 

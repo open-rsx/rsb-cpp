@@ -117,13 +117,13 @@ public:
     std::set<HandlerPtr> getHandlers() const;
 
     /**
-     * Appends a @ref rsb::Handler to the Listener. Events which
+     * Adds a @ref rsb::Handler to the Listener. Events which
      * match the restrictions described by the associated
      * @ref rsb::Subscription are passed to all handlers.
      *
      * @param h a Pointer to the Handler.
      */
-    virtual void appendHandler(HandlerPtr h);
+    virtual void addHandler(HandlerPtr h);
 
     void removeHandler(HandlerPtr h);
 
