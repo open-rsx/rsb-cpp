@@ -46,6 +46,14 @@ public:
 
     virtual ~Factory();
 
+    /**
+     * Creates a new informer in the specified scope.
+     *
+     * @tparam DataType the C++ data type this informer publishes
+     * @param scope the scope of the informer
+     * @param dataType the string representation of the data type used to select
+     *                 converters
+     */
     template<class DataType>
     typename Informer<DataType>::Ptr createInformer(
         const Scope &scope,
@@ -60,6 +68,11 @@ public:
         return typename Informer<DataType>::Ptr(new Informer<DataType> (connectors, scope, dataType));
     }
 
+    /**
+     * Creates a new listener for the specified scope.
+     *
+     * @param scope the scope of the new listener
+     */
     ListenerPtr createListener(const Scope &scope,
                                const std::string &connectorType = "spread");
 
