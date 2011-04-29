@@ -8,6 +8,7 @@ PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
 
 CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/rsb)
+# TODO why do we need to install them? they should be fully internal
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Notification.pb.h DESTINATION include/rsb/protocol)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATION include/rsb/protocol)
 
