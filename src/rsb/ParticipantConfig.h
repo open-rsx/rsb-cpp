@@ -153,7 +153,7 @@ public:
      */
     void setOptions(const rsc::runtime::Properties &options);
 
-    friend std::ostream &operator<<(std::ostream &stream,
+    friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
             const ParticipantConfig &config);
 
 private:
