@@ -23,6 +23,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
 #include "Event.h"
@@ -77,9 +78,13 @@ public:
      *             informer. It is used to find a converter that can convert
      *             these data to the port
      */
-    Informer(const std::vector<transport::OutConnectorPtr> &connectors, const Scope &scope, const std::string &type) :
-        Participant(scope), logger(rsc::logging::Logger::getLogger(
-                "rsb.Informer")), passive(false), defaultType(type) {
+    Informer(const std::vector<transport::OutConnectorPtr> &connectors,
+             const Scope &scope,
+             const std::string &type = rsc::runtime::typeName<T>()) :
+        Participant(scope),
+        logger(rsc::logging::Logger::getLogger("rsb.Informer")),
+        passive(false),
+        defaultType(type) {
         // TODO evaluate configuration
         assert(connectors.size() == 1);
         router = eventprocessing::RouterPtr(new eventprocessing::Router(transport::InConnectorPtr(), connectors[0]));
