@@ -22,6 +22,7 @@
 #include <rsc/misc/UUID.h>
 
 #include "rsb/rsbexports.h"
+#include "Scope.h"
 
 namespace rsb {
 
@@ -38,12 +39,30 @@ namespace rsb {
  */
 class RSB_EXPORT Participant {
 public:
-    rsc::misc::UUID
-    getUUID() const;
-protected:
-    rsc::misc::UUID uuid;
 
-    Participant();
+    /**
+     * Returns the unique id of the participant.
+     *
+     * @return unique id
+     */
+    rsc::misc::UUID getId() const;
+
+    /**
+     * Returns the scope of this participant.
+     *
+     * @return scope
+     */
+    Scope getScope() const;
+
+protected:
+
+    Participant(const Scope &scope);
+
+private:
+
+    rsc::misc::UUID id;
+    Scope scope;
+
 };
 
 }

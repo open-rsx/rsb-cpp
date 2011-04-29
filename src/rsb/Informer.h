@@ -76,24 +76,22 @@ public:
      *             these data to the port
      */
     Informer(const Scope &scope, const std::string &type) :
-                logger(
-                        rsc::logging::Logger::getLogger(
-                                "rsb.Informer." + scope.toString())),
-                scope(scope), passive(false), defaultType(type) {
+        Participant(scope), logger(rsc::logging::Logger::getLogger(
+                "rsb.Informer." + scope.toString())), passive(false),
+                defaultType(type) {
         // TODO evaluate configuration
-        router = eventprocessing::RouterPtr(
-                new eventprocessing::Router(transport::Factory::NONE,
-                        transport::Factory::SPREAD));
+        router = eventprocessing::RouterPtr(new eventprocessing::Router(
+                transport::Factory::NONE, transport::Factory::SPREAD));
         activate();
     }
 
     Informer(const transport::Factory::ConnectorTypes &out, const Scope &scope,
             const std::string &type) :
-        logger(rsc::logging::Logger::getLogger("rsb.Informer")), scope(scope),
-                passive(false), defaultType(type) {
+        Participant(scope), logger(rsc::logging::Logger::getLogger(
+                "rsb.Informer")), passive(false), defaultType(type) {
         // TODO evaluate configuration
-        router = eventprocessing::RouterPtr(
-                new eventprocessing::Router(transport::Factory::NONE, out));
+        router = eventprocessing::RouterPtr(new eventprocessing::Router(
+                transport::Factory::NONE, out));
         activate();
     }
 
@@ -143,7 +141,7 @@ public:
      */
     void publish(EventPtr event) {
         // TODO Check that exception is thrown if no converter available!
-        event->setScope(scope);
+        event->setScope(getScope());
         RSCDEBUG(logger, "Publishing event");
         router->publish(event);
     }
@@ -168,15 +166,10 @@ public:
         passive = true;
     }
 
-protected:
-
-    Informer() { /* forbidden */
-    }
-
     void publish(VoidPtr p, const std::string &type) {
         EventPtr e(new Event());
         e->setData(p);
-        e->setScope(scope);
+        e->setScope(getScope());
         // TODO Check that exception is thrown if no converter available!
         e->setType(type);
         RSCDEBUG(logger, "Publishing event");
@@ -185,7 +178,6 @@ protected:
 
 private:
     rsc::logging::LoggerPtr logger;
-    Scope scope;
     volatile bool passive;
     std::string defaultType;
     eventprocessing::RouterPtr router;
@@ -194,7 +186,7 @@ private:
 
 template<typename Ch, typename Tr, typename T>
 std::basic_ostream<Ch, Tr>&
-operator<<(std::basic_ostream<Ch, Tr>& stream, const Informer<T>& informer) {
+operator<<(std::basic_ostream<Ch, Tr> &stream, const Informer<T> &informer) {
     stream << "Informer[id=" << informer.getUUID() << "]";
     return stream;
 }

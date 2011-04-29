@@ -21,11 +21,16 @@
 
 namespace rsb {
 
-Participant::Participant() {
+Participant::Participant(const Scope &scope) :
+    scope(scope) {
 }
 
-rsc::misc::UUID Participant::getUUID() const {
-	return this->uuid;
+rsc::misc::UUID Participant::getId() const {
+    return this->id;
+}
+
+Scope Participant::getScope() const {
+    return scope;
 }
 
 }

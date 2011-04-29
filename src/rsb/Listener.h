@@ -127,16 +127,8 @@ public:
 
     void removeHandler(HandlerPtr h);
 
-protected:
-
-    /**
-     * Forbidden constructor.
-     */
-    Listener();
-
 private:
     rsc::logging::LoggerPtr logger;
-    Scope scope;
     volatile bool passive;
     SubscriptionPtr subscription;
     std::set<HandlerPtr> handlers;
@@ -150,7 +142,7 @@ typedef boost::shared_ptr<Listener> ListenerPtr;
 template<typename Ch, typename Tr>
 std::basic_ostream<Ch, Tr>&
 operator<<(std::basic_ostream<Ch, Tr>& stream, const Listener& listener) {
-    stream << "Listener[id=" << listener.getUUID() << "]";
+    stream << "Listener[id=" << listener.getId() << "]";
     return stream;
 }
 

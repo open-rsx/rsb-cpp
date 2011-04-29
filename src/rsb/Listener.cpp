@@ -29,14 +29,16 @@ using namespace std;
 namespace rsb {
 
 Listener::Listener(const Scope &scope) :
-    logger(rsc::logging::Logger::getLogger("rsb.Listener")), scope(scope),
-            passive(false) {
+    Participant(scope),
+            logger(rsc::logging::Logger::getLogger("rsb.Listener")), passive(
+                    false) {
     this->initialize(transport::Factory::SPREAD, scope);
 }
 
 Listener::Listener(transport::Factory::ConnectorTypes in, const Scope &scope) :
-    logger(rsc::logging::Logger::getLogger("rsb.Listener")), scope(scope),
-            passive(false) {
+    Participant(scope),
+            logger(rsc::logging::Logger::getLogger("rsb.Listener")), passive(
+                    false) {
     this->initialize(in, scope);
 }
 
@@ -49,11 +51,11 @@ Listener::~Listener() {
 void Listener::initialize(transport::Factory::ConnectorTypes in,
         const Scope &scope) {
     // TODO evaluate configuration
-    this->router = eventprocessing::RouterPtr(
-            new eventprocessing::Router(in, transport::Factory::NONE));
+    this->router = eventprocessing::RouterPtr(new eventprocessing::Router(in,
+            transport::Factory::NONE));
     this->subscription.reset(new Subscription());
-    this->subscription->appendFilter(
-            filter::FilterPtr(new filter::ScopeFilter(scope)));
+    this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
+            scope)));
     this->activate();
 }
 
@@ -76,8 +78,8 @@ SubscriptionPtr Listener::getSubscription() {
 void Listener::setSubscription(SubscriptionPtr s) {
     this->router->unsubscribe(this->subscription);
     this->subscription = s;
-    this->subscription->appendFilter(
-            filter::FilterPtr(new filter::ScopeFilter(this->scope)));
+    this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
+            this->getScope())));
     if (!this->handlers.empty()) {
         this->router->subscribe(this->subscription, this->handlers);
     }
@@ -85,8 +87,8 @@ void Listener::setSubscription(SubscriptionPtr s) {
 
 set<HandlerPtr> Listener::getHandlers() const {
     set<HandlerPtr> result;
-    copy(this->handlers.begin(), this->handlers.end(),
-            inserter(result, result.begin()));
+    copy(this->handlers.begin(), this->handlers.end(), inserter(result,
+            result.begin()));
     return result;
 }
 
@@ -104,9 +106,6 @@ void Listener::removeHandler(HandlerPtr h) {
     }
     this->handlers.erase(h);
     this->router->subscribe(this->subscription, this->handlers);
-}
-
-Listener::Listener() {
 }
 
 }
