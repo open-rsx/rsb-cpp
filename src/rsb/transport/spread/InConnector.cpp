@@ -63,6 +63,7 @@ void InConnector::activate() {
     // (re-)start threads
     this->exec->schedule(rec);
     //this->exec->schedule(st);
+    this->active = true;
 }
 
 void InConnector::deactivate() {
@@ -71,6 +72,7 @@ void InConnector::deactivate() {
     // should be handled specifically as the cancel flag was set
     this->connector->deactivate();
     this->rec->waitDone();
+    this->active = false;
 }
 
 void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {

@@ -53,10 +53,12 @@ OutConnector::~OutConnector() {
 
 void OutConnector::activate() {
     this->connector->activate();
+    this->active = true;
 }
 
 void OutConnector::deactivate() {
     this->connector->deactivate();
+    this->active = false;
 }
 
 void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
