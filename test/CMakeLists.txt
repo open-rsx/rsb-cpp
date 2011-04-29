@@ -46,6 +46,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/converter/DefaultConverterTest.cpp
                       rsb/eventprocessing/ParallelEventProcessingStrategyTest.cpp
                       rsb/HandlerTest.cpp
+                      rsb/ParticipantConfigTest.cpp
                       rsb/QualityOfServiceSpecTest.cpp
                       rsb/ScopeTest.cpp
                       rsb/filter/FilterObserverTest.cpp)

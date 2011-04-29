@@ -24,28 +24,32 @@ using namespace std;
 namespace rsb {
 
 QualityOfServiceSpec::QualityOfServiceSpec() :
-	ordering(UNORDERED), reliability(RELIABLE) {
+    ordering(UNORDERED), reliability(RELIABLE) {
 }
 
 QualityOfServiceSpec::QualityOfServiceSpec(Ordering ordering,
-		Reliability reliability) :
-	ordering(ordering), reliability(reliability) {
+        Reliability reliability) :
+    ordering(ordering), reliability(reliability) {
 }
 
 QualityOfServiceSpec::~QualityOfServiceSpec() {
 }
 
 QualityOfServiceSpec::Ordering QualityOfServiceSpec::getOrdering() const {
-	return ordering;
+    return ordering;
 }
 
 QualityOfServiceSpec::Reliability QualityOfServiceSpec::getReliability() const {
-	return reliability;
+    return reliability;
+}
+
+bool QualityOfServiceSpec::operator==(const QualityOfServiceSpec &other) const {
+    return (ordering == other.ordering && reliability == other.reliability);
 }
 
 ostream &operator<<(ostream &stream, const QualityOfServiceSpec &spec) {
-	return stream << "QualityOfServiceSpec[ordering = " << spec.ordering
-			<< ", reliability = " << spec.reliability << "]";
+    return stream << "QualityOfServiceSpec[ordering = " << spec.ordering
+            << ", reliability = " << spec.reliability << "]";
 }
 
 }

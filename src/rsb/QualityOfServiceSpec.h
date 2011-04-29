@@ -21,6 +21,8 @@
 
 #include <ostream>
 
+#include <boost/operators.hpp>
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -34,89 +36,92 @@ namespace rsb {
  *
  * @author jwienke
  */
-class RSB_EXPORT QualityOfServiceSpec {
+class RSB_EXPORT QualityOfServiceSpec: boost::equality_comparable<
+        QualityOfServiceSpec> {
 public:
 
-	/**
-	 * Specifies the ordering of events for listeners on a informer.
-	 *
-	 * @author jwienke
-	 */
-	enum Ordering {
-		/**
-		 * The events are delivered in arbitrary order.
-		 */
-		UNORDERED = 10,
-		/**
-		 * Every listener receives the events of one informer in the order
-		 * the informer sent the events. No guarantees are given for events of
-		 * multiple informers.
-		 */
-		ORDERED = 20
-	};
+    /**
+     * Specifies the ordering of events for listeners on a informer.
+     *
+     * @author jwienke
+     */
+    enum Ordering {
+        /**
+         * The events are delivered in arbitrary order.
+         */
+        UNORDERED = 10,
+        /**
+         * Every listener receives the events of one informer in the order
+         * the informer sent the events. No guarantees are given for events of
+         * multiple informers.
+         */
+        ORDERED = 20
+    };
 
-	/**
-	 * Specifies the reliability of messages.
-	 *
-	 * @author jwienke
-	 */
-	enum Reliability {
-		/**
-		 * Events may be dropped and not be visible to a listener.
-		 */
-		UNRELIABLE = 10,
-		/**
-		 * Messages are guaranteed to be delivered. Otherwise an error is
-		 * raised.
-		 */
-		RELIABLE = 20
-	};
+    /**
+     * Specifies the reliability of messages.
+     *
+     * @author jwienke
+     */
+    enum Reliability {
+        /**
+         * Events may be dropped and not be visible to a listener.
+         */
+        UNRELIABLE = 10,
+        /**
+         * Messages are guaranteed to be delivered. Otherwise an error is
+         * raised.
+         */
+        RELIABLE = 20
+    };
 
-	/**
-	 * Constructs the default QoS specs for every informers. Messages are
-	 * unordered but reliably.
-	 */
-	QualityOfServiceSpec();
+    /**
+     * Constructs the default QoS specs for every informers. Messages are
+     * unordered but reliably.
+     */
+    QualityOfServiceSpec();
 
-	/**
-	 * Constructs a new QoS specification with desired details.
-	 *
-	 * @param ordering desired ordering type
-	 * @param reliability desired reliability type
-	 */
-	QualityOfServiceSpec(Ordering ordering, Reliability reliability);
+    /**
+     * Constructs a new QoS specification with desired details.
+     *
+     * @param ordering desired ordering type
+     * @param reliability desired reliability type
+     */
+    QualityOfServiceSpec(Ordering ordering, Reliability reliability);
 
-	/**
-	 * Destructor.
-	 */
-	virtual ~QualityOfServiceSpec();
+    /**
+     * Destructor.
+     */
+    virtual ~QualityOfServiceSpec();
 
-	/**
-	 * Returns the desired ordering settings.
-	 *
-	 * @return ordering requirements
-	 */
-	Ordering getOrdering() const;
+    /**
+     * Returns the desired ordering settings.
+     *
+     * @return ordering requirements
+     */
+    Ordering getOrdering() const;
 
-	/**
-	 * Returns the desired reliability settings.
-	 *
-	 * @return reliability requirements
-	 */
-	Reliability getReliability() const;
+    /**
+     * Returns the desired reliability settings.
+     *
+     * @return reliability requirements
+     */
+    Reliability getReliability() const;
 
-	friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-			const QualityOfServiceSpec &spec);
+    friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
+            const QualityOfServiceSpec &spec);
+
+    bool operator==(const QualityOfServiceSpec &other) const;
 
 private:
 
-	Ordering ordering;
-	Reliability reliability;
+    Ordering ordering;
+    Reliability reliability;
 
 };
 
 RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-		const QualityOfServiceSpec &spec);
+        const QualityOfServiceSpec &spec);
 
 }
 

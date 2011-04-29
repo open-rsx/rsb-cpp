@@ -25,6 +25,7 @@ SET(SOURCES rsb/Exception.cpp
             rsb/Handler.cpp
             rsb/Scope.cpp
             rsb/Subscription.cpp
+            rsb/ParticipantConfig.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/QueuePushHandler.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
@@ -80,6 +81,7 @@ SET(HEADERS rsb/Version.h
             rsb/Handler.h
             rsb/Scope.h
             rsb/Subscription.h
+            rsb/ParticipantConfig.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
             rsb/UnsupportedQualityOfServiceException.h
