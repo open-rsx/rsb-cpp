@@ -80,18 +80,15 @@ public:
                 "rsb.Informer." + scope.toString())), passive(false),
                 defaultType(type) {
         // TODO evaluate configuration
-        router = eventprocessing::RouterPtr(new eventprocessing::Router(
-                transport::Factory::NONE, transport::Factory::SPREAD));
+        router = eventprocessing::RouterPtr(new eventprocessing::Router("", "spread"));
         activate();
     }
 
-    Informer(const transport::Factory::ConnectorTypes &out, const Scope &scope,
-            const std::string &type) :
+    Informer(const std::string &out, const Scope &scope, const std::string &type) :
         Participant(scope), logger(rsc::logging::Logger::getLogger(
                 "rsb.Informer")), passive(false), defaultType(type) {
         // TODO evaluate configuration
-        router = eventprocessing::RouterPtr(new eventprocessing::Router(
-                transport::Factory::NONE, out));
+        router = eventprocessing::RouterPtr(new eventprocessing::Router("", out));
         activate();
     }
 

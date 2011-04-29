@@ -24,20 +24,9 @@
 #include <rsc/patterns/Factory.h>
 
 #include "Connector.h"
-#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
-
-/**
- * @author swrede
- */
-class RSB_EXPORT Factory {
-public:
-    enum ConnectorTypes {
-        LOCAL, SPREAD, NONE
-    };
-};
 
 typedef rsc::patterns::SingletonFactory<std::string, InConnector> InFactory;
 

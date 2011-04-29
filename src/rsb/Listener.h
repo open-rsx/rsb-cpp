@@ -75,10 +75,10 @@ public:
      * construction.
      *
      * @param scope the scope where the data is received from.
-     * @param in the ConnectorType (enum) to connect with, i.e.
-     *           transport::Factory::SPREAD
+     * @param in the connector type to connect with, i.e.
+     *           "spread"
      */
-    Listener(transport::Factory::ConnectorTypes in, const Scope &scope);
+    Listener(const std::string &in, const Scope &scope);
 
     virtual ~Listener();
 
@@ -134,7 +134,7 @@ private:
     std::set<HandlerPtr> handlers;
     eventprocessing::RouterPtr router;
 
-    void initialize(transport::Factory::ConnectorTypes in, const Scope &scope);
+    void initialize(const std::string &in, const Scope &scope);
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;

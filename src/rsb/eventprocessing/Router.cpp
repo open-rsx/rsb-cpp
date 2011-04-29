@@ -33,30 +33,14 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-Router::Router(transport::Factory::ConnectorTypes inType,
-               transport::Factory::ConnectorTypes outType) :
+Router::Router(const string &inType, const string &outType) :
 logger(Logger::getLogger("rsb.transport.Router")) {
-    // TODO workaround until Router gets refactored
     rsb::Factory::getInstance();
-    switch (inType) {
-    case transport::Factory::LOCAL:
-      this->inConnector.reset(transport::InFactory::getInstance().createInst("inprocess"));
-      break;
-    case transport::Factory::SPREAD:
-      this->inConnector.reset(transport::InFactory::getInstance().createInst("spread"));
-      break;
-    case transport::Factory::NONE:
-      break;
+    if (!inType.empty()) {
+        this->inConnector.reset(transport::InFactory::getInstance().createInst(inType));
     }
-    switch (outType) {
-    case transport::Factory::LOCAL:
-      this->outConnector.reset(transport::OutFactory::getInstance().createInst("inprocess"));
-      break;
-    case transport::Factory::SPREAD:
-      this->outConnector.reset(transport::OutFactory::getInstance().createInst("spread"));
-      break;
-    case transport::Factory::NONE:
-      break;
+    if (!outType.empty()) {
+      this->outConnector.reset(transport::OutFactory::getInstance().createInst(outType));
     }
     if (this->inConnector) {
       eventProcessingStrategy = EventProcessingStrategyPtr(new ParallelEventProcessingStrategy());

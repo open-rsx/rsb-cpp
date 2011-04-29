@@ -32,10 +32,10 @@ Listener::Listener(const Scope &scope) :
     Participant(scope),
             logger(rsc::logging::Logger::getLogger("rsb.Listener")), passive(
                     false) {
-    this->initialize(transport::Factory::SPREAD, scope);
+    this->initialize("spread", scope);
 }
 
-Listener::Listener(transport::Factory::ConnectorTypes in, const Scope &scope) :
+Listener::Listener(const string &in, const Scope &scope) :
     Participant(scope),
             logger(rsc::logging::Logger::getLogger("rsb.Listener")), passive(
                     false) {
@@ -48,11 +48,9 @@ Listener::~Listener() {
     }
 }
 
-void Listener::initialize(transport::Factory::ConnectorTypes in,
-        const Scope &scope) {
+void Listener::initialize(const string &in, const Scope &scope) {
     // TODO evaluate configuration
-    this->router = eventprocessing::RouterPtr(new eventprocessing::Router(in,
-            transport::Factory::NONE));
+    this->router = eventprocessing::RouterPtr(new eventprocessing::Router(in, ""));
     this->subscription.reset(new Subscription());
     this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
             scope)));
