@@ -48,8 +48,8 @@ public:
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-    static rsb::transport::OutConnector* create(
-            const rsc::runtime::Properties& args);
+    static rsb::transport::OutConnector *create(
+            const rsc::runtime::Properties &args);
 private:
 
     /**
