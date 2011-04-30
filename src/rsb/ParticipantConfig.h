@@ -24,7 +24,9 @@
 #include <ostream>
 
 #include <boost/operators.hpp>
+#include <boost/filesystem/path.hpp>
 
+#include <rsc/config/OptionHandler.h>
 #include <rsc/runtime/Properties.h>
 
 #include "QualityOfServiceSpec.h"
@@ -38,7 +40,7 @@ namespace rsb {
  *
  * @author jwienke
  */
-class RSB_EXPORT ParticipantConfig {
+class RSB_EXPORT ParticipantConfig : public rsc::config::OptionHandler {
 public:
 
     /**
@@ -49,6 +51,7 @@ public:
      * @author jwienke
      */
     class RSB_EXPORT Transport: boost::totally_ordered<Transport> {
+        friend class ParticipantConfig;
     public:
 
         /**
@@ -117,6 +120,8 @@ public:
      */
     std::set<Transport> getTransports() const;
 
+    Transport getTransport(const std::string &name) const;
+
     /**
      * Adds a transport to the list of desired transport mechanisms.
      *
@@ -153,15 +158,21 @@ public:
      */
     void setOptions(const rsc::runtime::Properties &options);
 
+    static ParticipantConfig fromFile(const boost::filesystem::path &path,
+                                      const ParticipantConfig &defaults = ParticipantConfig());
+    static ParticipantConfig fromEnvironment(const ParticipantConfig &defaults = ParticipantConfig());
+    static ParticipantConfig fromConfiguration(const ParticipantConfig &defaults = ParticipantConfig());
+
     friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
             const ParticipantConfig &config);
 
 private:
 
     QualityOfServiceSpec qosSpec;
-    std::set<Transport> transports;
+    std::map<std::string, Transport> transports;
     rsc::runtime::Properties options;
 
+    void handleOption(const std::vector<std::string> &key, const std::string &value);
 };
 
 RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
@@ -170,4 +181,3 @@ RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
         const ParticipantConfig &config);
 
 }
-

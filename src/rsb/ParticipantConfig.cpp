@@ -20,8 +20,24 @@
 #include "ParticipantConfig.h"
 
 #include <stdexcept>
+#include <fstream>
+
+#include <boost/format.hpp>
+#include <boost/filesystem/fstream.hpp>
+
+#include <rsc/config/TypedValue.h>
+#include <rsc/config/ConfigFileSource.h>
+#include <rsc/config/Environment.h>
+#include <rsc/logging/Logger.h>
 
 using namespace std;
+
+using namespace boost;
+using namespace boost::filesystem;
+
+using namespace rsc::config;
+using namespace rsc::logging;
+using namespace rsc::runtime;
 
 namespace rsb {
 
@@ -44,8 +60,7 @@ rsc::runtime::Properties ParticipantConfig::Transport::getOptions() const {
     return options;
 }
 
-void ParticipantConfig::Transport::setOptions(
-        const rsc::runtime::Properties &options) {
+void ParticipantConfig::Transport::setOptions(const Properties &options) {
     this->options = options;
 }
 
@@ -72,42 +87,120 @@ void ParticipantConfig::setQualityOfServiceSpec(
     this->qosSpec = spec;
 }
 
+ParticipantConfig::Transport ParticipantConfig::getTransport(const string &name) const {
+    map<string, Transport>::const_iterator it = this->transports.find(name);
+    if (it == this->transports.end()) {
+        throw rsc::runtime::NoSuchObject(name);
+    }
+    return it->second;
+}
+
 set<ParticipantConfig::Transport> ParticipantConfig::getTransports() const {
-    return transports;
+    set<Transport> result;
+    for (map<string, Transport>::const_iterator it
+             = this->transports.begin();
+         it != this->transports.end(); ++it) {
+        result.insert(it->second);
+    }
+    return result;
 }
 
 void ParticipantConfig::addTransport(const Transport &transport) {
-    transports.insert(transport);
+    transports.insert(make_pair(transport.getName(), transport));
 }
 
 void ParticipantConfig::removeTransport(const Transport &transport) {
-    transports.erase(transport);
+    transports.erase(transport.getName());
 }
 
 void ParticipantConfig::setTransports(const set<Transport> &transports) {
-    this->transports = transports;
+    for (set<Transport>::const_iterator it = transports.begin();
+         it != transports.end(); ++it) {
+        this->transports.insert(make_pair(it->getName(), *it));
+    }
 }
 
 rsc::runtime::Properties ParticipantConfig::getOptions() const {
     return options;
 }
 
-void ParticipantConfig::setOptions(const rsc::runtime::Properties &options) {
+void ParticipantConfig::setOptions(const Properties &options) {
     this->options = options;
+}
+
+ParticipantConfig ParticipantConfig::fromFile(const path &path,
+                                              const ParticipantConfig &defaults) {
+    LoggerPtr logger = Logger::getLogger("rsb.ParticipantConfig");
+    RSCDEBUG(logger, "Trying to load config from file " << path);
+
+    ParticipantConfig result = defaults;
+
+    boost::filesystem::ifstream stream(path);
+    if (stream) {
+        RSCDEBUG(logger, "Stream is open; proceeding");
+        ConfigFileSource(stream).emit(result);
+    } else {
+        RSCDEBUG(logger, "Could not open file");
+    }
+
+    return result;
+}
+
+ParticipantConfig ParticipantConfig::fromEnvironment(const ParticipantConfig &defaults) {
+    ParticipantConfig result = defaults;
+    EnvironmentVariableSource().emit(result);
+    return result;
+}
+
+ParticipantConfig ParticipantConfig::fromConfiguration(const ParticipantConfig &defaults) {
+    ParticipantConfig result = defaults;
+    result = fromFile(userConfigDirectory() / "rsb.conf", result);
+    result = fromFile("rsb.conf", result);
+    result = fromEnvironment(result);
+    return result;
+}
+
+void ParticipantConfig::handleOption(const vector<string> &key, const string &value) {
+    if (key[0] == "qualityofservice") {
+        if (key[1] == "reliability") {
+            if (value == "UNRELIABLE") {
+                this->qosSpec.reliability = QualityOfServiceSpec::UNRELIABLE;
+            } else if (value == "RELIABLE") {
+                this->qosSpec.reliability = QualityOfServiceSpec::RELIABLE;
+            } else
+                throw invalid_argument(str(format("The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
+                                           % value));
+        } else if (key[1] == "ordering") {
+            if (value == "UNORDERED") {
+                this->qosSpec.ordering = QualityOfServiceSpec::UNORDERED;
+            } else if (value == "ORDERED") {
+                this->qosSpec.ordering = QualityOfServiceSpec::ORDERED;
+            } else
+                throw invalid_argument(str(format("The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
+                                           % value));
+        }
+    } else if (key[0] == "transport") {
+        if (key.size() != 3) {
+            throw invalid_argument(str(format("Option key `%1%' has invalid number of components; transport-related keys have to have three components.")
+                                       % key));
+        }
+        map<string, Transport>::iterator it = this->transports.find(key[1]);
+        if (it == this->transports.end()) {
+            addTransport(Transport(key[1]));
+            it = this->transports.find(key[1]);
+        }
+        Transport& transport = it->second;
+        transport.options[key[2]] = parseTypedValue(value);
+    }
 }
 
 ostream &operator<<(ostream &stream,
         const ParticipantConfig::Transport &transport) {
-    return stream << "Transport[name = " << transport.getName() << "]";
+    return stream << "Transport[name = " << transport.getName() << ", options = " << transport.getOptions() << "]";
 }
 ostream &operator<<(ostream &stream, const ParticipantConfig &config) {
     stream << "ParticipantConfig[qosSpec = " << config.qosSpec
-            << ", transports = [ ";
-    for (set<ParticipantConfig::Transport>::const_iterator transportIt =
-            config.transports.begin(); transportIt != config.transports.end(); ++transportIt) {
-        stream << "'" << transportIt->getName() << "' ";
-    }
-    stream << " ]]";
+           << ", transports = " << config.getTransports() << "]";
     return stream;
 }
 
