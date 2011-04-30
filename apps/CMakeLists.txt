@@ -6,8 +6,9 @@ SET(VERSION_NAME rsb_version)
 # --- monitor ---
 
 ADD_EXECUTABLE(${MONITOR_NAME} monitor/RSBMonitor.cpp
-                               monitor/mongoose.c)
-TARGET_LINK_LIBRARIES(${MONITOR_NAME} ${CMAKE_THREAD_LIBS_INIT} ${RSB_NAME} -ldl)
+                               monitor/mongoose.c
+                               monitor/mongoose.h)
+TARGET_LINK_LIBRARIES(${MONITOR_NAME} ${CMAKE_THREAD_LIBS_INIT} ${RSB_NAME})
 
 # --- send ---
 
