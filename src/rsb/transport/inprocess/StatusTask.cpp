@@ -24,16 +24,16 @@ using namespace std;
 namespace rsb {
 namespace inprocess {
 
-StatusTask::StatusTask(InProcessConnector* p, const unsigned int &ms) :
-	rsc::threading::PeriodicTask(ms), port(p) {
+StatusTask::StatusTask(InProcessConnector *p, const unsigned int &ms) :
+    rsc::threading::PeriodicTask(ms), port(p) {
 }
 
 StatusTask::~StatusTask() {
-	cout << "dtr ~StatusTask() " << endl;
+    cout << "dtr ~StatusTask() " << endl;
 }
 
 void StatusTask::execute() {
-	cout << "InProcessConnector alive." << endl;
+    cout << "InProcessConnector alive." << endl;
 }
 
 }

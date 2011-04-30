@@ -33,7 +33,7 @@ typedef boost::shared_ptr<InProcessConnector> InProcessConnectorPtr;
 class StatusTask: public rsc::threading::PeriodicTask {
 public:
 
-	StatusTask(InProcessConnector* p, const unsigned int &ms);
+	StatusTask(InProcessConnector *p, const unsigned int &ms);
 
 	~StatusTask();
 

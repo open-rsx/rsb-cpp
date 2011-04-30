@@ -30,6 +30,7 @@
 #include "../../Event.h"
 #include "../../Scope.h"
 #include "InConnector.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace inprocess {
@@ -38,7 +39,7 @@ namespace inprocess {
  *
  * @author jmoringe
  */
-class Bus : public rsc::patterns::Singleton<Bus> {
+class RSB_EXPORT Bus: public rsc::patterns::Singleton<Bus> {
 public:
     Bus();
     virtual ~Bus();
@@ -48,7 +49,7 @@ public:
 
     void push(EventPtr event);
 private:
-    typedef std::list< boost::weak_ptr<InConnector> > SinkList;
+    typedef std::list<boost::weak_ptr<InConnector> > SinkList;
     typedef std::map<Scope, SinkList> SinkMap;
 
     rsc::logging::LoggerPtr logger;

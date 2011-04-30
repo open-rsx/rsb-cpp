@@ -23,6 +23,7 @@
 
 #include "../Connector.h"
 #include "Bus.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace inprocess {
@@ -30,7 +31,7 @@ namespace inprocess {
 /**
  * @author jmoringe
  */
-class OutConnector : public rsb::transport::OutConnector {
+class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {
 public:
     OutConnector();
 
@@ -41,9 +42,10 @@ public:
 
     void push(rsb::EventPtr e);
 
-    static rsb::transport::OutConnector* create(const rsc::runtime::Properties &args);
+    static rsb::transport::OutConnector* create(
+            const rsc::runtime::Properties &args);
 private:
-    Bus& bus;
+    Bus &bus;
 };
 
 }

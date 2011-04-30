@@ -26,6 +26,7 @@
 #include <rsc/runtime/Properties.h>
 
 #include "../Connector.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace inprocess {
@@ -33,8 +34,8 @@ namespace inprocess {
 /**
  * @author jmoringe
  */
-class InConnector : public rsb::transport::InConnector,
-                    public boost::enable_shared_from_this<InConnector> {
+class RSB_EXPORT InConnector: public rsb::transport::InConnector,
+        public boost::enable_shared_from_this<InConnector> {
 public:
     InConnector();
     virtual ~InConnector();
@@ -49,7 +50,8 @@ public:
 
     void push(EventPtr e);
 
-    static rsb::transport::InConnector* create(const rsc::runtime::Properties &args);
+    static rsb::transport::InConnector *create(
+            const rsc::runtime::Properties &args);
 private:
     rsc::logging::LoggerPtr logger;
 
