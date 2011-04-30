@@ -44,14 +44,9 @@ namespace spread {
 const SpreadConnector::QoSMap SpreadConnector::qosMapping =
     SpreadConnector::buildQoSMapping();
 
-SpreadConnector::SpreadConnector(
-    rsb::converter::Repository<std::string>::Ptr converters) :
+SpreadConnector::SpreadConnector(const std::string &host, unsigned int port,
+                                 rsb::converter::Repository<std::string>::Ptr converters) :
     converters(converters) {
-    init(defaultHost(), defaultPort());
-}
-
-SpreadConnector::SpreadConnector(const std::string &host, unsigned int port) :
-    converters(converter::stringConverterRepository()) {
     init(host, port);
 }
 

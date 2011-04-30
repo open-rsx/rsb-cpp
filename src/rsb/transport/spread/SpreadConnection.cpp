@@ -318,11 +318,11 @@ mailbox *SpreadConnection::getMailbox() {
 }
 
 string defaultHost() {
-        return Configuration::getInstance()->getProperty("Spread.Host");
+    return "localhost";
 }
 
 unsigned int defaultPort() {
-        return lexical_cast<unsigned int>(Configuration::getInstance()->getProperty("Spread.Port"));
+    return 4803;
 }
 
 }

@@ -43,11 +43,11 @@ namespace spread {
  */
 class RSB_EXPORT SpreadConnector {
 public:
-
-    SpreadConnector(const std::string &host, unsigned int port);
-    explicit SpreadConnector(
-            rsb::converter::Repository<std::string>::Ptr converters =
+    SpreadConnector(const std::string &host = defaultHost(),
+                    unsigned int port = defaultPort(),
+        rsb::converter::Repository<std::string>::Ptr converters =
                     converter::stringConverterRepository());
+
     virtual ~SpreadConnector();
 
     void activate();

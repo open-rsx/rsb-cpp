@@ -26,17 +26,23 @@
 
 using namespace std;
 
+using namespace rsc::logging;
+
 namespace rsb {
 
-Factory::Factory() {
+Factory::Factory() :
+    logger(Logger::getLogger("rsb.Factory")) {
     introspection::registerIntrospectionConverters();
     converter::registerDefaultConverters();
     transport::registerDefaultTransports();
 
     // setup default participant config
-    // TODO later this should be inprocess
-    defaultConfig.addTransport(ParticipantConfig::Transport("spread"));
-
+    this->defaultConfig = ParticipantConfig::fromConfiguration();
+    if (this->defaultConfig.getTransports().empty()) {
+        // TODO later this should be inprocess
+        this->defaultConfig.addTransport(ParticipantConfig::Transport("spread"));
+    }
+    RSCDEBUG(logger, "Default config " << defaultConfig);
 }
 
 Factory::~Factory() {

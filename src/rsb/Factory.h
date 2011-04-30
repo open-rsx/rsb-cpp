@@ -25,6 +25,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+#include <rsc/logging/Logger.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/patterns/Singleton.h>
 
@@ -130,6 +131,8 @@ private:
      * Singleton constructor.
      */
     Factory();
+
+    rsc::logging::LoggerPtr logger;
 
     /**
      * Always acquire configMutex before reading or writing the config.
