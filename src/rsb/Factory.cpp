@@ -22,6 +22,7 @@
 #include "introspection/introspection.h"
 #include "converter/converters.h"
 #include "transport/transports.h"
+#include "LocalService.h"
 
 using namespace std;
 
@@ -76,6 +77,10 @@ ParticipantConfig Factory::getDefaultParticipantConfig() const {
 void Factory::setDefaultParticipantConfig(const ParticipantConfig &config) {
     boost::recursive_mutex::scoped_lock lock(configMutex);
     this->defaultConfig = config;
+}
+
+ServicePtr Factory::createService(const Scope &scope) {
+    return ServicePtr(new LocalService(scope));
 }
 
 }

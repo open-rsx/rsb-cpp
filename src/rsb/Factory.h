@@ -35,6 +35,7 @@
 #include "patterns/RemoteServer.h"
 #include "transport/Connector.h"
 #include "ParticipantConfig.h"
+#include "Service.h"
 
 namespace rsb {
 
@@ -93,6 +94,14 @@ public:
             const Scope &scope,
             const ParticipantConfig &config =
                     Factory::getInstance().getDefaultParticipantConfig());
+
+    /**
+     * Creates a Service instance operating on the given scope.
+     *
+     * @param scope parent-scope of the new service
+     * @return new service instance
+     */
+    ServicePtr createService(const Scope &scope);
 
     patterns::ServerPtr createServer(const Scope &scope);
 

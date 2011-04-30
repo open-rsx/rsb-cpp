@@ -24,15 +24,30 @@
 
 #include "rsb/ParticipantConfig.h"
 #include "rsb/Factory.h"
+#include "rsb/LocalService.h"
 
 using namespace std;
 using namespace testing;
 using namespace rsb;
 
-TEST(FactoryTest, testDefaultParticipantConfig)
+/**
+ * Test fixture for rsb::Factory.
+ *
+ * @author jwienke
+ */
+class FactoryTest: public ::testing::Test {
+protected:
+
+    virtual void SetUp() {
+        Factory::killInstance();
+    }
+
+};
+
+
+TEST_F(FactoryTest, testDefaultParticipantConfig)
 {
 
-    Factory::killInstance();
     Factory &f = Factory::getInstance();
 
     EXPECT_EQ(size_t(1), f.getDefaultParticipantConfig().getTransports().size());
@@ -43,5 +58,27 @@ TEST(FactoryTest, testDefaultParticipantConfig)
 
     f.setDefaultParticipantConfig(config);
     EXPECT_EQ(size_t(2), f.getDefaultParticipantConfig().getTransports().size());
+
+}
+
+TEST_F(FactoryTest, testCreateService)
+{
+
+    Factory &f = Factory::getInstance();
+
+    Scope scopeA("/a");
+    Scope scopeB("/b/with/sub");
+
+    ServicePtr sA = f.createService(scopeA);
+    ServicePtr sB = f.createService(scopeB);
+
+    EXPECT_TRUE(sA);
+    EXPECT_TRUE(sB);
+
+    EXPECT_EQ(scopeA, sA->getScope());
+    EXPECT_EQ(scopeB, sB->getScope());
+
+    EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sA));
+    EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sB));
 
 }
