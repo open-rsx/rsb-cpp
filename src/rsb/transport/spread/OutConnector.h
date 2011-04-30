@@ -33,27 +33,28 @@ namespace spread {
 /**
  * @author jmoringe
  */
-class RSB_EXPORT OutConnector : public rsb::transport::OutConnector {
+class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {
 public:
-        OutConnector(const std::string& host = defaultHost(),
-                     unsigned int port = defaultPort());
+    OutConnector(const std::string& host = defaultHost(),
+            unsigned int port = defaultPort());
 
-        virtual ~OutConnector();
+    virtual ~OutConnector();
 
-        void push(rsb::EventPtr e);
+    void push(rsb::EventPtr e);
 
-        void activate();
-        void deactivate();
+    void activate();
+    void deactivate();
 
-        void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-        static rsb::transport::OutConnector* create(const rsc::runtime::Properties& args);
+    static rsb::transport::OutConnector* create(
+            const rsc::runtime::Properties& args);
 private:
-	rsc::logging::LoggerPtr logger;
+    rsc::logging::LoggerPtr logger;
 
-        bool active;
+    bool active;
 
-        SpreadConnectorPtr connector;
+    SpreadConnectorPtr connector;
 };
 
 }
