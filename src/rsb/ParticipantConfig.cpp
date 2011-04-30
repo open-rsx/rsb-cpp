@@ -148,7 +148,7 @@ ParticipantConfig ParticipantConfig::fromFile(const path &path,
 
 ParticipantConfig ParticipantConfig::fromEnvironment(const ParticipantConfig &defaults) {
     ParticipantConfig result = defaults;
-    EnvironmentVariableSource().emit(result);
+    EnvironmentVariableSource("RSB_").emit(result);
     return result;
 }
 
