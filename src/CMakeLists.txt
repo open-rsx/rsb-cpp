@@ -30,7 +30,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/Service.cpp
             rsb/Subscription.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
-            
+
             rsb/converter/BoolConverter.cpp
             rsb/converter/Converter.cpp
             rsb/converter/Repository.cpp
@@ -39,25 +39,25 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/Uint64Converter.cpp
             rsb/converter/VoidConverter.cpp
             rsb/converter/converters.cpp
-            
+
             rsb/eventprocessing/EventProcessingStrategy.cpp
             rsb/eventprocessing/ParallelEventProcessingStrategy.cpp
             rsb/eventprocessing/Router.cpp
-            
+
             rsb/filter/Filter.cpp
             rsb/filter/FilterObservable.cpp
             rsb/filter/FilterObserver.cpp
             rsb/filter/ScopeFilter.cpp
-            
+
             rsb/introspection/IntrospectionConverter.cpp
             rsb/introspection/introspection.cpp
-            
+
             rsb/patterns/MethodExistsException.cpp
             rsb/patterns/RemoteServer.cpp
             rsb/patterns/Server.cpp
-            
+
             rsb/protocol/ProtocolException.cpp
-            
+
             rsb/transport/Connector.cpp
             rsb/transport/transports.cpp
 
@@ -74,12 +74,9 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/spread/SpreadConnector.cpp
             rsb/transport/spread/SpreadGroup.cpp
             rsb/transport/spread/SpreadMessage.cpp
-            
-            rsb/util/ConfigException.cpp
-            rsb/util/Configuration.cpp
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
-            
+
             ${INTERNAL_PROTO_SOURCES}
             ${PROTO_SOURCES})
 
@@ -100,7 +97,7 @@ SET(HEADERS rsb/CommException.h
             rsb/Subscription.h
             rsb/UnsupportedQualityOfServiceException.h
             rsb/Version.h
-            
+
             rsb/converter/BoolConverter.h
             rsb/converter/Converter.h
             rsb/converter/ProtocolBufferConverter.h
@@ -110,28 +107,28 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/Uint64Converter.h
             rsb/converter/VoidConverter.h
             rsb/converter/converters.h
-            
+
             rsb/eventprocessing/EventProcessingStrategy.h
             rsb/eventprocessing/ParallelEventProcessingStrategy.h
             rsb/eventprocessing/Router.h
-            
+
             rsb/filter/Filter.h
             rsb/filter/FilterActionTypes.h
             rsb/filter/FilterObservable.h
             rsb/filter/FilterObserver.h
             rsb/filter/ScopeFilter.h
-            
+
             rsb/introspection/IntrospectionConverter.h
             rsb/introspection/PortStateChange.h
             rsb/introspection/introspection.h
-            
+
             rsb/patterns/MethodExistsException.h
             rsb/patterns/RemoteServer.h
             rsb/patterns/Server.h
-            
+
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
-            
+
             rsb/transport/Connector.h
             rsb/transport/Factory.h
             rsb/transport/transports.h
@@ -148,10 +145,7 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/spread/SpreadConnection.h
             rsb/transport/spread/SpreadConnector.h
             rsb/transport/spread/SpreadGroup.h
-            rsb/transport/spread/SpreadMessage.h
-            
-            rsb/util/ConfigException.h
-            rsb/util/Configuration.h)
+            rsb/transport/spread/SpreadMessage.h)
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")

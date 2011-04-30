@@ -27,7 +27,6 @@
 
 #include <sp.h>
 
-#include "../../util/Configuration.h"
 #include "../../CommException.h"
 
 using namespace std;
@@ -35,8 +34,6 @@ using namespace std;
 using namespace boost;
 
 using namespace rsc::logging;
-
-using namespace rsb::util;
 
 namespace rsb {
 namespace spread {
