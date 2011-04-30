@@ -52,6 +52,16 @@ public:
             const rsc::runtime::Properties& args);
 private:
 
+    /**
+     * Fills a protocol::Notification with contents.
+     *
+     * @param notification notification to fill
+     * @param event the event that generated the notification
+     * @param wireSchema the wire schema of the encoded data
+     * @param numDataParts the number of parts the notification is split into
+     * @param dataPart the index of this data part
+     * @param data the encoded event data to send
+     */
     void fillNotification(protocol::Notification &notification,
             const EventPtr &event, const std::string &wireSchema,
             const unsigned int &numDataParts, const unsigned int &dataPart,
