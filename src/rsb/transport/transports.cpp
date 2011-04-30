@@ -30,18 +30,32 @@
 namespace rsb {
 namespace transport {
 
+static bool registered = false;
+static boost::mutex registrationMutex;
+
 void registerDefaultTransports() {
-    {
-        InFactory &factory = InFactory::getInstance();
-        //factory.impls().register_("inprocess", &rsb::inprocess::InConnector::create);
-        factory.impls().register_("spread", &rsb::spread::InConnector::create);
+
+    boost::mutex::scoped_lock lock(registrationMutex);
+    if (!registered) {
+
+        {
+            InFactory &factory = InFactory::getInstance();
+            //factory.impls().register_("inprocess", &rsb::inprocess::InConnector::create);
+            factory.impls().register_("spread",
+                    &rsb::spread::InConnector::create);
+        }
+
+        {
+            OutFactory &factory = OutFactory::getInstance();
+            //factory.impls().register_("inprocess", &rsb::inprocess::OutConnector::create);
+            factory.impls().register_("spread",
+                    &rsb::spread::OutConnector::create);
+        }
+
+        registered = true;
+
     }
 
-    {
-        OutFactory &factory = OutFactory::getInstance();
-        //factory.impls().register_("inprocess", &rsb::inprocess::OutConnector::create);
-        factory.impls().register_("spread", &rsb::spread::OutConnector::create);
-    }
 }
 
 }
