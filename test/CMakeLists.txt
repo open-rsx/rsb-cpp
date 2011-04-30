@@ -52,7 +52,7 @@ TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
 
 ADD_TEST(${CORE_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${CORE_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 
-# --- spreadport test ---
+# --- spread connector test ---
 
 SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
                             rsb/transport/spread/SpreadConnectorTest.cpp
@@ -68,11 +68,26 @@ TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
 
 ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 
+# --- inprocess connector test ---
+
+SET(INPROCESSCONNECTOR_TEST_SOURCES rsbtest_inprocess.cpp
+                            rsb/transport/inprocess/InProcessConnectorTest.cpp
+                            rsb/InformerTask.cpp
+                            rsb/InformerTask.h)
+
+ADD_EXECUTABLE(${INPROCESSCONNECTOR_TEST_NAME} ${INPROCESSCONNECTOR_TEST_SOURCES})
+TARGET_LINK_LIBRARIES(${INPROCESSCONNECTOR_TEST_NAME}
+                      ${RSB_NAME}
+                      ${Boost_LIBRARIES}
+                      ${GMOCK_LIBRARY_NAME})
+
+ADD_TEST(${INPROCESSCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${INPROCESSCONNECTOR_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+
 IF(WIN32)
     SET(PATH_STRING "$ENV{PATH};${Boost_LIBRARY_DIRS};${RSC_RUNTIME_LIBRARY_DIRS}")
     # requried for PATH entries with a slash before the semicolon
     STRING(REPLACE "\\;" ";" PATH_STRING "${PATH_STRING}")
     STRING(REPLACE ";" "\\;" PATH_STRING "${PATH_STRING}")
-    SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME}
+    SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME}
                  PROPERTY ENVIRONMENT "PATH=${PATH_STRING}")
 ENDIF()
