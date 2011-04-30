@@ -36,7 +36,8 @@ namespace spread {
 class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {
 public:
     OutConnector(const std::string& host = defaultHost(),
-            unsigned int port = defaultPort());
+            const unsigned int &port = defaultPort(),
+            const unsigned int &maxDataSize = 100000);
 
     virtual ~OutConnector();
 
@@ -50,11 +51,17 @@ public:
     static rsb::transport::OutConnector* create(
             const rsc::runtime::Properties& args);
 private:
+
+    void fillNotification(protocol::Notification &notification,
+            const EventPtr &event, const std::string &wireSchema,
+            const unsigned int &numDataParts, const unsigned int &dataPart,
+            const std::string &data);
+
     rsc::logging::LoggerPtr logger;
-
     bool active;
-
     SpreadConnectorPtr connector;
+    unsigned int maxDataSize;
+
 };
 
 }

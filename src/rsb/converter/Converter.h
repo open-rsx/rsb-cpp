@@ -47,83 +47,84 @@ template<class WireFormat>
 class Converter {
 public:
 
-	virtual ~Converter() {
-	}
+    virtual ~Converter() {
+    }
 
-	/**
-	 * Serialized the given domain object to the wire.
-	 *
-	 * @param data data to serialize
-	 * @throw SerializationException if the serialization failed
-	 */
-	virtual std::string
-	serialize(const AnnotatedData &data, WireFormat &wire) = 0;
+    /**
+     * Serialized the given domain object to the wire.
+     *
+     * @param data data to serialize
+     * @return the wire schema the data is encoded with
+     * @throw SerializationException if the serialization failed
+     */
+    virtual std::string
+    serialize(const AnnotatedData &data, WireFormat &wire) = 0;
 
-	/**
-	 * Deserializes a domain object from a wire format.
-	 *
-	 * @param wireSchema type of the wire message
-	 * @param wire the wire containing the date
-	 * @return the deserialized domain object annotated with its data type name
-	 * @throw SerializationException if deserializing the message fails
-	 */
-	virtual AnnotatedData deserialize(const std::string &wireSchema,
-			const WireFormat &wire) = 0;
+    /**
+     * Deserializes a domain object from a wire format.
+     *
+     * @param wireSchema type of the wire message
+     * @param wire the wire containing the date
+     * @return the deserialized domain object annotated with its data type name
+     * @throw SerializationException if deserializing the message fails
+     */
+    virtual AnnotatedData deserialize(const std::string &wireSchema,
+            const WireFormat &wire) = 0;
 
-	/**
-	 * Returns the name of the data type this converter is applicable for.
-	 *
-	 * @return name of the data type this converter can be used for
-	 */
-	virtual std::string getDataType() const {
-		return dataType;
-	}
+    /**
+     * Returns the name of the data type this converter is applicable for.
+     *
+     * @return name of the data type this converter can be used for
+     */
+    virtual std::string getDataType() const {
+        return dataType;
+    }
 
-	/**
-	 * Returns the name of the wire schema this converter can (de)serialize
-	 * from/to.
-	 *
-	 * @return name of the wire schema from/to this converter can
-	 *         (de)serialize
-	 */
-	virtual std::string getWireSchema() const {
-		return wireSchema;
-	}
+    /**
+     * Returns the name of the wire schema this converter can (de)serialize
+     * from/to.
+     *
+     * @return name of the wire schema from/to this converter can
+     *         (de)serialize
+     */
+    virtual std::string getWireSchema() const {
+        return wireSchema;
+    }
 
-	typedef boost::shared_ptr<Converter<WireFormat> > Ptr;
+    typedef boost::shared_ptr<Converter<WireFormat> > Ptr;
 
 protected:
 
-	/**
-	 * Creates a new instance of this class with automatic handling for types.
-	 *
-	 * @param dataType data type this converter can serialize
-	 * @param wireSchema wire schema this converter can deserialize
-	 * @todo this constructor cannot be called anymore for WireFormat string
-	 */
-	Converter(const std::string &dataType, const std::string &wireSchema) :
-		dataType(dataType), wireSchema(wireSchema) {
-	}
+    /**
+     * Creates a new instance of this class with automatic handling for types.
+     *
+     * @param dataType data type this converter can serialize
+     * @param wireSchema wire schema this converter can deserialize
+     * @todo this constructor cannot be called anymore for WireFormat string
+     */
+    Converter(const std::string &dataType, const std::string &wireSchema) :
+        dataType(dataType), wireSchema(wireSchema) {
+    }
 
-	/**
-	 * Creates a new instance of this class with a data type
-	 * string that is inferred based on the template parameter
-	 * @a DataType
-	 *
-	 * @tparam DataType type of the objects that the converter
-	 *                  (de)serializes. Use the RSB_TYPE_TAG macro with this.
-	 * @param wireSchema wire schema from/to this converter can
-	 *                   (de)serialize.
-	 */
-	template<typename DataType>
-	Converter(const std::string &wireSchema, const DataType */*unused*/= 0) :
-		dataType(rsc::runtime::typeName<DataType>()), wireSchema(wireSchema) {
-	}
+    /**
+     * Creates a new instance of this class with a data type
+     * string that is inferred based on the template parameter
+     * @a DataType
+     *
+     * @tparam DataType type of the objects that the converter
+     *                  (de)serializes. Use the RSB_TYPE_TAG macro with this.
+     * @param wireSchema wire schema from/to this converter can
+     *                   (de)serialize.
+     */
+    template<typename DataType>
+    Converter(const std::string &wireSchema, const DataType */*unused*/= 0) :
+        dataType(rsc::runtime::typeName<DataType>()), wireSchema(wireSchema) {
+    }
 
 private:
 
-	std::string dataType;
-	std::string wireSchema;
+    std::string dataType;
+    std::string wireSchema;
 
 };
 

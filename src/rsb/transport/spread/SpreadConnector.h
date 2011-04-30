@@ -43,8 +43,11 @@ namespace spread {
  */
 class RSB_EXPORT SpreadConnector {
 public:
+
     SpreadConnector(const std::string &host, unsigned int port);
-    explicit SpreadConnector(rsb::converter::Repository<std::string>::Ptr converters = converter::stringConverterRepository());
+    explicit SpreadConnector(
+            rsb::converter::Repository<std::string>::Ptr converters =
+                    converter::stringConverterRepository());
     virtual ~SpreadConnector();
 
     void activate();
@@ -64,7 +67,9 @@ public:
     rsb::converter::Repository<std::string>::Ptr getConverters();
 
     SpreadMessage::QOS getMessageQoS() const;
+
 private:
+
     rsc::logging::LoggerPtr logger;
 
     rsc::misc::UUID id;
@@ -82,7 +87,7 @@ private:
     SpreadMessage::QOS messageQoS;
 
     typedef std::map<QualityOfServiceSpec::Ordering, std::map<
-        QualityOfServiceSpec::Reliability, SpreadMessage::QOS> > QoSMap;
+            QualityOfServiceSpec::Reliability, SpreadMessage::QOS> > QoSMap;
 
     /**
      * Map from 2D input space defined in QualitOfServiceSpec to 1D spread message
@@ -91,6 +96,7 @@ private:
     static const QoSMap qosMapping;
 
     static QoSMap buildQoSMapping();
+
 };
 
 typedef boost::shared_ptr<SpreadConnector> SpreadConnectorPtr;
