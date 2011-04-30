@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <ostream>
+
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/misc/UUID.h>
@@ -77,5 +79,8 @@ private:
 };
 
 typedef boost::shared_ptr<Participant> ParticipantPtr;
+
+RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
+        const Participant &participant);
 
 }

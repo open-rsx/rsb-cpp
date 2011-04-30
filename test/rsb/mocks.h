@@ -17,25 +17,21 @@
  *
  * ============================================================ */
 
-#include "Service.h"
+#pragma once
 
-using namespace std;
+#include <gmock/gmock.h>
 
-namespace rsb {
+#include "rsb/Service.h"
 
-Service::Service(const Scope &scope) :
-    scope(scope) {
-}
-
-Service::~Service() {
-}
-
-Scope Service::getScope() const {
-    return scope;
-}
-
-ostream &operator<<(ostream &stream, const Service &service) {
-    return stream << "Service[scope = " << service.getScope() << "]";
-}
-
-}
+class MockService: public rsb::Service {
+public:
+    MockService() : rsb::Service(rsb::Scope("/")) {
+    }
+    MOCK_CONST_METHOD0(getScope, rsb::Scope());
+    MOCK_CONST_METHOD0(getParticipants, std::set<rsb::ParticipantPtr>());
+    MOCK_METHOD1(addParticipant, void(rsb::ParticipantPtr participant));
+    MOCK_METHOD1(removeParticipant, void(rsb::ParticipantPtr participant));
+    MOCK_CONST_METHOD0(getSubServices, std::set<rsb::ServicePtr>());
+    MOCK_METHOD1(addSubService, void(rsb::ServicePtr subService));
+    MOCK_METHOD1(removeSubService, void(rsb::ServicePtr subService));
+};

@@ -17,25 +17,40 @@
  *
  * ============================================================ */
 
-#include "Service.h"
+#pragma once
 
-using namespace std;
+#include <boost/thread/recursive_mutex.hpp>
+
+#include "Service.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
-Service::Service(const Scope &scope) :
-    scope(scope) {
+/**
+ * A Service implementation that structures services locally.
+ *
+ * @author jwienke
+ */
+class RSB_EXPORT LocalService: public Service {
+public:
+
+    LocalService(const Scope &scope);
+    virtual ~LocalService();
+
+    std::set<ParticipantPtr> getParticipants() const;
+    void addParticipant(ParticipantPtr participant);
+    void removeParticipant(ParticipantPtr participant);
+    std::set<ServicePtr> getSubServices() const;
+    void addSubService(ServicePtr subService);
+    void removeSubService(ServicePtr subService);
+
+private:
+
+    mutable boost::recursive_mutex mutex;
+    std::set<ParticipantPtr> participants;
+    std::set<ServicePtr> subServices;
+
+};
+
 }
 
-Service::~Service() {
-}
-
-Scope Service::getScope() const {
-    return scope;
-}
-
-ostream &operator<<(ostream &stream, const Service &service) {
-    return stream << "Service[scope = " << service.getScope() << "]";
-}
-
-}

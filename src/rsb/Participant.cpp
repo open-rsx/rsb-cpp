@@ -19,6 +19,8 @@
 
 #include "Participant.h"
 
+using namespace std;
+
 namespace rsb {
 
 Participant::Participant(const Scope &scope, const ParticipantConfig &config) :
@@ -35,6 +37,11 @@ Scope Participant::getScope() const {
 
 ParticipantConfig Participant::getConfig() const {
     return config;
+}
+
+ostream &operator<<(ostream &stream, const Participant &participant) {
+    return stream << "Participant[id = " << participant.getId() << ", scope = "
+            << participant.getScope() << "]";
 }
 
 }

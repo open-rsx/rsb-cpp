@@ -21,6 +21,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/Handler.cpp
             rsb/Informer.cpp
             rsb/Listener.cpp
+            rsb/LocalService.cpp
             rsb/Participant.cpp
             rsb/ParticipantConfig.cpp
             rsb/QualityOfServiceSpec.cpp
@@ -89,6 +90,7 @@ SET(HEADERS rsb/CommException.h
             rsb/Handler.h
             rsb/Informer.h
             rsb/Listener.h
+            rsb/LocalService.h
             rsb/Participant.h
             rsb/ParticipantConfig.h
             rsb/QualityOfServiceSpec.h

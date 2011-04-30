@@ -19,12 +19,14 @@
 
 #pragma once
 
+#include <ostream>
 #include <set>
 
 #include <boost/shared_ptr.hpp>
 
 #include "Participant.h"
 #include "Scope.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
@@ -40,7 +42,7 @@ typedef boost::shared_ptr<Service> ServicePtr;
  *
  * @author jwienke
  */
-class Service {
+class RSB_EXPORT Service {
 public:
 
     virtual ~Service();
@@ -113,6 +115,9 @@ private:
     Scope scope;
 
 };
+
+RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
+        const Service &service);
 
 }
 
