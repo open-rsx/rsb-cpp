@@ -38,6 +38,7 @@ namespace rsb {
  */
 class RSB_EXPORT QualityOfServiceSpec: boost::equality_comparable<
         QualityOfServiceSpec> {
+    friend class ParticipantConfig;
 public:
 
     /**
@@ -124,4 +125,3 @@ RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
         const QualityOfServiceSpec &spec);
 
 }
-
