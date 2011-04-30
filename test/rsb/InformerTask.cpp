@@ -19,20 +19,22 @@
 
 #include "InformerTask.h"
 
-#include "rsb/introspection/PortStateChange.h"
+#include <rsc/misc/langutils.h>
+#include <rsc/runtime/TypeStringTools.h>
 
 using namespace std;
 using namespace rsb;
 using namespace rsb::transport;
-using namespace rsb::introspection;
 using namespace rsc::threading;
 
 namespace rsb {
 
 namespace test {
 
-InformerTask::InformerTask(OutConnectorPtr p, const unsigned int &numEvents) :
-    numEvents(numEvents), sentEvents(0), port(p) {
+InformerTask::InformerTask(OutConnectorPtr p, const Scope &scope,
+        const unsigned int &numEvents, const unsigned int &dataSizeInBytes) :
+    scope(scope), numEvents(numEvents), dataSizeInBytes(dataSizeInBytes),
+            sentEvents(0), port(p) {
 }
 
 InformerTask::~InformerTask() {
@@ -42,20 +44,14 @@ void InformerTask::execute() {
 
     ++sentEvents;
     cout << "sending event: " << sentEvents << endl;
-    PortStateChangePtr psc(new PortStateChange());
-    psc->set_action("update");
-    psc->set_comment("sent from informer task");
-    psc->set_hostname("x200t");
-    psc->set_message("port id is blub");
-    psc->set_type("SpreadPort");
-    Scope scope("/blah");
+    boost::shared_ptr<string> data(
+            new string(rsc::misc::randAlnumStr(dataSizeInBytes)));
+    Scope thisScope = scope;
     if (sentEvents % 2 == 0) {
         // should be filtered by Port already
-        scope = Scope("/blahblah");
+        thisScope = scope.concat(Scope("/foo"));
     }
-    EventPtr p(
-            new Event(scope, boost::static_pointer_cast<void>(psc),
-                    "portstatechange"));
+    EventPtr p(new Event(thisScope, data, rsc::runtime::typeName<string>()));
     port->push(p);
     if (sentEvents % 2 == 1) {
         events.push_back(p);

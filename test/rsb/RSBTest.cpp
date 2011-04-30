@@ -36,7 +36,7 @@
 #include "rsb/Subscription.h"
 #include "rsb/filter/Filter.h"
 #include "rsb/filter/ScopeFilter.h"
-#include "rsb/introspection/introspection.h"
+#include "rsb/converter/converters.h"
 
 #include "testhelpers.h"
 
@@ -53,7 +53,7 @@ using namespace rsc::threading;
 TEST(RSBTest, testRoundtrip)
 {
 
-    introspection::registerIntrospectionConverters();
+    converter::registerDefaultConverters();
     registerDefaultTransports();
 
     // task execution service
@@ -68,12 +68,13 @@ TEST(RSBTest, testRoundtrip)
 
     // create subscription
     SubscriptionPtr s(new Subscription());
-    FilterPtr f(new ScopeFilter(Scope("/blah")));
+    const Scope scope("/blah");
+    FilterPtr f(new ScopeFilter(scope));
     s->appendFilter(f);
 
     // domain objects
     unsigned int numEvents = 10;
-    boost::shared_ptr<InformerTask> source(new InformerTask(out, 10));
+    boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, 10, 1000));
     WaitingObserver observer(numEvents);
     set<HandlerPtr> handlers;
     handlers.insert(

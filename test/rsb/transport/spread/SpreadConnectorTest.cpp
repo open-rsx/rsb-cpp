@@ -17,8 +17,6 @@
  *
  * ============================================================ */
 
-#include <iostream>
-
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -59,7 +57,16 @@ TEST(SpreadConnectorTest, testConnnection)
     ASSERT_NO_THROW(p->activate());
 }
 
-TEST(SpreadConnectorTest, testRoundtrip)
+/**
+ * Use a value-parametrized test for different data sizes to test data
+ * splitting.
+ *
+ * @author jwienke
+ */
+class SpreadConnectorRoundtripTest : public ::testing::TestWithParam<unsigned int> {
+};
+
+TEST_P(SpreadConnectorRoundtripTest, roundtrip)
 {
 
     // task execution service
@@ -77,12 +84,13 @@ TEST(SpreadConnectorTest, testRoundtrip)
     out->setQualityOfServiceSpecs(qosSpecs);
 
     // filter for joining test group
-    FilterPtr f = FilterPtr(new ScopeFilter(Scope("/blah")));
+    const Scope scope("/blah");
+    FilterPtr f = FilterPtr(new ScopeFilter(scope));
     f->notifyObserver(in, FilterAction::ADD);
 
     // domain objects
     const unsigned int numEvents = 100;
-    boost::shared_ptr<InformerTask> source(new InformerTask(out, numEvents));
+    boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, numEvents, GetParam()));
     WaitingObserver observer(numEvents);
     in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
@@ -103,7 +111,8 @@ TEST(SpreadConnectorTest, testRoundtrip)
         EXPECT_EQ(sent->getScope(), received->getScope());
     }
 
-    // port is deactivated through dtr
-    cerr << "SpreadProcessTest finished" << endl;
-
 }
+
+INSTANTIATE_TEST_CASE_P(RoundtripTest,
+                        SpreadConnectorRoundtripTest,
+                        ::testing::Values(1000, 100000, 350000));
