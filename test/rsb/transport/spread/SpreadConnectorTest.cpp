@@ -65,21 +65,23 @@ TEST(SpreadConnectorTest, testRoundtrip)
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
-    // in-process port
+    QualityOfServiceSpec qosSpecs(QualityOfServiceSpec::ORDERED,
+            QualityOfServiceSpec::RELIABLE);
+    // in connector
     InConnectorPtr in(new rsb::spread::InConnector());
     ASSERT_NO_THROW(in->activate());
+    in->setQualityOfServiceSpecs(qosSpecs);
 
     OutConnectorPtr out(new rsb::spread::OutConnector());
     ASSERT_NO_THROW(out->activate());
+    out->setQualityOfServiceSpecs(qosSpecs);
 
     // filter for joining test group
     FilterPtr f = FilterPtr(new ScopeFilter(Scope("/blah")));
     f->notifyObserver(in, FilterAction::ADD);
 
     // domain objects
-    // send only one event. Otherwise we need to do a correlation because
-    // ordering may change
-    const unsigned int numEvents = 1;
+    const unsigned int numEvents = 100;
     boost::shared_ptr<InformerTask> source(new InformerTask(out, numEvents));
     WaitingObserver observer(numEvents);
     in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
@@ -88,8 +90,10 @@ TEST(SpreadConnectorTest, testRoundtrip)
     exec->schedule(source);
 
     observer.waitReceived();
+    source->waitDone();
 
     // compare sent and received events
+    // ordering must be always correct, because we use appropriate QoS settings
     ASSERT_EQ(source->getEvents().size(), observer.getEvents().size());
     for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
         EventPtr sent = source->getEvents()[i];

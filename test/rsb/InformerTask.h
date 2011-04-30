@@ -34,18 +34,24 @@ namespace test {
  */
 class InformerTask: public rsc::threading::RepetitiveTask {
 public:
-	InformerTask(rsb::transport::OutConnectorPtr p, const unsigned int &numEvents);
-	virtual ~InformerTask();
+    InformerTask(rsb::transport::OutConnectorPtr p,
+            const unsigned int &numEvents);
+    virtual ~InformerTask();
 
-	void execute();
+    void execute();
 
-	std::vector<EventPtr> getEvents();
+    /**
+     * Not thread-safe. Use this only after joining the task.
+     *
+     * @return all sent events
+     */
+    std::vector<EventPtr> getEvents();
 
 private:
-	unsigned int numEvents;
-	unsigned int sentEvents;
-	rsb::transport::OutConnectorPtr port;
-	std::vector<EventPtr> events;
+    unsigned int numEvents;
+    unsigned int sentEvents;
+    rsb::transport::OutConnectorPtr port;
+    std::vector<EventPtr> events;
 
 };
 
@@ -55,21 +61,21 @@ private:
 class WaitingObserver {
 public:
 
-	WaitingObserver(const unsigned int &desiredEvents);
+    WaitingObserver(const unsigned int &desiredEvents);
 
-	void handler(EventPtr e);
+    void handler(EventPtr e);
 
-	void waitReceived();
+    void waitReceived();
 
-	std::vector<EventPtr> getEvents();
+    std::vector<EventPtr> getEvents();
 
 private:
 
-	unsigned int desiredEvents;
-	unsigned int receivedEvents;
-	boost::recursive_mutex m;
-	boost::condition condition;
-	std::vector<EventPtr> events;
+    unsigned int desiredEvents;
+    unsigned int receivedEvents;
+    boost::recursive_mutex m;
+    boost::condition condition;
+    std::vector<EventPtr> events;
 
 };
 

@@ -39,6 +39,7 @@ InformerTask::~InformerTask() {
 }
 
 void InformerTask::execute() {
+
     ++sentEvents;
     cout << "sending event: " << sentEvents << endl;
     PortStateChangePtr psc(new PortStateChange());
@@ -63,6 +64,7 @@ void InformerTask::execute() {
         cout << endl;
         cancel();
     }
+
 }
 
 std::vector<EventPtr> InformerTask::getEvents() {
