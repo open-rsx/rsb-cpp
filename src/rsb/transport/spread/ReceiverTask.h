@@ -42,18 +42,18 @@ namespace spread {
 class DataStore {
 public:
 
-	DataStore(rsb::protocol::NotificationPtr n);
+    DataStore(rsb::protocol::NotificationPtr n);
 
-	~DataStore();
+    ~DataStore();
 
-	std::string getData(const unsigned int &i);
+    std::string getData(const unsigned int &i);
 
-	unsigned int add(rsb::protocol::NotificationPtr n);
+    unsigned int add(rsb::protocol::NotificationPtr n);
 
 private:
-	rsc::logging::LoggerPtr logger;
-	unsigned int receivedParts;
-	std::vector<rsb::protocol::NotificationPtr> store;
+    rsc::logging::LoggerPtr logger;
+    unsigned int receivedParts;
+    std::vector<rsb::protocol::NotificationPtr> store;
 
 };
 
@@ -66,22 +66,47 @@ typedef boost::shared_ptr<DataStore> DataStorePtr;
 class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
-	ReceiverTask(SpreadConnectionPtr s,
-			converter::Repository<std::string>::Ptr converters,
-			HandlerPtr handler);
-	virtual ~ReceiverTask();
+    ReceiverTask(SpreadConnectionPtr s,
+            converter::Repository<std::string>::Ptr converters,
+            HandlerPtr handler);
+    virtual ~ReceiverTask();
 
-	void execute();
-	void setHandler(HandlerPtr handler);
+    void execute();
+    void setHandler(HandlerPtr handler);
 
 private:
-	rsc::logging::LoggerPtr logger;
-	volatile bool cancelRequested;
-	SpreadConnectionPtr con;
-	converter::Repository<std::string>::Ptr converters;
-	HandlerPtr handler;
-	std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
-	std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;
+
+    /**
+     * Notifies the handler of this task about a received event which is
+     * generated from an internal notification and the joined data that may
+     * originate from several notifications.
+     *
+     * @param notification notification with meta infos
+     * @param data user data for the event
+     */
+    void notifyHandler(protocol::NotificationPtr notification,
+            boost::shared_ptr<std::string> data);
+
+    /**
+     * Handles newly received notifications by extracting their data, joining
+     * the data if it is part of a multi-part message and and returning the
+     * joined data if a multi-part message was received completely.
+     *
+     * @param notification notification to handler
+     * @return pointer to joined data in case of a single-part message or a
+     *         completed multi-part message. If no event data is completely
+     *         available, a null pointer is returned
+     */
+    boost::shared_ptr<std::string> handleAndJoinNotification(
+            protocol::NotificationPtr notification);
+
+    rsc::logging::LoggerPtr logger;
+    volatile bool cancelRequested;
+    SpreadConnectionPtr con;
+    converter::Repository<std::string>::Ptr converters;
+    HandlerPtr handler;
+    std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
+    std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;
 
 };
 

@@ -53,8 +53,7 @@ int main(void) {
     cin >> numMsg;
 
     // Split into filename
-    size_t found;
-    found = fileLoc.find_last_of("/");
+    size_t found = fileLoc.find_last_of("/");
     string file = fileLoc.substr(found + 1);
 
     // Read file
@@ -75,9 +74,12 @@ int main(void) {
             Scope("/example/informer"));
     Informer<string>::DataPtr data(bin_doc);
 
+    cout << "sending " << data->length() << " bytes" << endl;
+
     EventPtr event = EventPtr(
             new Event(Scope("/example/informer"),
-                    boost::static_pointer_cast<void>(data), "string"));
+                    boost::static_pointer_cast<void>(data),
+                    rsc::runtime::typeName<string>()));
     event->addMetaInfo("file", file);
     for (unsigned int j = 0; j < numMsg; j++) {
         // Get current time

@@ -68,5 +68,5 @@ int main(int argc, char **argv) {
         boost::this_thread::sleep(boost::posix_time::seconds(1000));
     }
 
-    return (EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }

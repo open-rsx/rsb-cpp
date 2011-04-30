@@ -30,25 +30,23 @@ using namespace rsc::threading;
 namespace rsb {
 namespace spread {
 
+rsb::transport::InConnector *InConnector::create(const Properties& args) {
+    static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
+    RSCDEBUG(logger, "creating InConnector with properties " << args);
+
+    return new InConnector(args.get<string> ("host", defaultHost()),
+            args.get<unsigned int> ("port", defaultPort()));
+}
+
 InConnector::InConnector(const string &host, unsigned int port) :
-    logger(Logger::getLogger("rsb.spread.InConnector")),
-    active(false),
-    connector(new SpreadConnector(host, port)) {
+    logger(Logger::getLogger("rsb.spread.InConnector")), active(false),
+            connector(new SpreadConnector(host, port)) {
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
     // TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
     //st = boost::shared_ptr<StatusTask>(new StatusTask(this));
     this->rec = boost::shared_ptr<ReceiverTask>(
-        new ReceiverTask(this->connector->getConnection(),
-                         this->connector->getConverters(),
-                         this->observer));
-}
-
-rsb::transport::InConnector* InConnector::create(const Properties& args) {
-    static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
-    RSCDEBUG(logger, "creating InConnector with properties " << args);
-
-    return new InConnector(args.get<string>      ("host", defaultHost()),
-                           args.get<unsigned int>("port", defaultPort()));
+            new ReceiverTask(this->connector->getConnection(),
+                    this->connector->getConverters(), this->observer));
 }
 
 InConnector::~InConnector() {
@@ -85,7 +83,7 @@ void InConnector::setObserver(HandlerPtr observer) {
 }
 
 void InConnector::notify(rsb::filter::ScopeFilter* f,
-                         const rsb::filter::FilterAction::Types &at) {
+        const rsb::filter::FilterAction::Types &at) {
     // join or leave groups
     // TODO evaluate success
     RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered");
@@ -93,19 +91,19 @@ void InConnector::notify(rsb::filter::ScopeFilter* f,
     case rsb::filter::FilterAction::ADD:
         RSCINFO(logger, "ScopeFilter scope is " << f->getScope()
                 << " ,now going to join Spread group")
-            ;
+        ;
         this->connector->join(f->getScope().toString());
         break;
     case rsb::filter::FilterAction::REMOVE:
         RSCINFO(logger, "ScopeFilter scope is " << f->getScope()
                 << " ,now going to leave Spread group")
-            ;
+        ;
         this->connector->leave(f->getScope().toString());
         break;
     default:
         RSCWARN(logger,
                 "ScopeFilter Action not supported by this Connector implementation")
-            ;
+        ;
         break;
     }
 }

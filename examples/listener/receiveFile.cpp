@@ -66,6 +66,7 @@ public:
 
         ofstream out(fileLoc.c_str(), ios::binary);
         for (it = data->begin(); it < data->end(); ++it) {
+            cout << "write..." << endl;
             out << *it;
         }
         out.close();
@@ -99,5 +100,5 @@ int main(int argc, char **argv) {
         boost::this_thread::sleep(boost::posix_time::seconds(1000));
     }
 
-    return (EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }
