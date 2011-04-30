@@ -64,7 +64,7 @@ InConnectorPtr in(new InConnector());
     out->activate();
 
     unsigned int numEvents = 3;
-    boost::shared_ptr<InformerTask> source(new InformerTask(out, 1));
+    boost::shared_ptr<InformerTask> source(new InformerTask(out, Scope("/blah"), 1, 100));
     WaitingObserver observer(numEvents);
     in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
