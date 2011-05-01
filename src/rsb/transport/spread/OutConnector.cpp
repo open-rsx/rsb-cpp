@@ -71,14 +71,12 @@ void OutConnector::fillNotification(protocol::Notification &notification,
         const unsigned int &numDataParts, const unsigned int &dataPart,
         const string &data) {
 
-    notification.set_eid(event->getId().getIdAsString());
-    notification.set_sequence_length(0);
-    notification.set_standalone(false);
-    notification.set_uri(event->getScope().toString());
-    notification.set_type_id(wireSchema);
+    notification.set_id(event->getId().getIdAsString());
+    notification.set_scope(event->getScope().toString());
+    notification.set_wire_schema(wireSchema);
     for (map<string, string>::const_iterator it = event->metaInfoBegin(); it
             != event->metaInfoEnd(); ++it) {
-        MetaInfo *info = notification.mutable_metainfos()->Add();
+        MetaInfo *info = notification.mutable_meta_infos()->Add();
         info->set_key(it->first);
         info->set_value(it->second);
     }

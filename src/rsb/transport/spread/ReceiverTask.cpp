@@ -46,7 +46,7 @@ string DataStore::getData(const unsigned int &i) {
 }
 
 unsigned int DataStore::add(rsb::protocol::NotificationPtr n) {
-    RSCTRACE(logger, "Add message " << n->eid() << " (part " << n->data_part() << ") to DataStore");
+    RSCTRACE(logger, "Add message " << n->id() << " (part " << n->data_part() << ") to DataStore");
     store[n->data_part()] = n;
     return receivedParts++;
 }
@@ -92,7 +92,7 @@ void ReceiverTask::execute() {
         if (!notification->ParseFromString(message->getDataAsString())) {
             throw CommException("Failed to parse notification in pbuf format");
         }
-        RSCTRACE(logger, "Parsed event ID: " << notification->eid());
+        RSCTRACE(logger, "Parsed event ID: " << notification->id());
         RSCTRACE(logger, "Binary length: " << notification->data().length());
         RSCTRACE(logger, "Number of split message parts: " << notification->num_data_parts());
         RSCTRACE(logger, "... received message part    : " << notification->data_part());
@@ -123,7 +123,7 @@ boost::shared_ptr<string> ReceiverTask::handleAndJoinNotification(
     bool multiPartNotification = notification->num_data_parts() > 0;
     if (multiPartNotification) {
 
-        it = dataPool.find(notification->eid());
+        it = dataPool.find(notification->id());
         if (it != dataPool.end()) {
 
             // Push message to existing DataStore
@@ -142,9 +142,9 @@ boost::shared_ptr<string> ReceiverTask::handleAndJoinNotification(
 
         } else {
             // Create new DataStore
-            RSCTRACE(logger, "Create new data store for message: " << notification->eid());
+            RSCTRACE(logger, "Create new data store for message: " << notification->id());
             dataPool.insert(
-                    pair<string, DataStorePtr> (notification->eid(),
+                    pair<string, DataStorePtr> (notification->id(),
                             DataStorePtr(new DataStore(notification))));
         }
 
@@ -163,20 +163,20 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
 
     EventPtr e(new Event());
 
-    e->setId(rsc::misc::UUID(notification->eid()));
-    e->setScope(Scope(notification->uri()));
+    e->setId(rsc::misc::UUID(notification->id()));
+    e->setScope(Scope(notification->scope()));
 
-    for (int i = 0; i < notification->metainfos_size(); ++i) {
-        e->addMetaInfo(notification->metainfos(i).key(),
-                notification->metainfos(i).value());
+    for (int i = 0; i < notification->meta_infos_size(); ++i) {
+        e->addMetaInfo(notification->meta_infos(i).key(),
+                notification->meta_infos(i).value());
     }
 
     // TODO refactor converter handling and conversion
     // TODO error handling
     converter::Converter<string>::Ptr c = converters->getConverterByWireSchema(
-            notification->type_id());
+            notification->wire_schema());
     converter::AnnotatedData deserialized = c->deserialize(
-            notification->type_id(), *data);
+            notification->wire_schema(), *data);
     e->setType(deserialized.first);
     e->setData(deserialized.second);
 
