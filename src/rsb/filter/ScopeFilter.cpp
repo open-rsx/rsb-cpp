@@ -35,10 +35,11 @@ ScopeFilter::~ScopeFilter() {
 bool ScopeFilter::match(EventPtr e) {
     // TODO implement whitelisting
     // TODO implement removal of pointers in whitelist
-    //      after dispatching of event notification, needs to be done by EventProcessingStrategy
+    //      after dispatching of event notification, needs to be done by EventReceivingStrategy
     // TODO whitelist must be specific for each filter, but handled globally
     //if (whitelist[e] || (e->getScope()==scope)) {
-    if (e->getScope() == scope) {
+    if ((e->getScope() == this->scope)
+        || e->getScope().isSubScopeOf(this->scope)) {
         return true;
     } else {
         return false;
