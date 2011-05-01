@@ -316,7 +316,7 @@ string defaultHost() {
 }
 
 unsigned int defaultPort() {
-    return 4803;
+    return DEFAULT_SPREAD_PORT;
 }
 
 }
