@@ -264,7 +264,7 @@ bool SpreadConnection::send(const SpreadMessage &msg) {
                     (const char(*)[MAX_GROUP_NAME]) groups, 0, msg.getSize(),
                     msg.getData());
             msgCount++;
-            delete groups;
+            delete[] groups;
         }
         // FIXME: check return code of the above call
         if (ret >= 0) {
