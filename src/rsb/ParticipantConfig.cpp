@@ -191,6 +191,12 @@ void ParticipantConfig::handleOption(const vector<string> &key, const string &va
         }
         Transport& transport = it->second;
         transport.options[key[2]] = parseTypedValue(value);
+    } else {
+        if (key.size() != 1) {
+            throw invalid_argument(str(format("Option key `%1%' seems to designate a global option but has %2% components; global keys must not have more than one component.")
+                                       % key % key.size()));
+        }
+        this->options[key[0]] = parseTypedValue(value);
     }
 }
 
@@ -200,7 +206,9 @@ ostream &operator<<(ostream &stream,
 }
 ostream &operator<<(ostream &stream, const ParticipantConfig &config) {
     stream << "ParticipantConfig[qosSpec = " << config.qosSpec
-           << ", transports = " << config.getTransports() << "]";
+           << ", transports = " << config.getTransports()
+           << ", options = " << config.getOptions()
+           << "]";
     return stream;
 }
 
