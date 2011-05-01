@@ -57,15 +57,16 @@ TEST(InprocessConnectorTest, testActivate)
 
 TEST(InprocessConnectorTest, testRoundtrip)
 {
-InConnectorPtr in(new InConnector());
-    in->setScope(Scope("/blah"));
+    InConnectorPtr in(new InConnector());
+    const Scope scope("/blah");
+    in->setScope(scope);
     in->activate();
     transport::OutConnectorPtr out(new OutConnector());
     out->activate();
 
     unsigned int numEvents = 3;
     boost::shared_ptr<InformerTask> source(new InformerTask(out, Scope("/blah"), 1, 100));
-    WaitingObserver observer(numEvents);
+    WaitingObserver observer(numEvents, scope);
     in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
     // Send some events
@@ -103,5 +104,5 @@ InConnectorPtr in(new InConnector());
         EXPECT_EQ(sent->getId(), received->getId());
         EXPECT_EQ(sent->getType(), received->getType());
         EXPECT_EQ(sent->getScope(), received->getScope());
-        }
+    }
 }

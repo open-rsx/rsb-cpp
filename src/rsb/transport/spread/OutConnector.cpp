@@ -131,8 +131,12 @@ void OutConnector::push(EventPtr event) {
         SpreadMessage spreadMessage(serializedMessageData);
 
         // send message to appropriate groups
-        // TODO scope hierarchy sending
-        spreadMessage.addGroup(event->getScope().toString());
+        // TODO hashing of groups
+        vector<Scope> sendScopes = event->getScope().superScopes(true);
+        for (vector<Scope>::const_iterator scopeIt = sendScopes.begin(); scopeIt
+                != sendScopes.end(); ++scopeIt) {
+            spreadMessage.addGroup(scopeIt->toString());
+        }
         spreadMessage.setQOS(this->connector->getMessageQoS());
 
         RSCTRACE(logger, "This is the serialized message size before send: " << spreadMessage.getSize());

@@ -57,13 +57,95 @@ TEST(SpreadConnectorTest, testConnnection)
     ASSERT_NO_THROW(p->activate());
 }
 
+TEST(SpreadConnectorTest, testHierarchySending)
+{
+
+    const unsigned int numEvents = 10;
+    const Scope sendScope("/this/is/a/long/test");
+
+    QualityOfServiceSpec qosSpecs(QualityOfServiceSpec::ORDERED,
+            QualityOfServiceSpec::RELIABLE);
+
+    OutConnectorPtr out(new rsb::spread::OutConnector());
+    ASSERT_NO_THROW(out->activate());
+    out->setQualityOfServiceSpecs(qosSpecs);
+
+    vector<boost::shared_ptr<WaitingObserver> > observers;
+    vector<InConnectorPtr> inConnectors;
+
+    vector<Scope> receiveScopes = sendScope.superScopes(true);
+    for (vector<Scope>::const_iterator receiveScopeIt = receiveScopes.begin(); receiveScopeIt != receiveScopes.end(); ++receiveScopeIt) {
+
+        Scope receiveScope = *receiveScopeIt;
+
+        // in connector
+        InConnectorPtr in(new rsb::spread::InConnector());
+        in->activate();
+        in->setQualityOfServiceSpecs(qosSpecs);
+
+        // filter for joining test group
+        FilterPtr f = FilterPtr(new ScopeFilter(receiveScope));
+        f->notifyObserver(in, FilterAction::ADD);
+
+        unsigned int expectedEvents = numEvents;
+        if (receiveScope == Scope("/")) {
+            expectedEvents = 2 * numEvents;
+        }
+
+        boost::shared_ptr<WaitingObserver> observer(new WaitingObserver(expectedEvents, receiveScope));
+        in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, observer, _1))));
+        observers.push_back(observer);
+
+        inConnectors.push_back(in);
+
+    }
+
+    // why do I have to sleep here? Otherwise sometimes the first handler does
+    // not get all events on scope "/"
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+    // send events
+    boost::shared_ptr<InformerTask> source(new InformerTask(out, sendScope, numEvents, 10000));
+    TaskExecutorPtr exec(new ThreadedTaskExecutor);
+    exec->schedule(source);
+    source->waitDone();
+
+    for (vector<boost::shared_ptr<WaitingObserver> >::iterator observerIt = observers.begin();
+            observerIt != observers.end(); ++observerIt) {
+
+        boost::shared_ptr<WaitingObserver> observer = *observerIt;
+        bool ok = observer->waitReceived(40000);
+        ASSERT_TRUE(ok) << "Observer on scope " << observer->getScope() << " did not receive events.";
+
+        // the root observer will get all events, also the garbage created by
+        // the informer task...
+        if (observer->getScope() == Scope("/")) {
+            ASSERT_EQ(source->getEvents().size() * 2, observer->getEvents().size());
+            continue;
+        }
+
+        // compare sent and received events
+        // ordering must be always correct, because we use appropriate QoS settings
+        ASSERT_EQ(source->getEvents().size(), observer->getEvents().size()) << "Observer on " << observer->getScope() << " did not receive enough events.";
+        for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
+            EventPtr sent = source->getEvents()[i];
+            EventPtr received = observer->getEvents()[i];
+            EXPECT_EQ(sent->getId(), received->getId());
+            EXPECT_EQ(sent->getType(), received->getType());
+            EXPECT_EQ(sent->getScope(), received->getScope());
+        }
+
+    }
+
+}
+
 /**
  * Use a value-parametrized test for different data sizes to test data
  * splitting.
  *
  * @author jwienke
  */
-class SpreadConnectorRoundtripTest : public ::testing::TestWithParam<unsigned int> {
+class SpreadConnectorRoundtripTest: public ::testing::TestWithParam<unsigned int> {
 };
 
 TEST_P(SpreadConnectorRoundtripTest, roundtrip)
@@ -91,7 +173,7 @@ TEST_P(SpreadConnectorRoundtripTest, roundtrip)
     // domain objects
     const unsigned int numEvents = 100;
     boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, numEvents, GetParam()));
-    WaitingObserver observer(numEvents);
+    WaitingObserver observer(numEvents, scope);
     in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
     // activate port and schedule informer
@@ -114,5 +196,6 @@ TEST_P(SpreadConnectorRoundtripTest, roundtrip)
 }
 
 INSTANTIATE_TEST_CASE_P(RoundtripTest,
-                        SpreadConnectorRoundtripTest,
-                        ::testing::Values(1000, 100000, 350000));
+        SpreadConnectorRoundtripTest,
+        ::testing::Values(1000, 100000, 350000))
+;

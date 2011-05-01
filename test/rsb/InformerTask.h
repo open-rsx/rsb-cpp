@@ -63,17 +63,20 @@ private:
 class WaitingObserver {
 public:
 
-    WaitingObserver(const unsigned int &desiredEvents);
+    WaitingObserver(const unsigned int &desiredEvents, const Scope &scope);
 
     void handler(EventPtr e);
 
-    void waitReceived();
+    bool waitReceived(const unsigned int &timeoutMs = 0);
 
     std::vector<EventPtr> getEvents();
+
+    Scope getScope() const;
 
 private:
 
     unsigned int desiredEvents;
+    Scope scope;
     unsigned int receivedEvents;
     boost::recursive_mutex m;
     boost::condition condition;

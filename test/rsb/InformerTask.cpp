@@ -48,8 +48,8 @@ void InformerTask::execute() {
             new string(rsc::misc::randAlnumStr(dataSizeInBytes)));
     Scope thisScope = scope;
     if (sentEvents % 2 == 0) {
-        // should be filtered by Port already
-        thisScope = scope.concat(Scope("/foo"));
+        // should be filtered
+        thisScope = Scope("/other").concat(scope);
     }
     EventPtr p(new Event(thisScope, data, rsc::runtime::typeName<string>()));
     port->push(p);
@@ -69,8 +69,9 @@ std::vector<EventPtr> InformerTask::getEvents() {
 
 // ------
 
-WaitingObserver::WaitingObserver(const unsigned int &desiredEvents) :
-    desiredEvents(desiredEvents), receivedEvents(0) {
+WaitingObserver::WaitingObserver(const unsigned int &desiredEvents,
+        const Scope &scope) :
+    desiredEvents(desiredEvents), scope(scope), receivedEvents(0) {
 
 }
 
@@ -78,8 +79,8 @@ void WaitingObserver::handler(EventPtr e) {
     boost::recursive_mutex::scoped_lock lock(m);
     ++receivedEvents;
     events.push_back(e);
-    cout << "Event #" << receivedEvents << "/" << desiredEvents
-            << " received. Metadata: " << *e << endl;
+    cout << "WaitingObserver #" << receivedEvents << "/" << desiredEvents
+            << " received on " << scope << ". Metadata: " << *e << endl;
     if (receivedEvents == desiredEvents) {
         condition.notify_all();
     }
@@ -90,11 +91,24 @@ vector<EventPtr> WaitingObserver::getEvents() {
     return events;
 }
 
-void WaitingObserver::waitReceived() {
+bool WaitingObserver::waitReceived(const unsigned int &timeoutMs) {
     boost::recursive_mutex::scoped_lock lock(m);
     while (receivedEvents < desiredEvents) {
-        condition.wait(lock);
+        if (timeoutMs == 0) {
+            condition.wait(lock);
+        } else {
+            bool normalWakeup = condition.timed_wait(lock,
+                    boost::posix_time::milliseconds(timeoutMs));
+            if (!normalWakeup) {
+                return false;
+            }
+        }
     }
+    return true;
+}
+
+Scope WaitingObserver::getScope() const {
+    return scope;
 }
 
 }
