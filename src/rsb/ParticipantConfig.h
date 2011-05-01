@@ -158,9 +158,65 @@ public:
      */
     void setOptions(const rsc::runtime::Properties &options);
 
+    /**
+     * Obtain configuration options from the configuration file @a
+     * path, store them in a @ref ParticipantConfig object and return
+     * it.
+     *
+     * A simple configuration file may look like this:
+     * @verbatim
+[transport.spread]
+host = azurit # default type is string
+port = <uint>5301 # types can be specified in angle brackets
+# A comment
+@endverbatim
+     *
+     * @param path File of path
+     * @param defaults  defaults
+     * @return
+     *
+     * @see fromEnvironment, fromConfiguration
+     */
     static ParticipantConfig fromFile(const boost::filesystem::path &path,
                                       const ParticipantConfig &defaults = ParticipantConfig());
+
+    /**
+     * Obtain configuration options from environment variables, store
+     * them in a @ref ParticipantConfig object and return
+     * it. Environment variable names are mapped to RSB option names
+     * as illustrated in the following example:
+     *
+     * @verbatim
+RSB_TRANSPORT_SPREAD_PORT -> transport spread port
+@endverbatim
+     *
+     * @param defaults A @ref ParticipantConfig object that supplies
+     * values for configuration options for which no environment
+     * variables are found.
+     * @return A @ref ParticipantConfig object that contains the
+     * merged configuration options from @a defaults and relevant
+     * environment variables.
+     *
+     * @see fromFile, fromConfiguration
+     */
     static ParticipantConfig fromEnvironment(const ParticipantConfig &defaults = ParticipantConfig());
+
+    /**
+     * Obtain configuration options from multiple sources, store them
+     * in a @ref ParticipantConfig object and return it. The following
+     * sources of configuration information will be consulted:
+     *
+     * -# ~/.config/rsb.conf
+     * -# \$(PWD)/rsb.conf
+     * -# Environment Variables
+     *
+     * @param defaults A @ref ParticipantConfig object the options of
+     * which should be used as defaults.
+     * @return A @ref ParticipantConfig object that contains the
+     * merged configuration options from the sources mentioned above.
+     *
+     * @see fromFile, fromEnvironment
+     */
     static ParticipantConfig fromConfiguration(const ParticipantConfig &defaults = ParticipantConfig());
 
     friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
