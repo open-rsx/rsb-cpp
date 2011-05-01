@@ -300,7 +300,7 @@ string SpreadConnection::generateId(const string &prefix) {
     //            uuid_generate(id);
     //            char buf[37];
     //            uuid_unparse(id,buf);
-    return string(prefix);
+    return prefix;
 }
 
 unsigned long SpreadConnection::getMsgCount() {
