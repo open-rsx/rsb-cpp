@@ -131,7 +131,6 @@ void OutConnector::push(EventPtr event) {
         SpreadMessage spreadMessage(serializedMessageData);
 
         // send message to appropriate groups
-        // TODO hashing of groups
         vector<Scope> sendScopes = event->getScope().superScopes(true);
         for (vector<Scope>::const_iterator scopeIt = sendScopes.begin(); scopeIt
                 != sendScopes.end(); ++scopeIt) {
