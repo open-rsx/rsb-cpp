@@ -30,11 +30,15 @@
 #include "../../CommException.h"
 #include "../../converter/Converter.h"
 #include "../../UnsupportedQualityOfServiceException.h"
+#include "../../util/MD5.h"
+
+#include <sp.h>
 
 using namespace std;
 using namespace rsc::logging;
 using namespace rsc::runtime;
 using namespace rsb;
+using namespace rsb::util;
 using namespace rsb::transport;
 using namespace rsc::threading;
 
@@ -42,10 +46,10 @@ namespace rsb {
 namespace spread {
 
 const SpreadConnector::QoSMap SpreadConnector::qosMapping =
-    SpreadConnector::buildQoSMapping();
+        SpreadConnector::buildQoSMapping();
 
 SpreadConnector::SpreadConnector(const std::string &host, unsigned int port,
-                                 rsb::converter::Repository<std::string>::Ptr converters) :
+        rsb::converter::Repository<std::string>::Ptr converters) :
     converters(converters) {
     init(host, port);
 }
@@ -57,7 +61,8 @@ void SpreadConnector::init(const std::string& host, unsigned int port) {
     // TODO ConnectionPool for SpreadConnections?!?
     // TODO Send Message over Managing / Introspection Channel
     // TODO Generate Unique-IDs for Connectors
-    this->con = SpreadConnectionPtr(new SpreadConnection(id.getIdAsString(), host, port));
+    this->con = SpreadConnectionPtr(
+            new SpreadConnection(id.getIdAsString(), host, port));
     this->memberships = MembershipManagerPtr(new MembershipManager());
     setQualityOfServiceSpecs(QualityOfServiceSpec());
 }
@@ -109,19 +114,19 @@ SpreadMessage::QOS SpreadConnector::getMessageQoS() const {
 SpreadConnector::QoSMap SpreadConnector::buildQoSMapping() {
     map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> unorderedMap;
     unorderedMap.insert(
-        make_pair(QualityOfServiceSpec::UNRELIABLE,
-                  SpreadMessage::UNRELIABLE));
+            make_pair(QualityOfServiceSpec::UNRELIABLE,
+                    SpreadMessage::UNRELIABLE));
     unorderedMap.insert(
-        make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::RELIABLE));
+            make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::RELIABLE));
 
     map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS> orderedMap;
     orderedMap.insert(
-        make_pair(QualityOfServiceSpec::UNRELIABLE, SpreadMessage::FIFO));
+            make_pair(QualityOfServiceSpec::UNRELIABLE, SpreadMessage::FIFO));
     orderedMap.insert(
-        make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::FIFO));
+            make_pair(QualityOfServiceSpec::RELIABLE, SpreadMessage::FIFO));
 
     map<QualityOfServiceSpec::Ordering, map<QualityOfServiceSpec::Reliability,
-        SpreadMessage::QOS> > table;
+            SpreadMessage::QOS> > table;
     table.insert(make_pair(QualityOfServiceSpec::UNORDERED, unorderedMap));
     table.insert(make_pair(QualityOfServiceSpec::ORDERED, orderedMap));
 
@@ -129,14 +134,14 @@ SpreadConnector::QoSMap SpreadConnector::buildQoSMapping() {
 }
 
 void SpreadConnector::setQualityOfServiceSpecs(
-    const QualityOfServiceSpec &specs) {
+        const QualityOfServiceSpec &specs) {
 
     QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
     if (orderMapIt == qosMapping.end()) {
         throw UnsupportedQualityOfServiceException("Unknown ordering", specs);
     }
     map<QualityOfServiceSpec::Reliability, SpreadMessage::QOS>::const_iterator
-        mapIt = orderMapIt->second.find(specs.getReliability());
+            mapIt = orderMapIt->second.find(specs.getReliability());
     if (mapIt == orderMapIt->second.end()) {
         throw UnsupportedQualityOfServiceException("Unknown reliability", specs);
     }
@@ -144,6 +149,10 @@ void SpreadConnector::setQualityOfServiceSpecs(
     messageQoS = mapIt->second;
 
     RSCDEBUG(logger, "Selected new message type " << messageQoS);
+}
+
+string SpreadConnector::makeGroupName(const Scope &scope) const {
+    return MD5(scope.toString()).toHexString().substr(0, MAX_GROUP_NAME - 1);
 }
 
 }

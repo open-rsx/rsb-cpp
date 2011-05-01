@@ -57,6 +57,23 @@ TEST(SpreadConnectorTest, testConnnection)
     ASSERT_NO_THROW(p->activate());
 }
 
+TEST(SpreadConnectorTest, testSendLongGroupNames)
+{
+    OutConnectorPtr out(new rsb::spread::OutConnector());
+    out->activate();
+
+    Scope
+            longScope(
+                    "/this/is/a/very/long/scope/which/will/not/fit/into/thirty/two/chars");
+
+    EventPtr e(new Event());
+    e->setScope(longScope);
+    e->setType(rsc::runtime::typeName<string>());
+    e->setData(boost::shared_ptr<string>(new string("fooo")));
+    out->push(e);
+
+}
+
 TEST(SpreadConnectorTest, testHierarchySending)
 {
 

@@ -87,18 +87,19 @@ void InConnector::notify(rsb::filter::ScopeFilter* f,
     // join or leave groups
     // TODO evaluate success
     RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered");
+    string groupName = connector->makeGroupName(f->getScope());
     switch (at) {
     case rsb::filter::FilterAction::ADD:
         RSCINFO(logger, "ScopeFilter scope is " << f->getScope()
                 << " ,now going to join Spread group")
         ;
-        this->connector->join(f->getScope().toString());
+        this->connector->join(groupName);
         break;
     case rsb::filter::FilterAction::REMOVE:
         RSCINFO(logger, "ScopeFilter scope is " << f->getScope()
                 << " ,now going to leave Spread group")
         ;
-        this->connector->leave(f->getScope().toString());
+        this->connector->leave(groupName);
         break;
     default:
         RSCWARN(logger,

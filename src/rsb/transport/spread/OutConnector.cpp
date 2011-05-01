@@ -135,7 +135,7 @@ void OutConnector::push(EventPtr event) {
         vector<Scope> sendScopes = event->getScope().superScopes(true);
         for (vector<Scope>::const_iterator scopeIt = sendScopes.begin(); scopeIt
                 != sendScopes.end(); ++scopeIt) {
-            spreadMessage.addGroup(scopeIt->toString());
+            spreadMessage.addGroup(connector->makeGroupName(*scopeIt));
         }
         spreadMessage.setQOS(this->connector->getMessageQoS());
 

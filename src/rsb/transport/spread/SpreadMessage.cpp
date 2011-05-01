@@ -19,6 +19,10 @@
 
 #include "SpreadMessage.h"
 
+#include <stdexcept>
+
+#include <string.h>
+
 #include <rsc/logging/Logger.h>
 
 using namespace std;
@@ -32,76 +36,80 @@ namespace rsb {
 namespace spread {
 
 SpreadMessage::SpreadMessage() :
-	qos(UNRELIABLE) {
+    qos(UNRELIABLE) {
 }
 
 SpreadMessage::SpreadMessage(const Type &mt) :
-	type(mt), qos(UNRELIABLE) {
+    type(mt), qos(UNRELIABLE) {
 }
 
 SpreadMessage::SpreadMessage(const string &d) :
-	data(d), qos(UNRELIABLE) {
+    data(d), qos(UNRELIABLE) {
 }
 
 SpreadMessage::SpreadMessage(const char *buf) :
-	qos(UNRELIABLE) {
-	data = string(buf);
+    qos(UNRELIABLE) {
+    data = string(buf);
 }
 
 SpreadMessage::~SpreadMessage() {
-	RSCTRACE(logger, "spread message destructor called");
+    RSCTRACE(logger, "spread message destructor called");
 }
 
 void SpreadMessage::setData(const std::string& doc) {
-	data = doc;
+    data = doc;
 }
 
 void SpreadMessage::setData(const char* buf) {
-	data = string(buf);
+    data = string(buf);
 }
 
 string SpreadMessage::getDataAsString() const {
-	return data;
+    return data;
 }
 
 const char* SpreadMessage::getData() const {
-	return data.c_str();
+    return data.c_str();
 }
 
 int SpreadMessage::getSize() const {
-	return data.length();
+    return data.length();
 }
 
 void SpreadMessage::setType(Type mt) {
-	type = mt;
+    type = mt;
 }
 
 SpreadMessage::Type SpreadMessage::getType() const {
-	return type;
+    return type;
 }
 
-void SpreadMessage::addGroup(const std::string& name) {
-	groups.push_back(name);
+void SpreadMessage::addGroup(const std::string &name) {
+    if (strlen(name.c_str()) > 31) {
+        throw invalid_argument(
+                "Group name '" + name + "' is too long for spread.");
+    }
+    groups.push_back(name);
 }
 
 int SpreadMessage::getGroupCount() const {
-	return groups.size();
+    return groups.size();
 }
 
 list<string>::const_iterator SpreadMessage::getGroupsBegin() const {
-	return groups.begin();
+    return groups.begin();
 }
 
 list<string>::const_iterator SpreadMessage::getGroupsEnd() const {
-	return groups.end();
+    return groups.end();
 }
 
 SpreadMessage::QOS SpreadMessage::getQOS() const {
-	return qos;
+    return qos;
 }
 
 void SpreadMessage::setQOS(const QOS &qos) {
-	this->qos = qos;
+    this->qos = qos;
 }
 
 }

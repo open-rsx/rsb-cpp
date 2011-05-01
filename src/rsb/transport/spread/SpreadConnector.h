@@ -68,6 +68,8 @@ public:
 
     SpreadMessage::QOS getMessageQoS() const;
 
+    std::string makeGroupName(const Scope &scope) const;
+
 private:
 
     rsc::logging::LoggerPtr logger;
