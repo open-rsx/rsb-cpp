@@ -39,7 +39,7 @@ class RSB_EXPORT Connector {
 public:
 	virtual ~Connector();
 
-	virtual void activate() = 0;
+        virtual void activate() = 0;
 	virtual void deactivate() = 0;
 
 	/**
@@ -50,9 +50,6 @@ public:
 	 * @throw UnsupportedQualityOfServiceException requirements cannot be met
 	 */
 	virtual void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) = 0;
-
-protected:
-	rsc::misc::UUID id;
 };
 
 typedef boost::shared_ptr<Connector> ConnectorPtr;
@@ -61,6 +58,8 @@ typedef boost::shared_ptr<Connector> ConnectorPtr;
  * receive events by means of one transport mechanism.
  *
  * Received events are dispatched to an associated observer.
+ *
+ * @author jmoringe
  */
 class RSB_EXPORT InConnector : public virtual Connector,
                                public rsb::filter::FilterObserver {
@@ -76,6 +75,8 @@ typedef boost::shared_ptr<InConnector> InConnectorPtr;
 
 /** Objects of classes which implement this interface can be used to
  * send events by means of one transport mechanism.
+ *
+ * @author jmoringe
  */
 class RSB_EXPORT OutConnector : public virtual Connector {
 public:
