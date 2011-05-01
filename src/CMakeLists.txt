@@ -74,6 +74,8 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/spread/SpreadConnector.cpp
             rsb/transport/spread/SpreadGroup.cpp
             rsb/transport/spread/SpreadMessage.cpp
+            
+            rsb/util/MD5.cpp
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
 
@@ -145,7 +147,9 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/spread/SpreadConnection.h
             rsb/transport/spread/SpreadConnector.h
             rsb/transport/spread/SpreadGroup.h
-            rsb/transport/spread/SpreadMessage.h)
+            rsb/transport/spread/SpreadMessage.h
+            
+            rsb/util/MD5.h)
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
