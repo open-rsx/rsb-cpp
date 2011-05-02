@@ -22,8 +22,8 @@
 namespace rsb {
 namespace eventprocessing {
 
-            EventReceivingStrategy::~EventReceivingStrategy() {
-            }
+EventReceivingStrategy::~EventReceivingStrategy() {
+}
 
 }
 
