@@ -49,9 +49,8 @@ void InRouteConfigurator::activate() {
     ScopeFilter scopeFilter(scope);
     for (ConnectorList::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
-        // TODO legacy call
-        scopeFilter.notifyObserver(*it, FilterAction::ADD);
         (*it)->activate();
+        scopeFilter.notifyObserver(*it, FilterAction::ADD);
     }
 
     // Create the event processing strategy and attach it to all

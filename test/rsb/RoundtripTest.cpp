@@ -27,6 +27,7 @@
 
 #include <rsc/subprocess/Subprocess.h>
 #include <rsc/threading/ThreadedTaskExecutor.h>
+#include <rsc/threading/RepetitiveTask.h>
 
 #include "rsb/eventprocessing/InRouteConfigurator.h"
 #include "rsb/eventprocessing/OutRouteConfigurator.h"
@@ -38,6 +39,8 @@
 #include "rsb/filter/Filter.h"
 #include "rsb/filter/ScopeFilter.h"
 #include "rsb/converter/converters.h"
+#include "rsb/Factory.h"
+#include "rsb/Informer.h"
 
 #include "testhelpers.h"
 
@@ -51,48 +54,59 @@ using namespace rsc::subprocess;
 using namespace testing;
 using namespace rsc::threading;
 
+class UserInformerTask: public rsc::threading::RepetitiveTask {
+public:
+
+    UserInformerTask(Informer<string>::Ptr informer,
+            const unsigned int &numEvents) :
+        informer(informer), numEvents(numEvents), sentEvents(0) {
+
+    }
+
+    virtual ~UserInformerTask() {
+    }
+
+    void execute() {
+        informer->publish(boost::shared_ptr<string>(new string("hello world")));
+        ++sentEvents;
+        if (sentEvents == numEvents) {
+            cancel();
+        }
+    }
+
+private:
+    Informer<string>::Ptr informer;
+    unsigned int numEvents;
+    unsigned int sentEvents;
+
+};
+
 TEST(RSBTest, testRoundtrip)
 {
 
-    converter::registerDefaultConverters();
-    registerDefaultTransports();
-
-    // task execution service
-    TaskExecutorPtr exec(new ThreadedTaskExecutor);
-
-    InConnectorPtr in(InFactory::getInstance().createInst("spread"));
-    in->activate();
-    OutConnectorPtr out(OutFactory::getInstance().createInst("spread"));
+    Factory::killInstance();
+    Factory &factory = Factory::getInstance();
 
     const Scope scope("/blah");
 
-    // In- and OutRouteConfigurator instantiation
-    InRouteConfiguratorPtr inConfigurator(new InRouteConfigurator(scope));
-    inConfigurator->addConnector(in);
-    inConfigurator->activate();
-    OutRouteConfiguratorPtr outConfigurator(new OutRouteConfigurator());
-    outConfigurator->addConnector(out);
-    outConfigurator->activate();
+    ListenerPtr listener = factory.createListener(scope);
+    Informer<string>::Ptr informer = factory.createInformer<string> (scope);
 
     // domain objects
     unsigned int numEvents = 10;
-    boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, 10,
-            1000));
+    boost::shared_ptr<UserInformerTask> source(new UserInformerTask(informer,
+            10));
     WaitingObserver observer(numEvents, scope);
 
-    // add subscription to router
-    inConfigurator->handlerAdded(rsb::HandlerPtr(new EventFunctionHandler(
-            boost::bind(&WaitingObserver::handler, &observer, _1))));
+    listener->addHandler(rsb::HandlerPtr(new EventFunctionHandler(boost::bind(
+            &WaitingObserver::handler, &observer, _1))));
 
+    // task execution service
+    TaskExecutorPtr exec(new ThreadedTaskExecutor);
     exec->schedule(source);
 
-    observer.waitReceived();
-
-    // port is deactivated through dtr
-    cerr << "RSBTest finished" << endl;
-
-    source->cancel();
     source->waitDone();
+    observer.waitReceived();
 
 }
 

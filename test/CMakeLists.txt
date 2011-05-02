@@ -19,7 +19,7 @@ CONFIGURE_FILE(testconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/testconfig.h)
 
 # --- RSB (integration) test ---
 
-SET(RSB_TEST_SOURCES rsb/RSBTest.cpp
+SET(RSB_TEST_SOURCES rsb/RoundtripTest.cpp
                      rsb/InformerTask.cpp
                      rsb/InformerTask.h)
 
