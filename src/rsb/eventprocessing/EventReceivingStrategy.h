@@ -23,6 +23,7 @@
 
 #include "../Event.h"
 #include "../Subscription.h"
+#include "Handler.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -34,19 +35,19 @@ namespace eventprocessing {
  * @author swrede
  * @author jmoringe
  */
-class RSB_EXPORT EventReceivingStrategy {
+class RSB_EXPORT EventReceivingStrategy : public Handler {
 public:
-	virtual ~EventReceivingStrategy();
+    virtual ~EventReceivingStrategy();
 
-	// if invoked, the event is dispatched to listeners, typically called by ports
-        virtual void process(rsb::EventPtr e) = 0;
+    // add a subscription and associated handlers
+    virtual void subscribe(rsb::SubscriptionPtr s,
+                           std::set<HandlerPtr> handlers) = 0;
 
-        // add a subscription and associated handlers
-        virtual void subscribe(rsb::SubscriptionPtr s,
-                               std::set<HandlerPtr> handlers) = 0;
+    // unsubscribe a subscription
+    virtual void unsubscribe(rsb::SubscriptionPtr s) = 0;
 
-        // unsubscribe a subscription
-        virtual void unsubscribe(rsb::SubscriptionPtr s) = 0;
+    // if invoked, the event is dispatched to listeners, typically called by ports
+    virtual void handle(rsb::EventPtr event) = 0;
 };
 
 typedef boost::shared_ptr<EventReceivingStrategy> EventReceivingStrategyPtr;
