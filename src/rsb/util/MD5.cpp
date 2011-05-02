@@ -46,7 +46,7 @@ namespace util {
  * Rotate a 32 bit integer by n bytes
  */
 #if defined(__GNUC__) && defined(__i386__)
-static inline u32 rol( u32 x, int n)
+static inline unsigned int rol( u32 x, int n)
 {
     __asm__("roll %%cl,%0"
             :"=r" (x)
