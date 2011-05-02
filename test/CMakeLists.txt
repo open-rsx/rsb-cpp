@@ -42,7 +42,6 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/ScopeTest.cpp
                       rsb/converter/DefaultConverterTest.cpp
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
-                      rsb/filter/FilterObserverTest.cpp
                       rsb/util/MD5Test.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})

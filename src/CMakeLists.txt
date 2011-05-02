@@ -49,7 +49,6 @@ SET(SOURCES rsb/CommException.cpp
             rsb/eventprocessing/OutRouteConfigurator.cpp
 
             rsb/filter/Filter.cpp
-            rsb/filter/FilterObservable.cpp
             rsb/filter/FilterObserver.cpp
             rsb/filter/ScopeFilter.cpp
 
@@ -125,7 +124,6 @@ SET(HEADERS rsb/CommException.h
 
             rsb/filter/Filter.h
             rsb/filter/FilterActionTypes.h
-            rsb/filter/FilterObservable.h
             rsb/filter/FilterObserver.h
             rsb/filter/ScopeFilter.h
 
