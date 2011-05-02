@@ -21,46 +21,23 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <rsc/logging/Logger.h>
-#include <rsc/runtime/Properties.h>
-
-#include "../InConnector.h"
-#include "../../eventprocessing/Handler.h"
+#include "../eventprocessing/Handler.h"
+#include "Connector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace inprocess {
+namespace transport {
 
-/**
+/** Objects of classes which implement this interface can be used to
+ * send events by means of one transport mechanism.
+ *
  * @author jmoringe
  */
-class RSB_EXPORT InConnector: public transport::InConnector,
-                              public eventprocessing::Handler {
-public:
-    InConnector();
-    virtual ~InConnector();
-
-    Scope getScope() const;
-    void setScope(const Scope& scope);
-
-    void activate();
-    void deactivate();
-
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
-
-    void handle(EventPtr event);
-
-    static rsb::transport::InConnector *create(
-            const rsc::runtime::Properties &args);
-private:
-    rsc::logging::LoggerPtr logger;
-
-    Scope scope;
-
-    bool active;
+class RSB_EXPORT OutConnector : public Connector,
+                                public eventprocessing::Handler {
 };
 
-typedef boost::shared_ptr<InConnector> InConnectorPtr;
+typedef boost::shared_ptr<OutConnector> OutConnectorPtr;
 
 }
 }

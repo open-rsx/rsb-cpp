@@ -22,6 +22,7 @@
 
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
+#include "rsb/Handler.h"
 #include "rsb/transport/inprocess/InConnector.h"
 #include "rsb/transport/inprocess/OutConnector.h"
 
@@ -42,9 +43,8 @@ using namespace rsb::test;
 
 TEST(InprocessConnectorTest, testConstruction)
 {
-Scope();
     ASSERT_NO_THROW(transport::InConnectorPtr in(new InConnector()));
-      ASSERT_NO_THROW(transport::OutConnectorPtr out(new OutConnector()));
+    ASSERT_NO_THROW(transport::OutConnectorPtr out(new OutConnector()));
 }
 
 TEST(InprocessConnectorTest, testActivate)

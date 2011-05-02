@@ -25,13 +25,5 @@ namespace transport {
 Connector::~Connector() {
 }
 
-void InConnector::addHandler(HandlerPtr handler) {
-    this->handlers.push_back(handler);
-}
-
-void InConnector::removeHandler(HandlerPtr handler) {
-    this->handlers.remove(handler);
-}
-
 }
 }

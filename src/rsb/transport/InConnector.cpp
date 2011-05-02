@@ -17,36 +17,20 @@
  *
  * ============================================================ */
 
-#pragma once
+#include "InConnector.h"
 
-#include <rsc/runtime/Properties.h>
-
-#include "../OutConnector.h"
-#include "Bus.h"
-#include "rsb/rsbexports.h"
+using namespace rsb::eventprocessing;
 
 namespace rsb {
-namespace inprocess {
+namespace transport {
 
-/**
- * @author jmoringe
- */
-class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {
-public:
-    OutConnector();
+void InConnector::addHandler(HandlerPtr handler) {
+    this->handlers.push_back(handler);
+}
 
-    void activate();
-    void deactivate();
-
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
-
-    void handle(rsb::EventPtr e);
-
-    static rsb::transport::OutConnector* create(
-            const rsc::runtime::Properties &args);
-private:
-    Bus &bus;
-};
+void InConnector::removeHandler(HandlerPtr handler) {
+    this->handlers.remove(handler);
+}
 
 }
 }

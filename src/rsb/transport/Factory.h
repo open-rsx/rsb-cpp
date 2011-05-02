@@ -23,7 +23,8 @@
 
 #include <rsc/patterns/Factory.h>
 
-#include "Connector.h"
+#include "InConnector.h"
+#include "OutConnector.h"
 
 namespace rsb {
 namespace transport {

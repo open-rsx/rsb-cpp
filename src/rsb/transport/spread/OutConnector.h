@@ -23,7 +23,7 @@
 
 #include <rsc/runtime/Properties.h>
 
-#include "../Connector.h"
+#include "../OutConnector.h"
 #include "SpreadConnector.h"
 #include "rsb/rsbexports.h"
 

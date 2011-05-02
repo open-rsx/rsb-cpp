@@ -24,7 +24,7 @@
 
 #include <rsc/threading/RepetitiveTask.h>
 
-#include "rsb/transport/Connector.h"
+#include "rsb/transport/OutConnector.h"
 
 namespace rsb {
 namespace test {

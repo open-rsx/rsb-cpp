@@ -19,16 +19,9 @@
 
 #pragma once
 
-#include <list>
-
 #include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
-#include "../Event.h"
-#include "../Handler.h"
-#include "../filter/FilterObserver.h"
 #include "../QualityOfServiceSpec.h"
-#include "../eventprocessing/Handler.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -55,39 +48,6 @@ public:
 };
 
 typedef boost::shared_ptr<Connector> ConnectorPtr;
-
-/** Objects of classes which implement this interface can be used to
- * receive events by means of one transport mechanism.
- *
- * Received events are dispatched to an associated observer.
- *
- * @author jmoringe
- */
-class RSB_EXPORT InConnector : public Connector,
-                               public rsb::filter::FilterObserver,
-                               public boost::enable_shared_from_this<InConnector> {
-public:
-    virtual void addHandler(HandlerPtr handler);
-    virtual void removeHandler(HandlerPtr handler);
-protected:
-    typedef std::list<eventprocessing::HandlerPtr> HandlerList;
-
-    HandlerList handlers;
-};
-
-typedef boost::shared_ptr<InConnector> InConnectorPtr;
-
-/** Objects of classes which implement this interface can be used to
- * send events by means of one transport mechanism.
- *
- * @author jmoringe
- */
-class RSB_EXPORT OutConnector : public Connector,
-                                public eventprocessing::Handler {
-public:
-};
-
-typedef boost::shared_ptr<OutConnector> OutConnectorPtr;
 
 }
 }

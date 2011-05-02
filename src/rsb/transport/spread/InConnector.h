@@ -25,7 +25,7 @@
 #include <rsc/threading/TaskExecutor.h>
 
 #include "../../filter/ScopeFilter.h"
-#include "../Connector.h"
+#include "../InConnector.h"
 #include "SpreadConnector.h"
 #include "rsb/rsbexports.h"
 

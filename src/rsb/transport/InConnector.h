@@ -19,45 +19,36 @@
 
 #pragma once
 
+#include <list>
+
 #include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
-#include <rsc/logging/Logger.h>
-#include <rsc/runtime/Properties.h>
-
-#include "../InConnector.h"
-#include "../../eventprocessing/Handler.h"
+#include "../filter/FilterObserver.h"
+#include "../eventprocessing/Handler.h"
+#include "Connector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace inprocess {
+namespace transport {
 
-/**
+/** Objects of classes which implement this interface can be used to
+ * receive events by means of one transport mechanism.
+ *
+ * Received events are dispatched to an associated observer.
+ *
  * @author jmoringe
  */
-class RSB_EXPORT InConnector: public transport::InConnector,
-                              public eventprocessing::Handler {
+class RSB_EXPORT InConnector : public Connector,
+                               public rsb::filter::FilterObserver,
+                               public boost::enable_shared_from_this<InConnector> {
 public:
-    InConnector();
-    virtual ~InConnector();
+    virtual void addHandler(eventprocessing::HandlerPtr handler);
+    virtual void removeHandler(eventprocessing::HandlerPtr handler);
+protected:
+    typedef std::list<eventprocessing::HandlerPtr> HandlerList;
 
-    Scope getScope() const;
-    void setScope(const Scope& scope);
-
-    void activate();
-    void deactivate();
-
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
-
-    void handle(EventPtr event);
-
-    static rsb::transport::InConnector *create(
-            const rsc::runtime::Properties &args);
-private:
-    rsc::logging::LoggerPtr logger;
-
-    Scope scope;
-
-    bool active;
+    HandlerList handlers;
 };
 
 typedef boost::shared_ptr<InConnector> InConnectorPtr;

@@ -22,7 +22,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "../Event.h"
-#include "../transport/Connector.h"
+#include "../transport/OutConnector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -36,31 +36,31 @@ namespace eventprocessing {
  */
 class RSB_EXPORT EventSendingStrategy {
 public:
-	virtual ~EventSendingStrategy();
+    virtual ~EventSendingStrategy();
 
-        /** Add @a connector to the list of connectors to which this
-         * strategy should deliver events.
-         *
-         * @param connector The new @ref rsb::transport::OutConnector
-         * .
-         */
-        virtual void addConnector(transport::OutConnectorPtr connector) = 0;
+    /** Add @a connector to the list of connectors to which this
+     * strategy should deliver events.
+     *
+     * @param connector The new @ref rsb::transport::OutConnector
+     * .
+     */
+    virtual void addConnector(transport::OutConnectorPtr connector) = 0;
 
-        /** Remove @a connector from the list of connectors to which
-         * this strategy should deliver events.
-         *
-         * @param connector The @ref rsb::transport::OutConnector that
-         * should be removed.
-         */
-        virtual void removeConnector(transport::OutConnectorPtr connector) = 0;
+    /** Remove @a connector from the list of connectors to which
+     * this strategy should deliver events.
+     *
+     * @param connector The @ref rsb::transport::OutConnector that
+     * should be removed.
+     */
+    virtual void removeConnector(transport::OutConnectorPtr connector) = 0;
 
-        /** Deliver @a event to all @ref rsb::transport::OutConnector
-         * objects associated to this strategy.
-         *
-         * @param event An @ref rsb::Event that should be delivered to
-         * the connectors.
-         */
-        virtual void process(EventPtr event) = 0;
+    /** Deliver @a event to all @ref rsb::transport::OutConnector
+     * objects associated to this strategy.
+     *
+     * @param event An @ref rsb::Event that should be delivered to
+     * the connectors.
+     */
+    virtual void process(EventPtr event) = 0;
 };
 
 typedef boost::shared_ptr<EventSendingStrategy> EventSendingStrategyPtr;

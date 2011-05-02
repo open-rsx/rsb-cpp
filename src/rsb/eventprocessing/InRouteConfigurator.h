@@ -28,7 +28,7 @@
 
 #include "../Subscription.h"
 #include "../QualityOfServiceSpec.h"
-#include "../transport/Connector.h"
+#include "../transport/InConnector.h"
 #include "EventReceivingStrategy.h"
 #include "rsb/rsbexports.h"
 
@@ -41,7 +41,6 @@ namespace eventprocessing {
  * @author swrede
  * @todo add configuration, provide preliminary set up interface
  * @todo implement abstract factory pattern for different port types
- * @todo think about null objects for ports to avoid checks for existence
  */
 class RSB_EXPORT InRouteConfigurator {
 public:
