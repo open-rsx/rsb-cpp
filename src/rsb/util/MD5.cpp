@@ -404,7 +404,7 @@ string MD5::toHexString(const bool &pretty) const {
         if (pretty && ((i % 4) == 0) && i != 0) {
             s << " ";
         }
-        s << (int) hash[i];
+        s << setw(2) << setfill('0') << (int) hash[i];
     }
 
     return s.str();
