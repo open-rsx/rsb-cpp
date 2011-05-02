@@ -45,14 +45,15 @@ InRouteConfigurator::~InRouteConfigurator() {
 void InRouteConfigurator::activate() {
     RSCDEBUG(logger, "Activating");
 
+    // Activate all connectors.
     for (ConnectorList::iterator it = this->connectors.begin();
          it != this->connectors.end(); ++it) {
         (*it)->activate();
     }
 
+    // Create the event processing strategy and attach it to all
+    // connectors.
     this->eventReceivingStrategy = EventReceivingStrategyPtr(new ParallelEventReceivingStrategy());
-
-    // add event processor as observer to connectors
     for (ConnectorList::iterator it = this->connectors.begin();
          it != this->connectors.end(); ++it) {
         (*it)->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&EventReceivingStrategy::handle,
@@ -61,11 +62,15 @@ void InRouteConfigurator::activate() {
 }
 
 void InRouteConfigurator::deactivate() {
+    RSCDEBUG(logger, "Deactivating");
+
+    // Deactivate all connectors.
     for (ConnectorList::iterator it = this->connectors.begin();
          it != this->connectors.end(); ++it) {
         (*it)->deactivate();
     }
 
+    // Release event processing strategy.
     this->eventReceivingStrategy.reset();
     this->shutdown = true;
 }
