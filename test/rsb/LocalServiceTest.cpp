@@ -91,6 +91,8 @@ TEST(LocalServiceTest, testSubServices)
     LocalService service(scope);
 
     NiceMock<MockService> *mockService = new NiceMock<MockService> ;
+    ON_CALL(*mockService, getSubServices()).WillByDefault(Return(set<ServicePtr>()));
+    ON_CALL(*mockService, getParticipants()).WillByDefault(Return(set<ParticipantPtr>()));
     ServicePtr mockServicePtr(mockService);
 
     ON_CALL(*mockService, getScope()).WillByDefault(Return(Scope("/this/is")));
