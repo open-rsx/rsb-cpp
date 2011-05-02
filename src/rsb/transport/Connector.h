@@ -21,8 +21,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <rsc/misc/UUID.h>
-
 #include "../Event.h"
 #include "../Handler.h"
 #include "../filter/FilterObserver.h"
@@ -37,19 +35,19 @@ namespace transport {
  */
 class RSB_EXPORT Connector {
 public:
-	virtual ~Connector();
+    virtual ~Connector();
 
-        virtual void activate() = 0;
-	virtual void deactivate() = 0;
+    virtual void activate() = 0;
+    virtual void deactivate() = 0;
 
-	/**
-	 * Requests new QoS settings for publishing events. Does not influence the
-	 * receiving part.
-	 *
-	 * @param specs QoS specification
-	 * @throw UnsupportedQualityOfServiceException requirements cannot be met
-	 */
-	virtual void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) = 0;
+    /**
+     * Requests new QoS settings for publishing events. Does not
+     * influence the receiving part.
+     *
+     * @param specs QoS specification
+     * @throw UnsupportedQualityOfServiceException requirements cannot be met
+     */
+    virtual void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) = 0;
 };
 
 typedef boost::shared_ptr<Connector> ConnectorPtr;
@@ -61,14 +59,14 @@ typedef boost::shared_ptr<Connector> ConnectorPtr;
  *
  * @author jmoringe
  */
-class RSB_EXPORT InConnector : public virtual Connector,
+class RSB_EXPORT InConnector : public Connector,
                                public rsb::filter::FilterObserver {
 public:
-        // Observer may implement complex event matching
-	// or be just directly the user-level event handlers
-	virtual void setObserver(HandlerPtr observer);
+    // Observer may implement complex event matching
+    // or be just directly the user-level event handlers
+    virtual void setObserver(HandlerPtr observer);
 protected:
-        HandlerPtr observer;
+    HandlerPtr observer;
 };
 
 typedef boost::shared_ptr<InConnector> InConnectorPtr;
@@ -78,9 +76,9 @@ typedef boost::shared_ptr<InConnector> InConnectorPtr;
  *
  * @author jmoringe
  */
-class RSB_EXPORT OutConnector : public virtual Connector {
+class RSB_EXPORT OutConnector : public Connector {
 public:
-        virtual void push(EventPtr e) = 0;
+    virtual void push(EventPtr e) = 0;
 };
 
 typedef boost::shared_ptr<OutConnector> OutConnectorPtr;
