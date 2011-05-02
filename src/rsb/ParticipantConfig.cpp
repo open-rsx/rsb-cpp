@@ -64,6 +64,10 @@ void ParticipantConfig::Transport::setOptions(const Properties &options) {
     this->options = options;
 }
 
+bool ParticipantConfig::Transport::isEnabled() const {
+    return this->getOptions().get<bool>("enabled", true);
+}
+
 bool ParticipantConfig::Transport::operator==(const Transport &other) const {
     return name == other.name;
 }
@@ -72,7 +76,8 @@ bool ParticipantConfig::Transport::operator<(const Transport &other) const {
     return name < other.name;
 }
 
-ParticipantConfig::ParticipantConfig() {
+ParticipantConfig::ParticipantConfig() :
+    logger(Logger::getLogger("rsb.ParticipantConfig")) {
 }
 
 ParticipantConfig::~ParticipantConfig() {
@@ -95,12 +100,16 @@ ParticipantConfig::Transport ParticipantConfig::getTransport(const string &name)
     return it->second;
 }
 
-set<ParticipantConfig::Transport> ParticipantConfig::getTransports() const {
+set<ParticipantConfig::Transport> ParticipantConfig::getTransports(bool includeDisabled) const {
     set<Transport> result;
     for (map<string, Transport>::const_iterator it
              = this->transports.begin();
          it != this->transports.end(); ++it) {
-        result.insert(it->second);
+        if (it->second.isEnabled() || includeDisabled) {
+            result.insert(it->second);
+        } else {
+            RSCDEBUG(logger, "Skipping disabled transport " << it->second);
+        }
     }
     return result;
 }

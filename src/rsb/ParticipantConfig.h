@@ -26,6 +26,7 @@
 #include <boost/operators.hpp>
 #include <boost/filesystem/path.hpp>
 
+#include <rsc/logging/Logger.h>
 #include <rsc/config/OptionHandler.h>
 #include <rsc/runtime/Properties.h>
 
@@ -84,6 +85,8 @@ public:
          */
         void setOptions(const rsc::runtime::Properties &options);
 
+        bool isEnabled() const;
+
         bool operator==(const Transport &other) const;
         bool operator<(const Transport &other) const;
 
@@ -114,11 +117,13 @@ public:
     /**
      * Returns the set of desired transports for a participant.
      *
+     * @param includeDisabled If true, include transports that have
+     * been disabled via configuration options.
      * @return set of transports identified by strings
      * @note generates a copy. Changing the returned object does not change this
      *       configuration
      */
-    std::set<Transport> getTransports() const;
+    std::set<Transport> getTransports(bool includeDisabled = false) const;
 
     Transport getTransport(const std::string &name) const;
 
@@ -223,7 +228,7 @@ RSB_TRANSPORT_SPREAD_PORT -> transport spread port
             const ParticipantConfig &config);
 
 private:
-
+    rsc::logging::LoggerPtr logger;
     QualityOfServiceSpec qosSpec;
     std::map<std::string, Transport> transports;
     rsc::runtime::Properties options;
