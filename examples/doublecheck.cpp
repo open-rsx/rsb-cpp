@@ -38,8 +38,8 @@ int main(int /*argc*/, char **/*argv*/) {
 
     for (int i = 0; i < 3; ++i) {
 
-        Scope scope1("/test/dummy1");
-        Scope scope2("/test/dummy2");
+        Scope scope1("/test/dummyOne");
+        Scope scope2("/test/dummyTwo");
 
         Informer<string>::Ptr informer1 = factory.createInformer<string> (
                 scope1);
