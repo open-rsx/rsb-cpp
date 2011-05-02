@@ -55,7 +55,7 @@ void Bus::removeSink(InConnector* sink) {
 void Bus::push(EventPtr event) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
-    RSCDEBUG(logger, "Delivering event " << event);
+    RSCDEBUG(logger, "Delivering event " << *event);
 
     vector<Scope> scopes = event->getScope().superScopes(true);
     RSCDEBUG(logger, "Relevant scopes " << scopes);
