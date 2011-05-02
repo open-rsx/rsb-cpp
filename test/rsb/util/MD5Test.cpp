@@ -37,9 +37,15 @@ TEST(MD5Test, testConstruct)
 
 TEST(MD5Test, testHexString)
 {
+    {
+        MD5 md5("The quick brown fox jumps over the lazy dog");
+        EXPECT_EQ("9e107d9d372bb6826bd81d3542a419d6", md5.toHexString());
+        EXPECT_EQ("9e107d9d 372bb682 6bd81d35 42a419d6", md5.toHexString(true));
+    }
 
-    MD5 md5("The quick brown fox jumps over the lazy dog");
-    EXPECT_EQ("9e107d9d372bb6826bd81d3542a419d6", md5.toHexString());
-    EXPECT_EQ("9e107d9d 372bb682 6bd81d35 42a419d6", md5.toHexString(true));
-
+    {
+        MD5 md5("/foo/bar/");
+        EXPECT_EQ("1c184f3891344400380281315d9e7388", md5.toHexString());
+        EXPECT_EQ("1c184f38 91344400 38028131 5d9e7388", md5.toHexString(true));
+    }
 }
