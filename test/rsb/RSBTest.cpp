@@ -34,7 +34,7 @@
 #include "rsb/transport/Connector.h"
 #include "rsb/transport/transports.h"
 #include "InformerTask.h"
-#include "rsb/Subscription.h"
+#include "rsb/Handler.h"
 #include "rsb/filter/Filter.h"
 #include "rsb/filter/ScopeFilter.h"
 #include "rsb/converter/converters.h"
@@ -61,37 +61,29 @@ TEST(RSBTest, testRoundtrip)
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
 
     InConnectorPtr in(InFactory::getInstance().createInst("spread"));
+    in->activate();
     OutConnectorPtr out(OutFactory::getInstance().createInst("spread"));
 
+    const Scope scope("/blah");
+
     // In- and OutRouteConfigurator instantiation
-    InRouteConfiguratorPtr inConfigurator(new InRouteConfigurator());
+    InRouteConfiguratorPtr inConfigurator(new InRouteConfigurator(scope));
     inConfigurator->addConnector(in);
     inConfigurator->activate();
     OutRouteConfiguratorPtr outConfigurator(new OutRouteConfigurator());
     outConfigurator->addConnector(out);
     outConfigurator->activate();
 
-    // create subscription
-    SubscriptionPtr s(new Subscription());
-    const Scope scope("/blah");
-    FilterPtr f(new ScopeFilter(scope));
-    s->appendFilter(f);
-
     // domain objects
     unsigned int numEvents = 10;
-    boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, 10, 1000));
+    boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, 10,
+            1000));
     WaitingObserver observer(numEvents, scope);
-    set<rsb::HandlerPtr> handlers;
-    handlers.insert(
-    rsb::HandlerPtr(
-                    new EventFunctionHandler(
-                            boost::bind(&WaitingObserver::handler, &observer,
-                                    _1))));
 
     // add subscription to router
-    inConfigurator->subscribe(s, handlers);
+    inConfigurator->handlerAdded(rsb::HandlerPtr(new EventFunctionHandler(
+            boost::bind(&WaitingObserver::handler, &observer, _1))));
 
-    // activate port and schedule informer
     exec->schedule(source);
 
     observer.waitReceived();

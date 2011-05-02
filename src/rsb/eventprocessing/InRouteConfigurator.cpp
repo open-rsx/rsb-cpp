@@ -31,9 +31,9 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-InRouteConfigurator::InRouteConfigurator() :
+InRouteConfigurator::InRouteConfigurator(const Scope &scope) :
     logger(Logger::getLogger("rsb.eventprocessing.InRouteConfigurator")),
-    shutdown(false) {
+            scope(scope), shutdown(false) {
 }
 
 InRouteConfigurator::~InRouteConfigurator() {
@@ -46,18 +46,23 @@ void InRouteConfigurator::activate() {
     RSCDEBUG(logger, "Activating");
 
     // Activate all connectors.
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+    ScopeFilter scopeFilter(scope);
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
+        // TODO legacy call
+        scopeFilter.notifyObserver(*it, FilterAction::ADD);
         (*it)->activate();
     }
 
     // Create the event processing strategy and attach it to all
     // connectors.
-    this->eventReceivingStrategy = EventReceivingStrategyPtr(new ParallelEventReceivingStrategy());
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
-        (*it)->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&EventReceivingStrategy::handle,
-                                                                          this->eventReceivingStrategy, _1))));
+    this->eventReceivingStrategy = EventReceivingStrategyPtr(
+            new ParallelEventReceivingStrategy());
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
+        (*it)->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(
+                &EventReceivingStrategy::handle, this->eventReceivingStrategy,
+                _1))));
     }
 }
 
@@ -65,8 +70,8 @@ void InRouteConfigurator::deactivate() {
     RSCDEBUG(logger, "Deactivating");
 
     // Deactivate all connectors.
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
         (*it)->deactivate();
     }
 
@@ -74,7 +79,6 @@ void InRouteConfigurator::deactivate() {
     this->eventReceivingStrategy.reset();
     this->shutdown = true;
 }
-
 
 void InRouteConfigurator::addConnector(InConnectorPtr connector) {
     RSCDEBUG(logger, "Adding connector " << connector);
@@ -86,31 +90,28 @@ void InRouteConfigurator::removeConnector(InConnectorPtr connector) {
     this->connectors.remove(connector);
 }
 
-void InRouteConfigurator::notifyConnectors(SubscriptionPtr s,
-                              filter::FilterAction::Types a) {
+void InRouteConfigurator::handlerAdded(HandlerPtr handler) {
+    eventReceivingStrategy->addHandler(handler);
+}
 
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
-        FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(*it);
-        for (FilterChain::iterator listIt = s->getFilters()->begin(); listIt
-                 != s->getFilters()->end(); ++listIt) {
-            // TODO check whether we want to do this also for out ports
-            // TODO generally use filters::Observable implementation here!
-            (*listIt)->notifyObserver(fo, a);
-        }
+void InRouteConfigurator::handlerRemoved(HandlerPtr handler) {
+    eventReceivingStrategy->removeHandler(handler);
+}
+
+void InRouteConfigurator::filterAdded(filter::FilterPtr filter) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
+        filter->notifyObserver(*it, filter::FilterAction::ADD);
     }
+    eventReceivingStrategy->addFilter(filter);
 }
 
-void InRouteConfigurator::subscribe(SubscriptionPtr s, set<HandlerPtr> handlers) {
-    // notify ports about new subscription
-    notifyConnectors(s, filter::FilterAction::ADD);
-    this->eventReceivingStrategy->subscribe(s, handlers);
-}
-
-void InRouteConfigurator::unsubscribe(SubscriptionPtr s) {
-    // notify ports about removal of subscription
-    notifyConnectors(s, filter::FilterAction::REMOVE);
-    this->eventReceivingStrategy->unsubscribe(s);
+void InRouteConfigurator::filterRemoved(filter::FilterPtr filter) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
+        filter->notifyObserver(*it, filter::FilterAction::REMOVE);
+    }
+    eventReceivingStrategy->removeFilter(filter);
 }
 
 void InRouteConfigurator::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {

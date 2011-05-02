@@ -23,12 +23,12 @@
 #include <utility>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/OrderedQueueDispatcherPool.h>
 
 #include "../Event.h"
-#include "../Subscription.h"
 #include "EventReceivingStrategy.h"
 #include "rsb/rsbexports.h"
 
@@ -46,34 +46,33 @@ namespace eventprocessing {
 /**
  * @author swrede
  */
-class RSB_EXPORT ParallelEventReceivingStrategy : public EventReceivingStrategy {
+class RSB_EXPORT ParallelEventReceivingStrategy: public EventReceivingStrategy {
 public:
-	ParallelEventReceivingStrategy();
-	// TODO make threadpool size configurable
-	ParallelEventReceivingStrategy(unsigned int num_threads);
-	virtual ~ParallelEventReceivingStrategy();
+    ParallelEventReceivingStrategy();
+    // TODO make threadpool size configurable
+    ParallelEventReceivingStrategy(unsigned int num_threads);
+    virtual ~ParallelEventReceivingStrategy();
 
-        // add a subscription and associated handlers
-        void subscribe(rsb::SubscriptionPtr s,
-                       std::set<HandlerPtr> handlers);
+    virtual void addHandler(HandlerPtr handler);
+    virtual void removeHandler(HandlerPtr handler);
 
-        // unsubscribe a subscription
-        void unsubscribe(rsb::SubscriptionPtr s);
+    virtual void addFilter(filter::FilterPtr filter);
+    virtual void removeFilter(filter::FilterPtr filter);
 
-        // if invoked, the event is dispatched to listeners, typically called by ports
-        void handle(rsb::EventPtr e);
+    // if invoked, the event is dispatched to listeners, typically called by ports
+    void handle(rsb::EventPtr e);
+
 private:
-        typedef std::pair< rsb::SubscriptionPtr, std::set<HandlerPtr> > DispatchUnit;
-        typedef boost::shared_ptr<DispatchUnit> DispatchUnitPtr;
 
-        bool filter(DispatchUnitPtr dispatch, EventPtr event);
-        void deliver(DispatchUnitPtr dispatch, EventPtr event);
+    bool filter(HandlerPtr handler, EventPtr event);
+    void deliver(HandlerPtr handler, EventPtr event);
 
-        // TODO make list subscriptions
-        rsc::logging::LoggerPtr logger;
-        rsc::threading::OrderedQueueDispatcherPool<EventPtr, DispatchUnit> pool;
+    rsc::logging::LoggerPtr logger;
+    rsc::threading::OrderedQueueDispatcherPool<EventPtr, Handler> pool;
 
-        std::map<SubscriptionPtr, DispatchUnitPtr> dispatchUnitsBySubscription;
+    boost::shared_mutex filtersMutex;
+    std::set<filter::FilterPtr> filters;
+
 };
 
 }

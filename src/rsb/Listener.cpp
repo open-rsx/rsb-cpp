@@ -50,15 +50,11 @@ string Listener::getClassName() const {
 void Listener::initialize(const vector<InConnectorPtr> &connectors,
         const Scope &scope) {
     // TODO evaluate configuration
-    this->configurator.reset(new eventprocessing::InRouteConfigurator());
+    this->configurator.reset(new eventprocessing::InRouteConfigurator(scope));
     for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
             != connectors.end(); ++it) {
         this->configurator->addConnector(*it);
     }
-
-    this->subscription.reset(new Subscription());
-    this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
-            scope)));
 
     this->activate();
 }
@@ -75,20 +71,6 @@ void Listener::deactivate() {
     this->passive = true;
 }
 
-SubscriptionPtr Listener::getSubscription() {
-    return this->subscription;
-}
-
-void Listener::setSubscription(SubscriptionPtr s) {
-    this->configurator->unsubscribe(this->subscription);
-    this->subscription = s;
-    this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
-            this->getScope())));
-    if (!this->handlers.empty()) {
-        this->configurator->subscribe(this->subscription, this->handlers);
-    }
-}
-
 set<HandlerPtr> Listener::getHandlers() const {
     set<HandlerPtr> result;
     copy(this->handlers.begin(), this->handlers.end(), inserter(result,
@@ -97,19 +79,19 @@ set<HandlerPtr> Listener::getHandlers() const {
 }
 
 void Listener::addHandler(HandlerPtr h) {
-    if (!this->handlers.empty()) {
-        this->configurator->unsubscribe(this->subscription);
-    }
-    this->handlers.insert(h);
-    this->configurator->subscribe(this->subscription, this->handlers);
+    this->configurator->handlerAdded(h);
 }
 
 void Listener::removeHandler(HandlerPtr h) {
-    if (!this->handlers.empty()) {
-        this->configurator->unsubscribe(this->subscription);
-    }
-    this->handlers.erase(h);
-    this->configurator->subscribe(this->subscription, this->handlers);
+    this->configurator->handlerRemoved(h);
+}
+
+void Listener::addFilter(filter::FilterPtr filter) {
+    configurator->filterAdded(filter);
+}
+
+void Listener::removeFilter(filter::FilterPtr filter) {
+    configurator->filterRemoved(filter);
 }
 
 }

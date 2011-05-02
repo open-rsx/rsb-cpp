@@ -32,7 +32,8 @@
 namespace rsb {
 namespace transport {
 
-/** Objects of classes which implement this interface can be used to
+/**
+ * Objects of classes which implement this interface can be used to
  * receive events by means of one transport mechanism.
  *
  * Received events are dispatched to an associated observer.

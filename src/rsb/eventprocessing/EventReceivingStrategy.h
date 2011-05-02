@@ -22,29 +22,30 @@
 #include <boost/shared_ptr.hpp>
 
 #include "../Event.h"
-#include "../Subscription.h"
 #include "Handler.h"
+#include "../filter/Filter.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace eventprocessing {
 
-/** Implementations of this interface organize the receiving of events
+/**
+ * Implementations of this interface organize the receiving of events
  * via @ref rsb::transport::InConnector s.
  *
  * @author swrede
  * @author jmoringe
  */
-class RSB_EXPORT EventReceivingStrategy : public Handler {
+class RSB_EXPORT EventReceivingStrategy: public Handler {
 public:
+
     virtual ~EventReceivingStrategy();
 
-    // add a subscription and associated handlers
-    virtual void subscribe(rsb::SubscriptionPtr s,
-                           std::set<HandlerPtr> handlers) = 0;
+    virtual void addHandler(HandlerPtr handler) = 0;
+    virtual void removeHandler(HandlerPtr handler) = 0;
 
-    // unsubscribe a subscription
-    virtual void unsubscribe(rsb::SubscriptionPtr s) = 0;
+    virtual void addFilter(filter::FilterPtr filter) = 0;
+    virtual void removeFilter(filter::FilterPtr filter) = 0;
 
     // if invoked, the event is dispatched to listeners, typically called by ports
     virtual void handle(rsb::EventPtr event) = 0;

@@ -27,7 +27,6 @@
 
 #include "Event.h"
 #include "Participant.h"
-#include "Subscription.h"
 #include "Handler.h"
 #include "eventprocessing/InRouteConfigurator.h"
 #include "transport/Connector.h"
@@ -37,11 +36,10 @@ namespace rsb {
 
 /**
  * A Listener receives events published by @ref rsb::Informer objects
- * by participating in a channel with a suitable scope. The filters
- * can be added to the associated @ref rsb::Subscription object to
- * reduce the set of events received by a listener. @ref Handler
+ * by participating in a channel with a suitable scope. @ref Handler
  * objects have to be added to the listener to actually process
- * received events.
+ * received events. These events can be filtered for all handlers by adding
+ * Filter instances to this class. Filter form a conjunction.
  *
  * Usage example:
  * @code
@@ -68,39 +66,39 @@ public:
      * @param config the configuration that was used to setup this listener
      */
     Listener(const std::vector<transport::InConnectorPtr> &connectors,
-             const Scope &scope, const ParticipantConfig &config);
+            const Scope &scope, const ParticipantConfig &config);
 
     virtual ~Listener();
 
     std::string getClassName() const;
 
     /**
-     * Activates the Listener and therefore the InRouteConfigurator. Is considered being in
-     * active mode afterwards.
+     * Activates the Listener and therefore the InRouteConfigurator. Is
+     * considered being in active mode afterwards.
      */
     void activate();
 
     /**
-     * Deactivates the Listener and therefore the InRouteConfigurator. Is considered being
-     * in passive mode afterwards.
+     * Deactivates the Listener and therefore the InRouteConfigurator. Is
+     * considered being in passive mode afterwards.
      */
     void deactivate();
 
     /**
-     * Return the associated @ref rsb::Subscription of the
-     * listener.
+     * Adds a filter that will be applied after some time (but not immediately
+     * after this call) for all handlers.
      *
-     * @todo the return value should be immutable or a copy
+     * @param filter filter to add
      */
-    SubscriptionPtr
-    getSubscription();
+    void addFilter(filter::FilterPtr filter);
 
     /**
-     * Replace the associated @ref rsb::Subscription of the listener.
+     * Removes a previously installed filter if it is present by pointer
+     * comparison some time after this call.
      *
-     * @param subscription the new subscription.
+     * @param filter filter to remove if present
      */
-    void setSubscription(SubscriptionPtr subscription);
+    void removeFilter(filter::FilterPtr filter);
 
     /**
      * @note modifying the returned set object does not affect the
@@ -111,23 +109,27 @@ public:
     /**
      * Adds a @ref rsb::Handler to the Listener. Events which
      * match the restrictions described by the associated
-     * @ref rsb::Subscription are passed to all handlers.
+     * filters are passed to all handlers.
      *
      * @param h a Pointer to the Handler.
      */
     virtual void addHandler(HandlerPtr h);
 
+    /**
+     * Removes a Handler instance to process newly received events.
+     *
+     * @param h handler to remove if present (comparison based on pointer)
+     */
     void removeHandler(HandlerPtr h);
 
 private:
     rsc::logging::LoggerPtr logger;
     volatile bool passive;
-    SubscriptionPtr subscription;
     std::set<HandlerPtr> handlers;
     eventprocessing::InRouteConfiguratorPtr configurator;
 
     void initialize(const std::vector<transport::InConnectorPtr> &connectors,
-                    const Scope &scope);
+            const Scope &scope);
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;

@@ -21,7 +21,6 @@
 
 #include <rsb/Informer.h>
 #include <rsb/Listener.h>
-#include <rsb/Subscription.h>
 #include <rsb/Factory.h>
 
 using namespace std;

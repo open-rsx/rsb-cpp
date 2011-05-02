@@ -26,7 +26,6 @@
 
 #include <rsc/logging/Logger.h>
 
-#include "../Subscription.h"
 #include "../QualityOfServiceSpec.h"
 #include "../transport/InConnector.h"
 #include "EventReceivingStrategy.h"
@@ -40,11 +39,11 @@ namespace eventprocessing {
  *
  * @author swrede
  * @todo add configuration, provide preliminary set up interface
- * @todo implement abstract factory pattern for different port types
  */
 class RSB_EXPORT InRouteConfigurator {
 public:
-    InRouteConfigurator();
+
+    InRouteConfigurator(const Scope &scope);
     virtual ~InRouteConfigurator();
 
     void activate();
@@ -54,20 +53,22 @@ public:
     void removeConnector(transport::InConnectorPtr connector);
 
     /**
-     * Add a subscription.
+     * Adds a new handler that will be notified about received events.
      *
-     * @param s subscription to add
-     * @param handlers associated handlers
+     * @param handler the handler to add
      */
-    void subscribe(rsb::SubscriptionPtr s,
-                   std::set<HandlerPtr> handlers);
+    void handlerAdded(HandlerPtr handler);
 
     /**
-     * Unsubscribe a subscription.
+     * Removes a previously registered handle.
      *
-     * @param s subscription to remove
+     * @param handler handler to remove
+     * @todo guarantees
      */
-    void unsubscribe(rsb::SubscriptionPtr s);
+    void handlerRemoved(HandlerPtr handler);
+
+    void filterAdded(filter::FilterPtr filter);
+    void filterRemoved(filter::FilterPtr filter);
 
     /**
      * Define the desired quality of service specifications for published
@@ -77,18 +78,12 @@ public:
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
-protected:
-    /**
-     * Helper for port notification about subscription status changes.
-     */
-    void
-        notifyConnectors(rsb::SubscriptionPtr s,
-                         rsb::filter::FilterAction::Types a);
 
 private:
     typedef std::list<transport::InConnectorPtr> ConnectorList;
 
     rsc::logging::LoggerPtr logger;
+    Scope scope;
     ConnectorList connectors;
     // ep for observation model
     EventReceivingStrategyPtr eventReceivingStrategy;

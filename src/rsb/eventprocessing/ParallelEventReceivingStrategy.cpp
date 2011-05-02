@@ -25,90 +25,97 @@ namespace rsb {
 namespace eventprocessing {
 
 ParallelEventReceivingStrategy::ParallelEventReceivingStrategy() :
-	logger(rsc::logging::Logger::getLogger("rsb.ParallelEventReceivingStrategy")),
-	pool(5,
-	     boost::bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
-	     boost::bind(&ParallelEventReceivingStrategy::filter,  this, _1, _2)) {
-	pool.start();
+    logger(
+            rsc::logging::Logger::getLogger(
+                    "rsb.ParallelEventReceivingStrategy")),
+            pool(5, boost::bind(&ParallelEventReceivingStrategy::deliver, this,
+                    _1, _2), boost::bind(
+                    &ParallelEventReceivingStrategy::filter, this, _1, _2)) {
+    pool.start();
 }
 
-ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(unsigned int num_threads) :
-	logger(rsc::logging::Logger::getLogger("rsb.ParallelEventReceivingStrategy")),
-        pool(num_threads,
-             boost::bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
-             boost::bind(&ParallelEventReceivingStrategy::filter,  this, _1, _2)) {
-	pool.start();
+ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(
+        unsigned int num_threads) :
+    logger(
+            rsc::logging::Logger::getLogger(
+                    "rsb.ParallelEventReceivingStrategy")),
+            pool(num_threads, boost::bind(
+                    &ParallelEventReceivingStrategy::deliver, this, _1, _2),
+                    boost::bind(&ParallelEventReceivingStrategy::filter, this,
+                            _1, _2)) {
+    pool.start();
 }
 
 ParallelEventReceivingStrategy::~ParallelEventReceivingStrategy() {
-	pool.stop();
+    pool.stop();
 }
 
-bool ParallelEventReceivingStrategy::filter(DispatchUnitPtr dispatch, EventPtr e) {
-	RSCDEBUG(logger, "Matching event " << *e << " for subscription " << *dispatch->first);
+bool ParallelEventReceivingStrategy::filter(HandlerPtr handler, EventPtr e) {
+    RSCDEBUG(logger, "Matching event " << e << " for handler " << handler);
 
-	if (!dispatch->first->isEnabled()) {
-		return false;
-	}
+    // match event
+    try {
 
-	bool match = false;
-	// match event
-	try {
-		match = dispatch->first->match(e);
-	} catch (const exception& ex) {
-		// TODO probably disable this subscription
-		RSCFATAL(logger, "Exception matching event " << *e
-				<< " for subscription " << *dispatch->first << ":" << ex.what());
-	} catch (...) {
-		RSCFATAL(logger, "Catch-all exception matching event " << *e
-				<< " for subscription " << *dispatch->first);
-	}
+        boost::shared_lock<boost::shared_mutex> lock(filtersMutex);
+        for (set<filter::FilterPtr>::const_iterator filterIt = filters.begin(); filterIt
+                != filters.end(); ++filterIt) {
+            if (!(*filterIt)->match(e)) {
+                return false;
+            }
+        }
 
-	return match;
+        return true;
+
+    } catch (const exception& ex) {
+        RSCFATAL(logger, "Exception matching event " << *e
+                << " for handler " << handler << ":" << ex.what());
+    } catch (...) {
+        RSCFATAL(logger, "Catch-all exception matching event " << e
+                << " for handler " << handler);
+    }
+
+    return false;
 
 }
 
-void ParallelEventReceivingStrategy::deliver(DispatchUnitPtr dispatch, EventPtr e) {
-	RSCDEBUG(logger, "Delivering event " << *e << " for subscription " << *dispatch->first);
+void ParallelEventReceivingStrategy::deliver(HandlerPtr handler, EventPtr e) {
+    RSCDEBUG(logger, "Delivering event " << e << " for subscription " << handler);
 
-	if (!dispatch->first->isEnabled()) {
-		return;
-	}
+    try {
 
-	try {
+        handler->handle(e);
 
-		const set<HandlerPtr>& handlers = dispatch->second;
-		RSCTRACE(logger, "Match and subscriber is enabled, dispatching to "
-				<< handlers.size() << " handlers");
-		for (set<HandlerPtr>::const_iterator handlerIt = handlers.begin(); handlerIt
-				!= handlers.end(); ++handlerIt) {
-			(*handlerIt)->handle(e);
-		}
-
-	} catch (const exception& ex) {
-		// TODO probably disable this subscription
-		RSCFATAL(logger, "Exception delivering event " << *e
-                         << " to subscription " << *dispatch->first << ":" << ex.what());
-	} catch (...) {
-		RSCFATAL(logger, "Catch-all exception delivering event " << *e
-                         << " to subscription " << *dispatch->first);
-	}
+    } catch (const exception &ex) {
+        // TODO probably disable this subscription
+        RSCFATAL(logger, "Exception delivering event " << e
+                << " to handler " << handler << ":" << ex.what());
+    } catch (...) {
+        RSCFATAL(logger, "Catch-all exception delivering event " << e
+                << " to handler " << handler);
+    }
 
 }
 
 void ParallelEventReceivingStrategy::handle(EventPtr event) {
-	pool.push(event);
+    pool.push(event);
 }
 
-void ParallelEventReceivingStrategy::subscribe(SubscriptionPtr s,
-                                        set<HandlerPtr> handlers) {
-	pool.registerReceiver(DispatchUnitPtr(new DispatchUnit(s, handlers)));
+void ParallelEventReceivingStrategy::addHandler(HandlerPtr handler) {
+    pool.registerReceiver(handler);
 }
-void ParallelEventReceivingStrategy::unsubscribe(SubscriptionPtr s) {
-	// TODO subscriptions need to be made thread-safe
-	s->disable();
-        assert(dispatchUnitsBySubscription.find(s) != dispatchUnitsBySubscription.end());
-	pool.unregisterReceiver(dispatchUnitsBySubscription[s]);
+
+void ParallelEventReceivingStrategy::removeHandler(HandlerPtr handler) {
+    pool.unregisterReceiver(handler);
+}
+
+void ParallelEventReceivingStrategy::addFilter(filter::FilterPtr filter) {
+    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
+    filters.insert(filter);
+}
+
+void ParallelEventReceivingStrategy::removeFilter(filter::FilterPtr filter) {
+    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
+    filters.erase(filter);
 }
 
 }

@@ -29,7 +29,6 @@
 #include <rsc/logging/Logger.h>
 
 #include <rsb/Listener.h>
-#include <rsb/Subscription.h>
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
 #include <rsb/Factory.h>

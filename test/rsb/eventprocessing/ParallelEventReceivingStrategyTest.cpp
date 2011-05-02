@@ -27,7 +27,6 @@
 #include <boost/thread.hpp>
 
 #include "rsb/eventprocessing/ParallelEventReceivingStrategy.h"
-#include "rsb/Subscription.h"
 #include "rsb/QueuePushHandler.h"
 #include "rsb/filter/ScopeFilter.h"
 
@@ -42,40 +41,33 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
 {
 
     ParallelEventReceivingStrategy processor(1);
+    const Scope okScope("/OK");
+    processor.addFilter(FilterPtr(new ScopeFilter(okScope)));
 
     boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > > okQueue(
             new SynchronizedQueue<boost::shared_ptr<string> > );
     rsb::HandlerPtr okHandler(new QueuePushHandler<string> (okQueue));
-    SubscriptionPtr okSubscription(new Subscription);
-    const Scope okScope("/OK");
-    okSubscription->appendFilter(FilterPtr(new ScopeFilter(okScope)));
+    processor.addHandler(okHandler);
+
     {
-        set<rsb::HandlerPtr> handlers;
-        handlers.insert(okHandler);
-        processor.subscribe(okSubscription, handlers);
-    }
+        EventPtr event(new Event);
+        event->setScope(okScope);
+        event->setData(boost::shared_ptr<string>(new string("hello")));
 
-    boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > >
-            wrongQueue(new SynchronizedQueue<boost::shared_ptr<string> > );
-    rsb::HandlerPtr wrongHandler(new QueuePushHandler<string> (wrongQueue));
-    SubscriptionPtr wrongSubscription(new Subscription);
-    const Scope wrongScope("/WRONG");
-    wrongSubscription->appendFilter(FilterPtr(new ScopeFilter(wrongScope)));
+        processor.handle(event);
+    }
     {
-        set<rsb::HandlerPtr> handlers;
-        handlers.insert(wrongHandler);
-        processor.subscribe(wrongSubscription, handlers);
+        EventPtr event(new Event);
+        event->setScope(Scope("/This/Is/wrong"));
+        event->setData(boost::shared_ptr<string>(new string("hello")));
+
+        processor.handle(event);
     }
-
-    EventPtr event(new Event);
-    event->setScope(okScope);
-    event->setData(boost::shared_ptr<string>(new string("hello")));
-
-    processor.handle(event);
 
     boost::this_thread::sleep(boost::posix_time::millisec(500));
 
     EXPECT_FALSE(okQueue->empty());
-    EXPECT_TRUE(wrongQueue->empty());
+    okQueue->pop();
+    EXPECT_TRUE(okQueue->empty());
 
 }

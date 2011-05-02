@@ -44,10 +44,9 @@ public:
 
     RequestHandler(const string &methodName, Server::CallbackPtr callback,
             Informer<void>::Ptr informer) :
-                logger(
-                        rsc::logging::Logger::getLogger(
-                                "rsb.patterns.RequestHandler." + methodName)),
-                methodName(methodName), callback(callback), informer(informer) {
+        logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
+                + methodName)), methodName(methodName), callback(callback),
+                informer(informer) {
     }
 
     void handle(EventPtr event) {
@@ -75,18 +74,17 @@ public:
             EventPtr returnEvent(new Event());
             returnEvent->setType(callback->getReplyType());
             returnEvent->setData(returnData);
-            returnEvent ->addMetaInfo(requestIdKey,
-                    event->getMetaInfo(requestIdKey));
+            returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
+                    requestIdKey));
             informer->publish(returnEvent);
         } catch (exception &e) {
             EventPtr returnEvent(new Event());
             returnEvent->setType("string");
             string exceptionType = typeid(e).name();
-            returnEvent->setData(
-                    boost::shared_ptr<string>(
-                            new string(exceptionType + ": " + e.what())));
-            returnEvent->addMetaInfo(requestIdKey,
-                    event->getMetaInfo(requestIdKey));
+            returnEvent->setData(boost::shared_ptr<string>(new string(
+                    exceptionType + ": " + e.what())));
+            returnEvent->addMetaInfo(requestIdKey, event->getMetaInfo(
+                    requestIdKey));
             returnEvent->addMetaInfo("isException", "");
             informer->publish(returnEvent);
         }
@@ -111,18 +109,19 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
 
     // TODO check that the reply type is convertible
     Informer<void>::Ptr informer =
-            Factory::getInstance().createInformer<void> (
-                    scope.concat(Scope("reply")).concat(Scope(methodName)),
+            Factory::getInstance().createInformer<void> (scope.concat(Scope(
+                    "reply")).concat(Scope(methodName)),
                     Factory::getInstance().getDefaultParticipantConfig(),
                     callback->getReplyType());
 
-    ListenerPtr listener = Factory::getInstance().createListener(
-            scope.concat(Scope("request")).concat(Scope(methodName)));
-    listener->addHandler(
-            HandlerPtr(new RequestHandler(methodName, callback, informer)));
+    ListenerPtr listener = Factory::getInstance().createListener(scope.concat(
+            Scope("request")).concat(Scope(methodName)));
+    listener->addHandler(HandlerPtr(new RequestHandler(methodName, callback,
+            informer)));
     this->requestListeners.insert(listener);
 
-    methods[methodName] = make_pair(listener->getSubscription(), informer);
+    methods[methodName] = informer;
+
 }
 
 }

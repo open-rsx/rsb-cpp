@@ -27,8 +27,9 @@
 namespace rsb {
 namespace eventprocessing {
 
-/** Implementations of this class can be used in contexts where an
- * "event sink" is required.
+/**
+ * Implementations of this class can be used in contexts where an "event sink"
+ * is required.
  *
  * @author jmoringe
  */
@@ -36,7 +37,8 @@ class RSB_EXPORT Handler {
 public:
     virtual ~Handler();
 
-    /** Handle @a event.
+    /**
+     * Handle @a event.
      *
      * @param event The event that should be handled.
      */

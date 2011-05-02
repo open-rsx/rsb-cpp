@@ -28,7 +28,6 @@ SET(SOURCES rsb/CommException.cpp
             rsb/QueuePushHandler.cpp
             rsb/Scope.cpp
             rsb/Service.cpp
-            rsb/Subscription.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
 
             rsb/converter/BoolConverter.cpp
@@ -100,7 +99,6 @@ SET(HEADERS rsb/CommException.h
             rsb/QueuePushHandler.h
             rsb/Scope.h
             rsb/Service.h
-            rsb/Subscription.h
             rsb/UnsupportedQualityOfServiceException.h
             rsb/Version.h
 

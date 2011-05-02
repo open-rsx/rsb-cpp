@@ -83,7 +83,6 @@ private:
 		std::string sendType;
 		boost::shared_ptr<WaitingEventHandler> handler;
 		ListenerPtr replyListener;
-		SubscriptionPtr replySubscription;
 		Informer<void>::Ptr requestInformer;
 	};
 

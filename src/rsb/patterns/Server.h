@@ -72,11 +72,9 @@ public:
     class Callback: public IntlCallback {
     public:
         // typeid is due to msvc strangeness
-        Callback(
-                const std::string &requestType = rsc::runtime::typeName(
-                        typeid(RequestType)),
-                const std::string &replyType = rsc::runtime::typeName(
-                        typeid(ReplyType))) :
+        Callback(const std::string &requestType = rsc::runtime::typeName(
+                typeid(RequestType)), const std::string &replyType =
+                rsc::runtime::typeName(typeid(ReplyType))) :
             requestType(requestType), replyType(replyType) {
         }
 
@@ -109,8 +107,8 @@ public:
 
         boost::shared_ptr<void> intlCall(const std::string &methodName,
                 boost::shared_ptr<void> input) {
-            return call(methodName,
-                    boost::static_pointer_cast<RequestType>(input));
+            return call(methodName, boost::static_pointer_cast<RequestType>(
+                    input));
         }
 
     };
@@ -134,8 +132,7 @@ private:
 
     std::set<ListenerPtr> requestListeners;
 
-    std::map<std::string, std::pair<SubscriptionPtr, Informer<void>::Ptr> >
-            methods;
+    std::map<std::string, Informer<void>::Ptr> methods;
 
 };
 
