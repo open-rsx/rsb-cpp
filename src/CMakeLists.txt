@@ -63,6 +63,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/protocol/ProtocolException.cpp
 
             rsb/transport/Connector.cpp
+            rsb/transport/InConnector.cpp
             rsb/transport/transports.cpp
 
             rsb/transport/inprocess/Bus.cpp
@@ -140,6 +141,8 @@ SET(HEADERS rsb/CommException.h
             rsb/protocol/ProtocolException.h
 
             rsb/transport/Connector.h
+            rsb/transport/InConnector.h
+            rsb/transport/OutConnector.h
             rsb/transport/Factory.h
             rsb/transport/transports.h
 
