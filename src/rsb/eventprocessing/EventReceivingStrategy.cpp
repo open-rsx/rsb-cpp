@@ -17,12 +17,12 @@
  *
  * ============================================================ */
 
-#include "EventProcessingStrategy.h"
+#include "EventReceivingStrategy.h"
 
 namespace rsb {
 namespace eventprocessing {
 
-            EventProcessingStrategy::~EventProcessingStrategy() {
+            EventReceivingStrategy::~EventReceivingStrategy() {
             }
 
 }

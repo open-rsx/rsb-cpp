@@ -29,7 +29,7 @@
 
 #include "../Event.h"
 #include "../Subscription.h"
-#include "EventProcessingStrategy.h"
+#include "EventReceivingStrategy.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -46,12 +46,12 @@ namespace eventprocessing {
 /**
  * @author swrede
  */
-class RSB_EXPORT ParallelEventProcessingStrategy : public EventProcessingStrategy {
+class RSB_EXPORT ParallelEventReceivingStrategy : public EventReceivingStrategy {
 public:
-	ParallelEventProcessingStrategy();
+	ParallelEventReceivingStrategy();
 	// TODO make threadpool size configurable
-	ParallelEventProcessingStrategy(unsigned int num_threads);
-	virtual ~ParallelEventProcessingStrategy();
+	ParallelEventReceivingStrategy(unsigned int num_threads);
+	virtual ~ParallelEventReceivingStrategy();
 
 	// if invoked, the event is dispatched to listeners, typically called by ports
         void process(rsb::EventPtr e);

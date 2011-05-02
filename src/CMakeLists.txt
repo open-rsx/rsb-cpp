@@ -40,9 +40,12 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/VoidConverter.cpp
             rsb/converter/converters.cpp
 
-            rsb/eventprocessing/EventProcessingStrategy.cpp
-            rsb/eventprocessing/ParallelEventProcessingStrategy.cpp
-            rsb/eventprocessing/Router.cpp
+            rsb/eventprocessing/EventSendingStrategy.cpp
+            rsb/eventprocessing/DirectEventSendingStrategy.cpp
+            rsb/eventprocessing/EventReceivingStrategy.cpp
+            rsb/eventprocessing/ParallelEventReceivingStrategy.cpp
+            rsb/eventprocessing/InRouteConfigurator.cpp
+            rsb/eventprocessing/OutRouteConfigurator.cpp
 
             rsb/filter/Filter.cpp
             rsb/filter/FilterObservable.cpp
@@ -110,9 +113,12 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/VoidConverter.h
             rsb/converter/converters.h
 
-            rsb/eventprocessing/EventProcessingStrategy.h
-            rsb/eventprocessing/ParallelEventProcessingStrategy.h
-            rsb/eventprocessing/Router.h
+            rsb/eventprocessing/EventSendingStrategy.h
+            rsb/eventprocessing/DirectEventSendingStrategy.h
+            rsb/eventprocessing/EventReceivingStrategy.h
+            rsb/eventprocessing/ParallelEventReceivingStrategy.h
+            rsb/eventprocessing/InRouteConfigurator.h
+            rsb/eventprocessing/OutRouteConfigurator.h
 
             rsb/filter/Filter.h
             rsb/filter/FilterActionTypes.h

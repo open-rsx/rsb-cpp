@@ -28,12 +28,15 @@
 namespace rsb {
 namespace eventprocessing {
 
-/**
+/** Implementations of this interface organize the receiving of events
+ * via @ref rsb::transport::InConnector s.
+ *
  * @author swrede
+ * @author jmoringe
  */
-class RSB_EXPORT EventProcessingStrategy {
+class RSB_EXPORT EventReceivingStrategy {
 public:
-	virtual ~EventProcessingStrategy();
+	virtual ~EventReceivingStrategy();
 
 	// if invoked, the event is dispatched to listeners, typically called by ports
         virtual void process(rsb::EventPtr e) = 0;
@@ -46,7 +49,7 @@ public:
         virtual void unsubscribe(rsb::SubscriptionPtr s) = 0;
 };
 
-typedef boost::shared_ptr<EventProcessingStrategy> EventProcessingStrategyPtr;
+typedef boost::shared_ptr<EventReceivingStrategy> EventReceivingStrategyPtr;
 
 }
 }

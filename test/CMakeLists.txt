@@ -41,7 +41,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/QualityOfServiceSpecTest.cpp
                       rsb/ScopeTest.cpp
                       rsb/converter/DefaultConverterTest.cpp
-                      rsb/eventprocessing/ParallelEventProcessingStrategyTest.cpp
+                      rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
                       rsb/filter/FilterObserverTest.cpp
                       rsb/util/MD5Test.cpp)
 

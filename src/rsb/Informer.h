@@ -28,7 +28,7 @@
 
 #include "Event.h"
 #include "Participant.h"
-#include "eventprocessing/Router.h"
+#include "eventprocessing/OutRouteConfigurator.h"
 #include "transport/Connector.h"
 #include "transport/Factory.h"
 #include "QualityOfServiceSpec.h"
@@ -87,9 +87,7 @@ public:
                 passive(false), defaultType(type) {
         // TODO evaluate configuration
         assert(connectors.size() == 1);
-        router = eventprocessing::RouterPtr(
-                new eventprocessing::Router(transport::InConnectorPtr(),
-                        connectors[0]));
+        this->configurator.reset(new eventprocessing::OutRouteConfigurator(connectors[0]));
         activate();
     }
 
@@ -103,7 +101,7 @@ public:
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
     void setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
-        router->setQualityOfServiceSpecs(specs);
+        configurator->setQualityOfServiceSpecs(specs);
     }
 
     /**
@@ -141,25 +139,25 @@ public:
         // TODO Check that exception is thrown if no converter available!
         event->setScope(getScope());
         RSCDEBUG(logger, "Publishing event");
-        router->publish(event);
+        configurator->publish(event);
     }
 
     /**
-     * Activates the Informer and therefore the Router. Is considered being in
+     * Activates the Informer and therefore the InRouteConfigurator. Is considered being in
      * active mode afterwards.
      */
     void activate() {
-        router->activate();
+        configurator->activate();
         passive = false;
     }
 
     /**
-     * Deactivates the Informer and therefore the Router. Is considered being
+     * Deactivates the Informer and therefore the InRouteConfigurator. Is considered being
      * in passive mode afterwards.
      */
     void deactivate() {
         if (!passive) {
-            router->deactivate();
+            configurator->deactivate();
         }
         passive = true;
     }
@@ -171,15 +169,14 @@ public:
         // TODO Check that exception is thrown if no converter available!
         e->setType(type);
         RSCDEBUG(logger, "Publishing event");
-        router->publish(e);
+        configurator->publish(e);
     }
 
 private:
     rsc::logging::LoggerPtr logger;
     volatile bool passive;
     std::string defaultType;
-    eventprocessing::RouterPtr router;
-
+    eventprocessing::OutRouteConfiguratorPtr configurator;
 };
 
 template<typename Ch, typename Tr, typename T>

@@ -19,17 +19,13 @@
 
 #pragma once
 
-#include <string>
-
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
 
-#include "../transport/Connector.h"
-#include "../filter/FilterObservable.h"
-#include "EventProcessingStrategy.h"
-#include "../Subscription.h"
 #include "../QualityOfServiceSpec.h"
+#include "../transport/Connector.h"
+#include "EventSendingStrategy.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -44,10 +40,10 @@ namespace eventprocessing {
  * @todo implement abstract factory pattern for different port types
  * @todo think about null objects for ports to avoid checks for existence
  */
-class RSB_EXPORT Router { //: //public rsb::filter::FilterObservable {
+class RSB_EXPORT OutRouteConfigurator {
 public:
-    Router(transport::InConnectorPtr in, transport::OutConnectorPtr out);
-    virtual ~Router();
+    OutRouteConfigurator(transport::OutConnectorPtr out);
+    virtual ~OutRouteConfigurator();
 
     void activate();
     void deactivate();
@@ -60,22 +56,6 @@ public:
     void publish(EventPtr e);
 
     /**
-     * Add a subscription.
-     *
-     * @param s subscription to add
-     * @param handlers associated handlers
-     */
-    void subscribe(rsb::SubscriptionPtr s,
-                   std::set<HandlerPtr> handlers);
-
-    /**
-     * Unsubscribe a subscription.
-     *
-     * @param s subscription to remove
-     */
-    void unsubscribe(rsb::SubscriptionPtr s);
-
-    /**
      * Define the desired quality of service specifications for published
      * events.
      *
@@ -83,25 +63,16 @@ public:
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
-protected:
-    /**
-     * Helper for port notification about subscription status changes.
-     */
-    void
-        notifyConnectors(rsb::SubscriptionPtr s,
-                         rsb::filter::FilterAction::Types a);
-
 private:
     rsc::logging::LoggerPtr logger;
-    transport::InConnectorPtr inConnector;
+
     transport::OutConnectorPtr outConnector;
     // ep for observation model
-    EventProcessingStrategyPtr eventProcessingStrategy;
+    EventSendingStrategyPtr eventSendingStrategy;
     volatile bool shutdown;
-
 };
 
-typedef boost::shared_ptr<Router> RouterPtr;
+typedef boost::shared_ptr<OutRouteConfigurator> OutRouteConfiguratorPtr;
 
 }
 }

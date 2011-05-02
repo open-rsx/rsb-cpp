@@ -17,34 +17,34 @@
  *
  * ============================================================ */
 
-#include "ParallelEventProcessingStrategy.h"
+#include "ParallelEventReceivingStrategy.h"
 
 using namespace std;
 
 namespace rsb {
 namespace eventprocessing {
 
-ParallelEventProcessingStrategy::ParallelEventProcessingStrategy() :
-	logger(rsc::logging::Logger::getLogger("rsb.ParallelEventProcessingStrategy")),
+ParallelEventReceivingStrategy::ParallelEventReceivingStrategy() :
+	logger(rsc::logging::Logger::getLogger("rsb.ParallelEventReceivingStrategy")),
 	pool(5,
-	     boost::bind(&ParallelEventProcessingStrategy::deliver, this, _1, _2),
-	     boost::bind(&ParallelEventProcessingStrategy::filter,  this, _1, _2)) {
+	     boost::bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
+	     boost::bind(&ParallelEventReceivingStrategy::filter,  this, _1, _2)) {
 	pool.start();
 }
 
-ParallelEventProcessingStrategy::ParallelEventProcessingStrategy(unsigned int num_threads) :
-	logger(rsc::logging::Logger::getLogger("rsb.ParallelEventProcessingStrategy")),
+ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(unsigned int num_threads) :
+	logger(rsc::logging::Logger::getLogger("rsb.ParallelEventReceivingStrategy")),
         pool(num_threads,
-             boost::bind(&ParallelEventProcessingStrategy::deliver, this, _1, _2),
-             boost::bind(&ParallelEventProcessingStrategy::filter,  this, _1, _2)) {
+             boost::bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
+             boost::bind(&ParallelEventReceivingStrategy::filter,  this, _1, _2)) {
 	pool.start();
 }
 
-ParallelEventProcessingStrategy::~ParallelEventProcessingStrategy() {
+ParallelEventReceivingStrategy::~ParallelEventReceivingStrategy() {
 	pool.stop();
 }
 
-bool ParallelEventProcessingStrategy::filter(DispatchUnitPtr dispatch, EventPtr e) {
+bool ParallelEventReceivingStrategy::filter(DispatchUnitPtr dispatch, EventPtr e) {
 	RSCDEBUG(logger, "Matching event " << *e << " for subscription " << *dispatch->first);
 
 	if (!dispatch->first->isEnabled()) {
@@ -68,7 +68,7 @@ bool ParallelEventProcessingStrategy::filter(DispatchUnitPtr dispatch, EventPtr 
 
 }
 
-void ParallelEventProcessingStrategy::deliver(DispatchUnitPtr dispatch, EventPtr e) {
+void ParallelEventReceivingStrategy::deliver(DispatchUnitPtr dispatch, EventPtr e) {
 	RSCDEBUG(logger, "Delivering event " << *e << " for subscription " << *dispatch->first);
 
 	if (!dispatch->first->isEnabled()) {
@@ -96,15 +96,15 @@ void ParallelEventProcessingStrategy::deliver(DispatchUnitPtr dispatch, EventPtr
 
 }
 
-void ParallelEventProcessingStrategy::process(EventPtr e) {
+void ParallelEventReceivingStrategy::process(EventPtr e) {
 	pool.push(e);
 }
 
-void ParallelEventProcessingStrategy::subscribe(SubscriptionPtr s,
+void ParallelEventReceivingStrategy::subscribe(SubscriptionPtr s,
                                         set<HandlerPtr> handlers) {
 	pool.registerReceiver(DispatchUnitPtr(new DispatchUnit(s, handlers)));
 }
-void ParallelEventProcessingStrategy::unsubscribe(SubscriptionPtr s) {
+void ParallelEventReceivingStrategy::unsubscribe(SubscriptionPtr s) {
 	// TODO subscriptions need to be made thread-safe
 	s->disable();
         assert(dispatchUnitsBySubscription.find(s) != dispatchUnitsBySubscription.end());

@@ -28,7 +28,8 @@
 #include <rsc/subprocess/Subprocess.h>
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
-#include "rsb/eventprocessing/Router.h"
+#include "rsb/eventprocessing/InRouteConfigurator.h"
+#include "rsb/eventprocessing/OutRouteConfigurator.h"
 #include "rsb/transport/Factory.h"
 #include "rsb/transport/Connector.h"
 #include "rsb/transport/transports.h"
@@ -62,9 +63,11 @@ TEST(RSBTest, testRoundtrip)
     InConnectorPtr in(InFactory::getInstance().createInst("spread"));
     OutConnectorPtr out(OutFactory::getInstance().createInst("spread"));
 
-    // router instantiation
-    RouterPtr r(new Router(in, out));
-    r->activate();
+    // In- and OutRouteConfigurator instantiation
+    InRouteConfiguratorPtr inConfigurator(new InRouteConfigurator(in));
+    inConfigurator->activate();
+    OutRouteConfiguratorPtr outConfigurator(new OutRouteConfigurator(out));
+    outConfigurator->activate();
 
     // create subscription
     SubscriptionPtr s(new Subscription());
@@ -84,7 +87,7 @@ TEST(RSBTest, testRoundtrip)
                                     _1))));
 
     // add subscription to router
-    r->subscribe(s, handlers);
+    inConfigurator->subscribe(s, handlers);
 
     // activate port and schedule informer
     exec->schedule(source);

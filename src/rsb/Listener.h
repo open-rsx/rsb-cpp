@@ -29,7 +29,7 @@
 #include "Participant.h"
 #include "Subscription.h"
 #include "Handler.h"
-#include "eventprocessing/Router.h"
+#include "eventprocessing/InRouteConfigurator.h"
 #include "transport/Connector.h"
 #include "rsb/rsbexports.h"
 
@@ -73,13 +73,13 @@ public:
     virtual ~Listener();
 
     /**
-     * Activates the Listener and therefore the Router. Is considered being in
+     * Activates the Listener and therefore the InRouteConfigurator. Is considered being in
      * active mode afterwards.
      */
     void activate();
 
     /**
-     * Deactivates the Listener and therefore the Router. Is considered being
+     * Deactivates the Listener and therefore the InRouteConfigurator. Is considered being
      * in passive mode afterwards.
      */
     void deactivate();
@@ -122,7 +122,7 @@ private:
     volatile bool passive;
     SubscriptionPtr subscription;
     std::set<HandlerPtr> handlers;
-    eventprocessing::RouterPtr router;
+    eventprocessing::InRouteConfiguratorPtr configurator;
 
     void initialize(const std::vector<transport::InConnectorPtr> &connectors,
                     const Scope &scope);

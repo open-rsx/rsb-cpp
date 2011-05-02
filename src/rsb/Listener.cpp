@@ -46,9 +46,7 @@ void Listener::initialize(const vector<transport::InConnectorPtr> &connectors,
         const Scope &scope) {
     // TODO evaluate configuration
     assert(connectors.size() == 1);
-    this->router = eventprocessing::RouterPtr(
-            new eventprocessing::Router(connectors[0],
-                    transport::OutConnectorPtr()));
+    this->configurator.reset(new eventprocessing::InRouteConfigurator(connectors[0]));
     this->subscription.reset(new Subscription());
     this->subscription->appendFilter(
             filter::FilterPtr(new filter::ScopeFilter(scope)));
@@ -56,15 +54,15 @@ void Listener::initialize(const vector<transport::InConnectorPtr> &connectors,
 }
 
 void Listener::activate() {
-    router->activate();
-    passive = false;
+    this->configurator->activate();
+    this->passive = false;
 }
 
 void Listener::deactivate() {
-    if (!passive) {
-        router->deactivate();
+    if (!this->passive) {
+        this->configurator->deactivate();
     }
-    passive = true;
+    this->passive = true;
 }
 
 SubscriptionPtr Listener::getSubscription() {
@@ -72,12 +70,12 @@ SubscriptionPtr Listener::getSubscription() {
 }
 
 void Listener::setSubscription(SubscriptionPtr s) {
-    this->router->unsubscribe(this->subscription);
+    this->configurator->unsubscribe(this->subscription);
     this->subscription = s;
     this->subscription->appendFilter(
             filter::FilterPtr(new filter::ScopeFilter(this->getScope())));
     if (!this->handlers.empty()) {
-        this->router->subscribe(this->subscription, this->handlers);
+        this->configurator->subscribe(this->subscription, this->handlers);
     }
 }
 
@@ -90,18 +88,18 @@ set<HandlerPtr> Listener::getHandlers() const {
 
 void Listener::addHandler(HandlerPtr h) {
     if (!this->handlers.empty()) {
-        this->router->unsubscribe(this->subscription);
+        this->configurator->unsubscribe(this->subscription);
     }
     this->handlers.insert(h);
-    this->router->subscribe(this->subscription, this->handlers);
+    this->configurator->subscribe(this->subscription, this->handlers);
 }
 
 void Listener::removeHandler(HandlerPtr h) {
     if (!this->handlers.empty()) {
-        this->router->unsubscribe(this->subscription);
+        this->configurator->unsubscribe(this->subscription);
     }
     this->handlers.erase(h);
-    this->router->subscribe(this->subscription, this->handlers);
+    this->configurator->subscribe(this->subscription, this->handlers);
 }
 
 }
