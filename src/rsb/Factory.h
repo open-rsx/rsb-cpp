@@ -73,6 +73,7 @@ public:
         for (std::set<ParticipantConfig::Transport>::const_iterator
                 transportIt = configuredTransports.begin(); transportIt
                 != configuredTransports.end(); ++transportIt) {
+            RSCDEBUG(logger, "Trying to add connector " << *transportIt);
             connectors.push_back(
                     transport::OutConnectorPtr(
                             transport::OutFactory::getInstance().createInst(

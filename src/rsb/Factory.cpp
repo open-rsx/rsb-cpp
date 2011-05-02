@@ -57,6 +57,7 @@ ListenerPtr Factory::createListener(const Scope &scope,
     for (set<ParticipantConfig::Transport>::const_iterator transportIt =
             configuredTransports.begin(); transportIt
             != configuredTransports.end(); ++transportIt) {
+        RSCDEBUG(logger, "Trying to add connector " << *transportIt);
         connectors.push_back(
                 transport::InConnectorPtr(
                         transport::InFactory::getInstance().createInst(
