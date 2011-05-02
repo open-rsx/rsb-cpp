@@ -79,7 +79,7 @@ void InRouteConfigurator::unsubscribe(SubscriptionPtr s) {
     this->eventReceivingStrategy->unsubscribe(s);
 }
 
-void InRouteConfigurator::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+void InRouteConfigurator::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
     // TODO only required if we also want to support QoS for ingoing
     // connectors as well
     // this->inConnector->setQualityOfServiceSpecs(specs);
