@@ -42,7 +42,7 @@ namespace rsb {
  *
  * The basic usage pattern is explained with this example code:
  * @code
- * Informer<string>::Ptr informer(new Informer<string>("rsb://example/informer","string"));
+ * Informer<string>::Ptr informer(new Informer<string>(Scope("/example/informer")));
  * Informer<string>::DataPtr s(new string("blub"));
  * informer->publish(s);
  * @endcode
