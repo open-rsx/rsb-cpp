@@ -67,7 +67,8 @@ TEST(RSBTest, testRoundtrip)
     InRouteConfiguratorPtr inConfigurator(new InRouteConfigurator());
     inConfigurator->addConnector(in);
     inConfigurator->activate();
-    OutRouteConfiguratorPtr outConfigurator(new OutRouteConfigurator(out));
+    OutRouteConfiguratorPtr outConfigurator(new OutRouteConfigurator());
+    outConfigurator->addConnector(out);
     outConfigurator->activate();
 
     // create subscription

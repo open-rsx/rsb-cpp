@@ -86,8 +86,12 @@ public:
                 logger(rsc::logging::Logger::getLogger("rsb.Informer")),
                 passive(false), defaultType(type) {
         // TODO evaluate configuration
-        assert(connectors.size() == 1);
-        this->configurator.reset(new eventprocessing::OutRouteConfigurator(connectors[0]));
+        this->configurator.reset(new eventprocessing::OutRouteConfigurator());
+        for (std::vector<transport::OutConnectorPtr>::const_iterator it = connectors.begin();
+             it != connectors.end(); ++it) {
+            this->configurator->addConnector(*it);
+        }
+
         activate();
     }
 

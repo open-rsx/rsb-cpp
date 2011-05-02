@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <list>
+
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
@@ -35,18 +37,19 @@ namespace eventprocessing {
  *
  *
  * @author swrede
- * @todo extend incoming and outgoing ports to sets of ports
  * @todo add configuration, provide preliminary set up interface
  * @todo implement abstract factory pattern for different port types
- * @todo think about null objects for ports to avoid checks for existence
  */
 class RSB_EXPORT OutRouteConfigurator {
 public:
-    OutRouteConfigurator(transport::OutConnectorPtr out);
+    OutRouteConfigurator();
     virtual ~OutRouteConfigurator();
 
     void activate();
     void deactivate();
+
+    void addConnector(transport::OutConnectorPtr connector);
+    void removeConnector(transport::OutConnectorPtr connector);
 
     /**
      * Publish event to out ports of this router.
@@ -64,9 +67,11 @@ public:
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 private:
+    typedef std::list<transport::OutConnectorPtr> ConnectorList;
+
     rsc::logging::LoggerPtr logger;
 
-    transport::OutConnectorPtr outConnector;
+    ConnectorList connectors;
     // ep for observation model
     EventSendingStrategyPtr eventSendingStrategy;
     volatile bool shutdown;
