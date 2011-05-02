@@ -64,7 +64,8 @@ TEST(RSBTest, testRoundtrip)
     OutConnectorPtr out(OutFactory::getInstance().createInst("spread"));
 
     // In- and OutRouteConfigurator instantiation
-    InRouteConfiguratorPtr inConfigurator(new InRouteConfigurator(in));
+    InRouteConfiguratorPtr inConfigurator(new InRouteConfigurator());
+    inConfigurator->addConnector(in);
     inConfigurator->activate();
     OutRouteConfiguratorPtr outConfigurator(new OutRouteConfigurator(out));
     outConfigurator->activate();

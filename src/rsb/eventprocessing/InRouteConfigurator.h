@@ -20,6 +20,7 @@
 #pragma once
 
 #include <string>
+#include <list>
 
 #include <boost/shared_ptr.hpp>
 
@@ -38,18 +39,20 @@ namespace eventprocessing {
  *
  *
  * @author swrede
- * @todo extend incoming and outgoing ports to sets of ports
  * @todo add configuration, provide preliminary set up interface
  * @todo implement abstract factory pattern for different port types
  * @todo think about null objects for ports to avoid checks for existence
  */
 class RSB_EXPORT InRouteConfigurator {
 public:
-    InRouteConfigurator(transport::InConnectorPtr in);
+    InRouteConfigurator();
     virtual ~InRouteConfigurator();
 
     void activate();
     void deactivate();
+
+    void addConnector(transport::InConnectorPtr connector);
+    void removeConnector(transport::InConnectorPtr connector);
 
     /**
      * Add a subscription.
@@ -84,8 +87,10 @@ protected:
                          rsb::filter::FilterAction::Types a);
 
 private:
+    typedef std::list<transport::InConnectorPtr> ConnectorList;
+
     rsc::logging::LoggerPtr logger;
-    transport::InConnectorPtr inConnector;
+    ConnectorList connectors;
     // ep for observation model
     EventReceivingStrategyPtr eventReceivingStrategy;
     volatile bool shutdown;

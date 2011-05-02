@@ -31,9 +31,9 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-InRouteConfigurator::InRouteConfigurator(InConnectorPtr inConnector) :
+InRouteConfigurator::InRouteConfigurator() :
     logger(Logger::getLogger("rsb.eventprocessing.InRouteConfigurator")),
-    inConnector(inConnector), shutdown(false) {
+    shutdown(false) {
 }
 
 InRouteConfigurator::~InRouteConfigurator() {
@@ -43,27 +43,56 @@ InRouteConfigurator::~InRouteConfigurator() {
 }
 
 void InRouteConfigurator::activate() {
-    this->inConnector->activate();
+    RSCDEBUG(logger, "Activating");
+
+    for (ConnectorList::iterator it = this->connectors.begin();
+         it != this->connectors.end(); ++it) {
+        (*it)->activate();
+    }
 
     this->eventReceivingStrategy = EventReceivingStrategyPtr(new ParallelEventReceivingStrategy());
-    // add event processor as observer to input port(s)
-    this->inConnector->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&EventReceivingStrategy::handle,
-                                                                                   this->eventReceivingStrategy, _1))));
+
+    // add event processor as observer to connectors
+    for (ConnectorList::iterator it = this->connectors.begin();
+         it != this->connectors.end(); ++it) {
+        (*it)->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&EventReceivingStrategy::handle,
+                                                                          this->eventReceivingStrategy, _1))));
+    }
 }
 
 void InRouteConfigurator::deactivate() {
+    for (ConnectorList::iterator it = this->connectors.begin();
+         it != this->connectors.end(); ++it) {
+        (*it)->deactivate();
+    }
+
     this->eventReceivingStrategy.reset();
     this->shutdown = true;
 }
 
+
+void InRouteConfigurator::addConnector(InConnectorPtr connector) {
+    RSCDEBUG(logger, "Adding connector " << connector);
+    this->connectors.push_back(connector);
+}
+
+void InRouteConfigurator::removeConnector(InConnectorPtr connector) {
+    RSCDEBUG(logger, "Removing connector " << connector);
+    this->connectors.remove(connector);
+}
+
 void InRouteConfigurator::notifyConnectors(SubscriptionPtr s,
                               filter::FilterAction::Types a) {
-    FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(this->inConnector);
-    for (FilterChain::iterator listIt = s->getFilters()->begin(); listIt
-             != s->getFilters()->end(); ++listIt) {
-        // TODO check whether we want to do this also for out ports
-        // TODO generally use filters::Observable implementation here!
-        (*listIt)->notifyObserver(fo, a);
+
+    for (ConnectorList::iterator it = this->connectors.begin();
+         it != this->connectors.end(); ++it) {
+        FilterObserverPtr fo = boost::static_pointer_cast<FilterObserver>(*it);
+        for (FilterChain::iterator listIt = s->getFilters()->begin(); listIt
+                 != s->getFilters()->end(); ++listIt) {
+            // TODO check whether we want to do this also for out ports
+            // TODO generally use filters::Observable implementation here!
+            (*listIt)->notifyObserver(fo, a);
+        }
     }
 }
 

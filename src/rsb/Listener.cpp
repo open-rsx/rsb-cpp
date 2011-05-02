@@ -26,6 +26,8 @@
 
 using namespace std;
 
+using namespace rsb::transport;
+
 namespace rsb {
 
 Listener::Listener(const vector<transport::InConnectorPtr> &connectors,
@@ -42,14 +44,19 @@ Listener::~Listener() {
     }
 }
 
-void Listener::initialize(const vector<transport::InConnectorPtr> &connectors,
+void Listener::initialize(const vector<InConnectorPtr> &connectors,
         const Scope &scope) {
     // TODO evaluate configuration
-    assert(connectors.size() == 1);
-    this->configurator.reset(new eventprocessing::InRouteConfigurator(connectors[0]));
+    this->configurator.reset(new eventprocessing::InRouteConfigurator());
+    for (vector<InConnectorPtr>::const_iterator it = connectors.begin();
+         it != connectors.end(); ++it) {
+        this->configurator->addConnector(*it);
+    }
+
     this->subscription.reset(new Subscription());
     this->subscription->appendFilter(
             filter::FilterPtr(new filter::ScopeFilter(scope)));
+
     this->activate();
 }
 
