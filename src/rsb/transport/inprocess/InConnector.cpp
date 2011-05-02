@@ -58,7 +58,7 @@ void InConnector::setScope(const Scope& scope) {
 
 void InConnector::activate() {
     RSCDEBUG(logger, "Activating");
-    Bus::getInstance().addSink(shared_from_this());
+    Bus::getInstance().addSink(boost::dynamic_pointer_cast<InConnector>(shared_from_this()));
     this->active = true;
 }
 

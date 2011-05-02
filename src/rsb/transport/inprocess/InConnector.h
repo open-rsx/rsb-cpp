@@ -20,7 +20,6 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/Properties.h>
@@ -36,8 +35,7 @@ namespace inprocess {
  * @author jmoringe
  */
 class RSB_EXPORT InConnector: public transport::InConnector,
-                              public eventprocessing::Handler,
-                              public boost::enable_shared_from_this<InConnector> {
+                              public eventprocessing::Handler {
 public:
     InConnector();
     virtual ~InConnector();

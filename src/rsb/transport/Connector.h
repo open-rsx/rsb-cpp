@@ -22,6 +22,7 @@
 #include <list>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include "../Event.h"
 #include "../Handler.h"
@@ -63,7 +64,8 @@ typedef boost::shared_ptr<Connector> ConnectorPtr;
  * @author jmoringe
  */
 class RSB_EXPORT InConnector : public Connector,
-                               public rsb::filter::FilterObserver {
+                               public rsb::filter::FilterObserver,
+                               public boost::enable_shared_from_this<InConnector> {
 public:
     virtual void addHandler(HandlerPtr handler);
     virtual void removeHandler(HandlerPtr handler);
