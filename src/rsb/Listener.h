@@ -72,6 +72,8 @@ public:
 
     virtual ~Listener();
 
+    std::string getClassName() const;
+
     /**
      * Activates the Listener and therefore the InRouteConfigurator. Is considered being in
      * active mode afterwards.
@@ -129,12 +131,5 @@ private:
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;
-
-template<typename Ch, typename Tr>
-std::basic_ostream<Ch, Tr>&
-operator<<(std::basic_ostream<Ch, Tr>& stream, const Listener& listener) {
-    stream << "Listener[id=" << listener.getId() << "]";
-    return stream;
-}
 
 }

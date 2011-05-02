@@ -25,7 +25,11 @@
 
 class MockService: public rsb::Service {
 public:
-    MockService() : rsb::Service(rsb::Scope("/")) {
+    MockService() :
+        rsb::Service(rsb::Scope("/")) {
+    }
+    std::string getClassName() const {
+        return "MockService";
     }
     MOCK_CONST_METHOD0(getScope, rsb::Scope());
     MOCK_CONST_METHOD0(getParticipants, std::set<rsb::ParticipantPtr>());

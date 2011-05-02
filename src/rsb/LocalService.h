@@ -37,6 +37,8 @@ public:
     LocalService(const Scope &scope);
     virtual ~LocalService();
 
+    std::string getClassName() const;
+
     std::set<ParticipantPtr> getParticipants() const;
     void addParticipant(ParticipantPtr participant);
     void removeParticipant(ParticipantPtr participant);

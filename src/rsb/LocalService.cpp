@@ -32,6 +32,10 @@ LocalService::LocalService(const Scope &scope) :
 LocalService::~LocalService() {
 }
 
+string LocalService::getClassName() const {
+    return "LocalService";
+}
+
 set<ParticipantPtr> LocalService::getParticipants() const {
     boost::recursive_mutex::scoped_lock lock(mutex);
     return participants;

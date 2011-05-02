@@ -82,13 +82,12 @@ public:
     Informer(const std::vector<transport::OutConnectorPtr> &connectors,
             const Scope &scope, const ParticipantConfig &config,
             const std::string &type = rsc::runtime::typeName<T>()) :
-        Participant(scope, config),
-                logger(rsc::logging::Logger::getLogger("rsb.Informer")),
-                passive(false), defaultType(type) {
+        Participant(scope, config), logger(rsc::logging::Logger::getLogger(
+                "rsb.Informer")), passive(false), defaultType(type) {
         // TODO evaluate configuration
         this->configurator.reset(new eventprocessing::OutRouteConfigurator());
-        for (std::vector<transport::OutConnectorPtr>::const_iterator it = connectors.begin();
-             it != connectors.end(); ++it) {
+        for (std::vector<transport::OutConnectorPtr>::const_iterator it =
+                connectors.begin(); it != connectors.end(); ++it) {
             this->configurator->addConnector(*it);
         }
 
@@ -96,6 +95,15 @@ public:
     }
 
     virtual ~Informer() {
+    }
+
+    std::string getClassName() const {
+        return "Informer";
+    }
+
+    void printContents(std::ostream &stream) const {
+        Participant::printContents(stream);
+        stream << ", type = " << defaultType;
     }
 
     /**
@@ -182,12 +190,5 @@ private:
     std::string defaultType;
     eventprocessing::OutRouteConfiguratorPtr configurator;
 };
-
-template<typename Ch, typename Tr, typename T>
-std::basic_ostream<Ch, Tr>&
-operator<<(std::basic_ostream<Ch, Tr> &stream, const Informer<T> &informer) {
-    stream << "Informer[id=" << informer.getUUID() << "]";
-    return stream;
-}
 
 }

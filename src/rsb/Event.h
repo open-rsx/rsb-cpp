@@ -26,13 +26,10 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/misc/UUID.h>
+#include <rsc/runtime/Printable.h>
 
 #include "rsb/rsbexports.h"
 #include "Scope.h"
-
-// base / interface class for all events
-// data is set via static_cast:
-// EventPtr p(Event(boost::static_pointer_cast<void> boost::shared_ptr<Person>(new Person())));
 
 namespace rsb {
 
@@ -45,7 +42,7 @@ typedef boost::shared_ptr<void> VoidPtr;
  *
  * @author swrede
  */
-class RSB_EXPORT Event {
+class RSB_EXPORT Event: public rsc::runtime::Printable {
 public:
 
     Event();
@@ -61,6 +58,9 @@ public:
             const std::string &type);
 
     virtual ~Event();
+
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
 
     void setId(const rsc::misc::UUID &id);
     rsc::misc::UUID getId();
@@ -82,9 +82,6 @@ public:
     std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
     std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
 
-    friend RSB_EXPORT std::ostream &operator<<(std::ostream& out,
-            const Event &e);
-
 private:
     rsc::misc::UUID id;
     Scope scope;
@@ -99,8 +96,6 @@ private:
 };
 
 typedef boost::shared_ptr<Event> EventPtr;
-
-RSB_EXPORT std::ostream &operator<<(std::ostream& out, const Event &e);
 
 }
 

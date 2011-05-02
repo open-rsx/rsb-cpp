@@ -32,9 +32,8 @@ namespace rsb {
 
 Listener::Listener(const vector<transport::InConnectorPtr> &connectors,
         const Scope &scope, const ParticipantConfig &config) :
-    Participant(scope, config),
-            logger(rsc::logging::Logger::getLogger("rsb.Listener")),
-            passive(false) {
+    Participant(scope, config), logger(rsc::logging::Logger::getLogger(
+            "rsb.Listener")), passive(false) {
     this->initialize(connectors, scope);
 }
 
@@ -44,18 +43,22 @@ Listener::~Listener() {
     }
 }
 
+string Listener::getClassName() const {
+    return "Listener";
+}
+
 void Listener::initialize(const vector<InConnectorPtr> &connectors,
         const Scope &scope) {
     // TODO evaluate configuration
     this->configurator.reset(new eventprocessing::InRouteConfigurator());
-    for (vector<InConnectorPtr>::const_iterator it = connectors.begin();
-         it != connectors.end(); ++it) {
+    for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
+            != connectors.end(); ++it) {
         this->configurator->addConnector(*it);
     }
 
     this->subscription.reset(new Subscription());
-    this->subscription->appendFilter(
-            filter::FilterPtr(new filter::ScopeFilter(scope)));
+    this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
+            scope)));
 
     this->activate();
 }
@@ -79,8 +82,8 @@ SubscriptionPtr Listener::getSubscription() {
 void Listener::setSubscription(SubscriptionPtr s) {
     this->configurator->unsubscribe(this->subscription);
     this->subscription = s;
-    this->subscription->appendFilter(
-            filter::FilterPtr(new filter::ScopeFilter(this->getScope())));
+    this->subscription->appendFilter(filter::FilterPtr(new filter::ScopeFilter(
+            this->getScope())));
     if (!this->handlers.empty()) {
         this->configurator->subscribe(this->subscription, this->handlers);
     }
@@ -88,8 +91,8 @@ void Listener::setSubscription(SubscriptionPtr s) {
 
 set<HandlerPtr> Listener::getHandlers() const {
     set<HandlerPtr> result;
-    copy(this->handlers.begin(), this->handlers.end(),
-            inserter(result, result.begin()));
+    copy(this->handlers.begin(), this->handlers.end(), inserter(result,
+            result.begin()));
     return result;
 }
 

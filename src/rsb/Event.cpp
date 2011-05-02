@@ -36,6 +36,15 @@ Event::Event(const Scope &scope, boost::shared_ptr<void> payload,
 Event::~Event() {
 }
 
+string Event::getClassName() const {
+    return "Event";
+}
+
+void Event::printContents(ostream &stream) const {
+    stream << "id = " << id.getIdAsString() << " type = " << type
+            << " scope = " << scope;
+}
+
 void Event::setId(const rsc::misc::UUID &id) {
     this->id = id;
 }
@@ -83,8 +92,8 @@ string Event::getMetaInfo(const string &key) const {
 void Event::addMetaInfo(const string &key, const string &value, bool override) {
 
     if (metaInfos.count(key) && !override) {
-        throw runtime_error(
-                "There already is meta info registered under key '" + key + "'");
+        throw runtime_error("There already is meta info registered under key '"
+                + key + "'");
     }
     metaInfos[key] = value;
 
@@ -96,13 +105,6 @@ map<string, string>::const_iterator Event::metaInfoBegin() const {
 
 map<string, string>::const_iterator Event::metaInfoEnd() const {
     return metaInfos.end();
-}
-
-ostream& operator<<(ostream& out, const Event& e) {
-    //out.precision(3);
-    out << "Event[id=" << e.id.getIdAsString() << " type=" << e.type
-            << " scope=" << e.scope << "] ";
-    return out;
 }
 
 }

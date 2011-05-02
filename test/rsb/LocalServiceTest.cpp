@@ -40,6 +40,9 @@ public:
     DummyParticipant(const Scope &scope) :
         Participant(scope, ParticipantConfig()) {
     }
+    string getClassName() const {
+        return "DummyParticipant";
+    }
 };
 
 TEST(LocalServiceTest, testConstruction)
@@ -87,7 +90,7 @@ TEST(LocalServiceTest, testSubServices)
     Scope scope("/this/is/a/test");
     LocalService service(scope);
 
-    NiceMock<MockService> *mockService = new NiceMock<MockService>;
+    NiceMock<MockService> *mockService = new NiceMock<MockService> ;
     ServicePtr mockServicePtr(mockService);
 
     ON_CALL(*mockService, getScope()).WillByDefault(Return(Scope("/this/is")));

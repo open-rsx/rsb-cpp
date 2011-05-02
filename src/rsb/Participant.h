@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/misc/UUID.h>
+#include <rsc/runtime/Printable.h>
 
 #include "rsb/rsbexports.h"
 #include "Scope.h"
@@ -42,8 +43,10 @@ namespace rsb {
  *
  *  @author jmoringe
  */
-class RSB_EXPORT Participant {
+class RSB_EXPORT Participant: public rsc::runtime::Printable {
 public:
+
+    void printContents(std::ostream &stream) const;
 
     /**
      * Returns the unique id of the participant.
@@ -79,8 +82,5 @@ private:
 };
 
 typedef boost::shared_ptr<Participant> ParticipantPtr;
-
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-        const Participant &participant);
 
 }

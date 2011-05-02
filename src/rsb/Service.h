@@ -24,6 +24,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/Printable.h>
+
 #include "Participant.h"
 #include "Scope.h"
 #include "rsb/rsbexports.h"
@@ -42,10 +44,12 @@ typedef boost::shared_ptr<Service> ServicePtr;
  *
  * @author jwienke
  */
-class RSB_EXPORT Service {
+class RSB_EXPORT Service: public rsc::runtime::Printable {
 public:
 
     virtual ~Service();
+
+    void printContents(std::ostream &stream) const;
 
     /**
      * Returns the scope of this service under which all participants and
@@ -115,9 +119,6 @@ private:
     Scope scope;
 
 };
-
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-        const Service &service);
 
 }
 

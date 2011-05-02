@@ -34,8 +34,9 @@ Scope Service::getScope() const {
     return scope;
 }
 
-ostream &operator<<(ostream &stream, const Service &service) {
-    return stream << "Service[scope = " << service.getScope() << "]";
+void Service::printContents(ostream &stream) const {
+    stream << "scope = " << getScope() << ", participants = "
+            << getParticipants() << ", subServices = " << getSubServices();
 }
 
 }

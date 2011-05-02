@@ -39,9 +39,8 @@ ParticipantConfig Participant::getConfig() const {
     return config;
 }
 
-ostream &operator<<(ostream &stream, const Participant &participant) {
-    return stream << "Participant[id = " << participant.getId() << ", scope = "
-            << participant.getScope() << "]";
+void Participant::printContents(ostream &stream) const {
+    stream << "id = " << id << ", scope = " << scope;
 }
 
 }
