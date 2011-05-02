@@ -81,7 +81,7 @@ private:
 
 };
 
-TEST(RSBTest, testRoundtrip)
+TEST(RoundtripTest, testRoundtrip)
 {
 
     Factory::killInstance();

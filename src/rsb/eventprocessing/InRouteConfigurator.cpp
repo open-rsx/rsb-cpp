@@ -46,11 +46,10 @@ void InRouteConfigurator::activate() {
     RSCDEBUG(logger, "Activating");
 
     // Activate all connectors.
-    ScopeFilter scopeFilter(scope);
     for (ConnectorList::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         (*it)->activate();
-        scopeFilter.notifyObserver(*it, FilterAction::ADD);
+        (*it)->setScope(scope);
     }
 
     // Create the event processing strategy and attach it to all

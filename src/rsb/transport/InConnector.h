@@ -44,8 +44,18 @@ class RSB_EXPORT InConnector : public Connector,
                                public rsb::filter::FilterObserver,
                                public boost::enable_shared_from_this<InConnector> {
 public:
+
+    /**
+     * Sets the scope this connector will receive events from. Has to be called
+     * after #activate.
+     *
+     * @param scope scope of the connector
+     */
+    virtual void setScope(const Scope &scope) = 0;
+
     virtual void addHandler(eventprocessing::HandlerPtr handler);
     virtual void removeHandler(eventprocessing::HandlerPtr handler);
+
 protected:
     typedef std::list<eventprocessing::HandlerPtr> HandlerList;
 

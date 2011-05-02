@@ -35,13 +35,13 @@ namespace inprocess {
  * @author jmoringe
  */
 class RSB_EXPORT InConnector: public transport::InConnector,
-                              public eventprocessing::Handler {
+        public eventprocessing::Handler {
 public:
     InConnector();
     virtual ~InConnector();
 
     Scope getScope() const;
-    void setScope(const Scope& scope);
+    void setScope(const Scope &scope);
 
     void activate();
     void deactivate();

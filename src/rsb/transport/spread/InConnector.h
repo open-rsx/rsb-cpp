@@ -37,10 +37,12 @@ namespace spread {
  */
 class RSB_EXPORT InConnector: public rsb::transport::InConnector {
 public:
-    InConnector(const std::string &host = defaultHost(),
-            unsigned int port = defaultPort());
+    InConnector(const std::string &host = defaultHost(), unsigned int port =
+            defaultPort());
 
     virtual ~InConnector();
+
+    void setScope(const Scope &scope);
 
     void activate();
     void deactivate();
@@ -49,9 +51,6 @@ public:
 
     void addHandler(HandlerPtr handler);
     void removeHandler(HandlerPtr handler);
-
-    void notify(rsb::filter::ScopeFilter *f,
-            const rsb::filter::FilterAction::Types &at);
 
     static rsb::transport::InConnector *create(
             const rsc::runtime::Properties &args);

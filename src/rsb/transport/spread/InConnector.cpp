@@ -34,8 +34,8 @@ rsb::transport::InConnector *InConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
-    return new InConnector(args.get<string> ("host", defaultHost()),
-            args.get<unsigned int> ("port", defaultPort()));
+    return new InConnector(args.get<string> ("host", defaultHost()), args.get<
+            unsigned int> ("port", defaultPort()));
 }
 
 InConnector::InConnector(const string &host, unsigned int port) :
@@ -44,9 +44,9 @@ InConnector::InConnector(const string &host, unsigned int port) :
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
     // TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
     //st = boost::shared_ptr<StatusTask>(new StatusTask(this));
-    this->rec = boost::shared_ptr<ReceiverTask>(
-            new ReceiverTask(this->connector->getConnection(),
-                             this->connector->getConverters(), HandlerPtr()));
+    this->rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(
+            this->connector->getConnection(), this->connector->getConverters(),
+            HandlerPtr()));
 }
 
 InConnector::~InConnector() {
@@ -88,31 +88,8 @@ void InConnector::removeHandler(HandlerPtr handler) {
     this->rec->setHandler(HandlerPtr());
 }
 
-void InConnector::notify(rsb::filter::ScopeFilter* f,
-        const rsb::filter::FilterAction::Types &at) {
-    // join or leave groups
-    // TODO evaluate success
-    RSCDEBUG(logger, "notify(rsb::filter::ScopeFilter*, ...) entered");
-    string groupName = connector->makeGroupName(f->getScope());
-    switch (at) {
-    case rsb::filter::FilterAction::ADD:
-        RSCINFO(logger, "ScopeFilter scope is " << f->getScope()
-                << " ,now going to join Spread group")
-        ;
-        this->connector->join(groupName);
-        break;
-    case rsb::filter::FilterAction::REMOVE:
-        RSCINFO(logger, "ScopeFilter scope is " << f->getScope()
-                << " ,now going to leave Spread group")
-        ;
-        this->connector->leave(groupName);
-        break;
-    default:
-        RSCWARN(logger,
-                "ScopeFilter Action not supported by this Connector implementation")
-        ;
-        break;
-    }
+void InConnector::setScope(const Scope &scope) {
+    connector->join(connector->makeGroupName(scope));
 }
 
 }

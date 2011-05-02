@@ -99,10 +99,7 @@ TEST(SpreadConnectorTest, testHierarchySending)
         InConnectorPtr in(new rsb::spread::InConnector());
         in->activate();
         in->setQualityOfServiceSpecs(qosSpecs);
-
-        // filter for joining test group
-        FilterPtr f = FilterPtr(new ScopeFilter(receiveScope));
-        f->notifyObserver(in, FilterAction::ADD);
+        in->setScope(receiveScope);
 
         unsigned int expectedEvents = numEvents;
         if (receiveScope == Scope("/")) {
@@ -182,10 +179,9 @@ TEST_P(SpreadConnectorRoundtripTest, roundtrip)
     ASSERT_NO_THROW(out->activate());
     out->setQualityOfServiceSpecs(qosSpecs);
 
-    // filter for joining test group
+    // joining test group
     const Scope scope("/blah");
-    FilterPtr f = FilterPtr(new ScopeFilter(scope));
-    f->notifyObserver(in, FilterAction::ADD);
+    in->setScope(scope);
 
     // domain objects
     const unsigned int numEvents = 100;
