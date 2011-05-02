@@ -47,7 +47,8 @@ public:
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-    void setObserver(HandlerPtr handler);
+    void addHandler(HandlerPtr handler);
+    void removeHandler(HandlerPtr handler);
 
     void notify(rsb::filter::ScopeFilter *f,
             const rsb::filter::FilterAction::Types &at);
@@ -64,8 +65,6 @@ private:
     rsc::threading::TaskExecutorPtr exec;
     //   boost::shared_ptr<StatusTask> st;
     boost::shared_ptr<ReceiverTask> rec;
-
-    HandlerPtr observer;
 };
 
 }

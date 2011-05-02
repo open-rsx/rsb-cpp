@@ -52,7 +52,7 @@ void Bus::removeSink(InConnector* sink) {
     }
 }
 
-void Bus::push(EventPtr event) {
+void Bus::handle(EventPtr event) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
     RSCDEBUG(logger, "Delivering event " << *event);
@@ -69,7 +69,7 @@ void Bus::push(EventPtr event) {
                 InConnectorPtr connector = it__->lock();
                 if (connector) {
                     RSCDEBUG(logger, "Delivering to " << connector << " in " << *it);
-                    connector->push(event);
+                    connector->handle(event);
                 }
             }
         }

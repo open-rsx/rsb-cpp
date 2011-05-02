@@ -41,7 +41,7 @@ public:
 
     virtual ~OutConnector();
 
-    void push(rsb::EventPtr e);
+    void handle(rsb::EventPtr e);
 
     void activate();
     void deactivate();

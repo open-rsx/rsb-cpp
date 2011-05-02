@@ -19,12 +19,15 @@
 
 #pragma once
 
+#include <list>
+
 #include <boost/shared_ptr.hpp>
 
 #include "../Event.h"
 #include "../Handler.h"
 #include "../filter/FilterObserver.h"
 #include "../QualityOfServiceSpec.h"
+#include "../eventprocessing/Handler.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -62,11 +65,12 @@ typedef boost::shared_ptr<Connector> ConnectorPtr;
 class RSB_EXPORT InConnector : public Connector,
                                public rsb::filter::FilterObserver {
 public:
-    // Observer may implement complex event matching
-    // or be just directly the user-level event handlers
-    virtual void setObserver(HandlerPtr observer);
+    virtual void addHandler(HandlerPtr handler);
+    virtual void removeHandler(HandlerPtr handler);
 protected:
-    HandlerPtr observer;
+    typedef std::list<eventprocessing::HandlerPtr> HandlerList;
+
+    HandlerList handlers;
 };
 
 typedef boost::shared_ptr<InConnector> InConnectorPtr;
@@ -76,9 +80,9 @@ typedef boost::shared_ptr<InConnector> InConnectorPtr;
  *
  * @author jmoringe
  */
-class RSB_EXPORT OutConnector : public Connector {
+class RSB_EXPORT OutConnector : public Connector,
+                                public eventprocessing::Handler {
 public:
-    virtual void push(EventPtr e) = 0;
 };
 
 typedef boost::shared_ptr<OutConnector> OutConnectorPtr;

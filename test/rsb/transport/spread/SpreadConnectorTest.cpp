@@ -70,7 +70,7 @@ TEST(SpreadConnectorTest, testSendLongGroupNames)
     e->setScope(longScope);
     e->setType(rsc::runtime::typeName<string>());
     e->setData(boost::shared_ptr<string>(new string("fooo")));
-    out->push(e);
+    out->handle(e);
 
 }
 
@@ -110,7 +110,7 @@ TEST(SpreadConnectorTest, testHierarchySending)
         }
 
         boost::shared_ptr<WaitingObserver> observer(new WaitingObserver(expectedEvents, receiveScope));
-        in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, observer, _1))));
+        in->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, observer, _1))));
         observers.push_back(observer);
 
         inConnectors.push_back(in);
@@ -191,7 +191,7 @@ TEST_P(SpreadConnectorRoundtripTest, roundtrip)
     const unsigned int numEvents = 100;
     boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, numEvents, GetParam()));
     WaitingObserver observer(numEvents, scope);
-    in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
+    in->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
     // activate port and schedule informer
     exec->schedule(source);

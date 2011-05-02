@@ -26,6 +26,7 @@
 #include <rsc/runtime/Properties.h>
 
 #include "../Connector.h"
+#include "../../eventprocessing/Handler.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -34,8 +35,9 @@ namespace inprocess {
 /**
  * @author jmoringe
  */
-class RSB_EXPORT InConnector: public rsb::transport::InConnector,
-        public boost::enable_shared_from_this<InConnector> {
+class RSB_EXPORT InConnector: public transport::InConnector,
+                              public eventprocessing::Handler,
+                              public boost::enable_shared_from_this<InConnector> {
 public:
     InConnector();
     virtual ~InConnector();
@@ -48,7 +50,7 @@ public:
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-    void push(EventPtr e);
+    void handle(EventPtr event);
 
     static rsb::transport::InConnector *create(
             const rsc::runtime::Properties &args);

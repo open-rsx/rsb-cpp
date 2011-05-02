@@ -40,6 +40,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/VoidConverter.cpp
             rsb/converter/converters.cpp
 
+            rsb/eventprocessing/Handler.cpp
             rsb/eventprocessing/EventSendingStrategy.cpp
             rsb/eventprocessing/DirectEventSendingStrategy.cpp
             rsb/eventprocessing/EventReceivingStrategy.cpp
@@ -77,7 +78,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/spread/SpreadConnector.cpp
             rsb/transport/spread/SpreadGroup.cpp
             rsb/transport/spread/SpreadMessage.cpp
-            
+
             rsb/util/MD5.cpp
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
@@ -113,6 +114,7 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/VoidConverter.h
             rsb/converter/converters.h
 
+            rsb/eventprocessing/Handler.h
             rsb/eventprocessing/EventSendingStrategy.h
             rsb/eventprocessing/DirectEventSendingStrategy.h
             rsb/eventprocessing/EventReceivingStrategy.h
@@ -154,7 +156,7 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/spread/SpreadConnector.h
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/SpreadMessage.h
-            
+
             rsb/util/MD5.h)
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)

@@ -26,8 +26,8 @@ void OutConnector::deactivate() {
 void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
 }
 
-void OutConnector::push(EventPtr e) {
-    this->bus.push(e);
+void OutConnector::handle(EventPtr event) {
+    this->bus.handle(event);
 }
 
 }

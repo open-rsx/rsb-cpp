@@ -96,8 +96,8 @@ void ParallelEventReceivingStrategy::deliver(DispatchUnitPtr dispatch, EventPtr 
 
 }
 
-void ParallelEventReceivingStrategy::process(EventPtr e) {
-	pool.push(e);
+void ParallelEventReceivingStrategy::handle(EventPtr event) {
+	pool.push(event);
 }
 
 void ParallelEventReceivingStrategy::subscribe(SubscriptionPtr s,

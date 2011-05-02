@@ -46,7 +46,7 @@ InConnector::InConnector(const string &host, unsigned int port) :
     //st = boost::shared_ptr<StatusTask>(new StatusTask(this));
     this->rec = boost::shared_ptr<ReceiverTask>(
             new ReceiverTask(this->connector->getConnection(),
-                    this->connector->getConverters(), this->observer));
+                             this->connector->getConverters(), HandlerPtr()));
 }
 
 InConnector::~InConnector() {
@@ -77,9 +77,15 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
     this->connector->setQualityOfServiceSpecs(specs);
 }
 
-void InConnector::setObserver(HandlerPtr observer) {
-    this->observer = observer;
-    this->rec->setHandler(observer);
+void InConnector::addHandler(HandlerPtr handler) {
+    assert(this->handlers.empty());
+    transport::InConnector::addHandler(handler);
+    this->rec->setHandler(this->handlers.front());
+}
+
+void InConnector::removeHandler(HandlerPtr handler) {
+    transport::InConnector::addHandler(handler);
+    this->rec->setHandler(HandlerPtr());
 }
 
 void InConnector::notify(rsb::filter::ScopeFilter* f,

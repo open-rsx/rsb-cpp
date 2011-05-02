@@ -53,15 +53,15 @@ public:
 	ParallelEventReceivingStrategy(unsigned int num_threads);
 	virtual ~ParallelEventReceivingStrategy();
 
-	// if invoked, the event is dispatched to listeners, typically called by ports
-        void process(rsb::EventPtr e);
-
         // add a subscription and associated handlers
         void subscribe(rsb::SubscriptionPtr s,
                        std::set<HandlerPtr> handlers);
 
         // unsubscribe a subscription
         void unsubscribe(rsb::SubscriptionPtr s);
+
+        // if invoked, the event is dispatched to listeners, typically called by ports
+        void handle(rsb::EventPtr e);
 private:
         typedef std::pair< rsb::SubscriptionPtr, std::set<HandlerPtr> > DispatchUnit;
         typedef boost::shared_ptr<DispatchUnit> DispatchUnitPtr;

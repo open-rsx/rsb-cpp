@@ -23,25 +23,14 @@
 #include <boost/function.hpp>
 
 #include "Event.h"
+#include "eventprocessing/Handler.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 
-/**
- * A handler is a "callback object" invoked by a @ref rsb::Listener
- * when new data is available that matches the @ref rsb::Subscription
- * associated to the listener.
- *
- * @author swrede
- */
-class RSB_EXPORT Handler {
-public:
-	virtual ~Handler();
+typedef eventprocessing::Handler Handler;
 
-	virtual void handle(EventPtr event) = 0;
-};
-
-typedef boost::shared_ptr<Handler> HandlerPtr;
+typedef eventprocessing::HandlerPtr HandlerPtr;
 
 typedef boost::function<void(EventPtr)> EventFunction;
 

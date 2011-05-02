@@ -67,7 +67,7 @@ TEST(InprocessConnectorTest, testRoundtrip)
     unsigned int numEvents = 3;
     boost::shared_ptr<InformerTask> source(new InformerTask(out, Scope("/blah"), 1, 100));
     WaitingObserver observer(numEvents, scope);
-    in->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
+    in->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
     // Send some events
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
@@ -75,24 +75,24 @@ TEST(InprocessConnectorTest, testRoundtrip)
     source->cancel();
     source->waitDone();
 
-    out->push(EventPtr(new Event()));
+    out->handle(EventPtr(new Event()));
 
     {
         EventPtr e(new Event());
         e->setScope(Scope("/blah"));
-        out->push(e);
+        out->handle(e);
     }
 
     {
         EventPtr e(new Event());
         e->setScope(Scope("/blah/foo"));
-        out->push(e);
+        out->handle(e);
     }
 
     {
         EventPtr e(new Event());
         e->setScope(Scope("/bar"));
-        out->push(e);
+        out->handle(e);
     }
 
     observer.waitReceived();

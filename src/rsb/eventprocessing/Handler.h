@@ -19,46 +19,32 @@
 
 #pragma once
 
-#include <map>
-#include <list>
+#include <boost/shared_ptr.hpp>
 
-#include <boost/thread/recursive_mutex.hpp>
-
-#include <rsc/logging/Logger.h>
-#include <rsc/patterns/Singleton.h>
-
-#include "../../Event.h"
-#include "../../Scope.h"
-#include "../../eventprocessing/Handler.h"
-#include "InConnector.h"
+#include "../Event.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace inprocess {
+namespace eventprocessing {
 
-/**
+/** Implementations of this class can be used in contexts where an
+ * "event sink" is required.
  *
  * @author jmoringe
  */
-class RSB_EXPORT Bus: public rsc::patterns::Singleton<Bus>,
-                      public eventprocessing::Handler {
+class RSB_EXPORT Handler {
 public:
-    Bus();
-    virtual ~Bus();
+    virtual ~Handler();
 
-    void addSink(InConnectorPtr sink);
-    void removeSink(InConnector* sink);
-
-    void handle(EventPtr event);
-private:
-    typedef std::list<boost::weak_ptr<InConnector> > SinkList;
-    typedef std::map<Scope, SinkList> SinkMap;
-
-    rsc::logging::LoggerPtr logger;
-
-    SinkMap sinks;
-    boost::recursive_mutex mutex;
+    /** Handle @a event.
+     *
+     * @param event The event that should be handled.
+     */
+    virtual void handle(EventPtr event) = 0;
 };
 
+typedef boost::shared_ptr<Handler> HandlerPtr;
+
 }
+
 }

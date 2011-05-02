@@ -31,7 +31,7 @@ using namespace rsb::protocol;
 namespace rsb {
 namespace spread {
 
-rsb::transport::OutConnector *OutConnector::create(const Properties& args) {
+transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
@@ -88,7 +88,7 @@ void OutConnector::fillNotification(protocol::Notification &notification,
 
 }
 
-void OutConnector::push(EventPtr event) {
+void OutConnector::handle(EventPtr event) {
 
     // TODO Remove "data split" information from notification
 

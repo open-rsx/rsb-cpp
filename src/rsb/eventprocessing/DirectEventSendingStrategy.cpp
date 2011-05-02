@@ -30,10 +30,10 @@ void DirectEventSendingStrategy::removeConnector(transport::OutConnectorPtr conn
     this->connectors.remove(connector);
 }
 
-void DirectEventSendingStrategy::process(EventPtr e) {
+void DirectEventSendingStrategy::process(EventPtr event) {
     for (ConnectorList::const_iterator it = this->connectors.begin();
          it != this->connectors.end(); ++it) {
-        (*it)->push(e);
+        (*it)->handle(event);
     }
 }
 

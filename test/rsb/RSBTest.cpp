@@ -79,9 +79,9 @@ TEST(RSBTest, testRoundtrip)
     unsigned int numEvents = 10;
     boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, 10, 1000));
     WaitingObserver observer(numEvents, scope);
-    set<HandlerPtr> handlers;
+    set<rsb::HandlerPtr> handlers;
     handlers.insert(
-            HandlerPtr(
+    rsb::HandlerPtr(
                     new EventFunctionHandler(
                             boost::bind(&WaitingObserver::handler, &observer,
                                     _1))));

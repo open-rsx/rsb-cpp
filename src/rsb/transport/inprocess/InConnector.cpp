@@ -70,9 +70,11 @@ void InConnector::deactivate() {
 void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
 }
 
-void InConnector::push(EventPtr e) {
-    if (this->observer) {
-        this->observer->handle(e);
+void InConnector::handle(EventPtr event) {
+
+    for (HandlerList::iterator it = this->handlers.begin();
+         it != this->handlers.end(); ++it) {
+        (*it)->handle(event);
     }
 }
 

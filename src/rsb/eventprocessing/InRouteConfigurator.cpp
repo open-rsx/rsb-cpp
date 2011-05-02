@@ -47,7 +47,7 @@ void InRouteConfigurator::activate() {
 
     this->eventReceivingStrategy = EventReceivingStrategyPtr(new ParallelEventReceivingStrategy());
     // add event processor as observer to input port(s)
-    this->inConnector->setObserver(HandlerPtr(new EventFunctionHandler(boost::bind(&EventReceivingStrategy::process,
+    this->inConnector->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&EventReceivingStrategy::handle,
                                                                                    this->eventReceivingStrategy, _1))));
 }
 

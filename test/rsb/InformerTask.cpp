@@ -52,7 +52,7 @@ void InformerTask::execute() {
         thisScope = Scope("/other").concat(scope);
     }
     EventPtr p(new Event(thisScope, data, rsc::runtime::typeName<string>()));
-    port->push(p);
+    port->handle(p);
     if (sentEvents % 2 == 1) {
         events.push_back(p);
     }

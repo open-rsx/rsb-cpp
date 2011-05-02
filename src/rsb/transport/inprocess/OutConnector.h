@@ -40,7 +40,7 @@ public:
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-    void push(rsb::EventPtr e);
+    void handle(rsb::EventPtr e);
 
     static rsb::transport::OutConnector* create(
             const rsc::runtime::Properties &args);

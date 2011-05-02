@@ -45,24 +45,24 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
 
     boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > > okQueue(
             new SynchronizedQueue<boost::shared_ptr<string> > );
-    HandlerPtr okHandler(new QueuePushHandler<string> (okQueue));
+    rsb::HandlerPtr okHandler(new QueuePushHandler<string> (okQueue));
     SubscriptionPtr okSubscription(new Subscription);
     const Scope okScope("/OK");
     okSubscription->appendFilter(FilterPtr(new ScopeFilter(okScope)));
     {
-        set<HandlerPtr> handlers;
+        set<rsb::HandlerPtr> handlers;
         handlers.insert(okHandler);
         processor.subscribe(okSubscription, handlers);
     }
 
     boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > >
             wrongQueue(new SynchronizedQueue<boost::shared_ptr<string> > );
-    HandlerPtr wrongHandler(new QueuePushHandler<string> (wrongQueue));
+    rsb::HandlerPtr wrongHandler(new QueuePushHandler<string> (wrongQueue));
     SubscriptionPtr wrongSubscription(new Subscription);
     const Scope wrongScope("/WRONG");
     wrongSubscription->appendFilter(FilterPtr(new ScopeFilter(wrongScope)));
     {
-        set<HandlerPtr> handlers;
+        set<rsb::HandlerPtr> handlers;
         handlers.insert(wrongHandler);
         processor.subscribe(wrongSubscription, handlers);
     }
@@ -71,7 +71,7 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
     event->setScope(okScope);
     event->setData(boost::shared_ptr<string>(new string("hello")));
 
-    processor.process(event);
+    processor.handle(event);
 
     boost::this_thread::sleep(boost::posix_time::millisec(500));
 
