@@ -98,12 +98,12 @@ void InRouteConfigurator::removeConnector(InConnectorPtr connector) {
     this->connectors.remove(connector);
 }
 
-void InRouteConfigurator::handlerAdded(HandlerPtr handler) {
-    eventReceivingStrategy->addHandler(handler);
+void InRouteConfigurator::handlerAdded(HandlerPtr handler, const bool &wait) {
+    eventReceivingStrategy->addHandler(handler, wait);
 }
 
-void InRouteConfigurator::handlerRemoved(HandlerPtr handler) {
-    eventReceivingStrategy->removeHandler(handler);
+void InRouteConfigurator::handlerRemoved(HandlerPtr handler, const bool &wait) {
+    eventReceivingStrategy->removeHandler(handler, wait);
 }
 
 void InRouteConfigurator::filterAdded(filter::FilterPtr filter) {

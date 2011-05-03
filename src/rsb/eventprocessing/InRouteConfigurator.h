@@ -36,10 +36,12 @@ namespace rsb {
 namespace eventprocessing {
 
 /**
- *
+ * A class responsible of configuring the route that processes incoming events
+ * from one or more InConnector instances in one Listener. This responsibility
+ * includes updates to the route from adding or removing Filter or Handler
+ * instances.
  *
  * @author swrede
- * @todo add configuration, provide preliminary set up interface
  */
 class RSB_EXPORT InRouteConfigurator: public virtual rsc::runtime::Printable {
 public:
@@ -60,16 +62,21 @@ public:
      * Adds a new handler that will be notified about received events.
      *
      * @param handler the handler to add
+     * @param wait if set to @c true, this call will return only after the
+     *             handler has been completely installed and will receive the
+     *             next available event
      */
-    void handlerAdded(HandlerPtr handler);
+    void handlerAdded(HandlerPtr handler, const bool &wait);
 
     /**
      * Removes a previously registered handle.
      *
      * @param handler handler to remove
-     * @todo guarantees
+     * @param wait if set to @c true, this call will return only after the
+     *             handler has been completely removed and will not be notified
+     *             anymore
      */
-    void handlerRemoved(HandlerPtr handler);
+    void handlerRemoved(HandlerPtr handler, const bool &wait);
 
     void filterAdded(filter::FilterPtr filter);
     void filterRemoved(filter::FilterPtr filter);

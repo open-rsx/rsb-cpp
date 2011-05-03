@@ -78,12 +78,12 @@ set<HandlerPtr> Listener::getHandlers() const {
     return result;
 }
 
-void Listener::addHandler(HandlerPtr h) {
-    this->configurator->handlerAdded(h);
+void Listener::addHandler(HandlerPtr h, const bool &wait) {
+    this->configurator->handlerAdded(h, wait);
 }
 
-void Listener::removeHandler(HandlerPtr h) {
-    this->configurator->handlerRemoved(h);
+void Listener::removeHandler(HandlerPtr h, const bool &wait) {
+    this->configurator->handlerRemoved(h, wait);
 }
 
 void Listener::addFilter(filter::FilterPtr filter) {

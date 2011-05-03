@@ -47,7 +47,7 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
     boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > > okQueue(
             new SynchronizedQueue<boost::shared_ptr<string> > );
     rsb::HandlerPtr okHandler(new QueuePushHandler<string> (okQueue));
-    processor.addHandler(okHandler);
+    processor.addHandler(okHandler, true);
 
     {
         EventPtr event(new Event);

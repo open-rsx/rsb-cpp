@@ -112,15 +112,21 @@ public:
      * filters are passed to all handlers.
      *
      * @param h a Pointer to the Handler.
+     * @param wait if set to @c true, this method will return only after the
+     *             handler has completely been installed and will receive the
+     *             next available message. Otherwise it may return earlier.
      */
-    virtual void addHandler(HandlerPtr h);
+    virtual void addHandler(HandlerPtr h, const bool &wait = true);
 
     /**
      * Removes a Handler instance to process newly received events.
      *
      * @param h handler to remove if present (comparison based on pointer)
+     * @param wait if set to @c true, this method will return only after the
+     *             handler has been completely removed from the event processing
+     *             and will not be called anymore from this listener
      */
-    void removeHandler(HandlerPtr h);
+    void removeHandler(HandlerPtr h, const bool &wait = true);
 
 private:
     rsc::logging::LoggerPtr logger;

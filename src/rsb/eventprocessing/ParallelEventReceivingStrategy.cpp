@@ -110,11 +110,15 @@ void ParallelEventReceivingStrategy::handle(EventPtr event) {
     pool.push(event);
 }
 
-void ParallelEventReceivingStrategy::addHandler(HandlerPtr handler) {
+void ParallelEventReceivingStrategy::addHandler(HandlerPtr handler,
+        const bool &/*wait*/) {
+    // wait can be ignored because the pool always ensures this
     pool.registerReceiver(handler);
 }
 
-void ParallelEventReceivingStrategy::removeHandler(HandlerPtr handler) {
+void ParallelEventReceivingStrategy::removeHandler(HandlerPtr handler,
+        const bool &/*wait*/) {
+    // wait can be ignored because the pool always ensures this
     pool.unregisterReceiver(handler);
 }
 

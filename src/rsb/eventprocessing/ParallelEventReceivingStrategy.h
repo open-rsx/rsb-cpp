@@ -56,8 +56,8 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;
 
-    virtual void addHandler(HandlerPtr handler);
-    virtual void removeHandler(HandlerPtr handler);
+    virtual void addHandler(HandlerPtr handler, const bool &wait);
+    virtual void removeHandler(HandlerPtr handler, const bool &wait);
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
