@@ -105,6 +105,7 @@ private:
     ConnectorList connectors;
     // ep for observation model
     EventReceivingStrategyPtr eventReceivingStrategy;
+    ParticipantConfig::ErrorStrategy errorStrategy;
     volatile bool shutdown;
 
 };

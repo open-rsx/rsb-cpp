@@ -33,7 +33,8 @@ namespace eventprocessing {
 
 InRouteConfigurator::InRouteConfigurator(const Scope &scope) :
     logger(Logger::getLogger("rsb.eventprocessing.InRouteConfigurator")),
-            scope(scope), shutdown(false) {
+            scope(scope), errorStrategy(ParticipantConfig::LOG),
+            shutdown(false) {
 }
 
 InRouteConfigurator::~InRouteConfigurator() {
@@ -66,6 +67,7 @@ void InRouteConfigurator::activate() {
     // connectors.
     this->eventReceivingStrategy = EventReceivingStrategyPtr(
             new ParallelEventReceivingStrategy());
+    this->eventReceivingStrategy->setHandlerErrorStrategy(errorStrategy);
     for (ConnectorList::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         (*it)->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(
@@ -130,7 +132,10 @@ void InRouteConfigurator::setQualityOfServiceSpecs(const QualityOfServiceSpec &/
 
 void InRouteConfigurator::setErrorStrategy(
         const ParticipantConfig::ErrorStrategy &strategy) {
-    eventReceivingStrategy->setHandlerErrorStrategy(strategy);
+    if (eventReceivingStrategy) {
+        eventReceivingStrategy->setHandlerErrorStrategy(strategy);
+    }
+    this->errorStrategy = strategy;
 }
 
 }
