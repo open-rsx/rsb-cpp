@@ -19,12 +19,17 @@
 
 #include <stdexcept>
 
+#include <boost/format.hpp>
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include "rsb/ParticipantConfig.h"
 
+#include "../testconfig.h"
+
 using namespace std;
+using namespace boost;
 using namespace testing;
 using namespace rsb;
 
@@ -112,6 +117,29 @@ TEST(ParticipantConfigTest, testOptions)
     config.setOptions(options);
     EXPECT_TRUE(config.getOptions().has("key"));
 
+}
+
+TEST(ParticipantConfig, fromFile)
+{
+    ParticipantConfig config
+        = ParticipantConfig::fromFile(str(format("%1%/rsb.conf-for-smoke-test")
+                                          % TEST_ROOT));
+    EXPECT_EQ(config.getOptions().get<unsigned int>("global"), 1u);
+
+    EXPECT_EQ(config.getQualityOfServiceSpec().getReliability(),
+              QualityOfServiceSpec::UNRELIABLE);
+    EXPECT_EQ(config.getQualityOfServiceSpec().getOrdering(),
+              QualityOfServiceSpec::UNORDERED);
+
+    ParticipantConfig::Transport spread = config.getTransport("spread");
+    EXPECT_EQ(spread.getOptions().get<string>("host"), "localhost");
+    EXPECT_EQ(spread.getOptions().get<unsigned int>("port"), 4803u);
+
+    for (unsigned int i = 1; i <= 3; ++i) {
+        EXPECT_THROW(ParticipantConfig::fromFile(str(format("%1%/rsb.conf-semantic-errors-%2%")
+                                                     % TEST_ROOT % i)),
+            invalid_argument);
+    }
 }
 
 TEST(ParticipantConfigTest, testErrorStrategy)
