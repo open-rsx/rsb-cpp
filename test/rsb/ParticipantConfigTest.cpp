@@ -119,7 +119,7 @@ TEST(ParticipantConfigTest, testOptions)
 
 }
 
-TEST(ParticipantConfig, fromFile)
+TEST(ParticipantConfigTest, testFromFile)
 {
     ParticipantConfig config = ParticipantConfig::fromFile(str(format(
             "%1%/rsb.conf-for-smoke-test") % TEST_ROOT));
