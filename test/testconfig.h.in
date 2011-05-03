@@ -24,5 +24,6 @@
 
 const static std::string TEST_ROOT = "@TEST_ROOT@";
 const static std::string SPREAD_EXECUTABLE = "@SPREAD_EXECUTABLE@";
+const static unsigned int SPREAD_PORT = 4815;
 
 #endif /* TESTCONFIG_H_ */

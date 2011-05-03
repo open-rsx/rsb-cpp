@@ -34,6 +34,7 @@
 #include "../../InformerTask.h"
 
 #include "testhelpers.h"
+#include "testconfig.h"
 
 using namespace std;
 using namespace rsb;
@@ -53,13 +54,15 @@ TEST(SpreadConnectorTest, testConstruction)
 
 TEST(SpreadConnectorTest, testConnnection)
 {
-    SpreadConnectorPtr p(new rsb::spread::SpreadConnector());
+    SpreadConnectorPtr p(
+            new rsb::spread::SpreadConnector(defaultHost(), SPREAD_PORT));
     ASSERT_NO_THROW(p->activate());
 }
 
 TEST(SpreadConnectorTest, testSendLongGroupNames)
 {
-    OutConnectorPtr out(new rsb::spread::OutConnector());
+    OutConnectorPtr out(
+            new rsb::spread::OutConnector(defaultHost(), SPREAD_PORT));
     out->activate();
 
     Scope
@@ -83,7 +86,8 @@ TEST(SpreadConnectorTest, testHierarchySending)
     QualityOfServiceSpec qosSpecs(QualityOfServiceSpec::ORDERED,
             QualityOfServiceSpec::RELIABLE);
 
-    OutConnectorPtr out(new rsb::spread::OutConnector());
+    OutConnectorPtr out(
+            new rsb::spread::OutConnector(defaultHost(), SPREAD_PORT));
     ASSERT_NO_THROW(out->activate());
     out->setQualityOfServiceSpecs(qosSpecs);
 
@@ -96,7 +100,7 @@ TEST(SpreadConnectorTest, testHierarchySending)
         Scope receiveScope = *receiveScopeIt;
 
         // in connector
-        InConnectorPtr in(new rsb::spread::InConnector());
+        InConnectorPtr in(new rsb::spread::InConnector(defaultHost(), SPREAD_PORT));
         in->activate();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(receiveScope);
@@ -171,11 +175,11 @@ TEST_P(SpreadConnectorRoundtripTest, roundtrip)
     QualityOfServiceSpec qosSpecs(QualityOfServiceSpec::ORDERED,
             QualityOfServiceSpec::RELIABLE);
     // in connector
-    InConnectorPtr in(new rsb::spread::InConnector());
+    InConnectorPtr in(new rsb::spread::InConnector(defaultHost(), SPREAD_PORT));
     ASSERT_NO_THROW(in->activate());
     in->setQualityOfServiceSpecs(qosSpecs);
 
-    OutConnectorPtr out(new rsb::spread::OutConnector());
+    OutConnectorPtr out(new rsb::spread::OutConnector(defaultHost(), SPREAD_PORT));
     ASSERT_NO_THROW(out->activate());
     out->setQualityOfServiceSpecs(qosSpecs);
 

@@ -86,6 +86,14 @@ TEST(RoundtripTest, testRoundtrip)
 
     Factory::killInstance();
     Factory &factory = Factory::getInstance();
+    ParticipantConfig config = factory.getDefaultParticipantConfig();
+    ParticipantConfig::Transport spreadTransport =
+            config.getTransport("spread");
+    rsc::runtime::Properties p = spreadTransport.getOptions();
+    p.set<unsigned int> ("port", SPREAD_PORT);
+    spreadTransport.setOptions(p);
+    config.addTransport(spreadTransport);
+    factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/blah");
 
@@ -94,12 +102,15 @@ TEST(RoundtripTest, testRoundtrip)
 
     // domain objects
     unsigned int numEvents = 10;
-    boost::shared_ptr<UserInformerTask> source(new UserInformerTask(informer,
-            10));
+    boost::shared_ptr<UserInformerTask> source(
+            new UserInformerTask(informer, 10));
     WaitingObserver observer(numEvents, scope);
 
-    listener->addHandler(rsb::HandlerPtr(new EventFunctionHandler(boost::bind(
-            &WaitingObserver::handler, &observer, _1))));
+    listener->addHandler(
+            rsb::HandlerPtr(
+                    new EventFunctionHandler(
+                            boost::bind(&WaitingObserver::handler, &observer,
+                                    _1))));
 
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);

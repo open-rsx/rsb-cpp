@@ -17,33 +17,38 @@
  *
  * ============================================================ */
 
-#include "rsb/transport/spread/MembershipManager.h"
-
 #include <iostream>
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+#include "rsb/transport/spread/MembershipManager.h"
+
+#include "testconfig.h"
 
 using namespace std;
 using namespace rsb::spread;
 using namespace testing;
 
-TEST(MembershipManagerTest, testRoundtrip) {
-	MembershipManagerPtr mm(new MembershipManager());
-	// TODO convert this to a mock-only test case
-	SpreadConnectionPtr sp(new SpreadConnection("blub"));
-	sp->activate();
+TEST(MembershipManagerTest, testRoundtrip)
+{
+    MembershipManagerPtr mm(new MembershipManager());
+    // TODO convert this to a mock-only test case
+    SpreadConnectionPtr sp(
+            new SpreadConnection("blub", defaultHost(), SPREAD_PORT));
+    sp->activate();
 
-	ASSERT_NO_THROW(mm->join("a",sp));
-	mm->join("a",sp);
-	// join a different group
-	mm->join("b",sp);
-	// leave it
-	mm->leave("b",sp);
-	// leave a
-	mm->leave("a",sp);
-	mm->leave("a",sp);
-	// re-join a previously left group
-	mm->join("b",sp);
-	// left b as well
-	ASSERT_NO_THROW(mm->leave("b",sp));
+    ASSERT_NO_THROW(mm->join("a",sp));
+    mm->join("a",sp);
+    // join a different group
+    mm->join("b",sp);
+    // leave it
+    mm->leave("b",sp);
+    // leave a
+    mm->leave("a",sp);
+    mm->leave("a",sp);
+    // re-join a previously left group
+    mm->join("b",sp);
+    // left b as well
+    ASSERT_NO_THROW(mm->leave("b",sp));
 }
