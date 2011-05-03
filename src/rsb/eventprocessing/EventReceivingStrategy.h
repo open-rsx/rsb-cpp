@@ -25,6 +25,7 @@
 #include "Handler.h"
 #include "../filter/Filter.h"
 #include "rsb/rsbexports.h"
+#include "../ParticipantConfig.h"
 
 namespace rsb {
 namespace eventprocessing {
@@ -40,6 +41,15 @@ class RSB_EXPORT EventReceivingStrategy: public Handler {
 public:
 
     virtual ~EventReceivingStrategy();
+
+    /**
+     * Defines the strategy to use for handling dispatching errors to the client
+     * handler.
+     *
+     * @param strategy the new strategy to use
+     */
+    virtual void setHandlerErrorStrategy(
+            const ParticipantConfig::ErrorStrategy &strategy) = 0;
 
     /**
      * Adds a new handler that will be notified about new events.

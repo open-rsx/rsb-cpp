@@ -52,6 +52,31 @@ TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
 
 ADD_TEST(${CORE_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${CORE_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 
+# --- core death tests ---
+
+SET(CORE_DEAT_TEST_SOURCES rsb/eventprocessing/ParallelEventReceivingStrategyDeathTest.cpp)
+
+ADD_EXECUTABLE(parallelStrategyDeathTest ${CORE_DEAT_TEST_SOURCES})
+TARGET_LINK_LIBRARIES(parallelStrategyDeathTest
+                      ${RSB_NAME}
+                      ${Boost_LIBRARIES})
+
+FIND_PACKAGE(PythonInterp)
+IF(PYTHONINTERP_FOUND)
+    ADD_TEST(parallelStrategyDeathTestException ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/deathTest.py"
+                                               --exe "${EXECUTABLE_OUTPUT_PATH}/parallelStrategyDeathTest"
+                                               --xml "${TEST_RESULT_DIR}/rsbtest-parallelStrategyDeathTestException.xml"
+                                               --name deathTestException
+                                               exception)
+    ADD_TEST(parallelStrategyDeathTestCatchAll ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/deathTest.py"
+                                               --exe "${EXECUTABLE_OUTPUT_PATH}/parallelStrategyDeathTest"
+                                               --xml "${TEST_RESULT_DIR}/rsbtest-parallelStrategyDeathTestCatchAll.xml"
+                                               --name deathTestCatchAll
+                                               catchall)
+ELSE()
+    MESSAGE(STATUS "Python interpreter not found, not enabling death tests")
+ENDIF()
+
 # --- spread connector test ---
 
 SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp

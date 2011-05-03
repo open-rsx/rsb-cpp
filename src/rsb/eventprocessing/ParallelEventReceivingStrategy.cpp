@@ -19,6 +19,7 @@
 
 #include "ParallelEventReceivingStrategy.h"
 
+#include <rsc/debug/DebugTools.h>
 #include <rsc/runtime/ContainerIO.h>
 
 using namespace std;
@@ -32,7 +33,8 @@ ParallelEventReceivingStrategy::ParallelEventReceivingStrategy() :
                     "rsb.ParallelEventReceivingStrategy")),
             pool(5, boost::bind(&ParallelEventReceivingStrategy::deliver, this,
                     _1, _2), boost::bind(
-                    &ParallelEventReceivingStrategy::filter, this, _1, _2)) {
+                    &ParallelEventReceivingStrategy::filter, this, _1, _2)),
+            errorStrategy(ParticipantConfig::LOG) {
     pool.start();
 }
 
@@ -44,7 +46,7 @@ ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(
             pool(num_threads, boost::bind(
                     &ParallelEventReceivingStrategy::deliver, this, _1, _2),
                     boost::bind(&ParallelEventReceivingStrategy::filter, this,
-                            _1, _2)) {
+                            _1, _2)), errorStrategy(ParticipantConfig::LOG) {
     pool.start();
 }
 
@@ -57,7 +59,15 @@ string ParallelEventReceivingStrategy::getClassName() const {
 }
 
 void ParallelEventReceivingStrategy::printContents(ostream &stream) const {
-    stream << "filters = " << filters;
+    boost::shared_lock<boost::shared_mutex> filtersLock(filtersMutex);
+    boost::recursive_mutex::scoped_lock errorLock(errorStrategyMutex);
+    stream << "filters = " << filters << ", errorStrategy = " << errorStrategy;
+}
+
+void ParallelEventReceivingStrategy::setHandlerErrorStrategy(
+        const ParticipantConfig::ErrorStrategy &strategy) {
+    boost::recursive_mutex::scoped_lock lock(errorStrategyMutex);
+    this->errorStrategy = strategy;
 }
 
 bool ParallelEventReceivingStrategy::filter(HandlerPtr handler, EventPtr e) {
@@ -77,31 +87,85 @@ bool ParallelEventReceivingStrategy::filter(HandlerPtr handler, EventPtr e) {
         return true;
 
     } catch (const exception& ex) {
-        RSCFATAL(logger, "Exception matching event " << *e
-                << " for handler " << handler << ":" << ex.what());
+
+        stringstream s;
+        s << "Exception matching event " << e << " for handler " << handler
+                << ":" << endl;
+        s << ex.what() << endl;
+        s << rsc::debug::DebugTools::newInstance()->exceptionInfo(ex);
+
+        handleDispatchError(s.str());
+
     } catch (...) {
-        RSCFATAL(logger, "Catch-all exception matching event " << e
-                << " for handler " << handler);
+
+        stringstream s;
+        s << "Catch-all handler called matching event " << e << " for handler "
+                << handler << endl;
+        rsc::debug::DebugToolsPtr tool = rsc::debug::DebugTools::newInstance();
+        vector<string> trace = tool->createBacktrace();
+        s << tool->formatBacktrace(trace);
+
+        handleDispatchError(s.str());
+
     }
 
     return false;
 
 }
 
+void ParallelEventReceivingStrategy::handleDispatchError(const string &message) {
+
+    boost::recursive_mutex::scoped_lock strategyLock(errorStrategyMutex);
+    switch (errorStrategy) {
+    case ParticipantConfig::LOG:
+        RSCERROR(logger, message)
+        ;
+        break;
+    case ParticipantConfig::PRINT:
+        cerr << message << endl;
+        break;
+    case ParticipantConfig::EXIT:
+        cerr << message << endl;
+        exit(1);
+        break;
+    default:
+        RSCWARN(logger, "Unknown error strategy: " << errorStrategy)
+        ;
+        RSCERROR(logger, message)
+        ;
+        break;
+    }
+
+}
+
 void ParallelEventReceivingStrategy::deliver(HandlerPtr handler, EventPtr e) {
-    RSCDEBUG(logger, "Delivering event " << e << " for subscription " << handler);
+    RSCDEBUG(logger, "Delivering event " << e << " to handler " << handler);
 
     try {
 
         handler->handle(e);
 
-    } catch (const exception &ex) {
-        // TODO probably disable this subscription
-        RSCFATAL(logger, "Exception delivering event " << e
-                << " to handler " << handler << ":" << ex.what());
+    } catch (const exception& ex) {
+
+        stringstream s;
+        s << "Exception dispatching event " << e << " to handler " << handler
+                << ":" << endl;
+        s << ex.what() << endl;
+        s << rsc::debug::DebugTools::newInstance()->exceptionInfo(ex);
+
+        handleDispatchError(s.str());
+
     } catch (...) {
-        RSCFATAL(logger, "Catch-all exception delivering event " << e
-                << " to handler " << handler);
+
+        stringstream s;
+        s << "Catch-all handler called dispatching event " << e
+                << " to handler " << handler << endl;
+        rsc::debug::DebugToolsPtr tool = rsc::debug::DebugTools::newInstance();
+        vector<string> trace = tool->createBacktrace();
+        s << tool->formatBacktrace(trace);
+
+        handleDispatchError(s.str());
+
     }
 
 }

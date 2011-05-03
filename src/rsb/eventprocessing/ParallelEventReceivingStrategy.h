@@ -56,6 +56,9 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;
 
+    void setHandlerErrorStrategy(
+            const ParticipantConfig::ErrorStrategy &strategy);
+
     virtual void addHandler(HandlerPtr handler, const bool &wait);
     virtual void removeHandler(HandlerPtr handler, const bool &wait);
 
@@ -70,11 +73,16 @@ private:
     bool filter(HandlerPtr handler, EventPtr event);
     void deliver(HandlerPtr handler, EventPtr event);
 
+    void handleDispatchError(const std::string &message);
+
     rsc::logging::LoggerPtr logger;
     rsc::threading::OrderedQueueDispatcherPool<EventPtr, Handler> pool;
 
-    boost::shared_mutex filtersMutex;
+    mutable boost::shared_mutex filtersMutex;
     std::set<filter::FilterPtr> filters;
+
+    mutable boost::recursive_mutex errorStrategyMutex;
+    ParticipantConfig::ErrorStrategy errorStrategy;
 
 };
 

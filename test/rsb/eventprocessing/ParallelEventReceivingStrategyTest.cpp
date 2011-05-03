@@ -71,3 +71,77 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
     EXPECT_TRUE(okQueue->empty());
 
 }
+
+class ErrorGeneratingHandler: public rsb::Handler {
+public:
+
+    ErrorGeneratingHandler(const bool &catchAll) :
+        catchAll(catchAll) {
+    }
+
+    virtual ~ErrorGeneratingHandler() {
+
+    }
+
+    string getClassName() const {
+        return "ErrorGeneratingHandler";
+    }
+
+    void handle(EventPtr /*event*/) {
+        if (catchAll) {
+            throw "A random string";
+        } else {
+            throw runtime_error("A random error");
+        }
+    }
+
+private:
+    bool catchAll;
+
+};
+
+TEST(ParallelEventReceivingStrategyTest, testHandlerErrorStrategyException)
+{
+
+    ParallelEventReceivingStrategy processor(1);
+    rsb::HandlerPtr exceptionHandler(new ErrorGeneratingHandler(false));
+    processor.addHandler(exceptionHandler, true);
+
+    // default should log
+    EventPtr event(new Event);
+    event->setData(boost::shared_ptr<string>(new string("hello")));
+    processor.handle(event);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+
+    processor.setHandlerErrorStrategy(ParticipantConfig::LOG);
+    processor.handle(event);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+
+    processor.setHandlerErrorStrategy(ParticipantConfig::PRINT);
+    processor.handle(event);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+
+}
+
+TEST(ParallelEventReceivingStrategyTest, testHandlerErrorStrategyCatchAll)
+{
+
+    ParallelEventReceivingStrategy processor(1);
+    rsb::HandlerPtr exceptionHandler(new ErrorGeneratingHandler(true));
+    processor.addHandler(exceptionHandler, true);
+
+    // default should log
+    EventPtr event(new Event);
+    event->setData(boost::shared_ptr<string>(new string("hello")));
+    processor.handle(event);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+
+    processor.setHandlerErrorStrategy(ParticipantConfig::LOG);
+    processor.handle(event);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+
+    processor.setHandlerErrorStrategy(ParticipantConfig::PRINT);
+    processor.handle(event);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+
+}
