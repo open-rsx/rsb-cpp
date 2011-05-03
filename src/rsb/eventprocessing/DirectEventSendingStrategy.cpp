@@ -31,8 +31,7 @@ string DirectEventSendingStrategy::getClassName() const {
 }
 
 void DirectEventSendingStrategy::printContents(ostream &stream) const {
-    // TODO why does this not work?
-    //stream = "connectors = " << connectors;
+    stream << "connectors = " << connectors;
 }
 
 void DirectEventSendingStrategy::addConnector(transport::OutConnectorPtr connector) {
