@@ -181,7 +181,12 @@ ParticipantConfig ParticipantConfig::fromConfiguration(
 
 void ParticipantConfig::handleOption(const vector<string> &key,
         const string &value) {
+    // Quality of Service
     if (key[0] == "qualityofservice") {
+        if (key.size() != 2) {
+            throw invalid_argument(str(format("Option key `%1%' has invalid number of components; options related to quality of service have to have two components.")
+                                       % key));
+        }
         if (key[1] == "reliability") {
             if (value == "UNRELIABLE") {
                 this->qosSpec.reliability = QualityOfServiceSpec::UNRELIABLE;
@@ -191,8 +196,8 @@ void ParticipantConfig::handleOption(const vector<string> &key,
                 throw invalid_argument(
                         str(
                                 format(
-                                        "The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
-                                        % value));
+                                        "The value `%1%' is invalid for the key `%2%'.")
+                                        % value % key));
         } else if (key[1] == "ordering") {
             if (value == "UNORDERED") {
                 this->qosSpec.ordering = QualityOfServiceSpec::UNORDERED;
@@ -202,9 +207,30 @@ void ParticipantConfig::handleOption(const vector<string> &key,
                 throw invalid_argument(
                         str(
                                 format(
-                                        "The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
-                                        % value));
+                                        "The value `%1%' is invalid for the key `%2%'.")
+                                        % value % key));
+        } else {
+            throw invalid_argument(str(format("`%2%' is not a valid sub-key of `%1%'.")
+                                       % key[0] % key[1]));
         }
+    // Error handling
+    } else if (key[0] == "errorhandling") {
+        if (key[1] == "onhandlererror") {
+            if (value == "LOG") {
+                this->errorStrategy = LOG;
+            } else if (value == "PRINT") {
+                this->errorStrategy = PRINT;
+            } else if (value == "EXIT") {
+                this->errorStrategy = EXIT;
+            } else {
+                throw invalid_argument(str(format("The value `%1%' is invalid for the key `%2%'.")
+                                           % value % key));
+            }
+        } else {
+            throw invalid_argument(str(format("`%2%' is not a valid sub-key of `%1%'.")
+                                       % key[0] % key[1]));
+        }
+    // Transports
     } else if (key[0] == "transport") {
         if (key.size() != 3) {
             throw invalid_argument(
@@ -220,6 +246,7 @@ void ParticipantConfig::handleOption(const vector<string> &key,
         }
         Transport& transport = it->second;
         transport.options[key[2]] = parseTypedValue(value);
+    // Global (participant-wide) options
     } else {
         if (key.size() != 1) {
             throw invalid_argument(

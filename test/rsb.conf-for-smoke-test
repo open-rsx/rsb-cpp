@@ -4,6 +4,9 @@ global = <uint>1
 reliability = UNRELIABLE
 ordering = UNORDERED
 
+[errorhandling]
+onhandlererror = EXIT
+
 [transport.spread]
 host    = localhost
 port    = <uint>4803

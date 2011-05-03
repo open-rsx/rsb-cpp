@@ -130,6 +130,8 @@ TEST(ParticipantConfigTest, testFromFile)
     EXPECT_EQ(config.getQualityOfServiceSpec().getOrdering(),
             QualityOfServiceSpec::UNORDERED);
 
+    EXPECT_EQ(config.getErrorStrategy(), ParticipantConfig::EXIT);
+
     ParticipantConfig::Transport spread = config.getTransport("spread");
     EXPECT_EQ(spread.getOptions().get<string>("host"), "localhost");
     EXPECT_EQ(spread.getOptions().get<unsigned int>("port"), 4803u);
