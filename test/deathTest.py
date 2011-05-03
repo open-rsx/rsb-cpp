@@ -31,8 +31,6 @@ goodXml = '''<?xml version="1.0" encoding="UTF-8"?>
 </testsuites>
 ''' % {"name" : options.name, "prog" : options.exe, "args" : args}
 
-print(goodXml)
-    
 print("Calling %s" % ([options.exe] + args))
 retcode = subprocess.call([options.exe] + args)
 print("retcode=%s" % retcode)
@@ -48,4 +46,4 @@ else:
     print("Successful death")
     f.write(goodXml)
     f.close()
-    exit(1)
+    exit(0)
