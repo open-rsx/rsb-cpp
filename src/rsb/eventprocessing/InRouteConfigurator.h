@@ -90,6 +90,13 @@ public:
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
+    /**
+     * Sets the desired error strategy to use.
+     *
+     * @param strategy the strategy to use
+     */
+    void setErrorStrategy(const ParticipantConfig::ErrorStrategy &strategy);
+
 private:
     typedef std::list<transport::InConnectorPtr> ConnectorList;
 

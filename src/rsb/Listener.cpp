@@ -51,6 +51,7 @@ void Listener::initialize(const vector<InConnectorPtr> &connectors,
         const Scope &scope) {
     // TODO evaluate configuration
     this->configurator.reset(new eventprocessing::InRouteConfigurator(scope));
+    this->configurator->setErrorStrategy(getConfig().getErrorStrategy());
     for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
             != connectors.end(); ++it) {
         this->configurator->addConnector(*it);

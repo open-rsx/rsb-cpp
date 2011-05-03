@@ -128,5 +128,10 @@ void InRouteConfigurator::setQualityOfServiceSpecs(const QualityOfServiceSpec &/
     // this->inConnector->setQualityOfServiceSpecs(specs);
 }
 
+void InRouteConfigurator::setErrorStrategy(
+        const ParticipantConfig::ErrorStrategy &strategy) {
+    eventReceivingStrategy->setHandlerErrorStrategy(strategy);
+}
+
 }
 }
