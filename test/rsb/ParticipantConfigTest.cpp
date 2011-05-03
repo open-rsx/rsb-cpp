@@ -26,7 +26,7 @@
 
 #include "rsb/ParticipantConfig.h"
 
-#include "../testconfig.h"
+#include "testconfig.h"
 
 using namespace std;
 using namespace boost;
@@ -121,15 +121,14 @@ TEST(ParticipantConfigTest, testOptions)
 
 TEST(ParticipantConfig, fromFile)
 {
-    ParticipantConfig config
-        = ParticipantConfig::fromFile(str(format("%1%/rsb.conf-for-smoke-test")
-                                          % TEST_ROOT));
+    ParticipantConfig config = ParticipantConfig::fromFile(str(format(
+            "%1%/rsb.conf-for-smoke-test") % TEST_ROOT));
     EXPECT_EQ(config.getOptions().get<unsigned int>("global"), 1u);
 
     EXPECT_EQ(config.getQualityOfServiceSpec().getReliability(),
-              QualityOfServiceSpec::UNRELIABLE);
+            QualityOfServiceSpec::UNRELIABLE);
     EXPECT_EQ(config.getQualityOfServiceSpec().getOrdering(),
-              QualityOfServiceSpec::UNORDERED);
+            QualityOfServiceSpec::UNORDERED);
 
     ParticipantConfig::Transport spread = config.getTransport("spread");
     EXPECT_EQ(spread.getOptions().get<string>("host"), "localhost");
@@ -137,8 +136,8 @@ TEST(ParticipantConfig, fromFile)
 
     for (unsigned int i = 1; i <= 3; ++i) {
         EXPECT_THROW(ParticipantConfig::fromFile(str(format("%1%/rsb.conf-semantic-errors-%2%")
-                                                     % TEST_ROOT % i)),
-            invalid_argument);
+                                % TEST_ROOT % i)),
+                invalid_argument);
     }
 }
 
