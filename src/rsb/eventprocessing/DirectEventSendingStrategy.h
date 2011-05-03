@@ -33,8 +33,12 @@ namespace eventprocessing {
  *
  * @author jmoringe
  */
-class DirectEventSendingStrategy : public EventSendingStrategy {
+class DirectEventSendingStrategy: public EventSendingStrategy {
 public:
+
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
+
     void addConnector(transport::OutConnectorPtr connector);
     void removeConnector(transport::OutConnectorPtr connector);
 

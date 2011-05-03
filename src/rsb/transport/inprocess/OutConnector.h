@@ -35,6 +35,8 @@ class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {
 public:
     OutConnector();
 
+    std::string getClassName() const;
+
     void activate();
     void deactivate();
 

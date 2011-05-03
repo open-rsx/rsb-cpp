@@ -55,6 +55,14 @@ InConnector::~InConnector() {
     }
 }
 
+string InConnector::getClassName() const {
+    return "InConnector";
+}
+
+void InConnector::printContents(ostream &stream) const {
+    stream << "connector = " << connector;
+}
+
 void InConnector::activate() {
     this->connector->activate();
 

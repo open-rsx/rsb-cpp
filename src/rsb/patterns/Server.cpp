@@ -49,6 +49,14 @@ public:
                 informer(informer) {
     }
 
+    string getClassName() const {
+        return "RequestHandler";
+    }
+
+    void printContents(ostream &stream) const {
+        stream << "methodName = " << methodName;
+    }
+
     void handle(EventPtr event) {
 
         const string requestIdKey = "ServerRequestId";

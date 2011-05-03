@@ -43,7 +43,7 @@ namespace rsb {
  *
  *  @author jmoringe
  */
-class RSB_EXPORT Participant: public rsc::runtime::Printable {
+class RSB_EXPORT Participant: public virtual rsc::runtime::Printable {
 public:
 
     void printContents(std::ostream &stream) const;

@@ -19,15 +19,24 @@
 
 #include "Handler.h"
 
+using namespace std;
+
 namespace rsb {
 
-EventFunctionHandler::EventFunctionHandler(const EventFunction& function)
-        : function(function) {
+EventFunctionHandler::EventFunctionHandler(const EventFunction& function) :
+    function(function) {
 }
 
-void
-EventFunctionHandler::handle(EventPtr event) {
-        this->function(event);
+string EventFunctionHandler::getClassName() const {
+    return "EventFunctionHandler";
+}
+
+void EventFunctionHandler::printContents(ostream &stream) const {
+    stream << "function = " << function;
+}
+
+void EventFunctionHandler::handle(EventPtr event) {
+    this->function(event);
 }
 
 }

@@ -44,7 +44,7 @@ typedef boost::shared_ptr<Service> ServicePtr;
  *
  * @author jwienke
  */
-class RSB_EXPORT Service: public rsc::runtime::Printable {
+class RSB_EXPORT Service: public virtual rsc::runtime::Printable {
 public:
 
     virtual ~Service();

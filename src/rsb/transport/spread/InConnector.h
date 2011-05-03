@@ -39,8 +39,10 @@ class RSB_EXPORT InConnector: public rsb::transport::InConnector {
 public:
     InConnector(const std::string &host = defaultHost(), unsigned int port =
             defaultPort());
-
     virtual ~InConnector();
+
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
 
     void setScope(const Scope &scope);
 

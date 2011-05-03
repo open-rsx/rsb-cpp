@@ -22,6 +22,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 
+#include <rsc/runtime/TypeStringTools.h>
+
 #include "Event.h"
 #include "eventprocessing/Handler.h"
 #include "rsb/rsbexports.h"
@@ -41,11 +43,14 @@ typedef boost::function<void(EventPtr)> EventFunction;
  */
 class RSB_EXPORT EventFunctionHandler: public Handler {
 public:
-	EventFunctionHandler(const EventFunction& function);
+    EventFunctionHandler(const EventFunction& function);
 
-	void handle(EventPtr event);
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
+
+    void handle(EventPtr event);
 protected:
-	EventFunction function;
+    EventFunction function;
 };
 
 /**
@@ -60,18 +65,27 @@ protected:
 template<typename T>
 class DataFunctionHandler: public Handler {
 public:
-	typedef boost::shared_ptr<T> DataPtr;
-	typedef boost::function<void(DataPtr)> DataFunction;
+    typedef boost::shared_ptr<T> DataPtr;
+    typedef boost::function<void(DataPtr)> DataFunction;
 
-	DataFunctionHandler(const DataFunction& function) :
-		function(function) {
-	}
+    std::string getClassName() const {
+        return "DataFunctionHandler";
+    }
 
-	void handle(EventPtr event) {
-		this->function(boost::static_pointer_cast<T>(event->getData()));
-	}
+    void printContents(std::ostream &stream) const {
+        stream << "DataType = " << rsc::runtime::typeName<T>()
+                << ", function = " << function;
+    }
+
+    DataFunctionHandler(const DataFunction& function) :
+        function(function) {
+    }
+
+    void handle(EventPtr event) {
+        this->function(boost::static_pointer_cast<T>(event->getData()));
+    }
 protected:
-	DataFunction function;
+    DataFunction function;
 };
 
 /**
@@ -84,14 +98,14 @@ protected:
 template<class DataType>
 class DataHandler: public Handler {
 public:
-	virtual ~DataHandler() {
-	}
+    virtual ~DataHandler() {
+    }
 
-	void handle(EventPtr event) {
-		notify(boost::static_pointer_cast<DataType>(event->getData()));
-	}
+    void handle(EventPtr event) {
+        notify(boost::static_pointer_cast<DataType>(event->getData()));
+    }
 
-	virtual void notify(boost::shared_ptr<DataType> data) = 0;
+    virtual void notify(boost::shared_ptr<DataType> data) = 0;
 
 };
 

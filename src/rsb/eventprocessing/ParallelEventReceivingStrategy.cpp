@@ -19,6 +19,8 @@
 
 #include "ParallelEventReceivingStrategy.h"
 
+#include <rsc/runtime/ContainerIO.h>
+
 using namespace std;
 
 namespace rsb {
@@ -48,6 +50,14 @@ ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(
 
 ParallelEventReceivingStrategy::~ParallelEventReceivingStrategy() {
     pool.stop();
+}
+
+string ParallelEventReceivingStrategy::getClassName() const {
+    return "ParallelEventReceivingStrategy";
+}
+
+void ParallelEventReceivingStrategy::printContents(ostream &stream) const {
+    stream << "filters = " << filters;
 }
 
 bool ParallelEventReceivingStrategy::filter(HandlerPtr handler, EventPtr e) {

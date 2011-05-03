@@ -21,6 +21,8 @@
 
 #include "Bus.h"
 
+using namespace std;
+
 using namespace rsc::logging;
 using namespace rsc::runtime;
 
@@ -28,8 +30,7 @@ namespace rsb {
 namespace inprocess {
 
 InConnector::InConnector() :
-    logger(Logger::getLogger("rsb.inprocess.InConnector")),
-    active(false) {
+    logger(Logger::getLogger("rsb.inprocess.InConnector")), active(false) {
 }
 
 rsb::transport::InConnector* InConnector::create(const Properties& args) {
@@ -45,6 +46,14 @@ InConnector::~InConnector() {
     }
 }
 
+string InConnector::getClassName() const {
+    return "InConnector";
+}
+
+void InConnector::printContents(ostream &stream) const {
+    stream << "scope = " << scope;
+}
+
 Scope InConnector::getScope() const {
     return this->scope;
 }
@@ -58,7 +67,8 @@ void InConnector::setScope(const Scope& scope) {
 
 void InConnector::activate() {
     RSCDEBUG(logger, "Activating");
-    Bus::getInstance().addSink(boost::dynamic_pointer_cast<InConnector>(shared_from_this()));
+    Bus::getInstance().addSink(boost::dynamic_pointer_cast<InConnector>(
+            shared_from_this()));
     this->active = true;
 }
 
@@ -72,8 +82,8 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/
 
 void InConnector::handle(EventPtr event) {
 
-    for (HandlerList::iterator it = this->handlers.begin();
-         it != this->handlers.end(); ++it) {
+    for (HandlerList::iterator it = this->handlers.begin(); it
+            != this->handlers.end(); ++it) {
         (*it)->handle(event);
     }
 }

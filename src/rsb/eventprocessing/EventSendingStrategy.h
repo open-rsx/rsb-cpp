@@ -21,6 +21,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/Printable.h>
+
 #include "../Event.h"
 #include "../transport/OutConnector.h"
 #include "rsb/rsbexports.h"
@@ -34,7 +36,7 @@ namespace eventprocessing {
  * @author swrede
  * @author jmoringe
  */
-class RSB_EXPORT EventSendingStrategy {
+class RSB_EXPORT EventSendingStrategy: public virtual rsc::runtime::Printable {
 public:
     virtual ~EventSendingStrategy();
 

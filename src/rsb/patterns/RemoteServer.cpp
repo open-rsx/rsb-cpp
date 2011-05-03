@@ -51,6 +51,10 @@ public:
         logger(logger) {
     }
 
+    string getClassName() const {
+        return "WaitingEventHandler";
+    }
+
     void handle(EventPtr event) {
         {
             boost::mutex::scoped_lock lock(mutex);

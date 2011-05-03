@@ -21,6 +21,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/Printable.h>
+
 #include "../Event.h"
 #include "rsb/rsbexports.h"
 
@@ -33,7 +35,7 @@ namespace eventprocessing {
  *
  * @author jmoringe
  */
-class RSB_EXPORT Handler {
+class RSB_EXPORT Handler: public virtual rsc::runtime::Printable {
 public:
     virtual ~Handler();
 

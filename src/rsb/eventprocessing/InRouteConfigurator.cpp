@@ -42,6 +42,16 @@ InRouteConfigurator::~InRouteConfigurator() {
     }
 }
 
+string InRouteConfigurator::getClassName() const {
+    return "InRouteConfigurator";
+}
+
+void InRouteConfigurator::printContents(ostream &stream) const {
+    stream << "scope = " << scope << ", connectors = " << connectors
+            << ", eventReceivingStrategy = " << eventReceivingStrategy
+            << ", shutdown = " << shutdown;
+}
+
 void InRouteConfigurator::activate() {
     RSCDEBUG(logger, "Activating");
 

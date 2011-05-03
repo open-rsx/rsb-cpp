@@ -19,8 +19,21 @@
 
 #include "DirectEventSendingStrategy.h"
 
+#include <rsc/runtime/ContainerIO.h>
+
+using namespace std;
+
 namespace rsb {
 namespace eventprocessing {
+
+string DirectEventSendingStrategy::getClassName() const {
+    return "DirectEventSendingStrategy";
+}
+
+void DirectEventSendingStrategy::printContents(ostream &stream) const {
+    // TODO why does this not work?
+    //stream = "connectors = " << connectors;
+}
 
 void DirectEventSendingStrategy::addConnector(transport::OutConnectorPtr connector) {
     this->connectors.push_back(connector);

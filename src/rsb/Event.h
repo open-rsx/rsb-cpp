@@ -42,7 +42,7 @@ typedef boost::shared_ptr<void> VoidPtr;
  *
  * @author swrede
  */
-class RSB_EXPORT Event: public rsc::runtime::Printable {
+class RSB_EXPORT Event: public virtual rsc::runtime::Printable {
 public:
 
     Event();

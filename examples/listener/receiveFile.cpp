@@ -49,6 +49,10 @@ public:
         counter = 0;
     }
 
+    string getClassName() const {
+        return "MyDataHandler";
+    }
+
     void handle(EventPtr e) {
 
         counter++;

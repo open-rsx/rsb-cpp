@@ -53,6 +53,9 @@ public:
     ParallelEventReceivingStrategy(unsigned int num_threads);
     virtual ~ParallelEventReceivingStrategy();
 
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
+
     virtual void addHandler(HandlerPtr handler);
     virtual void removeHandler(HandlerPtr handler);
 

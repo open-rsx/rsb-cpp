@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <rsc/runtime/Printable.h>
+
 #include "../Event.h"
 #include "FilterActionTypes.h"
 #include "rsb/rsbexports.h"
@@ -32,7 +34,7 @@ typedef boost::shared_ptr<FilterObserver> FilterObserverPtr;
 /**
  * @author swrede
  */
-class RSB_EXPORT Filter {
+class RSB_EXPORT Filter: public virtual rsc::runtime::Printable {
 public:
 	Filter();
 	virtual ~Filter();

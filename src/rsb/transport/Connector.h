@@ -21,6 +21,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/Printable.h>
+
 #include "../QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
 
@@ -30,7 +32,7 @@ namespace transport {
 /**
  * @author swrede
  */
-class RSB_EXPORT Connector {
+class RSB_EXPORT Connector: public virtual rsc::runtime::Printable {
 public:
     virtual ~Connector();
 

@@ -1,5 +1,7 @@
 #include "OutConnector.h"
 
+using namespace std;
+
 using namespace rsc::logging;
 using namespace rsc::runtime;
 
@@ -15,6 +17,10 @@ rsb::transport::OutConnector* OutConnector::create(const Properties& args) {
     RSCDEBUG(logger, "Creating OutConnector with properties " << args);
 
     return new OutConnector();
+}
+
+string OutConnector::getClassName() const {
+    return "OutConnector";
 }
 
 void OutConnector::activate() {

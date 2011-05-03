@@ -25,6 +25,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
+#include <rsc/runtime/Printable.h>
 
 #include "../QualityOfServiceSpec.h"
 #include "../transport/InConnector.h"
@@ -40,11 +41,14 @@ namespace eventprocessing {
  * @author swrede
  * @todo add configuration, provide preliminary set up interface
  */
-class RSB_EXPORT InRouteConfigurator {
+class RSB_EXPORT InRouteConfigurator: public virtual rsc::runtime::Printable {
 public:
 
     InRouteConfigurator(const Scope &scope);
     virtual ~InRouteConfigurator();
+
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
 
     void activate();
     void deactivate();

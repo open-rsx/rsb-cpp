@@ -19,6 +19,14 @@ Bus::~Bus() {
     }
 }
 
+string Bus::getClassName() const {
+    return "Bus";
+}
+
+void Bus::printContents(ostream &stream) const {
+    stream << "sinks = " << sinks;
+}
+
 void Bus::addSink(InConnectorPtr sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 

@@ -35,8 +35,8 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(args.get<string> ("host", defaultHost()),
-            args.get<unsigned int> ("port", defaultPort()));
+    return new OutConnector(args.get<string> ("host", defaultHost()), args.get<
+            unsigned int> ("port", defaultPort()));
 }
 
 OutConnector::OutConnector(const string &host, const unsigned int &port,
@@ -50,6 +50,14 @@ OutConnector::~OutConnector() {
     if (this->active) {
         deactivate();
     }
+}
+
+string OutConnector::getClassName() const {
+    return "OutConnector";
+}
+
+void OutConnector::printContents(ostream &stream) const {
+    stream << "connector = " << connector << ", active = " << active;
 }
 
 void OutConnector::activate() {
@@ -97,8 +105,8 @@ void OutConnector::handle(EventPtr event) {
             this->connector->getConverters()->getConverterByDataType(
                     event->getType());
     string wire;
-    string wireSchema = c->serialize(
-            make_pair(event->getType(), event->getData()), wire);
+    string wireSchema = c->serialize(make_pair(event->getType(),
+            event->getData()), wire);
 
     // ---- Begin split message implementation ----
     RSCDEBUG(logger, "Whole message size (data only): " << wire.size());

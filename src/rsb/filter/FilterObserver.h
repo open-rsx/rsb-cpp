@@ -22,6 +22,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
+#include <rsc/runtime/Printable.h>
 
 #include "Filter.h"
 #include "ScopeFilter.h"
@@ -34,13 +35,13 @@ namespace filter {
  * @author swrede
  * @todo Check if Double Dispatch pattern is best suited here
  */
-class RSB_EXPORT FilterObserver {
+class RSB_EXPORT FilterObserver: public virtual rsc::runtime::Printable {
 public:
 	FilterObserver();
 	virtual ~FilterObserver();
 
-	virtual void notify(Filter* filter, const FilterAction::Types &at);
-	virtual void notify(ScopeFilter* filter, const FilterAction::Types &at);
+	virtual void notify(Filter *filter, const FilterAction::Types &at);
+	virtual void notify(ScopeFilter *filter, const FilterAction::Types &at);
 
 private:
 

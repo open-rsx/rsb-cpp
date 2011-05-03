@@ -38,8 +38,10 @@ public:
     OutConnector(const std::string& host = defaultHost(),
             const unsigned int &port = defaultPort(),
             const unsigned int &maxDataSize = 100000);
-
     virtual ~OutConnector();
+
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
 
     void handle(rsb::EventPtr e);
 

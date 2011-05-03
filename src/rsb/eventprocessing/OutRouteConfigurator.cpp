@@ -19,6 +19,8 @@
 
 #include "OutRouteConfigurator.h"
 
+#include <rsc/runtime/ContainerIO.h>
+
 #include "DirectEventSendingStrategy.h"
 
 using namespace std;
@@ -33,7 +35,7 @@ namespace eventprocessing {
 
 OutRouteConfigurator::OutRouteConfigurator() :
     logger(Logger::getLogger("rsb.eventprocessing.OutRouteConfigurator")),
-    shutdown(false) {
+            shutdown(false) {
 }
 
 OutRouteConfigurator::~OutRouteConfigurator() {
@@ -42,21 +44,29 @@ OutRouteConfigurator::~OutRouteConfigurator() {
     }
 }
 
+string OutRouteConfigurator::getClassName() const {
+    return "OutRouteConfigurator";
+}
+
+void OutRouteConfigurator::printContents(ostream &stream) const {
+    stream << "connectors = " << connectors << ", shutdown = " << shutdown;
+}
+
 void OutRouteConfigurator::activate() {
     RSCDEBUG(logger, "Activating");
 
     // Activate all connectors.
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
         (*it)->activate();
     }
 
     // Create a strategy object and add all connectors to it.
     this->eventSendingStrategy.reset(new DirectEventSendingStrategy());
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
         RSCDEBUG(logger, "Adding connector " << *it
-                 << " to strategy " << this->eventSendingStrategy);
+                << " to strategy " << this->eventSendingStrategy);
         this->eventSendingStrategy->addConnector(*it);
     }
 }
@@ -66,20 +76,20 @@ void OutRouteConfigurator::deactivate() {
 
     // Remove all connectors from the strategy object, the release the
     // strategy.
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
         RSCDEBUG(logger, "Removing connector " << *it
-                 << " from strategy " << this->eventSendingStrategy);
+                << " from strategy " << this->eventSendingStrategy);
         this->eventSendingStrategy->removeConnector(*it);
     }
     this->eventSendingStrategy.reset();
 
     // Deactivate all connectors.
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
         (*it)->deactivate();
     }
-    
+
     this->shutdown = true;
 }
 
@@ -98,9 +108,10 @@ void OutRouteConfigurator::publish(EventPtr e) {
     this->eventSendingStrategy->process(e);
 }
 
-void OutRouteConfigurator::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
-    for (ConnectorList::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+void OutRouteConfigurator::setQualityOfServiceSpecs(
+        const QualityOfServiceSpec &specs) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
         (*it)->setQualityOfServiceSpecs(specs);
     }
 }

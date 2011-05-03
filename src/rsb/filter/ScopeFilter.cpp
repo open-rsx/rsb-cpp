@@ -32,14 +32,22 @@ ScopeFilter::ScopeFilter(const Scope &scope) :
 ScopeFilter::~ScopeFilter() {
 }
 
+string ScopeFilter::getClassName() const {
+    return "ScopeFilter";
+}
+
+void ScopeFilter::printContents(ostream &stream) const {
+    stream << "scope = " << scope;
+}
+
 bool ScopeFilter::match(EventPtr e) {
     // TODO implement whitelisting
     // TODO implement removal of pointers in whitelist
     //      after dispatching of event notification, needs to be done by EventReceivingStrategy
     // TODO whitelist must be specific for each filter, but handled globally
     //if (whitelist[e] || (e->getScope()==scope)) {
-    if ((e->getScope() == this->scope)
-        || e->getScope().isSubScopeOf(this->scope)) {
+    if ((e->getScope() == this->scope) || e->getScope().isSubScopeOf(
+            this->scope)) {
         return true;
     } else {
         return false;

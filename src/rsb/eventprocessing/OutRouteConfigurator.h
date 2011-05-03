@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
+#include <rsc/runtime/Printable.h>
 
 #include "../QualityOfServiceSpec.h"
 #include "../transport/Connector.h"
@@ -40,10 +41,13 @@ namespace eventprocessing {
  * @todo add configuration, provide preliminary set up interface
  * @todo implement abstract factory pattern for different port types
  */
-class RSB_EXPORT OutRouteConfigurator {
+class RSB_EXPORT OutRouteConfigurator: public virtual rsc::runtime::Printable {
 public:
     OutRouteConfigurator();
     virtual ~OutRouteConfigurator();
+
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
 
     void activate();
     void deactivate();

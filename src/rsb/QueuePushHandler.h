@@ -39,23 +39,31 @@ namespace rsb {
 template<class T>
 class QueuePushHandler: public Handler {
 private:
-	boost::shared_ptr<rsc::threading::SynchronizedQueue<boost::shared_ptr<T> > >
-			queue;
+    boost::shared_ptr<rsc::threading::SynchronizedQueue<boost::shared_ptr<T> > >
+            queue;
 public:
 
-	/**
-	 * Constructs a new instance.
-	 *
-	 * @param queue the queue to push received data on
-	 */
-	QueuePushHandler(boost::shared_ptr<rsc::threading::SynchronizedQueue<
-			boost::shared_ptr<T> > > queue) :
-		queue(queue) {
-	}
+    /**
+     * Constructs a new instance.
+     *
+     * @param queue the queue to push received data on
+     */
+    QueuePushHandler(boost::shared_ptr<rsc::threading::SynchronizedQueue<
+            boost::shared_ptr<T> > > queue) :
+        queue(queue) {
+    }
 
-	void handle(EventPtr event) {
-		queue->push(boost::static_pointer_cast<T>(event->getData()));
-	}
+    std::string getClassName() const {
+        return "QueuePushHandler";
+    }
+
+    void printContents(std::ostream &stream) const {
+        stream << "queue = " << queue;
+    }
+
+    void handle(EventPtr event) {
+        queue->push(boost::static_pointer_cast<T>(event->getData()));
+    }
 };
 
 }

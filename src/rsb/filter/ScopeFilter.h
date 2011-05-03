@@ -33,6 +33,9 @@ public:
     ScopeFilter(const Scope &scope);
     virtual ~ScopeFilter();
 
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
+
     bool match(EventPtr e);
 
     Scope getScope();
