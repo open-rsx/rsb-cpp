@@ -41,7 +41,7 @@ namespace rsb {
  *
  * @author jwienke
  */
-class RSB_EXPORT ParticipantConfig : public rsc::config::OptionHandler {
+class RSB_EXPORT ParticipantConfig: public rsc::config::OptionHandler {
 public:
 
     /**
@@ -97,6 +97,31 @@ public:
 
     };
 
+    /**
+     * Possible error handling strategies in user-provided code like event
+     * handlers.
+     *
+     * @author jwienke
+     */
+    enum ErrorStrategy {
+        /**
+         * Logs a message using the logging mechanism.
+         */
+        LOG,
+        /**
+         * Uses stderr for printing a message.
+         */
+        PRINT,
+        /**
+         * exits the program.
+         */
+        EXIT
+    };
+
+    /**
+     * Constructs a new empty configuration using the default QoS settings and
+     * #LOG as error strategy.
+     */
     ParticipantConfig();
     virtual ~ParticipantConfig();
 
@@ -113,6 +138,18 @@ public:
      * @param spec new settings
      */
     void setQualityOfServiceSpec(const QualityOfServiceSpec &spec);
+
+    /**
+     * Returns the selected error strategy for the configured participant.
+     *
+     * @return strategy to use
+     */
+    ErrorStrategy getErrorStrategy() const;
+
+    /**
+     * Sets the desired error strategy for the participant.
+     */
+    void setErrorStrategy(const ErrorStrategy &strategy);
 
     /**
      * Returns the set of desired transports for a participant.
@@ -170,11 +207,11 @@ public:
      *
      * A simple configuration file may look like this:
      * @verbatim
-[transport.spread]
-host = azurit # default type is string
-port = <uint>5301 # types can be specified in angle brackets
-# A comment
-@endverbatim
+     [transport.spread]
+     host = azurit # default type is string
+     port = <uint>5301 # types can be specified in angle brackets
+     # A comment
+     @endverbatim
      *
      * @param path File of path
      * @param defaults  defaults
@@ -183,7 +220,7 @@ port = <uint>5301 # types can be specified in angle brackets
      * @see fromEnvironment, fromConfiguration
      */
     static ParticipantConfig fromFile(const boost::filesystem::path &path,
-                                      const ParticipantConfig &defaults = ParticipantConfig());
+            const ParticipantConfig &defaults = ParticipantConfig());
 
     /**
      * Obtain configuration options from environment variables, store
@@ -192,8 +229,8 @@ port = <uint>5301 # types can be specified in angle brackets
      * as illustrated in the following example:
      *
      * @verbatim
-RSB_TRANSPORT_SPREAD_PORT -> transport spread port
-@endverbatim
+     RSB_TRANSPORT_SPREAD_PORT -> transport spread port
+     @endverbatim
      *
      * @param defaults A @ref ParticipantConfig object that supplies
      * values for configuration options for which no environment
@@ -204,7 +241,8 @@ RSB_TRANSPORT_SPREAD_PORT -> transport spread port
      *
      * @see fromFile, fromConfiguration
      */
-    static ParticipantConfig fromEnvironment(const ParticipantConfig &defaults = ParticipantConfig());
+    static ParticipantConfig fromEnvironment(const ParticipantConfig &defaults =
+            ParticipantConfig());
 
     /**
      * Obtain configuration options from multiple sources, store them
@@ -222,7 +260,8 @@ RSB_TRANSPORT_SPREAD_PORT -> transport spread port
      *
      * @see fromFile, fromEnvironment
      */
-    static ParticipantConfig fromConfiguration(const ParticipantConfig &defaults = ParticipantConfig());
+    static ParticipantConfig fromConfiguration(
+            const ParticipantConfig &defaults = ParticipantConfig());
 
     friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
             const ParticipantConfig &config);
@@ -230,10 +269,12 @@ RSB_TRANSPORT_SPREAD_PORT -> transport spread port
 private:
     rsc::logging::LoggerPtr logger;
     QualityOfServiceSpec qosSpec;
+    ErrorStrategy errorStrategy;
     std::map<std::string, Transport> transports;
     rsc::runtime::Properties options;
 
-    void handleOption(const std::vector<std::string> &key, const std::string &value);
+    void handleOption(const std::vector<std::string> &key,
+            const std::string &value);
 };
 
 RSB_EXPORT std::ostream &operator<<(std::ostream &stream,

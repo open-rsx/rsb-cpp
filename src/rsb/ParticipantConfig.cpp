@@ -65,7 +65,7 @@ void ParticipantConfig::Transport::setOptions(const Properties &options) {
 }
 
 bool ParticipantConfig::Transport::isEnabled() const {
-    return this->getOptions().get<bool>("enabled", true);
+    return this->getOptions().get<bool> ("enabled", true);
 }
 
 bool ParticipantConfig::Transport::operator==(const Transport &other) const {
@@ -77,7 +77,7 @@ bool ParticipantConfig::Transport::operator<(const Transport &other) const {
 }
 
 ParticipantConfig::ParticipantConfig() :
-    logger(Logger::getLogger("rsb.ParticipantConfig")) {
+    logger(Logger::getLogger("rsb.ParticipantConfig")), errorStrategy(LOG) {
 }
 
 ParticipantConfig::~ParticipantConfig() {
@@ -92,6 +92,14 @@ void ParticipantConfig::setQualityOfServiceSpec(
     this->qosSpec = spec;
 }
 
+ParticipantConfig::ErrorStrategy ParticipantConfig::getErrorStrategy() const {
+    return errorStrategy;
+}
+
+void ParticipantConfig::setErrorStrategy(const ErrorStrategy &strategy) {
+    this->errorStrategy = strategy;
+}
+
 ParticipantConfig::Transport ParticipantConfig::getTransport(const string &name) const {
     map<string, Transport>::const_iterator it = this->transports.find(name);
     if (it == this->transports.end()) {
@@ -100,11 +108,11 @@ ParticipantConfig::Transport ParticipantConfig::getTransport(const string &name)
     return it->second;
 }
 
-set<ParticipantConfig::Transport> ParticipantConfig::getTransports(bool includeDisabled) const {
+set<ParticipantConfig::Transport> ParticipantConfig::getTransports(
+        bool includeDisabled) const {
     set<Transport> result;
-    for (map<string, Transport>::const_iterator it
-             = this->transports.begin();
-         it != this->transports.end(); ++it) {
+    for (map<string, Transport>::const_iterator it = this->transports.begin(); it
+            != this->transports.end(); ++it) {
         if (it->second.isEnabled() || includeDisabled) {
             result.insert(it->second);
         } else {
@@ -123,8 +131,8 @@ void ParticipantConfig::removeTransport(const Transport &transport) {
 }
 
 void ParticipantConfig::setTransports(const set<Transport> &transports) {
-    for (set<Transport>::const_iterator it = transports.begin();
-         it != transports.end(); ++it) {
+    for (set<Transport>::const_iterator it = transports.begin(); it
+            != transports.end(); ++it) {
         this->transports.insert(make_pair(it->getName(), *it));
     }
 }
@@ -138,7 +146,7 @@ void ParticipantConfig::setOptions(const Properties &options) {
 }
 
 ParticipantConfig ParticipantConfig::fromFile(const path &path,
-                                              const ParticipantConfig &defaults) {
+        const ParticipantConfig &defaults) {
     LoggerPtr logger = Logger::getLogger("rsb.ParticipantConfig");
     RSCDEBUG(logger, "Trying to load config from file " << path);
 
@@ -155,13 +163,15 @@ ParticipantConfig ParticipantConfig::fromFile(const path &path,
     return result;
 }
 
-ParticipantConfig ParticipantConfig::fromEnvironment(const ParticipantConfig &defaults) {
+ParticipantConfig ParticipantConfig::fromEnvironment(
+        const ParticipantConfig &defaults) {
     ParticipantConfig result = defaults;
     EnvironmentVariableSource("RSB_").emit(result);
     return result;
 }
 
-ParticipantConfig ParticipantConfig::fromConfiguration(const ParticipantConfig &defaults) {
+ParticipantConfig ParticipantConfig::fromConfiguration(
+        const ParticipantConfig &defaults) {
     ParticipantConfig result = defaults;
     result = fromFile(userConfigDirectory() / "rsb.conf", result);
     result = fromFile("rsb.conf", result);
@@ -169,7 +179,8 @@ ParticipantConfig ParticipantConfig::fromConfiguration(const ParticipantConfig &
     return result;
 }
 
-void ParticipantConfig::handleOption(const vector<string> &key, const string &value) {
+void ParticipantConfig::handleOption(const vector<string> &key,
+        const string &value) {
     if (key[0] == "qualityofservice") {
         if (key[1] == "reliability") {
             if (value == "UNRELIABLE") {
@@ -177,21 +188,30 @@ void ParticipantConfig::handleOption(const vector<string> &key, const string &va
             } else if (value == "RELIABLE") {
                 this->qosSpec.reliability = QualityOfServiceSpec::RELIABLE;
             } else
-                throw invalid_argument(str(format("The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
-                                           % value));
+                throw invalid_argument(
+                        str(
+                                format(
+                                        "The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
+                                        % value));
         } else if (key[1] == "ordering") {
             if (value == "UNORDERED") {
                 this->qosSpec.ordering = QualityOfServiceSpec::UNORDERED;
             } else if (value == "ORDERED") {
                 this->qosSpec.ordering = QualityOfServiceSpec::ORDERED;
             } else
-                throw invalid_argument(str(format("The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
-                                           % value));
+                throw invalid_argument(
+                        str(
+                                format(
+                                        "The value `%1%' is invalid for the key `qualityofservicespec.reliability'.")
+                                        % value));
         }
     } else if (key[0] == "transport") {
         if (key.size() != 3) {
-            throw invalid_argument(str(format("Option key `%1%' has invalid number of components; transport-related keys have to have three components.")
-                                       % key));
+            throw invalid_argument(
+                    str(
+                            format(
+                                    "Option key `%1%' has invalid number of components; transport-related keys have to have three components.")
+                                    % key));
         }
         map<string, Transport>::iterator it = this->transports.find(key[1]);
         if (it == this->transports.end()) {
@@ -202,8 +222,11 @@ void ParticipantConfig::handleOption(const vector<string> &key, const string &va
         transport.options[key[2]] = parseTypedValue(value);
     } else {
         if (key.size() != 1) {
-            throw invalid_argument(str(format("Option key `%1%' seems to designate a global option but has %2% components; global keys must not have more than one component.")
-                                       % key % key.size()));
+            throw invalid_argument(
+                    str(
+                            format(
+                                    "Option key `%1%' seems to designate a global option but has %2% components; global keys must not have more than one component.")
+                                    % key % key.size()));
         }
         this->options[key[0]] = parseTypedValue(value);
     }
@@ -211,13 +234,14 @@ void ParticipantConfig::handleOption(const vector<string> &key, const string &va
 
 ostream &operator<<(ostream &stream,
         const ParticipantConfig::Transport &transport) {
-    return stream << "Transport[name = " << transport.getName() << ", options = " << transport.getOptions() << "]";
+    return stream << "Transport[name = " << transport.getName()
+            << ", options = " << transport.getOptions() << "]";
 }
 ostream &operator<<(ostream &stream, const ParticipantConfig &config) {
     stream << "ParticipantConfig[qosSpec = " << config.qosSpec
-           << ", transports = " << config.getTransports()
-           << ", options = " << config.getOptions()
-           << "]";
+            << ", errorStrategy = " << config.errorStrategy
+            << ", transports = " << config.getTransports() << ", options = "
+            << config.getOptions() << "]";
     return stream;
 }
 

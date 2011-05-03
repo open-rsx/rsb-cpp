@@ -55,10 +55,11 @@ TEST(ParticipantConfigTest, testCreation)
     ParticipantConfig config;
     EXPECT_TRUE(config.getTransports().empty());
     EXPECT_EQ(QualityOfServiceSpec(), config.getQualityOfServiceSpec());
+    EXPECT_EQ(ParticipantConfig::LOG, config.getErrorStrategy());
 
 }
 
-TEST(ParticipantConfigTest, testQualityOfServiceSpecManipulation)
+TEST(ParticipantConfigTest, testQualityOfServiceSpec)
 {
 
     ParticipantConfig config;
@@ -71,7 +72,7 @@ TEST(ParticipantConfigTest, testQualityOfServiceSpecManipulation)
 
 }
 
-TEST(ParticipantConfigTest, testTransportManipulation)
+TEST(ParticipantConfigTest, testTransports)
 {
 
     ParticipantConfig config;
@@ -110,5 +111,15 @@ TEST(ParticipantConfigTest, testOptions)
     EXPECT_FALSE(config.getOptions().has("key"));
     config.setOptions(options);
     EXPECT_TRUE(config.getOptions().has("key"));
+
+}
+
+TEST(ParticipantConfigTest, testErrorStrategy)
+{
+
+    ParticipantConfig config;
+    const ParticipantConfig::ErrorStrategy strategy = ParticipantConfig::EXIT;
+    config.setErrorStrategy(strategy);
+    EXPECT_EQ(strategy, config.getErrorStrategy());
 
 }
