@@ -19,8 +19,6 @@
 
 #include "Factory.h"
 
-#include <iostream>
-
 #include "introspection/introspection.h"
 #include "converter/converters.h"
 #include "transport/transports.h"
@@ -37,15 +35,11 @@ Factory::Factory() :
     logger(Logger::getLogger("rsb.Factory")) {
     cout << "Factory constructor called" << endl;
     introspection::registerIntrospectionConverters();
-    cout << "introspection converters registered" << endl;
     converter::registerDefaultConverters();
-    cout << "default converters registered" << endl;
     transport::registerDefaultTransports();
-    cout << "transports registered" << endl;
 
     // setup default participant config
     this->defaultConfig = ParticipantConfig::fromConfiguration();
-    cout << "configuration parsed" << endl;
     if (this->defaultConfig.getTransports().empty()) {
         // TODO later this should be inprocess
         this->defaultConfig.addTransport(ParticipantConfig::Transport("spread"));

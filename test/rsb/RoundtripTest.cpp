@@ -84,13 +84,9 @@ private:
 TEST(RoundtripTest, testRoundtrip)
 {
 
-    cout << "Killing instance" << endl;
     Factory::killInstance();
-    cout << "Killed instance" << endl;
     Factory &factory = Factory::getInstance();
-    cout << "factory instance created" << endl;
     ParticipantConfig config = factory.getDefaultParticipantConfig();
-    cout << "config obtained" << endl;
     ParticipantConfig::Transport spreadTransport =
             config.getTransport("spread");
     rsc::runtime::Properties p = spreadTransport.getOptions();
@@ -98,7 +94,6 @@ TEST(RoundtripTest, testRoundtrip)
     spreadTransport.setOptions(p);
     config.addTransport(spreadTransport);
     factory.setDefaultParticipantConfig(config);
-    cout << "config changed" << endl;
 
     const Scope scope("/blah");
 

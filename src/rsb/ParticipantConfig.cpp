@@ -21,7 +21,6 @@
 
 #include <stdexcept>
 #include <fstream>
-#include <iostream>
 
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -74,17 +73,23 @@ bool ParticipantConfig::Transport::isEnabled() const {
 }
 
 void ParticipantConfig::Transport::handleOption(const vector<string> &key,
-                                                const string &value) {
+        const string &value) {
     if (key[0] == "converter") {
         if (key.size() != 2) {
-            throw invalid_argument(str(format("Option key `%1%' has invalid number of components; converter-related keys for transports has to have two components")
-                                       % key));
+            throw invalid_argument(
+                    str(
+                            format(
+                                    "Option key `%1%' has invalid number of components; converter-related keys for transports has to have two components")
+                                    % key));
         }
         this->converters.insert(make_pair(key[1], value));
     } else {
         if (key.size() != 1) {
-            throw invalid_argument(str(format("Key `%1%' has invalid number of components; transport option keys have to have one component.")
-                                       % key));
+            throw invalid_argument(
+                    str(
+                            format(
+                                    "Key `%1%' has invalid number of components; transport option keys have to have one component.")
+                                    % key));
         }
         this->options[key[0]] = parseTypedValue(value);
     }
@@ -103,11 +108,9 @@ string ParticipantConfig::Transport::getClassName() const {
 }
 
 void ParticipantConfig::Transport::printContents(ostream &stream) const {
-    stream << "name = " << this->name
-           << ", converters = " << this->converters
-           << ", options = " << this->options;
+    stream << "name = " << this->name << ", converters = " << this->converters
+            << ", options = " << this->options;
 }
-
 
 ParticipantConfig::ParticipantConfig() :
     logger(Logger::getLogger("rsb.ParticipantConfig")), errorStrategy(LOG) {
@@ -206,14 +209,14 @@ ParticipantConfig ParticipantConfig::fromEnvironment(
 
 ParticipantConfig ParticipantConfig::fromConfiguration(
         const ParticipantConfig &defaults) {
-    cout << "ParticipantConfig::fromConfiguration" << endl;
     ParticipantConfig result = defaults;
-    result = fromFile(userConfigDirectory() / "rsb.conf", result);
-    cout << "ParticipantConfig::fromConfiguration from user rsb.conf read" << endl;
+    try {
+        result = fromFile(userConfigDirectory() / "rsb.conf", result);
+    } catch (runtime_error &e) {
+        RSCWARN(Logger::getLogger("rsb.ParticipantConfig"), "Could not find a user config directory for parsing the config file.");
+    }
     result = fromFile("rsb.conf", result);
-    cout << "ParticipantConfig::fromConfiguration from PWD rsb.conf read" << endl;
     result = fromEnvironment(result);
-    cout << "ParticipantConfig::fromConfiguration from environment" << endl;
     return result;
 }
 
@@ -234,29 +237,24 @@ void ParticipantConfig::handleOption(const vector<string> &key,
             } else if (value == "RELIABLE") {
                 this->qosSpec.reliability = QualityOfServiceSpec::RELIABLE;
             } else
-                throw invalid_argument(
-                        str(
-                                format(
-                                        "The value `%1%' is invalid for the key `%2%'.")
-                                        % value % key));
+                throw invalid_argument(str(format(
+                        "The value `%1%' is invalid for the key `%2%'.")
+                        % value % key));
         } else if (key[1] == "ordering") {
             if (value == "UNORDERED") {
                 this->qosSpec.ordering = QualityOfServiceSpec::UNORDERED;
             } else if (value == "ORDERED") {
                 this->qosSpec.ordering = QualityOfServiceSpec::ORDERED;
             } else
-                throw invalid_argument(
-                        str(
-                                format(
-                                        "The value `%1%' is invalid for the key `%2%'.")
-                                        % value % key));
+                throw invalid_argument(str(format(
+                        "The value `%1%' is invalid for the key `%2%'.")
+                        % value % key));
         } else {
             throw invalid_argument(
-                    str(
-                            format("`%2%' is not a valid sub-key of `%1%'.")
-                                    % key[0] % key[1]));
+                    str(format("`%2%' is not a valid sub-key of `%1%'.")
+                            % key[0] % key[1]));
         }
-    // Error handling
+        // Error handling
     } else if (key[0] == "errorhandling") {
         if (key[1] == "onhandlererror") {
             if (value == "LOG") {
@@ -266,19 +264,16 @@ void ParticipantConfig::handleOption(const vector<string> &key,
             } else if (value == "EXIT") {
                 this->errorStrategy = EXIT;
             } else {
-                throw invalid_argument(
-                        str(
-                                format(
-                                        "The value `%1%' is invalid for the key `%2%'.")
-                                        % value % key));
+                throw invalid_argument(str(format(
+                        "The value `%1%' is invalid for the key `%2%'.")
+                        % value % key));
             }
         } else {
             throw invalid_argument(
-                    str(
-                            format("`%2%' is not a valid sub-key of `%1%'.")
-                                    % key[0] % key[1]));
+                    str(format("`%2%' is not a valid sub-key of `%1%'.")
+                            % key[0] % key[1]));
         }
-    // Transports
+        // Transports
     } else if (key[0] == "transport") {
         if (key.size() < 3) {
             throw invalid_argument(
@@ -296,7 +291,7 @@ void ParticipantConfig::handleOption(const vector<string> &key,
         vector<string> subKey;
         copy(key.begin() + 2, key.end(), back_inserter(subKey));
         transport.handleOption(subKey, value);
-    // Global (participant-wide) options
+        // Global (participant-wide) options
     } else {
         if (key.size() != 1) {
             throw invalid_argument(
