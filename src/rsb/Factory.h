@@ -32,7 +32,6 @@
 #include "rsb/rsbexports.h"
 #include "Informer.h"
 #include "Listener.h"
-#include "Receiver.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
 #include "transport/Connector.h"
