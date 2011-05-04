@@ -29,6 +29,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/config/OptionHandler.h>
 #include <rsc/runtime/Properties.h>
+#include <rsc/runtime/Printable.h>
 
 #include "QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
@@ -51,9 +52,11 @@ public:
      *
      * @author jwienke
      */
-    class RSB_EXPORT Transport: boost::totally_ordered<Transport> {
-        friend class ParticipantConfig;
+    class RSB_EXPORT Transport: boost::totally_ordered<Transport>,
+                                public rsc::config::OptionHandler,
+                                public rsc::runtime::Printable {
     public:
+        typedef std::set< std::pair<std::string, std::string> > ConverterNames;
 
         /**
          * Creates a new transport description for the transport with the given
@@ -70,6 +73,8 @@ public:
          * Returns the name of this transport description.
          */
         std::string getName() const;
+
+        ConverterNames getConverters() const;
 
         /**
          * Returns the specified options for the transport.
@@ -90,11 +95,16 @@ public:
         bool operator==(const Transport &other) const;
         bool operator<(const Transport &other) const;
 
+        std::string getClassName() const;
+        void printContents(std::ostream &stream) const;
+
+
+        void handleOption(const std::vector<std::string> &key,
+                          const std::string &value);
     private:
-
         std::string name;
+        ConverterNames converters;
         rsc::runtime::Properties options;
-
     };
 
     /**
@@ -277,8 +287,6 @@ private:
             const std::string &value);
 };
 
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-        const ParticipantConfig::Transport &transport);
 RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
         const ParticipantConfig &config);
 

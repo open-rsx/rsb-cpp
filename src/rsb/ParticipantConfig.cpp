@@ -56,6 +56,10 @@ string ParticipantConfig::Transport::getName() const {
     return name;
 }
 
+ParticipantConfig::Transport::ConverterNames ParticipantConfig::Transport::getConverters() const {
+    return this->converters;
+}
+
 rsc::runtime::Properties ParticipantConfig::Transport::getOptions() const {
     return options;
 }
@@ -68,6 +72,23 @@ bool ParticipantConfig::Transport::isEnabled() const {
     return this->getOptions().get<bool> ("enabled", true);
 }
 
+void ParticipantConfig::Transport::handleOption(const vector<string> &key,
+                                                const string &value) {
+    if (key[0] == "converter") {
+        if (key.size() != 2) {
+            throw invalid_argument(str(format("Option key `%1%' has invalid number of components; converter-related keys for transports has to have two components")
+                                       % key));
+        }
+        this->converters.insert(make_pair(key[1], value));
+    } else {
+        if (key.size() != 1) {
+            throw invalid_argument(str(format("Key `%1%' has invalid number of components; transport option keys have to have one component.")
+                                       % key));
+        }
+        this->options[key[0]] = parseTypedValue(value);
+    }
+}
+
 bool ParticipantConfig::Transport::operator==(const Transport &other) const {
     return name == other.name;
 }
@@ -75,6 +96,17 @@ bool ParticipantConfig::Transport::operator==(const Transport &other) const {
 bool ParticipantConfig::Transport::operator<(const Transport &other) const {
     return name < other.name;
 }
+
+string ParticipantConfig::Transport::getClassName() const {
+    return "Transport";
+}
+
+void ParticipantConfig::Transport::printContents(ostream &stream) const {
+    stream << "name = " << this->name
+           << ", converters = " << this->converters
+           << ", options = " << this->options;
+}
+
 
 ParticipantConfig::ParticipantConfig() :
     logger(Logger::getLogger("rsb.ParticipantConfig")), errorStrategy(LOG) {
@@ -219,7 +251,7 @@ void ParticipantConfig::handleOption(const vector<string> &key,
                             format("`%2%' is not a valid sub-key of `%1%'.")
                                     % key[0] % key[1]));
         }
-        // Error handling
+    // Error handling
     } else if (key[0] == "errorhandling") {
         if (key[1] == "onhandlererror") {
             if (value == "LOG") {
@@ -241,13 +273,13 @@ void ParticipantConfig::handleOption(const vector<string> &key,
                             format("`%2%' is not a valid sub-key of `%1%'.")
                                     % key[0] % key[1]));
         }
-        // Transports
+    // Transports
     } else if (key[0] == "transport") {
-        if (key.size() != 3) {
+        if (key.size() < 3) {
             throw invalid_argument(
                     str(
                             format(
-                                    "Option key `%1%' has invalid number of components; transport-related keys have to have three components.")
+                                    "Option key `%1%' has invalid number of components; transport-related keys have to have at least three components.")
                                     % key));
         }
         map<string, Transport>::iterator it = this->transports.find(key[1]);
@@ -256,8 +288,10 @@ void ParticipantConfig::handleOption(const vector<string> &key,
             it = this->transports.find(key[1]);
         }
         Transport& transport = it->second;
-        transport.options[key[2]] = parseTypedValue(value);
-        // Global (participant-wide) options
+        vector<string> subKey;
+        copy(key.begin() + 2, key.end(), back_inserter(subKey));
+        transport.handleOption(subKey, value);
+    // Global (participant-wide) options
     } else {
         if (key.size() != 1) {
             throw invalid_argument(
@@ -270,11 +304,6 @@ void ParticipantConfig::handleOption(const vector<string> &key,
     }
 }
 
-ostream &operator<<(ostream &stream,
-        const ParticipantConfig::Transport &transport) {
-    return stream << "Transport[name = " << transport.getName()
-            << ", options = " << transport.getOptions() << "]";
-}
 ostream &operator<<(ostream &stream, const ParticipantConfig &config) {
     stream << "ParticipantConfig[qosSpec = " << config.qosSpec
             << ", errorStrategy = " << config.errorStrategy
