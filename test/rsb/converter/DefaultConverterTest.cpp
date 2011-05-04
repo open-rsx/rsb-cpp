@@ -108,7 +108,7 @@ TEST_P(Uint64ConverterTest, testRoundtrip)
 }
 
 INSTANTIATE_TEST_CASE_P(DefaultConverterTest, Uint64ConverterTest,
-		::testing::Values(0, -1, 1, 12342423439))
+		::testing::Values<boost::uint64_t>(0, -1, 1, 12342423439))
 ;
 
 TEST(VoidConverterTest, testRoundtrip)
