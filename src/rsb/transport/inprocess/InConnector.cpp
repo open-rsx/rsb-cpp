@@ -37,6 +37,9 @@ rsb::transport::InConnector* InConnector::create(const Properties& args) {
     LoggerPtr logger = Logger::getLogger("rsb.inprocess.InConnector");
     RSCDEBUG(logger, "Creating InConnector with properties " << args);
 
+    if (args.has("converters")) {
+      RSCWARN(logger, "`converters' property found when constructing inprocess::InConnector. This connector does not support (or require) converters.");
+    }
     return new InConnector();
 }
 

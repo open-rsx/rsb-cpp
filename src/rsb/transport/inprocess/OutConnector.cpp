@@ -16,6 +16,9 @@ rsb::transport::OutConnector* OutConnector::create(const Properties& args) {
     LoggerPtr logger = Logger::getLogger("rsb.inprocess.OutConnector");
     RSCDEBUG(logger, "Creating OutConnector with properties " << args);
 
+    if (args.has("converters")) {
+        RSCWARN(logger, "`converters' property found when constructing inprocess::OutConnector. This connector does not support (or require) converters.");
+    }
     return new OutConnector();
 }
 
