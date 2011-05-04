@@ -136,7 +136,11 @@ TEST(ParticipantConfigTest, testFromFile)
     EXPECT_EQ(spread.getOptions().get<string>("host"), "localhost");
     EXPECT_EQ(spread.getOptions().get<unsigned int>("port"), 4803u);
 
-    for (unsigned int i = 1; i <= 5; ++i) {
+    EXPECT_EQ(spread.getConverters().size(), 1u);
+    EXPECT_EQ(spread.getConverters().begin()->first, "image");
+    EXPECT_EQ(spread.getConverters().begin()->second, "IplImage");
+
+    for (unsigned int i = 1; i <= 6; ++i) {
         EXPECT_THROW(ParticipantConfig::fromFile(str(format("%1%/rsb.conf-semantic-errors-%2%")
                                 % TEST_ROOT % i)),
                 invalid_argument);
