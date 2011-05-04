@@ -38,12 +38,12 @@ echo [build successful and tests executed]
 REM kill remaining spread instances to not block subsequent builds
 taskkill /F /IM spread.exe
 
-echo [installing project]
+echo [creating package]
 
-nmake install
+cpack -G ZIP
 IF %ERRORLEVEL% NEQ 0 (
-	echo [install error]
-	goto :error
+    echo [package error]
+    goto :error
 )
 
 cd ..
