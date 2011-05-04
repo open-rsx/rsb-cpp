@@ -32,32 +32,10 @@
 #include "../Connector.h"
 #include "../../converter/Converter.h"
 #include "SpreadConnection.h"
+#include "Assembly.h"
 
 namespace rsb {
 namespace spread {
-
-/**
- * @author swrede
- */
-class DataStore {
-public:
-
-    DataStore(rsb::protocol::NotificationPtr n);
-
-    ~DataStore();
-
-    std::string getData(const unsigned int &i);
-
-    unsigned int add(rsb::protocol::NotificationPtr n);
-
-private:
-    rsc::logging::LoggerPtr logger;
-    unsigned int receivedParts;
-    std::vector<rsb::protocol::NotificationPtr> store;
-
-};
-
-typedef boost::shared_ptr<DataStore> DataStorePtr;
 
 class InConnector;
 
@@ -104,10 +82,8 @@ private:
     volatile bool cancelRequested;
     SpreadConnectionPtr con;
     InConnector* connector;
+    AssemblyPoolPtr assemblyPool;
     HandlerPtr handler;
-    std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
-    std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;
-
 };
 
 }

@@ -33,28 +33,10 @@ using namespace rsc::logging;
 namespace rsb {
 namespace spread {
 
-DataStore::DataStore(rsb::protocol::NotificationPtr n) :
-    logger(Logger::getLogger("rsb.spread.DataStore")), receivedParts(0) {
-    store.resize(n->num_data_parts() + 1);
-    add(n);
-}
-
-DataStore::~DataStore() {
-}
-
-string DataStore::getData(const unsigned int &i) {
-    return store[i]->data().binary();
-}
-
-unsigned int DataStore::add(rsb::protocol::NotificationPtr n) {
-    RSCTRACE(logger, "Add message " << n->id() << " (part " << n->data_part() << ") to DataStore");
-    store[n->data_part()] = n;
-    return receivedParts++;
-}
-
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler, InConnector* connector) :
     logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-    cancelRequested(false), con(s), connector(connector), handler(handler) {
+    cancelRequested(false), con(s), connector(connector), assemblyPool(new AssemblyPool()),
+    handler(handler) {
 
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
@@ -69,8 +51,6 @@ ReceiverTask::~ReceiverTask() {
 
 void ReceiverTask::execute() {
     // TODO Do performance optimization for data joining
-    // TODO Think about old data in dataPool map
-
     try {
 
         SpreadMessagePtr message(new SpreadMessage(SpreadMessage::REGULAR));
@@ -121,38 +101,10 @@ boost::shared_ptr<string> ReceiverTask::handleAndJoinNotification(
 
     bool multiPartNotification = notification->num_data_parts() > 0;
     if (multiPartNotification) {
-
-        it = dataPool.find(notification->id());
-        if (it != dataPool.end()) {
-
-            // Push message to existing DataStore
-            RSCTRACE(logger, "Add message to existing data store");
-            unsigned int dataStoreSize = it->second->add(notification);
-
-            if (notification->num_data_parts() == dataStoreSize) {
-                RSCTRACE(logger, "Join data parts");
-                // Concatenate data parts
-                completeData.reset(new string(it->second->getData(0)));
-                for (unsigned int i = 1; i <= notification->num_data_parts(); ++i) {
-                    completeData->append(it->second->getData(i));
-                }
-                dataPool.erase(it);
-            }
-
-        } else {
-            // Create new DataStore
-            RSCTRACE(logger, "Create new data store for message: " << notification->id());
-            dataPool.insert(
-                    pair<string, DataStorePtr> (notification->id(),
-                            DataStorePtr(new DataStore(notification))));
-        }
-
+        completeData = this->assemblyPool->add(notification);
     } else {
         completeData.reset(new string(notification->data().binary()));
     }
-
-    RSCTRACE(logger, "dataPool size: " << dataPool.size());
-
     return completeData;
 
 }

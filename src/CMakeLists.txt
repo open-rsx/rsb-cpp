@@ -77,6 +77,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/spread/SpreadConnector.cpp
             rsb/transport/spread/SpreadGroup.cpp
             rsb/transport/spread/SpreadMessage.cpp
+            rsb/transport/spread/Assembly.cpp
 
             rsb/util/MD5.cpp
 
@@ -158,6 +159,7 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/spread/SpreadConnector.h
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/SpreadMessage.h
+            rsb/transport/spread/Assembly.h
 
             rsb/util/MD5.h)
 
