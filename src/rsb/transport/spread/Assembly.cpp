@@ -1,10 +1,14 @@
 #include "Assembly.h"
 
+#include <boost/date_time/microsec_time_clock.hpp>
+
 using namespace std;
 
 using namespace boost;
+using namespace boost::posix_time;
 
 using namespace rsc::logging;
+using namespace rsc::threading;
 
 using namespace rsb::protocol;
 
@@ -12,7 +16,8 @@ namespace rsb {
 namespace spread {
 
 Assembly::Assembly(rsb::protocol::NotificationPtr n) :
-    logger(Logger::getLogger("rsb.spread.Assembly[" + n->id() + "]")), receivedParts(0) {
+    logger(Logger::getLogger("rsb.spread.Assembly[" + n->id() + "]")), receivedParts(0),
+    birthTime(microsec_clock::local_time()) {
     store.resize(n->num_data_parts() + 1);
     add(n);
 }
@@ -48,11 +53,42 @@ bool Assembly::isComplete() const {
     return this->receivedParts == this->store.size();
 }
 
+unsigned int Assembly::age() const {
+    return (microsec_clock::local_time() - this->birthTime).total_seconds();
+}
+
+AssemblyPool::PruningTask::PruningTask(Pool &pool, boost::recursive_mutex &poolMutex) :
+    PeriodicTask(4000),
+    logger(Logger::getLogger("rsb.spread.AssemblyPool.PruningTask")),
+    pool(pool), poolMutex(poolMutex) {
+}
+
+void AssemblyPool::PruningTask::execute() {
+    boost::recursive_mutex::scoped_lock lock(this->poolMutex);
+
+    RSCDEBUG(logger, "Scanning for old assemblies");
+    for (Pool::iterator it = this->pool.begin(); it != this->pool.end(); ++it) {
+        if (it->second->age() > 20) {
+            RSCDEBUG(logger, "Pruning old assembly " << it->second);
+            this->pool.erase(it);
+        }
+    }
+}
+
 AssemblyPool::AssemblyPool() :
-    logger(Logger::getLogger("rsb.spread.AssemblyPool")) {
+    logger(Logger::getLogger("rsb.spread.AssemblyPool")),
+    pruningTask(new PruningTask(this->pool, this->poolMutex)) {
+    this->executor.schedule(this->pruningTask);
+}
+
+AssemblyPool::~AssemblyPool() {
+    this->pruningTask->cancel();
+    this->pruningTask->waitDone();
 }
 
 shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
+    boost::recursive_mutex::scoped_lock lock(this->poolMutex);
+
     Pool::iterator it = this->pool.find(notification->id());
     string *result = 0;
     if (it != this->pool.end()) {

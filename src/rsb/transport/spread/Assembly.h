@@ -4,6 +4,8 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
 
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/PeriodicTask.h>
@@ -32,10 +34,13 @@ public:
     unsigned int add(rsb::protocol::NotificationPtr n);
 
     bool isComplete() const;
+
+    unsigned int age() const;
 private:
     rsc::logging::LoggerPtr logger;
     unsigned int receivedParts;
     std::vector<rsb::protocol::NotificationPtr> store;
+    boost::posix_time::ptime birthTime;
 };
 
 typedef boost::shared_ptr<Assembly> AssemblyPtr;
@@ -48,14 +53,31 @@ typedef boost::shared_ptr<Assembly> AssemblyPtr;
  */
 class AssemblyPool {
 public:
-AssemblyPool();
+    AssemblyPool();
 
-boost::shared_ptr<std::string> add(rsb::protocol::NotificationPtr notification);
+    ~AssemblyPool();
+
+    boost::shared_ptr<std::string> add(rsb::protocol::NotificationPtr notification);
 private:
-typedef std::map<std::string, boost::shared_ptr<Assembly> > Pool;
+    typedef std::map<std::string, boost::shared_ptr<Assembly> > Pool;
 
-rsc::logging::LoggerPtr logger;
-Pool pool;
+    class PruningTask : public rsc::threading::PeriodicTask {
+    public:
+        PruningTask(Pool &pool, boost::recursive_mutex &poolMutex);
+
+        void execute();
+    private:
+        rsc::logging::LoggerPtr logger;
+        Pool &pool;
+        boost::recursive_mutex &poolMutex;
+    };
+
+    rsc::logging::LoggerPtr logger;
+    Pool pool;
+    boost::recursive_mutex poolMutex;
+
+    rsc::threading::ThreadedTaskExecutor executor;
+    rsc::threading::TaskPtr pruningTask;
 };
 
 typedef boost::shared_ptr<AssemblyPool> AssemblyPoolPtr;
