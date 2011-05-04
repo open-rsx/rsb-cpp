@@ -21,6 +21,7 @@
 
 #include <stdexcept>
 #include <fstream>
+#include <iostream>
 
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -205,10 +206,14 @@ ParticipantConfig ParticipantConfig::fromEnvironment(
 
 ParticipantConfig ParticipantConfig::fromConfiguration(
         const ParticipantConfig &defaults) {
+    cout << "ParticipantConfig::fromConfiguration" << endl;
     ParticipantConfig result = defaults;
     result = fromFile(userConfigDirectory() / "rsb.conf", result);
+    cout << "ParticipantConfig::fromConfiguration from user rsb.conf read" << endl;
     result = fromFile("rsb.conf", result);
+    cout << "ParticipantConfig::fromConfiguration from PWD rsb.conf read" << endl;
     result = fromEnvironment(result);
+    cout << "ParticipantConfig::fromConfiguration from environment" << endl;
     return result;
 }
 
