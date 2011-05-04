@@ -27,6 +27,7 @@
 using namespace std;
 
 using namespace rsc::logging;
+using namespace rsc::runtime;
 
 namespace rsb {
 
@@ -58,11 +59,14 @@ ListenerPtr Factory::createListener(const Scope &scope,
             configuredTransports.begin(); transportIt
             != configuredTransports.end(); ++transportIt) {
         RSCDEBUG(logger, "Trying to add connector " << *transportIt);
+        Properties options = transportIt->getOptions();
+        if (!transportIt->getConverters().empty()) {
+            options["converters"] = pairsToMap<1>(transportIt->getConverters());
+        }
         connectors.push_back(
                 transport::InConnectorPtr(
                         transport::InFactory::getInstance().createInst(
-                                transportIt->getName(),
-                                transportIt->getOptions())));
+                                                                       transportIt->getName(), options)));
     }
 
     return ListenerPtr(new Listener(connectors, scope, defaultConfig));

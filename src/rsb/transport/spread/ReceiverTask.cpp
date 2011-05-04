@@ -22,6 +22,7 @@
 #include "../../converter/Converter.h"
 #include "../../CommException.h"
 #include "SpreadConnection.h"
+#include "InConnector.h"
 
 using namespace std;
 using namespace rsb;
@@ -51,11 +52,9 @@ unsigned int DataStore::add(rsb::protocol::NotificationPtr n) {
     return receivedParts++;
 }
 
-ReceiverTask::ReceiverTask(SpreadConnectionPtr s,
-        converter::Repository<string>::Ptr converters, HandlerPtr handler) :
+ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler, InConnector* connector) :
     logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-            cancelRequested(false), con(s), converters(converters),
-            handler(handler) {
+    cancelRequested(false), con(s), connector(connector), handler(handler) {
 
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
@@ -171,10 +170,8 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
                 notification->meta_infos(i).value());
     }
 
-    // TODO refactor converter handling and conversion
     // TODO error handling
-    converter::Converter<string>::Ptr c = converters->getConverterByWireSchema(
-            notification->wire_schema());
+    InConnector::ConverterPtr c = this->connector->getConverter(notification->wire_schema());
     converter::AnnotatedData deserialized = c->deserialize(
             notification->wire_schema(), *data);
     e->setType(deserialized.first);

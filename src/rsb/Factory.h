@@ -32,6 +32,7 @@
 #include "rsb/rsbexports.h"
 #include "Informer.h"
 #include "Listener.h"
+#include "Receiver.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
 #include "transport/Connector.h"
@@ -39,6 +40,26 @@
 #include "Service.h"
 
 namespace rsb {
+
+template <unsigned int which, typename C>
+std::map<typename C::value_type::first_type,
+         typename C::value_type::second_type>
+pairsToMap(const C &container) {
+    typedef typename C::value_type::first_type first_type;
+    typedef typename C::value_type::second_type second_type;
+
+    typedef typename C::const_iterator const_iterator;
+
+    std::map<first_type, second_type> result;
+    for (const_iterator it = container.begin();
+         it != container.end(); ++it) {
+        if (which == 1)
+            result[it->first] = it->second;
+        else
+            result[it->second] = it->first;
+    }
+    return result;
+}
 
 /**
  * Factory for RSB user-level domain objects for communication patterns.
@@ -71,14 +92,17 @@ public:
         std::set<ParticipantConfig::Transport> configuredTransports =
                 config.getTransports();
         for (std::set<ParticipantConfig::Transport>::const_iterator
-                transportIt = configuredTransports.begin(); transportIt
-                != configuredTransports.end(); ++transportIt) {
+                 transportIt = configuredTransports.begin(); transportIt
+                 != configuredTransports.end(); ++transportIt) {
             RSCDEBUG(logger, "Trying to add connector " << *transportIt);
+            rsc::runtime::Properties options = transportIt->getOptions();
+            if (!transportIt->getConverters().empty()) {
+                options["converters"] = pairsToMap<2>(transportIt->getConverters());
+            }
             connectors.push_back(
                     transport::OutConnectorPtr(
                             transport::OutFactory::getInstance().createInst(
-                                    transportIt->getName(),
-                                    transportIt->getOptions())));
+                                    transportIt->getName(), options)));
         }
 
         return typename Informer<DataType>::Ptr(

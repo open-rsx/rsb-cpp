@@ -27,7 +27,6 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/misc/UUID.h>
 
-#include "../../converter/Repository.h"
 #include "../Connector.h"
 #include "ReceiverTask.h"
 #include "MembershipManager.h"
@@ -44,9 +43,7 @@ namespace spread {
 class RSB_EXPORT SpreadConnector {
 public:
     SpreadConnector(const std::string &host = defaultHost(),
-                    unsigned int port = defaultPort(),
-        rsb::converter::Repository<std::string>::Ptr converters =
-                    converter::stringConverterRepository());
+                    unsigned int port = defaultPort());
 
     virtual ~SpreadConnector();
 
@@ -64,8 +61,6 @@ public:
 
     SpreadConnectionPtr getConnection();
 
-    rsb::converter::Repository<std::string>::Ptr getConverters();
-
     SpreadMessage::QOS getMessageQoS() const;
 
     std::string makeGroupName(const Scope &scope) const;
@@ -80,8 +75,6 @@ private:
     SpreadConnectionPtr con;
 
     MembershipManagerPtr memberships;
-
-    rsb::converter::Repository<std::string>::Ptr converters;
 
     /**
      * The message type applied to every outgoing message.

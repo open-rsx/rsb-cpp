@@ -59,6 +59,8 @@ private:
 
 typedef boost::shared_ptr<DataStore> DataStorePtr;
 
+class InConnector;
+
 /**
  * @author swrede
  * @todo does action need locking if it is set while the task is running?
@@ -66,9 +68,7 @@ typedef boost::shared_ptr<DataStore> DataStorePtr;
 class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
-    ReceiverTask(SpreadConnectionPtr s,
-            converter::Repository<std::string>::Ptr converters,
-            HandlerPtr handler);
+    ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler, InConnector* connector);
     virtual ~ReceiverTask();
 
     void execute();
@@ -103,7 +103,7 @@ private:
     rsc::logging::LoggerPtr logger;
     volatile bool cancelRequested;
     SpreadConnectionPtr con;
-    converter::Repository<std::string>::Ptr converters;
+    InConnector* connector;
     HandlerPtr handler;
     std::map<std::string, boost::shared_ptr<DataStore> > dataPool;
     std::map<std::string, boost::shared_ptr<DataStore> >::iterator it;

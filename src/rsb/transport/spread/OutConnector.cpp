@@ -35,12 +35,15 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(args.get<string> ("host", defaultHost()), args.get<
-            unsigned int> ("port", defaultPort()));
+    return new OutConnector(args.get<string> ("host", defaultHost()),
+                            args.get<unsigned int> ("port", defaultPort()),
+                            args.get<ConverterNames>("converters", ConverterNames()));
 }
 
 OutConnector::OutConnector(const string &host, const unsigned int &port,
-        const unsigned int &maxDataSize) :
+                           const ConverterNames &converters,
+                           const unsigned int &maxDataSize) :
+    transport::ConverterSelectingOutConnector<string>(converters),
     logger(Logger::getLogger("rsb.spread.OutConnector")), active(false),
             connector(new SpreadConnector(host, port)),
             maxDataSize(maxDataSize) {
@@ -101,9 +104,7 @@ void OutConnector::handle(EventPtr event) {
     // TODO Remove "data split" information from notification
 
     // TODO exception handling if converter is not available
-    boost::shared_ptr<converter::Converter<string> > c =
-            this->connector->getConverters()->getConverterByDataType(
-                    event->getType());
+    ConverterPtr c = getConverter(event->getType());
     string wire;
     string wireSchema = c->serialize(make_pair(event->getType(),
             event->getData()), wire);
