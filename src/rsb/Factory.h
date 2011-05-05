@@ -40,18 +40,16 @@
 
 namespace rsb {
 
-template <unsigned int which, typename C>
+template<unsigned int which, typename C>
 std::map<typename C::value_type::first_type,
-         typename C::value_type::second_type>
-pairsToMap(const C &container) {
+        typename C::value_type::second_type> pairsToMap(const C &container) {
     typedef typename C::value_type::first_type first_type;
     typedef typename C::value_type::second_type second_type;
 
     typedef typename C::const_iterator const_iterator;
 
     std::map<first_type, second_type> result;
-    for (const_iterator it = container.begin();
-         it != container.end(); ++it) {
+    for (const_iterator it = container.begin(); it != container.end(); ++it) {
         if (which == 1)
             result[it->first] = it->second;
         else
@@ -80,8 +78,7 @@ public:
      * @return new informer instance
      */
     template<class DataType>
-    typename Informer<DataType>::Ptr createInformer(
-            const Scope &scope,
+    typename Informer<DataType>::Ptr createInformer(const Scope &scope,
             const ParticipantConfig &config =
                     Factory::getInstance().getDefaultParticipantConfig(),
             const std::string &dataType = rsc::runtime::typeName(
@@ -91,22 +88,21 @@ public:
         std::set<ParticipantConfig::Transport> configuredTransports =
                 config.getTransports();
         for (std::set<ParticipantConfig::Transport>::const_iterator
-                 transportIt = configuredTransports.begin(); transportIt
-                 != configuredTransports.end(); ++transportIt) {
+                transportIt = configuredTransports.begin(); transportIt
+                != configuredTransports.end(); ++transportIt) {
             RSCDEBUG(logger, "Trying to add connector " << *transportIt);
             rsc::runtime::Properties options = transportIt->getOptions();
             if (!transportIt->getConverters().empty()) {
-                options["converters"] = pairsToMap<2>(transportIt->getConverters());
+                options["converters"] = pairsToMap<2> (
+                        transportIt->getConverters());
             }
-            connectors.push_back(
-                    transport::OutConnectorPtr(
-                            transport::OutFactory::getInstance().createInst(
-                                    transportIt->getName(), options)));
+            connectors.push_back(transport::OutConnectorPtr(
+                    getOutFactoryInstance().createInst(transportIt->getName(),
+                            options)));
         }
 
-        return typename Informer<DataType>::Ptr(
-                new Informer<DataType> (connectors, scope, defaultConfig,
-                        dataType));
+        return typename Informer<DataType>::Ptr(new Informer<DataType> (
+                connectors, scope, defaultConfig, dataType));
     }
 
     /**
@@ -115,8 +111,7 @@ public:
      * @param scope the scope of the new listener
      * @return new listener instance
      */
-    ListenerPtr createListener(
-            const Scope &scope,
+    ListenerPtr createListener(const Scope &scope,
             const ParticipantConfig &config =
                     Factory::getInstance().getDefaultParticipantConfig());
 
@@ -150,6 +145,14 @@ public:
     friend class rsc::patterns::Singleton<Factory>;
 
 private:
+
+    /**
+     * This function is only required to have the same factory instance on
+     * windows because there the Singleton template is instantiated once per
+     * compilation unit. For the template-based createInformer method this will
+     * then be in the caller's compilation unit. :/
+     */
+    transport::OutFactory &getOutFactoryInstance();
 
     /**
      * Singleton constructor.

@@ -50,6 +50,10 @@ Factory::Factory() :
 Factory::~Factory() {
 }
 
+transport::OutFactory &Factory::getOutFactoryInstance() {
+    return transport::OutFactory::getInstance();
+}
+
 ListenerPtr Factory::createListener(const Scope &scope,
         const ParticipantConfig &config) {
     // Create requested connectors
@@ -62,12 +66,12 @@ ListenerPtr Factory::createListener(const Scope &scope,
         RSCDEBUG(logger, "Trying to add connector " << *transportIt);
         Properties options = transportIt->getOptions();
         if (!transportIt->getConverters().empty()) {
-            options["converters"] = pairsToMap<1>(transportIt->getConverters());
+            options["converters"]
+                    = pairsToMap<1> (transportIt->getConverters());
         }
-        connectors.push_back(
-                transport::InConnectorPtr(
-                        transport::InFactory::getInstance().createInst(
-                                                                       transportIt->getName(), options)));
+        connectors.push_back(transport::InConnectorPtr(
+                transport::InFactory::getInstance().createInst(
+                        transportIt->getName(), options)));
     }
 
     return ListenerPtr(new Listener(connectors, scope, defaultConfig));
