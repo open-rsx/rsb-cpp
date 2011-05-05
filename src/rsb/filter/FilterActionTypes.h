@@ -25,15 +25,32 @@ namespace rsb {
 namespace filter {
 
 /**
+ * A class to encapsulate enum constants that specify changes of a Filter for
+ * FilterObserver instances.
+ *
  * @author swrede
  */
 class RSB_EXPORT FilterAction {
 public:
-	enum Types {
-		ADD,
-		REMOVE,
-		UPDATE
-	};
+    /**
+     * Possible actions with filters.
+     *
+     * @note There is not update action because filters would then need a more
+     *       detailed observation model. Instead, the assumption is that a
+     *       filter's settings will not change after it has been notified to a
+     *       FilterObserver.
+     * @author swrede
+     */
+    enum Types {
+        /**
+         * A filter shall be added to the FilterObserver.
+         */
+        ADD,
+        /**
+         * A filter shall be remove from the observer.
+         */
+        REMOVE
+    };
 };
 
 }

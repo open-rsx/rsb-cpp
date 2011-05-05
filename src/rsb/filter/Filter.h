@@ -32,16 +32,50 @@ class FilterObserver;
 typedef boost::shared_ptr<FilterObserver> FilterObserverPtr;
 
 /**
+ * A filter filters an event stream by removing unwanted events. Therefore
+ * it has a function to match an event against its restrictions.
+ *
+ * As some there may be optimization possible for certain specific filter types,
+ * a double-dispatch logic is available using @ref FilterObserver. Instances
+ * must implement this #notifyObserver if they are relevant for FilterObserver
+ * instances.
+ *
+ * @note most RSB classes using filters expect that the filters will not change
+ *       their configuration after they have been added to e.g. the listener.
+ *       So generally do not change a filter after this. Instead first remove
+ *       it and then re-add the reconfigured instance.
  * @author swrede
  */
 class RSB_EXPORT Filter: public virtual rsc::runtime::Printable {
 public:
-	Filter();
-	virtual ~Filter();
 
-	virtual bool match(EventPtr e) = 0;
+    Filter();
+    virtual ~Filter();
 
-	virtual void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
+    /**
+     * Matches the given event against the constraints specified by this filter.
+     *
+     * @param the event to match. Must not be changed!
+     * @return @c true if the event matches the restrictions specified by this
+     *         filter and hence can be delivered to the client, @c false to
+     *         remove the event from the stream.
+     */
+    virtual bool match(EventPtr e) = 0;
+
+    /**
+     * Double-dispatch method to notfify a FilterObserver about changes for this
+     * filter with a more specific type that the general Filter interface.
+     *
+     * The default implementation does not generate a specific notification on
+     * FilterObserver. Override this method if there is a specific reception
+     * method in FilterObserver.
+     *
+     * @param fo the observer to notify
+     * @param at action that is performed with this filter. Just pass this to
+     *           the observer
+     */
+    virtual void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
+
 };
 
 typedef boost::shared_ptr<Filter> FilterPtr;

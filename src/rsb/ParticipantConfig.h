@@ -53,10 +53,10 @@ public:
      * @author jwienke
      */
     class RSB_EXPORT Transport: boost::totally_ordered<Transport>,
-                                public rsc::config::OptionHandler,
-                                public rsc::runtime::Printable {
+            public rsc::config::OptionHandler,
+            public rsc::runtime::Printable {
     public:
-        typedef std::set< std::pair<std::string, std::string> > ConverterNames;
+        typedef std::set<std::pair<std::string, std::string> > ConverterNames;
 
         /**
          * Creates a new transport description for the transport with the given
@@ -98,9 +98,8 @@ public:
         std::string getClassName() const;
         void printContents(std::ostream &stream) const;
 
-
         void handleOption(const std::vector<std::string> &key,
-                          const std::string &value);
+                const std::string &value);
     private:
         std::string name;
         ConverterNames converters;
