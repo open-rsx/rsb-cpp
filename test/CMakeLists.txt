@@ -89,6 +89,7 @@ SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
 ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
                       ${RSB_NAME}
+                      ${SPREAD_PROTOCOL_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARY_NAME})
 

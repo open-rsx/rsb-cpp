@@ -6,12 +6,17 @@ PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
                       PROTOROOT ${RSBPROTO_ROOT}
                       OUTPATH ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol)
 
-CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/rsb)
+ADD_LIBRARY(${SPREAD_PROTOCOL_NAME} STATIC ${PROTO_SOURCES})
+IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    SET_TARGET_PROPERTIES(${SPREAD_PROTOCOL_NAME} PROPERTIES COMPILE_FLAGS -fPIC)
+ENDIF()
+
 # TODO why do we need to install them? they should be fully internal
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Notification.pb.h DESTINATION include/rsb/protocol)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATION include/rsb/protocol)
 
+CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/rsb)
 CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @ONLY)
 
 SET(SOURCES rsb/CommException.cpp
@@ -81,10 +86,7 @@ SET(SOURCES rsb/CommException.cpp
 
             rsb/util/MD5.cpp
 
-            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
-
-            ${INTERNAL_PROTO_SOURCES}
-            ${PROTO_SOURCES})
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp)
 
 SET(HEADERS rsb/CommException.h
             rsb/Event.h
@@ -165,7 +167,8 @@ SET(HEADERS rsb/CommException.h
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-TARGET_LINK_LIBRARIES(${RSB_NAME} ${LIBS_LIBRARIES}
+TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_PROTOCOL_NAME}
+                                  ${LIBS_LIBRARIES}
                                   ${Boost_LIBRARIES}
                                   ${SPREAD_LIBRARIES}
                                   ${PROTOBUF_LIBRARIES}

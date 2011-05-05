@@ -51,6 +51,7 @@ ENDIF()
 SET(RSB_NAME "RSBCore")
 SET(RSB_TEST_NAME "rsbtest")
 SET(CORE_TEST_NAME rsbtest_core)
+SET(SPREAD_PROTOCOL_NAME rsbspread_proto)
 SET(SPREADPORT_TEST_NAME rsbtest_spread)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
 
