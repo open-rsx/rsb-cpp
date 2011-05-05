@@ -12,6 +12,7 @@
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "../../protocol/Notification.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace spread {
@@ -22,7 +23,7 @@ namespace spread {
  *
  * @author swrede
  */
-class Assembly {
+class RSB_EXPORT Assembly {
 public:
 
     Assembly(rsb::protocol::NotificationPtr n);
@@ -60,7 +61,7 @@ typedef boost::shared_ptr<Assembly> AssemblyPtr;
  *
  * @author jmoringe
  */
-class AssemblyPool {
+class RSB_EXPORT AssemblyPool {
 public:
 
     /**
