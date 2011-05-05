@@ -62,31 +62,79 @@ typedef boost::shared_ptr<Assembly> AssemblyPtr;
  */
 class AssemblyPool {
 public:
-    AssemblyPool();
+
+    /**
+     * Creates a new pool with specified settings. Pruning will not immediately
+     * start with these settings. It has to be enabled explicitly using the
+     * appropriate method calls.
+     *
+     * @param ageMs defines the max. allowed age of pooled fragments before they
+     *              are pruned (s) > 0
+     * @param pruningIntervalMs the interval to use for checking the age (ms) > 0
+     * @throw std::domain_error 0 given for ageMs or pruningIntervalMs
+     */
+    explicit AssemblyPool(const unsigned int &ageS = 20,
+            const unsigned int &pruningIntervalMs = 4000);
 
     ~AssemblyPool();
 
-    boost::shared_ptr<std::string> add(rsb::protocol::NotificationPtr notification);
+    /**
+     * Tells whether the pool is currently pruning fragments or not. This method
+     * is thread-safe.
+     *
+     * @return @c true if the pool is currently pruning, else @c false
+     */
+    bool isPruning() const;
+
+    /**
+     * Changes the pruning settings (enables or disables pruning) and waits
+     * until the new settings are applied. This method is thread-safe.
+     *
+     * @param prune if @c true, start pruning if it is not yet running, if
+     *        @c false, disable pruning if active
+     */
+    void setPruning(const bool &prune);
+
+    /**
+     * Adds a new notification to the pool and tries to join it with already
+     * pooled parts. If a complete event notification is available after this
+     * message, the joined body is returned and the all parts are removed
+     * from the pool.
+     *
+     * @param notification notification to add to the pool
+     * @return if a joined message is ready, the contents are returned, else a
+     *         0 pointer
+     */
+    boost::shared_ptr<std::string> add(
+            rsb::protocol::NotificationPtr notification);
 
 private:
     typedef std::map<std::string, boost::shared_ptr<Assembly> > Pool;
 
-    class PruningTask : public rsc::threading::PeriodicTask {
+    class PruningTask: public rsc::threading::PeriodicTask {
     public:
-        PruningTask(Pool &pool, boost::recursive_mutex &poolMutex);
+
+                PruningTask(Pool &pool, boost::recursive_mutex &poolMutex,
+                        const unsigned int &ageS,
+                        const unsigned int &pruningIntervalMs);
 
         void execute();
     private:
         rsc::logging::LoggerPtr logger;
         Pool &pool;
         boost::recursive_mutex &poolMutex;
+        unsigned int maxAge;
     };
 
     rsc::logging::LoggerPtr logger;
     Pool pool;
     boost::recursive_mutex poolMutex;
 
+    const unsigned int pruningAgeS;
+    const unsigned int pruningIntervalMs;
+
     rsc::threading::ThreadedTaskExecutor executor;
+    mutable boost::recursive_mutex pruningMutex;
     rsc::threading::TaskPtr pruningTask;
 };
 

@@ -57,10 +57,11 @@ unsigned int Assembly::age() const {
 }
 
 AssemblyPool::PruningTask::PruningTask(Pool &pool,
-        boost::recursive_mutex &poolMutex) :
-    PeriodicTask(4000), logger(Logger::getLogger(
+        boost::recursive_mutex &poolMutex, const unsigned &ageS,
+        const unsigned int &pruningIntervalMs) :
+    PeriodicTask(pruningIntervalMs), logger(Logger::getLogger(
             "rsb.spread.AssemblyPool.PruningTask")), pool(pool), poolMutex(
-            poolMutex) {
+            poolMutex), maxAge(ageS) {
 }
 
 void AssemblyPool::PruningTask::execute() {
@@ -68,22 +69,47 @@ void AssemblyPool::PruningTask::execute() {
 
     RSCDEBUG(logger, "Scanning for old assemblies");
     for (Pool::iterator it = this->pool.begin(); it != this->pool.end(); ++it) {
-        if (it->second->age() > 20) {
+        if (it->second->age() > maxAge) {
             RSCDEBUG(logger, "Pruning old assembly " << it->second);
             this->pool.erase(it);
         }
     }
 }
 
-AssemblyPool::AssemblyPool() :
-    logger(Logger::getLogger("rsb.spread.AssemblyPool")), pruningTask(
-            new PruningTask(this->pool, this->poolMutex)) {
-    this->executor.schedule(this->pruningTask);
+AssemblyPool::AssemblyPool(const unsigned int &ageS,
+        const unsigned int &pruningIntervalMs) :
+    logger(Logger::getLogger("rsb.spread.AssemblyPool")), pruningAgeS(ageS),
+            pruningIntervalMs(pruningIntervalMs) {
+    if (ageS == 0) {
+        throw domain_error("Age must not be 0.");
+    }
+    if (pruningIntervalMs == 0) {
+        throw domain_error("Pruning interval must not be 0");
+    }
 }
 
 AssemblyPool::~AssemblyPool() {
-    this->pruningTask->cancel();
-    this->pruningTask->waitDone();
+    setPruning(false);
+}
+
+bool AssemblyPool::isPruning() const {
+    boost::recursive_mutex::scoped_lock lock(pruningMutex);
+    return pruningTask;
+}
+
+void AssemblyPool::setPruning(const bool &prune) {
+    boost::recursive_mutex::scoped_lock lock(pruningMutex);
+
+    if (!isPruning() && prune) {
+        pruningTask.reset(new PruningTask(this->pool, this->poolMutex,
+                pruningAgeS, pruningIntervalMs));
+        this->executor.schedule(this->pruningTask);
+    } else if (isPruning() && !prune) {
+        assert(pruningTask);
+        pruningTask->cancel();
+        pruningTask->waitDone();
+    }
+
 }
 
 shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
@@ -91,22 +117,25 @@ shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
 
     Pool::iterator it = this->pool.find(notification->id());
     string *result = 0;
+    AssemblyPtr assembly;
     if (it != this->pool.end()) {
         // Push message to existing Assembly
-        AssemblyPtr assembly = it->second;
+        assembly = it->second;
         RSCTRACE(logger, "Adding notification " << notification->id() << " to existing assembly "
                 << assembly);
         assembly->add(notification);
-        if (assembly->isComplete()) {
-            result = assembly->getCompleteData();
-            this->pool.erase(it);
-        }
     } else {
         // Create new Assembly
         RSCTRACE(logger, "Creating new assembly for notification " << notification->id());
-        this->pool.insert(make_pair(notification->id(), AssemblyPtr(
-                new Assembly(notification))));
+        assembly.reset(new Assembly(notification));
+        it = this->pool.insert(make_pair(notification->id(), assembly)).first;
     }
+
+    if (assembly->isComplete()) {
+        result = assembly->getCompleteData();
+        this->pool.erase(it);
+    }
+
     RSCTRACE(logger, "dataPool size: " << this->pool.size());
 
     return shared_ptr<string> (result);
