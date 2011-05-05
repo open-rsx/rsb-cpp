@@ -16,9 +16,9 @@ namespace rsb {
 namespace spread {
 
 Assembly::Assembly(rsb::protocol::NotificationPtr n) :
-    logger(Logger::getLogger("rsb.spread.Assembly[" + n->id() + "]")), receivedParts(0),
-    birthTime(microsec_clock::local_time()) {
-    store.resize(n->num_data_parts() + 1);
+    logger(Logger::getLogger("rsb.spread.Assembly[" + n->id() + "]")),
+            receivedParts(0), birthTime(microsec_clock::local_time()) {
+    store.resize(n->num_data_parts());
     add(n);
 }
 
@@ -42,9 +42,8 @@ string *Assembly::getCompleteData() const {
 
 unsigned int Assembly::add(NotificationPtr n) {
     RSCTRACE(logger, "Adding notification " << n->id()
-             << " (part " << n->data_part() << "/" << this->store.size()
-             << ") to assembly");
-
+            << " (part " << n->data_part() << "/" << this->store.size()
+            << ") to assembly");
     store[n->data_part()] = n;
     return receivedParts++;
 }
@@ -57,10 +56,11 @@ unsigned int Assembly::age() const {
     return (microsec_clock::local_time() - this->birthTime).total_seconds();
 }
 
-AssemblyPool::PruningTask::PruningTask(Pool &pool, boost::recursive_mutex &poolMutex) :
-    PeriodicTask(4000),
-    logger(Logger::getLogger("rsb.spread.AssemblyPool.PruningTask")),
-    pool(pool), poolMutex(poolMutex) {
+AssemblyPool::PruningTask::PruningTask(Pool &pool,
+        boost::recursive_mutex &poolMutex) :
+    PeriodicTask(4000), logger(Logger::getLogger(
+            "rsb.spread.AssemblyPool.PruningTask")), pool(pool), poolMutex(
+            poolMutex) {
 }
 
 void AssemblyPool::PruningTask::execute() {
@@ -76,8 +76,8 @@ void AssemblyPool::PruningTask::execute() {
 }
 
 AssemblyPool::AssemblyPool() :
-    logger(Logger::getLogger("rsb.spread.AssemblyPool")),
-    pruningTask(new PruningTask(this->pool, this->poolMutex)) {
+    logger(Logger::getLogger("rsb.spread.AssemblyPool")), pruningTask(
+            new PruningTask(this->pool, this->poolMutex)) {
     this->executor.schedule(this->pruningTask);
 }
 
@@ -95,7 +95,7 @@ shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
         // Push message to existing Assembly
         AssemblyPtr assembly = it->second;
         RSCTRACE(logger, "Adding notification " << notification->id() << " to existing assembly "
-                 << assembly);
+                << assembly);
         assembly->add(notification);
         if (assembly->isComplete()) {
             result = assembly->getCompleteData();
@@ -104,13 +104,13 @@ shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
     } else {
         // Create new Assembly
         RSCTRACE(logger, "Creating new assembly for notification " << notification->id());
-        this->pool.insert(make_pair(notification->id(), AssemblyPtr(new Assembly(notification))));
+        this->pool.insert(make_pair(notification->id(), AssemblyPtr(
+                new Assembly(notification))));
     }
     RSCTRACE(logger, "dataPool size: " << this->pool.size());
 
-    return shared_ptr<string>(result);
+    return shared_ptr<string> (result);
 }
-
 
 }
 }

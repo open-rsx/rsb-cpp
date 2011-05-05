@@ -99,7 +99,7 @@ boost::shared_ptr<string> ReceiverTask::handleAndJoinNotification(
 
     boost::shared_ptr<string> completeData;
 
-    bool multiPartNotification = notification->num_data_parts() > 0;
+    bool multiPartNotification = notification->num_data_parts() > 1;
     if (multiPartNotification) {
         completeData = this->assemblyPool->add(notification);
     } else {

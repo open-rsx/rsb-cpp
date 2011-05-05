@@ -80,6 +80,7 @@ ENDIF()
 # --- spread connector test ---
 
 SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
+                            rsb/transport/spread/AssemblyTest.cpp
                             rsb/transport/spread/SpreadConnectorTest.cpp
                             rsb/transport/spread/MembershipManagerTest.cpp
                             rsb/InformerTask.cpp

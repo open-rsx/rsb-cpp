@@ -16,15 +16,16 @@
 namespace rsb {
 namespace spread {
 
-/** Instances of this class store fragments of partially received,
+/**
+ * Instances of this class store fragments of partially received,
  * fragmented notifications for later assembly.
  *
  * @author swrede
  */
 class Assembly {
 public:
-    Assembly(rsb::protocol::NotificationPtr n);
 
+    Assembly(rsb::protocol::NotificationPtr n);
     ~Assembly();
 
     std::string getData(const unsigned int &i) const;
@@ -35,7 +36,14 @@ public:
 
     bool isComplete() const;
 
+    /**
+     * Age of the assembly as seconds. The age is the elaped time since this
+     * instance was created.
+     *
+     * @return age in seconds
+     */
     unsigned int age() const;
+
 private:
     rsc::logging::LoggerPtr logger;
     unsigned int receivedParts;
@@ -45,7 +53,8 @@ private:
 
 typedef boost::shared_ptr<Assembly> AssemblyPtr;
 
-/** Instances of this class maintain a pool of ongoing @ref Assembly
+/**
+ * Instances of this class maintain a pool of ongoing @ref Assembly
  * s. In addition to adding arriving notification fragments to these,
  * the ages of assemblies are monitor and old assemblies are pruned.
  *
@@ -58,6 +67,7 @@ public:
     ~AssemblyPool();
 
     boost::shared_ptr<std::string> add(rsb::protocol::NotificationPtr notification);
+
 private:
     typedef std::map<std::string, boost::shared_ptr<Assembly> > Pool;
 

@@ -35,16 +35,15 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(args.get<string> ("host", defaultHost()),
-                            args.get<unsigned int> ("port", defaultPort()),
-                            args.get<ConverterNames>("converters", ConverterNames()));
+    return new OutConnector(args.get<string> ("host", defaultHost()), args.get<
+            unsigned int> ("port", defaultPort()), args.get<ConverterNames> (
+            "converters", ConverterNames()));
 }
 
 OutConnector::OutConnector(const string &host, const unsigned int &port,
-                           const ConverterNames &converters,
-                           const unsigned int &maxDataSize) :
-    transport::ConverterSelectingOutConnector<string>(converters),
-    logger(Logger::getLogger("rsb.spread.OutConnector")), active(false),
+        const ConverterNames &converters, const unsigned int &maxDataSize) :
+    transport::ConverterSelectingOutConnector<string>(converters), logger(
+            Logger::getLogger("rsb.spread.OutConnector")), active(false),
             connector(new SpreadConnector(host, port)),
             maxDataSize(maxDataSize) {
 }
@@ -111,11 +110,11 @@ void OutConnector::handle(EventPtr event) {
 
     // ---- Begin split message implementation ----
     RSCDEBUG(logger, "Whole message size (data only): " << wire.size());
-    unsigned int numDataParts = wire.size() / maxDataSize;
-    RSCDEBUG(logger, "Number of message parts (data only): " << numDataParts + 1);
+    unsigned int numDataParts = wire.size() / maxDataSize + 1;
+    RSCDEBUG(logger, "Number of message parts (data only): " << numDataParts);
 
     size_t curPos = 0;
-    for (unsigned int i = 0; i <= numDataParts; i++) {
+    for (unsigned int i = 0; i < numDataParts; i++) {
 
         // extract the data for this message part
         string dataPart;
