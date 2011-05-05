@@ -68,12 +68,16 @@ void AssemblyPool::PruningTask::execute() {
     boost::recursive_mutex::scoped_lock lock(this->poolMutex);
 
     RSCDEBUG(logger, "Scanning for old assemblies");
-    for (Pool::iterator it = this->pool.begin(); it != this->pool.end(); ++it) {
+    Pool::iterator it = this->pool.begin();
+    while (it != this->pool.end()) {
         if (it->second->age() > maxAge) {
             RSCDEBUG(logger, "Pruning old assembly " << it->second);
-            this->pool.erase(it);
+            this->pool.erase(it++);
+        } else {
+            ++it;
         }
     }
+
 }
 
 AssemblyPool::AssemblyPool(const unsigned int &ageS,
