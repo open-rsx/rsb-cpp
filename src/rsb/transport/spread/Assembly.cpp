@@ -101,13 +101,16 @@ void AssemblyPool::setPruning(const bool &prune) {
     boost::recursive_mutex::scoped_lock lock(pruningMutex);
 
     if (!isPruning() && prune) {
+        RSCDEBUG(logger, "Starting Assembly pruning");
         pruningTask.reset(new PruningTask(this->pool, this->poolMutex,
                 pruningAgeS, pruningIntervalMs));
         this->executor.schedule(this->pruningTask);
     } else if (isPruning() && !prune) {
+        RSCDEBUG(logger, "Stopping Assembly pruning");
         assert(pruningTask);
         pruningTask->cancel();
         pruningTask->waitDone();
+        RSCDEBUG(logger, "Assembly pruning stopped");
     }
 
 }

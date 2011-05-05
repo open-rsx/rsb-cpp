@@ -40,6 +40,13 @@ namespace spread {
 class InConnector;
 
 /**
+ * A task that receives Notifications from a SpreadConnection, deserializes them
+ * to events and notifies a Handler with deserialized Events. Messages may be
+ * split into multiple Notifications to respect the spread limitations. Hence,
+ * there is an assembly strategy for multiple notifications forming one Event.
+ * An optional pruning for Event fragments may be enable to avoid a growing pool
+ * if Notifications are lost. As a default this pruning is disabled.
+ *
  * @author swrede
  * @todo does action need locking if it is set while the task is running?
  */
@@ -51,6 +58,15 @@ public:
 
     void execute();
     void setHandler(HandlerPtr handler);
+
+    /**
+     * Enables or disables pruning of messages and waits until the changes are
+     * performed. Thread-safe method.
+     *
+     * @param pruning if @c true and not pruning, start pruning, else if @c false
+     *        and pruning, stop pruning
+     */
+    void setPruning(const bool &pruning);
 
 private:
 

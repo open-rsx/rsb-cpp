@@ -124,10 +124,12 @@ void InRouteConfigurator::filterRemoved(filter::FilterPtr filter) {
     eventReceivingStrategy->removeFilter(filter);
 }
 
-void InRouteConfigurator::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
-    // TODO only required if we also want to support QoS for ingoing
-    // connectors as well
-    // this->inConnector->setQualityOfServiceSpecs(specs);
+void InRouteConfigurator::setQualityOfServiceSpecs(
+        const QualityOfServiceSpec &specs) {
+    for (ConnectorList::iterator it = this->connectors.begin(); it
+            != this->connectors.end(); ++it) {
+        (*it)->setQualityOfServiceSpecs(specs);
+    }
 }
 
 void InRouteConfigurator::setErrorStrategy(

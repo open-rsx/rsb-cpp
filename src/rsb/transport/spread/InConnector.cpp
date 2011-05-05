@@ -86,6 +86,11 @@ void InConnector::deactivate() {
 
 void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
     this->connector->setQualityOfServiceSpecs(specs);
+    if (specs.getReliability() >= QualityOfServiceSpec::RELIABLE) {
+        this->rec->setPruning(false);
+    } else {
+        this->rec->setPruning(true);
+    }
 }
 
 void InConnector::addHandler(HandlerPtr handler) {

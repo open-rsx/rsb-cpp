@@ -33,10 +33,11 @@ using namespace rsc::logging;
 namespace rsb {
 namespace spread {
 
-ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler, InConnector* connector) :
+ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
+        InConnector* connector) :
     logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-    cancelRequested(false), con(s), connector(connector), assemblyPool(new AssemblyPool()),
-    handler(handler) {
+            cancelRequested(false), con(s), connector(connector), assemblyPool(
+                    new AssemblyPool()), handler(handler) {
 
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
@@ -123,7 +124,8 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     }
 
     // TODO error handling
-    InConnector::ConverterPtr c = this->connector->getConverter(notification->wire_schema());
+    InConnector::ConverterPtr c = this->connector->getConverter(
+            notification->wire_schema());
     converter::AnnotatedData deserialized = c->deserialize(
             notification->wire_schema(), *data);
     e->setType(deserialized.first);
@@ -137,6 +139,10 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
 
 void ReceiverTask::setHandler(HandlerPtr handler) {
     this->handler = handler;
+}
+
+void ReceiverTask::setPruning(const bool &pruning) {
+    assemblyPool->setPruning(pruning);
 }
 
 }
