@@ -34,7 +34,8 @@ namespace test {
 InformerTask::InformerTask(OutConnectorPtr p, const Scope &scope,
         const unsigned int &numEvents, const unsigned int &dataSizeInBytes) :
     scope(scope), numEvents(numEvents), dataSizeInBytes(dataSizeInBytes),
-            sentEvents(0), port(p) {
+            sentEvents(0), port(p), data(new string(rsc::misc::randAlnumStr(
+                    dataSizeInBytes))) {
 }
 
 InformerTask::~InformerTask() {
@@ -44,8 +45,6 @@ void InformerTask::execute() {
 
     ++sentEvents;
     cout << "sending event: " << sentEvents << endl;
-    boost::shared_ptr<string> data(
-            new string(rsc::misc::randAlnumStr(dataSizeInBytes)));
     Scope thisScope = scope;
     if (sentEvents % 2 == 0) {
         // should be filtered

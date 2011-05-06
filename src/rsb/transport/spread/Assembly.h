@@ -38,7 +38,7 @@ public:
     bool isComplete() const;
 
     /**
-     * Age of the assembly as seconds. The age is the elaped time since this
+     * Age of the assembly as seconds. The age is the elapsed time since this
      * instance was created.
      *
      * @return age in seconds
