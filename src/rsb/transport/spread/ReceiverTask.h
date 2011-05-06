@@ -28,7 +28,7 @@
 #include "../../protocol/Notification.h"
 #include "../../converter/Repository.h"
 #include "../../Event.h"
-#include "../../Handler.h"
+#include "../../eventprocessing/Handler.h"
 #include "../Connector.h"
 #include "../../converter/Converter.h"
 #include "SpreadConnection.h"
@@ -53,11 +53,12 @@ class InConnector;
 class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
-    ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler, InConnector* connector);
+    ReceiverTask(SpreadConnectionPtr s, eventprocessing::HandlerPtr handler,
+            InConnector* connector);
     virtual ~ReceiverTask();
 
     void execute();
-    void setHandler(HandlerPtr handler);
+    void setHandler(eventprocessing::HandlerPtr handler);
 
     /**
      * Enables or disables pruning of messages and waits until the changes are
@@ -99,7 +100,7 @@ private:
     SpreadConnectionPtr con;
     InConnector* connector;
     AssemblyPoolPtr assemblyPool;
-    HandlerPtr handler;
+    eventprocessing::HandlerPtr handler;
 };
 
 }

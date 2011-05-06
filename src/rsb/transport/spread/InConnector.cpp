@@ -23,6 +23,7 @@
 
 using namespace std;
 
+using namespace rsb::eventprocessing;
 using namespace rsc::logging;
 using namespace rsc::runtime;
 using namespace rsc::threading;

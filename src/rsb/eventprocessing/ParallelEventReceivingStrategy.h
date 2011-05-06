@@ -59,8 +59,8 @@ public:
     void setHandlerErrorStrategy(
             const ParticipantConfig::ErrorStrategy &strategy);
 
-    virtual void addHandler(HandlerPtr handler, const bool &wait);
-    virtual void removeHandler(HandlerPtr handler, const bool &wait);
+    virtual void addHandler(rsb::HandlerPtr handler, const bool &wait);
+    virtual void removeHandler(rsb::HandlerPtr handler, const bool &wait);
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
@@ -70,13 +70,13 @@ public:
 
 private:
 
-    bool filter(HandlerPtr handler, EventPtr event);
-    void deliver(HandlerPtr handler, EventPtr event);
+    bool filter(rsb::HandlerPtr handler, EventPtr event);
+    void deliver(rsb::HandlerPtr handler, EventPtr event);
 
     void handleDispatchError(const std::string &message);
 
     rsc::logging::LoggerPtr logger;
-    rsc::threading::OrderedQueueDispatcherPool<EventPtr, Handler> pool;
+    rsc::threading::OrderedQueueDispatcherPool<EventPtr, rsb::Handler> pool;
 
     mutable boost::shared_mutex filtersMutex;
     std::set<filter::FilterPtr> filters;

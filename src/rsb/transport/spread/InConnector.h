@@ -53,8 +53,8 @@ public:
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-    void addHandler(HandlerPtr handler);
-    void removeHandler(HandlerPtr handler);
+    void addHandler(eventprocessing::HandlerPtr handler);
+    void removeHandler(eventprocessing::HandlerPtr handler);
 
     static rsb::transport::InConnector *create(
             const rsc::runtime::Properties &args);

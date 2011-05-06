@@ -100,11 +100,11 @@ void InRouteConfigurator::removeConnector(InConnectorPtr connector) {
     this->connectors.remove(connector);
 }
 
-void InRouteConfigurator::handlerAdded(HandlerPtr handler, const bool &wait) {
+void InRouteConfigurator::handlerAdded(rsb::HandlerPtr handler, const bool &wait) {
     eventReceivingStrategy->addHandler(handler, wait);
 }
 
-void InRouteConfigurator::handlerRemoved(HandlerPtr handler, const bool &wait) {
+void InRouteConfigurator::handlerRemoved(rsb::HandlerPtr handler, const bool &wait) {
     eventReceivingStrategy->removeHandler(handler, wait);
 }
 

@@ -22,7 +22,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "../Event.h"
-#include "Handler.h"
+#include "../Handler.h"
 #include "../filter/Filter.h"
 #include "rsb/rsbexports.h"
 #include "../ParticipantConfig.h"
@@ -59,7 +59,7 @@ public:
      *             handler has been install completely so that the next event
      *             will be delivered to it
      */
-    virtual void addHandler(HandlerPtr handler, const bool &wait) = 0;
+    virtual void addHandler(rsb::HandlerPtr handler, const bool &wait) = 0;
 
     /**
      * Removes a handler that will will then not be notified anymore.
@@ -69,7 +69,7 @@ public:
      *             handler has been removed completely and will not receive
      *             any more notifications
      */
-    virtual void removeHandler(HandlerPtr handler, const bool &wait) = 0;
+    virtual void removeHandler(rsb::HandlerPtr handler, const bool &wait) = 0;
 
     virtual void addFilter(filter::FilterPtr filter) = 0;
     virtual void removeFilter(filter::FilterPtr filter) = 0;

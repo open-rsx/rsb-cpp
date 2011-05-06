@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <set>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 
@@ -30,9 +32,26 @@
 
 namespace rsb {
 
-typedef eventprocessing::Handler Handler;
+/**
+ * Asynchronously called handler interface on the client level. Handler may have
+ * associated methods and are only called for events that match their desired
+ * method.
+ *
+ * @author jwienke
+ */
+class RSB_EXPORT Handler: public eventprocessing::Handler {
+protected:
+    explicit Handler(const std::string &method = "");
+    explicit Handler(const std::set<std::string> &methods);
+    virtual ~Handler();
 
-typedef eventprocessing::HandlerPtr HandlerPtr;
+    std::set<std::string> getMethods() const;
+
+private:
+    std::set<std::string> methods;
+};
+
+typedef boost::shared_ptr<Handler> HandlerPtr;
 
 typedef boost::function<void(EventPtr)> EventFunction;
 

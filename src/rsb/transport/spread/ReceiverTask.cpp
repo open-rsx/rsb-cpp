@@ -28,6 +28,7 @@ using namespace std;
 using namespace rsb;
 using namespace rsb::protocol;
 using namespace rsb::transport;
+using namespace rsb::eventprocessing;
 using namespace rsc::logging;
 
 namespace rsb {

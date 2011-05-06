@@ -30,6 +30,7 @@
 #include "../QualityOfServiceSpec.h"
 #include "../transport/InConnector.h"
 #include "EventReceivingStrategy.h"
+#include "../Handler.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -66,7 +67,7 @@ public:
      *             handler has been completely installed and will receive the
      *             next available event
      */
-    void handlerAdded(HandlerPtr handler, const bool &wait);
+    void handlerAdded(rsb::HandlerPtr handler, const bool &wait);
 
     /**
      * Removes a previously registered handle.
@@ -76,7 +77,7 @@ public:
      *             handler has been completely removed and will not be notified
      *             anymore
      */
-    void handlerRemoved(HandlerPtr handler, const bool &wait);
+    void handlerRemoved(rsb::HandlerPtr handler, const bool &wait);
 
     void filterAdded(filter::FilterPtr filter);
     void filterRemoved(filter::FilterPtr filter);

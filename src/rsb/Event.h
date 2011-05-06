@@ -53,9 +53,11 @@ public:
      * @param scope scope of the event
      * @param payload payload of the event
      * @param type type identifier to serialize / deserialize the event payload
+     * @param method a method that is represented by this event. Am empty string
+     *               specifies an undecided method.
      */
     Event(const Scope &scope, boost::shared_ptr<void> payload,
-            const std::string &type);
+            const std::string &type, const std::string &method = "");
 
     virtual ~Event();
 
@@ -75,6 +77,21 @@ public:
     VoidPtr getData();
     void setData(VoidPtr d);
 
+    /**
+     * Returns the method associated with this event. An empty string indicates
+     * an unspecified method.
+     *
+     * @return method name or empty string
+     */
+    std::string getMethod() const;
+
+    /**
+     * Sets the method associated with this event.
+     *
+     * @param method method name or empty string for unspecified method.
+     */
+    void setMethod(const std::string &method);
+
     bool hasMetaInfo(const std::string &key) const;
     std::string getMetaInfo(const std::string &key) const;
     void addMetaInfo(const std::string &key, const std::string &value,
@@ -90,6 +107,8 @@ private:
 
     // is this a single type, a hierarchy or a set?
     std::string type;
+
+    std::string method;
 
     std::map<std::string, std::string> metaInfos;
 

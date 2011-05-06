@@ -23,6 +23,21 @@ using namespace std;
 
 namespace rsb {
 
+Handler::Handler(const string &method) {
+    methods.insert(method);
+}
+
+Handler::Handler(const set<string> &methods) :
+    methods(methods) {
+}
+
+Handler::~Handler() {
+}
+
+set<string> Handler::getMethods() const {
+    return methods;
+}
+
 EventFunctionHandler::EventFunctionHandler(const EventFunction& function) :
     function(function) {
 }

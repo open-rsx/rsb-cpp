@@ -29,8 +29,8 @@ Event::Event() {
 }
 
 Event::Event(const Scope &scope, boost::shared_ptr<void> payload,
-        const string &type) :
-    scope(scope), content(payload), type(type) {
+        const string &type, const string &method) :
+    scope(scope), content(payload), type(type), method(method) {
 }
 
 Event::~Event() {
@@ -75,6 +75,14 @@ string Event::getType() {
 
 void Event::setType(const string &t) {
     type = t;
+}
+
+string Event::getMethod() const {
+    return method;
+}
+
+void Event::setMethod(const string &method) {
+    this->method = method;
 }
 
 bool Event::hasMetaInfo(const string &key) const {

@@ -70,7 +70,7 @@ void ParallelEventReceivingStrategy::setHandlerErrorStrategy(
     this->errorStrategy = strategy;
 }
 
-bool ParallelEventReceivingStrategy::filter(HandlerPtr handler, EventPtr e) {
+bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e) {
     RSCDEBUG(logger, "Matching event " << e << " for handler " << handler);
 
     // match event
@@ -138,7 +138,7 @@ void ParallelEventReceivingStrategy::handleDispatchError(const string &message) 
 
 }
 
-void ParallelEventReceivingStrategy::deliver(HandlerPtr handler, EventPtr e) {
+void ParallelEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e) {
     RSCDEBUG(logger, "Delivering event " << e << " to handler " << handler);
 
     try {
@@ -174,13 +174,13 @@ void ParallelEventReceivingStrategy::handle(EventPtr event) {
     pool.push(event);
 }
 
-void ParallelEventReceivingStrategy::addHandler(HandlerPtr handler,
+void ParallelEventReceivingStrategy::addHandler(rsb::HandlerPtr handler,
         const bool &/*wait*/) {
     // wait can be ignored because the pool always ensures this
     pool.registerReceiver(handler);
 }
 
-void ParallelEventReceivingStrategy::removeHandler(HandlerPtr handler,
+void ParallelEventReceivingStrategy::removeHandler(rsb::HandlerPtr handler,
         const bool &/*wait*/) {
     // wait can be ignored because the pool always ensures this
     pool.unregisterReceiver(handler);

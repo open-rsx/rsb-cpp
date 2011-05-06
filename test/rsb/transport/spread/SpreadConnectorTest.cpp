@@ -30,6 +30,7 @@
 #include "rsb/transport/spread/InConnector.h"
 #include "rsb/transport/spread/OutConnector.h"
 #include "rsb/filter/Filter.h"
+#include "rsb/Handler.h"
 
 #include "../../InformerTask.h"
 
