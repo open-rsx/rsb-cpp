@@ -72,6 +72,53 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
 
 }
 
+TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
+{
+
+    ParallelEventReceivingStrategy processor(1);
+    const Scope okScope("/OK");
+    const string desiredMethod = "FooMethod";
+    processor.addFilter(FilterPtr(new ScopeFilter(okScope)));
+
+    boost::shared_ptr<SynchronizedQueue<boost::shared_ptr<string> > > okQueue(
+            new SynchronizedQueue<boost::shared_ptr<string> > );
+    rsb::HandlerPtr okHandler(new QueuePushHandler<string> (okQueue, desiredMethod));
+    processor.addHandler(okHandler, true);
+
+    {
+        // good method
+        EventPtr event(new Event);
+        event->setScope(okScope);
+        event->setMethod(desiredMethod);
+        event->setData(boost::shared_ptr<string>(new string("hello")));
+
+        processor.handle(event);
+    }
+    {
+        // no method at all
+        EventPtr event(new Event);
+        event->setScope(okScope);
+        event->setData(boost::shared_ptr<string>(new string("hello")));
+
+        processor.handle(event);
+    }
+    {
+        // no method at all
+        EventPtr event(new Event);
+        event->setScope(okScope);
+        event->setMethod("wrong method");
+        event->setData(boost::shared_ptr<string>(new string("hello")));
+
+        processor.handle(event);
+    }
+    boost::this_thread::sleep(boost::posix_time::millisec(500));
+
+    EXPECT_FALSE(okQueue->empty());
+    okQueue->pop();
+    EXPECT_TRUE(okQueue->empty());
+
+}
+
 class ErrorGeneratingHandler: public rsb::Handler {
 public:
 

@@ -76,6 +76,10 @@ bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e)
     // match event
     try {
 
+        if (!handler->acceptsMethod(e->getMethod())) {
+            return false;
+        }
+
         boost::shared_lock<boost::shared_mutex> lock(filtersMutex);
         for (set<filter::FilterPtr>::const_iterator filterIt = filters.begin(); filterIt
                 != filters.end(); ++filterIt) {

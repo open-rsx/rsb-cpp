@@ -40,12 +40,36 @@ namespace rsb {
  * @author jwienke
  */
 class RSB_EXPORT Handler: public eventprocessing::Handler {
-protected:
-    explicit Handler(const std::string &method = "");
-    explicit Handler(const std::set<std::string> &methods);
-    virtual ~Handler();
+public:
 
+    /**
+     * Returns the desired set of methods this handler can handle. An empty set
+     * means no restrictions on methods are placed.
+     *
+     * @return set of diesred methods or empty for all methods
+     */
     std::set<std::string> getMethods() const;
+    bool acceptsMethod(const std::string &method) const;
+
+protected:
+
+    /**
+     * Creates a new handler that only accepts events for the specified method.
+     *
+     * @param method the accepted method of this handler or empty string for
+     *               all methods
+     */
+    explicit Handler(const std::string &method = "");
+
+    /**
+     * Creates a new handler that only accepts events with the specified
+     * methods.
+     *
+     * @param methods set of desired methods, empty for all methods
+     */
+    explicit Handler(const std::set<std::string> &methods);
+
+    virtual ~Handler();
 
 private:
     std::set<std::string> methods;
@@ -62,7 +86,8 @@ typedef boost::function<void(EventPtr)> EventFunction;
  */
 class RSB_EXPORT EventFunctionHandler: public Handler {
 public:
-    EventFunctionHandler(const EventFunction& function);
+    EventFunctionHandler(const EventFunction& function,
+            const std::string &method = "");
 
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;

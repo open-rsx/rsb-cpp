@@ -24,7 +24,9 @@ using namespace std;
 namespace rsb {
 
 Handler::Handler(const string &method) {
-    methods.insert(method);
+    if (!method.empty()) {
+        methods.insert(method);
+    }
 }
 
 Handler::Handler(const set<string> &methods) :
@@ -38,8 +40,16 @@ set<string> Handler::getMethods() const {
     return methods;
 }
 
-EventFunctionHandler::EventFunctionHandler(const EventFunction& function) :
-    function(function) {
+bool Handler::acceptsMethod(const string &method) const {
+    if (methods.empty()) {
+        return true;
+    }
+    return methods.count(method);
+}
+
+EventFunctionHandler::EventFunctionHandler(const EventFunction &function,
+        const string &method) :
+    Handler(method), function(function) {
 }
 
 string EventFunctionHandler::getClassName() const {

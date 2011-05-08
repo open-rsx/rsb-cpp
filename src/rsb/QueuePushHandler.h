@@ -48,9 +48,11 @@ public:
      *
      * @param queue the queue to push received data on
      */
-    QueuePushHandler(boost::shared_ptr<rsc::threading::SynchronizedQueue<
-            boost::shared_ptr<T> > > queue) :
-        queue(queue) {
+    QueuePushHandler(
+            boost::shared_ptr<rsc::threading::SynchronizedQueue<
+                    boost::shared_ptr<T> > > queue,
+            const std::string &method = "") :
+        Handler(method), queue(queue) {
     }
 
     std::string getClassName() const {
