@@ -24,6 +24,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "rsb/rsbexports.h"
+
 namespace rsb {
 namespace spread {
 
@@ -32,7 +34,7 @@ namespace spread {
  *
  * @author swrede
  */
-class SpreadMessage {
+class RSB_EXPORT SpreadMessage {
 public:
 
     enum Type {

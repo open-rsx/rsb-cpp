@@ -54,7 +54,7 @@ class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
     ReceiverTask(SpreadConnectionPtr s, eventprocessing::HandlerPtr handler,
-            InConnector* connector);
+            InConnector *connector);
     virtual ~ReceiverTask();
 
     void execute();

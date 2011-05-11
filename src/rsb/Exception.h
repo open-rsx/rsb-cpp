@@ -28,7 +28,6 @@ namespace rsb {
 
 /**
  * @author swrede
- * @todo implement stream operators to add variables to exception message
  */
 class RSB_EXPORT Exception: public std::runtime_error {
 public:

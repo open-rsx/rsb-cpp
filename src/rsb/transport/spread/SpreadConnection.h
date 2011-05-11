@@ -39,7 +39,6 @@ RSB_EXPORT unsigned int defaultPort();
 
 /**
  * @author swrede
- * @todo really expose this through dlls only for the unit tests?
  */
 class RSB_EXPORT SpreadConnection {
 public:

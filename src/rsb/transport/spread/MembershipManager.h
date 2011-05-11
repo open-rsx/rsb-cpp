@@ -40,7 +40,6 @@ typedef std::map<std::string , std::pair<SpreadGroupPtr, int> > GroupMap;
  * Reference counting class for Spread group memberships.
  *
  * @author swrede
- * @todo do we really want to expose this through dlls only for the unit tests
  * @todo think about adding SpreadConnectionPtr as a member, offering
  *       methods that operate on this connection only
  * @todo Threadsafety!!!

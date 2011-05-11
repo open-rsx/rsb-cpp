@@ -38,7 +38,6 @@ namespace spread {
 
 /**
  * @author swrede
- * @todo do we really want to expose this through dlls only for the unit tests
  */
 class RSB_EXPORT SpreadConnector {
 public:

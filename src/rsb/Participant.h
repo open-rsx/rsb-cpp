@@ -22,6 +22,7 @@
 #include <ostream>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 
 #include <rsc/misc/UUID.h>
 #include <rsc/runtime/Printable.h>
@@ -43,7 +44,8 @@ namespace rsb {
  *
  *  @author jmoringe
  */
-class RSB_EXPORT Participant: public virtual rsc::runtime::Printable {
+class RSB_EXPORT Participant: public virtual rsc::runtime::Printable,
+        public boost::noncopyable {
 public:
 
     void printContents(std::ostream &stream) const;

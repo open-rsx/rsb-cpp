@@ -70,7 +70,6 @@ public:
     Scope getScope();
     void setScope(const Scope &scope);
 
-    // TODO REFACTOR: introduce domain object for type (hierarchy?)
     std::string getType();
     void setType(const std::string &type);
 

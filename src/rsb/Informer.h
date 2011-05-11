@@ -52,7 +52,6 @@ namespace rsb {
  *
  * @todo check thread-safety, e.g. setting router to active and setting the
  *       passive flag must be atomic
- * @todo does it make sense that informers are copyable?
  */
 template<class T>
 class Informer: public Participant {
@@ -82,8 +81,9 @@ public:
     Informer(const std::vector<transport::OutConnectorPtr> &connectors,
             const Scope &scope, const ParticipantConfig &config,
             const std::string &type = rsc::runtime::typeName<T>()) :
-        Participant(scope, config), logger(rsc::logging::Logger::getLogger(
-                "rsb.Informer")), passive(false), defaultType(type) {
+        Participant(scope, config),
+                logger(rsc::logging::Logger::getLogger("rsb.Informer")),
+                passive(false), defaultType(type) {
         // TODO evaluate configuration
         this->configurator.reset(new eventprocessing::OutRouteConfigurator());
         for (std::vector<transport::OutConnectorPtr>::const_iterator it =
@@ -144,14 +144,12 @@ public:
      * define additional meta data.
      *
      * @param event the event to publish.
-     * @todo assumption is that data and type field already set externally
-     *       throw exception if not the case
      */
     void publish(EventPtr event) {
         // TODO Check that exception is thrown if no converter available!
         event->setScope(getScope());
         RSCDEBUG(logger, "Publishing event");
-        configurator->publish(event);
+        checkedPublish(event);
     }
 
     /**
@@ -181,10 +179,20 @@ public:
         // TODO Check that exception is thrown if no converter available!
         e->setType(type);
         RSCDEBUG(logger, "Publishing event");
-        configurator->publish(e);
+        checkedPublish(e);
     }
 
 private:
+
+    void checkedPublish(EventPtr event) {
+        if (event->getType().empty()) {
+            std::stringstream s;
+            s << "Event type cannot be empty: " << event;
+            throw std::invalid_argument(s.str());
+        }
+        configurator->publish(event);
+    }
+
     rsc::logging::LoggerPtr logger;
     volatile bool passive;
     std::string defaultType;

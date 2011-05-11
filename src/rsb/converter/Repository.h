@@ -172,9 +172,6 @@ private:
     ConverterMap converters;
 };
 
-/**
- * @todo how to avoid this central wire format repository?
- */
 RSB_EXPORT Repository<std::string>::Ptr stringConverterRepository();
 
 }
