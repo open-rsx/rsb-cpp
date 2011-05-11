@@ -152,8 +152,10 @@ bool SpreadConnection::isActive() {
 }
 
 void SpreadConnection::receive(SpreadMessagePtr sm) {
+
+    sm->reset();
+
     // read from Spread multicast group
-    // TODO add something like sm->reset
     int service_type;
     int num_groups;
     char sender[MAX_GROUP_NAME];
@@ -234,7 +236,8 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 
 bool SpreadConnection::send(const SpreadMessage &msg) {
     // TODO check message size, if larger than ~100KB throw exception
-    // TODO add mutex, enque or send directly?
+    // TODO add mutex, enqueue or send directly?
+    // jwienke: no queuing please, this is part of a higher level of abstraction
     const int groupCount = msg.getGroupCount();
     if (groupCount == 0) {
         throw CommException("group information missing in message");
@@ -248,7 +251,6 @@ bool SpreadConnection::send(const SpreadMessage &msg) {
             RSCDEBUG(logger, "sending message to group with name " << group);
             ret = SP_multicast(con, msg.getQOS(), group.c_str(), 0,
                     msg.getSize(), msg.getData());
-            msgCount++;
         } else {
             // use SP_multigroup_multicast
             char *groups = new char[groupCount * MAX_GROUP_NAME];
@@ -263,14 +265,16 @@ bool SpreadConnection::send(const SpreadMessage &msg) {
             ret = SP_multigroup_multicast(con, msg.getQOS(), groupCount,
                     (const char(*)[MAX_GROUP_NAME]) groups, 0, msg.getSize(),
                     msg.getData());
-            msgCount++;
             delete[] groups;
         }
-        // FIXME: check return code of the above call
+        // TODO shouldn't msgCount be incremented only in case of success?
+        msgCount++;
+        // FIXME check return code of the above call
         if (ret >= 0) {
-            // cerr << "Message sent successfully!" << endl;
             return true;
         } else {
+            // TODO missing default case
+            // TODO generate exceptions
             switch (ret) {
             case ILLEGAL_SESSION:
                 // TODO throw exception

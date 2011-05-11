@@ -45,7 +45,6 @@ TEST(HandlerTest, testDispatch)
     EventPtr e(new Event());
     e->setData(boost::shared_ptr<string>(new string("blub")));
     e->setScope(Scope("/blah"));
-    // TODO Check that exception is thrown if no converter available!
     e->setType("string");
     eh->handle(e);
     dh->handle(e);

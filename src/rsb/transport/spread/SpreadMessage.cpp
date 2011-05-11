@@ -25,6 +25,8 @@
 
 #include <rsc/logging/Logger.h>
 
+#include <sp.h>
+
 using namespace std;
 using namespace rsc::logging;
 
@@ -36,7 +38,7 @@ namespace rsb {
 namespace spread {
 
 SpreadMessage::SpreadMessage() :
-    qos(UNRELIABLE) {
+    type(OTHER), qos(UNRELIABLE) {
 }
 
 SpreadMessage::SpreadMessage(const Type &mt) :
@@ -44,19 +46,17 @@ SpreadMessage::SpreadMessage(const Type &mt) :
 }
 
 SpreadMessage::SpreadMessage(const string &d) :
-    data(d), qos(UNRELIABLE) {
+    data(d), type(OTHER), qos(UNRELIABLE) {
 }
 
 SpreadMessage::SpreadMessage(const char *buf) :
-    qos(UNRELIABLE) {
-    data = string(buf);
+    data(buf), type(OTHER), qos(UNRELIABLE) {
 }
 
 SpreadMessage::~SpreadMessage() {
-    RSCTRACE(logger, "spread message destructor called");
 }
 
-void SpreadMessage::setData(const std::string& doc) {
+void SpreadMessage::setData(const std::string &doc) {
     data = doc;
 }
 
@@ -85,14 +85,14 @@ SpreadMessage::Type SpreadMessage::getType() const {
 }
 
 void SpreadMessage::addGroup(const std::string &name) {
-    if (strlen(name.c_str()) > 31) {
+    if (strlen(name.c_str()) > MAX_GROUP_NAME - 1) {
         throw invalid_argument(
                 "Group name '" + name + "' is too long for spread.");
     }
     groups.push_back(name);
 }
 
-int SpreadMessage::getGroupCount() const {
+unsigned int SpreadMessage::getGroupCount() const {
     return groups.size();
 }
 
@@ -110,6 +110,13 @@ SpreadMessage::QOS SpreadMessage::getQOS() const {
 
 void SpreadMessage::setQOS(const QOS &qos) {
     this->qos = qos;
+}
+
+void SpreadMessage::reset() {
+    type = OTHER;
+    data.clear();
+    qos = UNRELIABLE;
+    groups.clear();
 }
 
 }

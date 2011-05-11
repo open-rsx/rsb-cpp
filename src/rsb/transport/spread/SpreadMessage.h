@@ -31,8 +31,6 @@ namespace spread {
  * Default message QOS for sending is RELIABLE.
  *
  * @author swrede
- * @todo what happens with the message type in constructors that do not take
- *       it as an argument
  */
 class SpreadMessage {
 public:
@@ -56,9 +54,30 @@ public:
         SAFE = 0x00000020
     };
 
+    /**
+     * Creates a new empty message with undefined type #OTHER and QoS
+     * #UNRELIABLE.
+     */
     SpreadMessage();
+    /**
+     * Creates a new message with the specified type and QoS #UNRELIABLE.
+     *
+     * @param mt message type
+     */
     SpreadMessage(const Type &mt);
+    /**
+     * Creates a message with the specified data and message type #OTHER and QoS
+     * #UNRELIABLE.
+     *
+     * @param d data to set
+     */
     SpreadMessage(const std::string &d);
+    /**
+     * Creates a message with the specified data and message type #OTHER and QoS
+     * #UNRELIABLE.
+     *
+     * @param d data to set
+     */
     SpreadMessage(const char *d);
     virtual ~SpreadMessage();
 
@@ -73,9 +92,15 @@ public:
     void setQOS(const QOS &qos);
 
     void addGroup(const std::string &name);
-    int getGroupCount() const;
+    unsigned int getGroupCount() const;
     std::list<std::string>::const_iterator getGroupsBegin() const;
     std::list<std::string>::const_iterator getGroupsEnd() const;
+
+    /**
+     * Resets this message to a message of type #OTHER with no contents and
+     * groups.
+     */
+    void reset();
 
 private:
     std::string data;

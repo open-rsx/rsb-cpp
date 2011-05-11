@@ -48,37 +48,83 @@ public:
             unsigned int port = defaultPort());
     virtual ~SpreadConnection();
 
-    // connection state management
-    // CHECK: this is similar to the other active objects, but is it
-    // really necessary in the spread case?
+    /**
+     * @name connection state management
+     * @todo is this really necesary?
+     */
+    //@{
     void activate();
     void deactivate();
+    //@}
 
-    // fundamental message exchange
+    /**
+     * @name fundamental message exchange
+     */
+    //@{
     bool send(const SpreadMessage &msg);
     void receive(SpreadMessagePtr sm);
+    //@}
 
-    // is connected to spread daemon
+    /**
+     * Tells if this instance is connected to spread daemon.
+     *
+     * @return @c true if connected
+     */
     bool isActive();
 
-    // return number of message sent
+    /**
+     * Returns number of messages sent.
+     *
+     * @return number of sent messages
+     */
     unsigned long getMsgCount();
 
-    // return mailbox for other low-level functions
+    /**
+     * Returns the internally used mailbox for other low-level functions.
+     *
+     * @return mailbox
+     * @todo why pointer? mailbox is a typedef to int? If pointer is required
+     *       use a shared ptr
+     */
     mailbox *getMailbox();
 
 private:
     std::string generateId(const std::string &prefix);
 
     rsc::logging::LoggerPtr logger;
-    bool connected; // flag to indicate whether we are connected to spread
-    mailbox con; // Handle to the returned spread connection
-    std::string host; // host
-    unsigned int port; // and port
-    std::string spreadhost; // and name of spread daemon, e.g., 4803@localhost
-    std::string spreadpg; // private name of this connection
-    std::string conId; // user name to be used for spread connection
-    unsigned long msgCount; // nr of message sent via this connection
+    /**
+     * A flag to indicate whether we are connected to spread.
+     */
+    bool connected;
+    /**
+     * Handle to the internal spread connection.
+     */
+    mailbox con;
+    /**
+     * Host for the spread daemon.
+     */
+    std::string host;
+    /**
+     * Port for the spread daemon.
+     */
+    unsigned int port;
+    /**
+     * The composd name of the daemon made up from port and host, e.g.
+     * 4803@localhost,
+     */
+    std::string spreadhost;
+    /**
+     * Private name of this connection.
+     */
+    std::string spreadpg;
+    /**
+     * User-defined name to be used for this spread connection.
+     */
+    std::string conId;
+    /**
+     * Number of message sent via this connection.
+     */
+    unsigned long msgCount;
 };
 
 typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;
