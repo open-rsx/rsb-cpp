@@ -72,7 +72,6 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/inprocess/Bus.cpp
             rsb/transport/inprocess/InConnector.cpp
             rsb/transport/inprocess/OutConnector.cpp
-#            rsb/transport/inprocess/StatusTask.cpp
 
             rsb/transport/spread/InConnector.cpp
             rsb/transport/spread/MembershipManager.cpp
@@ -151,7 +150,6 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/inprocess/Bus.h
             rsb/transport/inprocess/InConnector.h
             rsb/transport/inprocess/OutConnector.h
-#            rsb/transport/inprocess/StatusTask.h
 
             rsb/transport/spread/InConnector.h
             rsb/transport/spread/MembershipManager.h

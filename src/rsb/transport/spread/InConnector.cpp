@@ -46,8 +46,6 @@ InConnector::InConnector(const string &host, unsigned int port,
     logger(Logger::getLogger("rsb.spread.InConnector")), active(false),
             connector(new SpreadConnector(host, port)) {
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
-    // TODO check if it makes sense and is possible to provide a weak_ptr to the ctr of StatusTask
-    //st = boost::shared_ptr<StatusTask>(new StatusTask(this));
     this->rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(
                                                     this->connector->getConnection(), HandlerPtr(),
                                                     this));
