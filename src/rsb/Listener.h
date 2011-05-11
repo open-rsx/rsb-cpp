@@ -73,18 +73,6 @@ public:
     std::string getClassName() const;
 
     /**
-     * Activates the Listener and therefore the InRouteConfigurator. Is
-     * considered being in active mode afterwards.
-     */
-    void activate();
-
-    /**
-     * Deactivates the Listener and therefore the InRouteConfigurator. Is
-     * considered being in passive mode afterwards.
-     */
-    void deactivate();
-
-    /**
      * Adds a filter that will be applied after some time (but not immediately
      * after this call) for all handlers.
      *
@@ -130,7 +118,6 @@ public:
 
 private:
     rsc::logging::LoggerPtr logger;
-    volatile bool passive;
     std::set<HandlerPtr> handlers;
     eventprocessing::InRouteConfiguratorPtr configurator;
 

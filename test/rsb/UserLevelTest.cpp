@@ -121,12 +121,40 @@ TEST(RoundtripTest, testRoundtrip)
 
 }
 
+TEST(PublisherTest, testConversionException)
+{
+
+    Factory::killInstance();
+    Factory &factory = Factory::getInstance();
+    ParticipantConfig config = factory.getDefaultParticipantConfig();
+    ParticipantConfig::Transport spreadTransport =
+            config.getTransport("spread");
+    rsc::runtime::Properties p = spreadTransport.getOptions();
+    p.set<unsigned int> ("port", SPREAD_PORT);
+    spreadTransport.setOptions(p);
+    config.addTransport(spreadTransport);
+    factory.setDefaultParticipantConfig(config);
+
+    const Scope scope("/damn/strange/scope");
+    Informer<string>::Ptr informer = factory.createInformer<string> (scope,
+            Factory::getInstance().getDefaultParticipantConfig(),
+            "IAmNotConvertible");
+    EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo"))), runtime_error);
+    EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo")), "AnotherInconvertibleType"), runtime_error);
+
+    EventPtr e(new Event);
+    e->setData(boost::shared_ptr<string> (new string("foo")));
+    e->setScope(scope);
+    e->setType("DamnThingThatDoesNotWork");
+    EXPECT_THROW(informer->publish(e), runtime_error);
+
+}
+
 int main(int argc, char* argv[]) {
 
     setupLogging();
 
     SubprocessPtr spread = startSpread();
-    boost::this_thread::sleep(boost::posix_time::seconds(2));
 
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();

@@ -35,7 +35,6 @@ using namespace rsc::subprocess;
 int main(int argc, char* argv[]) {
 
 	SubprocessPtr spread = startSpread();
-	boost::this_thread::sleep(boost::posix_time::seconds(2));
 
 	rsb::introspection::registerIntrospectionConverters();
 	rsb::converter::registerDefaultConverters();

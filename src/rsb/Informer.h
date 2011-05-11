@@ -83,7 +83,7 @@ public:
             const std::string &type = rsc::runtime::typeName<T>()) :
         Participant(scope, config),
                 logger(rsc::logging::Logger::getLogger("rsb.Informer")),
-                passive(false), defaultType(type) {
+                defaultType(type) {
         // TODO evaluate configuration
         this->configurator.reset(new eventprocessing::OutRouteConfigurator());
         for (std::vector<transport::OutConnectorPtr>::const_iterator it =
@@ -91,7 +91,7 @@ public:
             this->configurator->addConnector(*it);
         }
 
-        activate();
+        this->configurator->activate();
     }
 
     virtual ~Informer() {
@@ -146,37 +146,15 @@ public:
      * @param event the event to publish.
      */
     void publish(EventPtr event) {
-        // TODO Check that exception is thrown if no converter available!
         event->setScope(getScope());
         RSCDEBUG(logger, "Publishing event");
         checkedPublish(event);
-    }
-
-    /**
-     * Activates the Informer and therefore the InRouteConfigurator. Is considered being in
-     * active mode afterwards.
-     */
-    void activate() {
-        configurator->activate();
-        passive = false;
-    }
-
-    /**
-     * Deactivates the Informer and therefore the InRouteConfigurator. Is considered being
-     * in passive mode afterwards.
-     */
-    void deactivate() {
-        if (!passive) {
-            configurator->deactivate();
-        }
-        passive = true;
     }
 
     void publish(VoidPtr p, const std::string &type) {
         EventPtr e(new Event());
         e->setData(p);
         e->setScope(getScope());
-        // TODO Check that exception is thrown if no converter available!
         e->setType(type);
         RSCDEBUG(logger, "Publishing event");
         checkedPublish(e);
@@ -194,7 +172,6 @@ private:
     }
 
     rsc::logging::LoggerPtr logger;
-    volatile bool passive;
     std::string defaultType;
     eventprocessing::OutRouteConfiguratorPtr configurator;
 };

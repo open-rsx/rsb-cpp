@@ -32,15 +32,12 @@ namespace rsb {
 
 Listener::Listener(const vector<transport::InConnectorPtr> &connectors,
         const Scope &scope, const ParticipantConfig &config) :
-    Participant(scope, config), logger(rsc::logging::Logger::getLogger(
-            "rsb.Listener")), passive(false) {
+    Participant(scope, config),
+            logger(rsc::logging::Logger::getLogger("rsb.Listener")) {
     this->initialize(connectors, scope);
 }
 
 Listener::~Listener() {
-    if (!passive) {
-        deactivate();
-    }
 }
 
 string Listener::getClassName() const {
@@ -57,25 +54,14 @@ void Listener::initialize(const vector<InConnectorPtr> &connectors,
         this->configurator->addConnector(*it);
     }
 
-    this->activate();
-}
-
-void Listener::activate() {
     this->configurator->activate();
-    this->passive = false;
-}
-
-void Listener::deactivate() {
-    if (!this->passive) {
-        this->configurator->deactivate();
-    }
-    this->passive = true;
 }
 
 set<HandlerPtr> Listener::getHandlers() const {
+    // TODO thread-safety
     set<HandlerPtr> result;
-    copy(this->handlers.begin(), this->handlers.end(), inserter(result,
-            result.begin()));
+    copy(this->handlers.begin(), this->handlers.end(),
+            inserter(result, result.begin()));
     return result;
 }
 
