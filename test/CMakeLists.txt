@@ -15,8 +15,14 @@ INCLUDE_DIRECTORIES(BEFORE ../src
 SET(TEST_RESULT_DIR ${CMAKE_BINARY_DIR}/testresults)
 SET(TEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
-SET(TEST_SPREAD_PORT 4816 CACHE STRING "the port of the spread daemon for tests" )
+SET(TEST_SPREAD_PORT 4816 CACHE STRING "the port of the spread daemon for tests")
+SET(TEST_SPREAD_CONFIG_SYMLINK "" CACHE STRING "A symlink pointing to the generated test spread config file. If not empty it will be created and used for the unit tests. This is required to prevent a size limitation bug for the argument in the spread daemon.")
 SET(SPREAD_CONFIG_FILE "${CMAKE_CURRENT_BINARY_DIR}/spread.conf")
+
+SET(REAL_SPREAD_CONFIG_FILE ${SPREAD_CONFIG_FILE})
+IF(TEST_SPREAD_CONFIG_SYMLINK)
+    SET(REAL_SPREAD_CONFIG_FILE ${TEST_SPREAD_CONFIG_SYMLINK})
+ENDIF()
 
 CONFIGURE_FILE(spread.conf.in ${SPREAD_CONFIG_FILE} @ONLY)
 CONFIGURE_FILE(testconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/testconfig.h)
@@ -121,6 +127,8 @@ ADD_TEST(${INPROCESSCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${INPROCESSCO
 
 SET_TESTS_PROPERTIES(${RSB_TEST_NAME} ${SPREADPORT_TEST_NAME} PROPERTIES RSB_transport_spread_host 4815)
 
+# --- windows cleanup ---
+
 IF(WIN32)
     SET(PATH_STRING "$ENV{PATH};${Boost_LIBRARY_DIRS};${RSC_RUNTIME_LIBRARY_DIRS}")
     # requried for PATH entries with a slash before the semicolon
@@ -128,4 +136,19 @@ IF(WIN32)
     STRING(REPLACE ";" "\\;" PATH_STRING "${PATH_STRING}")
     SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME}
                  PROPERTY ENVIRONMENT "PATH=${PATH_STRING}")
+ENDIF()
+
+# --- spread symlink workaround ---
+
+IF(TEST_SPREAD_CONFIG_SYMLINK)
+
+    ADD_CUSTOM_COMMAND(TARGET ${RSB_TEST_NAME} PRE_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E remove ${TEST_SPREAD_CONFIG_SYMLINK}
+                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${SPREAD_CONFIG_FILE} ${TEST_SPREAD_CONFIG_SYMLINK}
+                       COMMENT "Creating spread test config symlink")
+    ADD_CUSTOM_COMMAND(TARGET ${SPREADPORT_TEST_NAME} PRE_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E remove ${TEST_SPREAD_CONFIG_SYMLINK}
+                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${SPREAD_CONFIG_FILE} ${TEST_SPREAD_CONFIG_SYMLINK}
+                       COMMENT "Creating spread test config symlink")
+
 ENDIF()
