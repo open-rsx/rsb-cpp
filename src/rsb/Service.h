@@ -44,20 +44,12 @@ typedef boost::shared_ptr<Service> ServicePtr;
  *
  * @author jwienke
  */
-class RSB_EXPORT Service: public virtual rsc::runtime::Printable {
+class RSB_EXPORT Service: public Participant {
 public:
 
     virtual ~Service();
 
     void printContents(std::ostream &stream) const;
-
-    /**
-     * Returns the scope of this service under which all participants and
-     * sub-service must exist.
-     *
-     * @return scope of this service
-     */
-    virtual Scope getScope() const;
 
     /**
      * Returns all participants that reside under this service
@@ -81,29 +73,6 @@ public:
      * @param participant participant to remove
      */
     virtual void removeParticipant(ParticipantPtr participant) = 0;
-
-    /**
-     * Returns all currently registered sub-services.
-     *
-     * @return sub-services
-     */
-    virtual std::set<ServicePtr> getSubServices() const = 0;
-
-    /**
-     * Registers a sub-service under this service.
-     *
-     * @param subService service to register
-     * @throw std::invalid_argument given sub-service is not in a sub-scope of
-     *                              this service
-     */
-    virtual void addSubService(ServicePtr subService) = 0;
-
-    /**
-     * Removes a previously registered sub-service.
-     *
-     * @param subService service to remove
-     */
-    virtual void removeSubService(ServicePtr subService) = 0;
 
 protected:
 

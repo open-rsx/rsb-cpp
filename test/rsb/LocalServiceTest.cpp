@@ -52,7 +52,6 @@ TEST(LocalServiceTest, testConstruction)
     LocalService service(scope);
     EXPECT_EQ(scope, service.getScope());
     EXPECT_TRUE(service.getParticipants().empty());
-    EXPECT_TRUE(service.getSubServices().empty());
 
 }
 
@@ -81,39 +80,5 @@ TEST(LocalServiceTest, testParticipants)
     participants = service.getParticipants();
     EXPECT_EQ(size_t(1), participants.size());
     EXPECT_EQ(size_t(1), participants.count(directChild));
-
-}
-
-TEST(LocalServiceTest, testSubServices)
-{
-
-    Scope scope("/this/is/a/test");
-    LocalService service(scope);
-
-    NiceMock<MockService> *mockService = new NiceMock<MockService> ;
-    ON_CALL(*mockService, getSubServices()).WillByDefault(Return(set<ServicePtr>()));
-    ON_CALL(*mockService, getParticipants()).WillByDefault(Return(set<ParticipantPtr>()));
-    ServicePtr mockServicePtr(mockService);
-
-    ON_CALL(*mockService, getScope()).WillByDefault(Return(Scope("/this/is")));
-    EXPECT_THROW(service.addSubService(mockServicePtr), invalid_argument);
-    ON_CALL(*mockService, getScope()).WillByDefault(Return(Scope("/not/a/prefix")));
-    EXPECT_THROW(service.addSubService(mockServicePtr), invalid_argument);
-    ON_CALL(*mockService, getScope()).WillByDefault(Return(scope));
-    EXPECT_THROW(service.addSubService(mockServicePtr), invalid_argument);
-
-    ON_CALL(*mockService, getScope()).WillByDefault(Return(scope.concat(Scope("/direct"))));
-    service.addSubService(mockServicePtr);
-    EXPECT_EQ(size_t(1), service.getSubServices().size());
-    EXPECT_EQ(size_t(1), service.getSubServices().count(mockServicePtr));
-    service.removeSubService(mockServicePtr);
-    EXPECT_EQ(size_t(0), service.getSubServices().size());
-
-    ON_CALL(*mockService, getScope()).WillByDefault(Return(scope.concat(Scope("/indirect/child"))));
-    service.addSubService(mockServicePtr);
-    EXPECT_EQ(size_t(1), service.getSubServices().size());
-    EXPECT_EQ(size_t(1), service.getSubServices().count(mockServicePtr));
-    service.removeSubService(mockServicePtr);
-    EXPECT_EQ(size_t(0), service.getSubServices().size());
 
 }

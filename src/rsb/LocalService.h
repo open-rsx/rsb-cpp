@@ -42,15 +42,11 @@ public:
     std::set<ParticipantPtr> getParticipants() const;
     void addParticipant(ParticipantPtr participant);
     void removeParticipant(ParticipantPtr participant);
-    std::set<ServicePtr> getSubServices() const;
-    void addSubService(ServicePtr subService);
-    void removeSubService(ServicePtr subService);
 
 private:
 
     mutable boost::recursive_mutex mutex;
     std::set<ParticipantPtr> participants;
-    std::set<ServicePtr> subServices;
 
 };
 

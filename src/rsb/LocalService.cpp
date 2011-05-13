@@ -59,26 +59,4 @@ void LocalService::removeParticipant(ParticipantPtr participant) {
     participants.erase(participant);
 }
 
-set<ServicePtr> LocalService::getSubServices() const {
-    boost::recursive_mutex::scoped_lock lock(mutex);
-    return subServices;
-}
-
-void LocalService::addSubService(ServicePtr subService) {
-    if (!subService->getScope().isSubScopeOf(getScope())) {
-        stringstream s;
-        s << "Cannot add Service " << *subService << " with scope "
-                << subService->getScope() << " to this service with scope "
-                << getScope() << " because the service is not in a sub-scope.";
-        throw invalid_argument(s.str());
-    }
-    boost::recursive_mutex::scoped_lock lock(mutex);
-    subServices.insert(subService);
-}
-
-void LocalService::removeSubService(ServicePtr subService) {
-    boost::recursive_mutex::scoped_lock lock(mutex);
-    subServices.erase(subService);
-}
-
 }
