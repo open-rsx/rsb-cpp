@@ -17,13 +17,11 @@
  *
  * ============================================================ */
 
-#ifndef TESTCONFIG_H_
-#define TESTCONFIG_H_
+#pragma once
 
 #include <string>
 
 const static std::string TEST_ROOT = "@TEST_ROOT@";
+const static std::string SPREAD_CONFIG_FILE = "@SPREAD_CONFIG_FILE@";
 const static std::string SPREAD_EXECUTABLE = "@SPREAD_EXECUTABLE@";
-const static unsigned int SPREAD_PORT = 4815;
-
-#endif /* TESTCONFIG_H_ */
+const static unsigned int SPREAD_PORT = @TEST_SPREAD_PORT@;

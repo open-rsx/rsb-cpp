@@ -42,7 +42,7 @@ inline rsc::subprocess::SubprocessPtr startSpread() {
 	spreadArgs.push_back("-n");
 	spreadArgs.push_back("localhost");
 	spreadArgs.push_back("-c");
-	spreadArgs.push_back(TEST_ROOT + "/spread.conf");
+	spreadArgs.push_back(SPREAD_CONFIG_FILE);
 	std::cout << "Calling " << SPREAD_EXECUTABLE << " with args:";
 	for (std::vector<std::string>::iterator it = spreadArgs.begin(); it
 			!= spreadArgs.end(); ++it) {
