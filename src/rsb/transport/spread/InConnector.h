@@ -64,6 +64,7 @@ private:
     bool active;
 
     SpreadConnectorPtr connector;
+    boost::shared_ptr<Scope> activationScope;
 
     rsc::threading::TaskExecutorPtr exec;
     //   boost::shared_ptr<StatusTask> st;

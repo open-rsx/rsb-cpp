@@ -36,6 +36,10 @@ class RSB_EXPORT Connector: public virtual rsc::runtime::Printable {
 public:
     virtual ~Connector();
 
+    /**
+     * Activates the connector. Settings made between construction and
+     * activation via this method must be applied on a call to this method.
+     */
     virtual void activate() = 0;
     virtual void deactivate() = 0;
 

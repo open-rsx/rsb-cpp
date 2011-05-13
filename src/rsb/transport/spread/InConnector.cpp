@@ -35,20 +35,19 @@ rsb::transport::InConnector *InConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
-    return new InConnector(args.get<string> ("host", defaultHost()),
-                           args.get<unsigned int> ("port", defaultPort()),
-                           args.get<ConverterNames>("converters", ConverterNames()));
+    return new InConnector(args.get<string> ("host", defaultHost()), args.get<
+            unsigned int> ("port", defaultPort()), args.get<ConverterNames> (
+            "converters", ConverterNames()));
 }
 
 InConnector::InConnector(const string &host, unsigned int port,
-                         const ConverterNames &converters) :
-    transport::ConverterSelectingInConnector<string>(converters),
-    logger(Logger::getLogger("rsb.spread.InConnector")), active(false),
+        const ConverterNames &converters) :
+    transport::ConverterSelectingInConnector<string>(converters), logger(
+            Logger::getLogger("rsb.spread.InConnector")), active(false),
             connector(new SpreadConnector(host, port)) {
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
     this->rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(
-                                                    this->connector->getConnection(), HandlerPtr(),
-                                                    this));
+            this->connector->getConnection(), HandlerPtr(), this));
 }
 
 InConnector::~InConnector() {
@@ -72,6 +71,13 @@ void InConnector::activate() {
     this->exec->schedule(rec);
     //this->exec->schedule(st);
     this->active = true;
+
+    // check that scope is applied
+    if (activationScope) {
+        setScope(*activationScope);
+        activationScope.reset();
+    }
+
 }
 
 void InConnector::deactivate() {
@@ -104,7 +110,11 @@ void InConnector::removeHandler(HandlerPtr handler) {
 }
 
 void InConnector::setScope(const Scope &scope) {
-    connector->join(connector->makeGroupName(scope));
+    if (!active) {
+        activationScope.reset(new Scope(scope));
+    } else {
+        connector->join(connector->makeGroupName(scope));
+    }
 }
 
 }

@@ -80,6 +80,8 @@ ENDIF()
 # --- spread connector test ---
 
 SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
+                            rsb/transport/ConnectorTest.cpp
+                            rsb/transport/ConnectorTest.h
                             rsb/transport/spread/AssemblyTest.cpp
                             rsb/transport/spread/SpreadConnectorTest.cpp
                             rsb/transport/spread/SpreadMessageTest.cpp
@@ -99,9 +101,11 @@ ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAM
 # --- inprocess connector test ---
 
 SET(INPROCESSCONNECTOR_TEST_SOURCES rsbtest_inprocess.cpp
-                            rsb/transport/inprocess/InProcessConnectorTest.cpp
-                            rsb/InformerTask.cpp
-                            rsb/InformerTask.h)
+                                    rsb/transport/ConnectorTest.cpp
+                                    rsb/transport/ConnectorTest.h
+                                    rsb/transport/inprocess/InProcessConnectorTest.cpp
+                                    rsb/InformerTask.cpp
+                                    rsb/InformerTask.h)
 
 ADD_EXECUTABLE(${INPROCESSCONNECTOR_TEST_NAME} ${INPROCESSCONNECTOR_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${INPROCESSCONNECTOR_TEST_NAME}

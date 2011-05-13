@@ -46,8 +46,7 @@ class RSB_EXPORT InConnector : public Connector,
 public:
 
     /**
-     * Sets the scope this connector will receive events from. Has to be called
-     * after #activate.
+     * Sets the scope this connector will receive events from.
      *
      * @param scope scope of the connector
      */
