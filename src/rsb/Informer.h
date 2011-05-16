@@ -120,10 +120,12 @@ public:
      * Publishes the given data to the Informer's scope.
      *
      * @param data Pointer to the data to send.
+     * @return A @ref boost::shared_ptr to the @ref rsb::Event object
+     * that has been implicitly created.
      */
-    void publish(boost::shared_ptr<T> data) {
+    EventPtr publish(boost::shared_ptr<T> data) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
-        publish(p, defaultType);
+        return publish(p, defaultType);
     }
 
     /**
@@ -132,32 +134,45 @@ public:
      * @param data Pointer to the data to send.
      * @param type string which defines the type of the data. I.e. "string"
      *        for strings.
+     * @return A @ref boost::shared_ptr to the @ref rsb::Event object
+     * that has been implicitly created.
      */
     template<class T1>
-    void publish(boost::shared_ptr<T1> data, std::string type) {
+    EventPtr publish(boost::shared_ptr<T1> data, std::string type) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
-        publish(p, type);
+        return publish(p, type);
     }
 
     /**
      * Publishes the given event to the Informer's scope with the ability to
      * define additional meta data.
      *
-     * @param event the event to publish.
+     * @param event The event to publish.
+     * @return @a event.
      */
-    void publish(EventPtr event) {
+    EventPtr publish(EventPtr event) {
         event->setScope(getScope());
         RSCDEBUG(logger, "Publishing event");
         checkedPublish(event);
+	return event;
     }
 
-    void publish(VoidPtr p, const std::string &type) {
-        EventPtr e(new Event());
-        e->setData(p);
-        e->setScope(getScope());
-        e->setType(type);
+    /**
+     * Publishes the given data to the Informer's scope.
+     *
+     * @param data Pointer to the data to send.
+     * @param type Type of
+     * @return A @ref boost::shared_ptr to the @ref rsb::Event object
+     * that has been implicitly created.
+     */
+    EventPtr publish(VoidPtr data, const std::string &type) {
+        EventPtr event(new Event());
+        event->setData(data);
+        event->setScope(getScope());
+        event->setType(type);
         RSCDEBUG(logger, "Publishing event");
-        checkedPublish(e);
+        checkedPublish(event);
+	return event;
     }
 
 private:

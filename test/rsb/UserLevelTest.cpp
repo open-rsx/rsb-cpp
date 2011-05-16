@@ -26,6 +26,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/subprocess/Subprocess.h>
 #include <rsc/threading/ThreadedTaskExecutor.h>
 #include <rsc/threading/RepetitiveTask.h>
@@ -123,7 +124,34 @@ TEST(RoundtripTest, testRoundtrip)
 
 }
 
-TEST(PublisherTest, testConversionException)
+TEST(InformerTest, testReturnValue)
+{
+    Factory::killInstance();
+    Factory &factory = Factory::getInstance();
+    ParticipantConfig config = factory.getDefaultParticipantConfig();
+    ParticipantConfig::Transport spreadTransport =
+	config.getTransport("spread");
+    rsc::runtime::Properties p = spreadTransport.getOptions();
+    p.set<string> ("port", lexical_cast<string>(SPREAD_PORT));
+    spreadTransport.setOptions(p);
+    config.addTransport(spreadTransport);
+    factory.setDefaultParticipantConfig(config);
+
+    const Scope scope("/return/value/test");
+    Informer<string>::Ptr informer = factory.createInformer<string> (scope, Factory::getInstance().getDefaultParticipantConfig());
+
+    {
+	EventPtr event = informer->publish(shared_ptr<string> (new string("foo")));
+	EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
+    }
+
+    {
+	EventPtr event = informer->publish(shared_ptr<void> (new string("foo")), rsc::runtime::typeName<std::string>());
+	EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
+    }
+}
+
+TEST(InformerTest, testConversionException)
 {
 
     Factory::killInstance();
