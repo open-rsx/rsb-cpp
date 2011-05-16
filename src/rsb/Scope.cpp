@@ -43,7 +43,7 @@ Scope::Scope(const string &s) {
 
     // validate fully formal scope syntax
     boost::regex expression(
-            COMPONENT_SEPARATOR + "([a-zA-Z]+" + COMPONENT_SEPARATOR + ")*");
+            COMPONENT_SEPARATOR + "([a-zA-Z0-9]+" + COMPONENT_SEPARATOR + ")*");
     if (!boost::regex_match(scope, expression)) {
         throw invalid_argument("Invalid scope syntax for '" + scope + "'");
     }

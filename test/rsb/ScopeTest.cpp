@@ -59,9 +59,7 @@ TEST(ScopeTest, testParsingErrors)
 
     EXPECT_THROW(Scope(""), invalid_argument);
     EXPECT_THROW(Scope(" "), invalid_argument);
-    EXPECT_THROW(Scope("/23"), invalid_argument);
     EXPECT_THROW(Scope("/with space/does/not/work/"), invalid_argument);
-    EXPECT_THROW(Scope("/withnumbers/does/not43as/work/"), invalid_argument);
     EXPECT_THROW(Scope("/with/do#3es/not43as/work/"), invalid_argument);
     EXPECT_THROW(Scope("/this//is/not/allowed/"), invalid_argument);
     EXPECT_THROW(Scope("/this/ /is/not/allowed/"), invalid_argument);
