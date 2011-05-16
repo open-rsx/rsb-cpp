@@ -38,12 +38,12 @@ TEST(ScopeTest, testParsing)
     ASSERT_EQ(size_t(1), onePart.getComponents().size());
     EXPECT_EQ("test", onePart.getComponents()[0]);
 
-    Scope manyParts("/this/is/a/dumb/test/");
+    Scope manyParts("/this/is/a/dumb3/test/");
     ASSERT_EQ(size_t(5), manyParts.getComponents().size());
     EXPECT_EQ("this", manyParts.getComponents()[0]);
     EXPECT_EQ("is", manyParts.getComponents()[1]);
     EXPECT_EQ("a", manyParts.getComponents()[2]);
-    EXPECT_EQ("dumb", manyParts.getComponents()[3]);
+    EXPECT_EQ("dumb3", manyParts.getComponents()[3]);
     EXPECT_EQ("test", manyParts.getComponents()[4]);
 
     // also ensure that the shortcut syntax works
