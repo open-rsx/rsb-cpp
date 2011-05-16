@@ -123,7 +123,7 @@ TEST(ParticipantConfigTest, testFromFile)
 {
     ParticipantConfig config = ParticipantConfig::fromFile(str(format(
             "%1%/rsb.conf-for-smoke-test") % TEST_ROOT));
-    EXPECT_EQ(config.getOptions().get<unsigned int>("global"), 1u);
+    EXPECT_EQ(config.getOptions().getAs<unsigned int>("global"), 1u);
 
     EXPECT_EQ(config.getQualityOfServiceSpec().getReliability(),
             QualityOfServiceSpec::UNRELIABLE);
@@ -134,7 +134,7 @@ TEST(ParticipantConfigTest, testFromFile)
 
     ParticipantConfig::Transport spread = config.getTransport("spread");
     EXPECT_EQ(spread.getOptions().get<string>("host"), "localhost");
-    EXPECT_EQ(spread.getOptions().get<unsigned int>("port"), 4803u);
+    EXPECT_EQ(spread.getOptions().getAs<unsigned int>("port"), 4803u);
 
     EXPECT_EQ(spread.getConverters().size(), 1u);
     EXPECT_EQ(spread.getConverters().begin()->first, "image");

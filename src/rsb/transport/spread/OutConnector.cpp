@@ -35,7 +35,7 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(args.get<string> ("host", defaultHost()), args.get<
+    return new OutConnector(args.get<string> ("host", defaultHost()), args.getAs<
             unsigned int> ("port", defaultPort()), args.get<ConverterNames> (
             "converters", ConverterNames()));
 }

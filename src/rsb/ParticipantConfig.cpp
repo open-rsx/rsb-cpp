@@ -69,7 +69,7 @@ void ParticipantConfig::Transport::setOptions(const Properties &options) {
 }
 
 bool ParticipantConfig::Transport::isEnabled() const {
-    return this->getOptions().get<bool> ("enabled", true);
+    return this->getOptions().getAs<bool> ("enabled", true);
 }
 
 void ParticipantConfig::Transport::handleOption(const vector<string> &key,
@@ -91,7 +91,7 @@ void ParticipantConfig::Transport::handleOption(const vector<string> &key,
                                     "Key `%1%' has invalid number of components; transport option keys have to have one component.")
                                     % key));
         }
-        this->options[key[0]] = parseTypedValue(value);
+        this->options[key[0]] = value;
     }
 }
 

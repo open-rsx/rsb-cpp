@@ -35,7 +35,7 @@ rsb::transport::InConnector *InConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
-    return new InConnector(args.get<string> ("host", defaultHost()), args.get<
+    return new InConnector(args.get<string> ("host", defaultHost()), args.getAs<
             unsigned int> ("port", defaultPort()), args.get<ConverterNames> (
             "converters", ConverterNames()));
 }

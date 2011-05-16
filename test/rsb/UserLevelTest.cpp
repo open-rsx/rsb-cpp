@@ -19,6 +19,7 @@
 
 #include <iostream>
 
+#include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -45,6 +46,7 @@
 #include "testhelpers.h"
 
 using namespace std;
+using namespace boost;
 using namespace rsb;
 using namespace rsb::test;
 using namespace rsb::filter;
@@ -90,7 +92,7 @@ TEST(RoundtripTest, testRoundtrip)
     ParticipantConfig::Transport spreadTransport =
             config.getTransport("spread");
     rsc::runtime::Properties p = spreadTransport.getOptions();
-    p.set<unsigned int> ("port", SPREAD_PORT);
+    p.set<string> ("port", lexical_cast<string>(SPREAD_PORT));
     spreadTransport.setOptions(p);
     config.addTransport(spreadTransport);
     factory.setDefaultParticipantConfig(config);
@@ -130,7 +132,7 @@ TEST(PublisherTest, testConversionException)
     ParticipantConfig::Transport spreadTransport =
             config.getTransport("spread");
     rsc::runtime::Properties p = spreadTransport.getOptions();
-    p.set<unsigned int> ("port", SPREAD_PORT);
+    p.set<string> ("port", lexical_cast<string>(SPREAD_PORT));
     spreadTransport.setOptions(p);
     config.addTransport(spreadTransport);
     factory.setDefaultParticipantConfig(config);

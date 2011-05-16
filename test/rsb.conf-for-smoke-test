@@ -1,4 +1,4 @@
-global = <uint>1
+global = 1
 
 [qualityofservice]
 reliability = UNRELIABLE
@@ -9,12 +9,12 @@ onhandlererror = EXIT
 
 [transport.spread]
 host    = localhost
-port    = <uint>4803
-enabled = <bool>1
+port    = 4803
+enabled = 1
 
 [transport.spread.converter]
 image = IplImage # wireSchema = dataType
 
 [transport.inprocess]
 foo     = bar
-factor  = <double>1.5
+factor  = 1.5
