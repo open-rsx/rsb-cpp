@@ -37,8 +37,13 @@
 namespace rsb {
 
 /**
- * A class describing the configuration of Participant instances. This contains
- * QoS settings as well as configuration options for the desired transports.
+ * A class describing the configuration of Participant instances. This contains:
+ * - QoS settings (see @ref rsb::QualityOfServiceSpec)
+ * - Error handling strategies
+ * - Selection of transport mechanism
+ *   - Configuration options for selected transports
+ *   - Converters associated to selected transports
+ *     (see @ref rsb::converter::Converter)
  *
  * @author jwienke
  */
