@@ -39,15 +39,15 @@ namespace converter {
  * wire.
  *
  * @author jwienke
- * @tparam WireFormat the wire format of the collected converters
+ * @tparam WireType the wire-type of the collected converters.
  */
-template<class WireFormat>
+template<class WireType>
 class Repository {
 public:
 
-    typedef typename Converter<WireFormat>::Ptr Converter;
+    typedef typename Converter<WireType>::Ptr Converter;
 
-    /** WireType and DataType */
+    /** WireSchema and DataType */
     typedef std::pair<std::string, std::string> ConverterSignature;
 
     std::list<ConverterSignature> getConverterSignatures() const {
@@ -89,30 +89,24 @@ public:
      *                              with the same wire type or data type
      */
     void registerConverter(Converter converter) {
-
-        if (wireSchemaMap.count(converter->getWireSchema())) {
-            throw std::invalid_argument("Wire schema '"
-					+ converter->getWireSchema()
-					+ "' already exists in the collection.");
+        std::string wireSchema = converter->getWireSchema();
+        std::string dataType   = converter->getDataType();
+        typename ConverterMap::const_iterator it
+            = this->converters.find(std::make_pair(wireSchema, dataType));
+        if (it != this->converters.end()) {
+            throw std::invalid_argument(boost::str(boost::format("There already is a converter for wire-schema `%1%' and data-type `%2%'")
+                                                   % wireSchema % dataType));
         }
-        if (dataTypeMap.count(converter->getDataType())) {
-            throw std::invalid_argument("Data type '"
-					+ converter->getDataType()
-					+ "' already exists in the collection.");
-        }
-
-        wireSchemaMap[converter->getWireSchema()] = converter;
-        dataTypeMap[converter->getDataType()] = converter;
-
-        this->converters[std::make_pair(converter->getWireSchema(), converter->getDataType())]
-          = converter;
+        this->converters[std::make_pair(wireSchema, dataType)]
+            = converter;
     }
 
     Converter getConverter(const std::string &wireSchema, const std::string &dataType) const {
+        std::cout << this->converters << std::endl;
         typename ConverterMap::const_iterator it
             = this->converters.find(std::make_pair(wireSchema, dataType));
         if (it == this->converters.end()) {
-            throw rsc::runtime::NoSuchObject(boost::str(boost::format("Could not find a converter for wireSchema `%1%' and dataType `%2%'")
+            throw rsc::runtime::NoSuchObject(boost::str(boost::format("Could not find a converter for wire-schema `%1%' and data-type `%2%'")
                                                         % wireSchema % dataType));
         }
         return it->second;
@@ -122,53 +116,12 @@ public:
         return getConverter(signature.first, signature.second);
     }
 
-    /**
-     * Accesses a the converter for the specified wire schema.
-     *
-     * @param wireSchema wire schema to find a converter for
-     * @return the converter
-     * @throw std::invalid_argument no converter for the given schema
-     */
-    Converter getConverterByWireSchema(const std::string &wireSchema) const {
 
-        typename std::map<std::string, Converter>::const_iterator it =
-            wireSchemaMap.find(wireSchema);
-        if (it == wireSchemaMap.end()) {
-            throw std::invalid_argument("There is no converter for wire schema '"
-					+ wireSchema + "'.");
-        } else {
-            return it->second;
-        }
-
-    }
-
-    /**
-     * Accesses a the converter for the specified data type.
-     *
-     * @param dataType data type to find a converter for
-     * @return the converter
-     * @throw std::invalid_argument no converter for the given type
-     */
-    Converter getConverterByDataType(const std::string &dataType) const {
-
-        typename std::map<std::string, Converter>::const_iterator it =
-            dataTypeMap.find(dataType);
-        if (it == dataTypeMap.end()) {
-            throw std::invalid_argument("There is no converter for data type '"
-					+ dataType + "'.");
-        } else {
-            return it->second;
-        }
-
-    }
-
-    typedef boost::shared_ptr<Repository<WireFormat> > Ptr;
+    typedef boost::shared_ptr<Repository<WireType> > Ptr;
 
 private:
     typedef std::map<ConverterSignature, Converter> ConverterMap;
 
-    std::map<std::string, Converter> wireSchemaMap;
-    std::map<std::string, Converter> dataTypeMap;
     ConverterMap converters;
 };
 
