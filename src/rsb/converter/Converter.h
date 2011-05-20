@@ -25,6 +25,7 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <rsc/runtime/Printable.h>
 #include <rsc/runtime/TypeStringTools.h>
 
 #include "../Event.h"
@@ -43,8 +44,8 @@ typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
  * @author jwienke
  * @tparam WireFormat is the serialization format, uchar, string, binary, ...
  */
-template<class WireFormat>
-class Converter {
+template<class WireType>
+class Converter: public rsc::runtime::Printable {
 public:
 
     virtual ~Converter() {
@@ -58,10 +59,10 @@ public:
      * @throw SerializationException if the serialization failed
      */
     virtual std::string
-    serialize(const AnnotatedData &data, WireFormat &wire) = 0;
+    serialize(const AnnotatedData &data, WireType &wire) = 0;
 
     /**
-     * Deserializes a domain object from a wire format.
+     * Deserializes a domain object from a wire type.
      *
      * @param wireSchema type of the wire message
      * @param wire the wire containing the date
@@ -69,7 +70,7 @@ public:
      * @throw SerializationException if deserializing the message fails
      */
     virtual AnnotatedData deserialize(const std::string &wireSchema,
-            const WireFormat &wire) = 0;
+            const WireType &wire) = 0;
 
     /**
      * Returns the name of the data type this converter is applicable for.
@@ -91,7 +92,7 @@ public:
         return wireSchema;
     }
 
-    typedef boost::shared_ptr<Converter<WireFormat> > Ptr;
+    typedef boost::shared_ptr<Converter<WireType> > Ptr;
 
 protected:
 
@@ -100,7 +101,7 @@ protected:
      *
      * @param dataType data type this converter can serialize
      * @param wireSchema wire schema this converter can deserialize
-     * @todo this constructor cannot be called anymore for WireFormat string
+     * @todo this constructor cannot be called anymore for WireType string
      */
     Converter(const std::string &dataType, const std::string &wireSchema) :
         dataType(dataType), wireSchema(wireSchema) {
@@ -126,6 +127,15 @@ private:
     std::string dataType;
     std::string wireSchema;
 
+    std::string getClassName() const {
+        return rsc::runtime::typeName(*this);
+    }
+
+    void printContents(std::ostream &stream) const {
+        stream << "wireType = " << rsc::runtime::typeName<WireType>()
+               << ", wireSchema = " << this->wireSchema
+               << ", dataType = " << this->dataType;
+    }
 };
 
 }
