@@ -101,9 +101,10 @@ protected:
      *
      * @param dataType data type this converter can serialize
      * @param wireSchema wire schema this converter can deserialize
-     * @todo this constructor cannot be called anymore for WireType string
+     * @param dummy This parameter is used to disambiguate constructor
+     * signatures when WireType is @ref std::string .
      */
-    Converter(const std::string &dataType, const std::string &wireSchema) :
+    Converter(const std::string &dataType, const std::string &wireSchema, bool /*dummy*/ = true) :
         dataType(dataType), wireSchema(wireSchema) {
     }
 
