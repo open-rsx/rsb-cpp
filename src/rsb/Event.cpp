@@ -21,6 +21,8 @@
 
 #include <ostream>
 
+#include <rsc/runtime/ContainerIO.h>
+
 using namespace std;
 
 namespace rsb {
@@ -42,7 +44,7 @@ string Event::getClassName() const {
 
 void Event::printContents(ostream &stream) const {
     stream << "id = " << id.getIdAsString() << " type = " << type
-            << " scope = " << scope;
+	   << " scope = " << scope << " meta-infos = " << this->metaInfos;
 }
 
 void Event::setId(const rsc::misc::UUID &id) {
