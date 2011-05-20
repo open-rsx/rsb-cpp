@@ -34,6 +34,8 @@
 #include "Listener.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
+#include "converter/UnambiguousConverterMap.h"
+#include "converter/Repository.h"
 #include "transport/Connector.h"
 #include "ParticipantConfig.h"
 #include "Service.h"
@@ -92,10 +94,17 @@ public:
                 != configuredTransports.end(); ++transportIt) {
             RSCDEBUG(logger, "Trying to add connector " << *transportIt);
             rsc::runtime::Properties options = transportIt->getOptions();
-            if (!transportIt->getConverters().empty()) {
-                options["converters"] = pairsToMap<2> (
-                        transportIt->getConverters());
-            }
+
+            // Take care of converters
+            RSCDEBUG(logger, "Converter configuration for transport `"
+                         << transportIt->getName() << "': " << transportIt->getConverters());
+            // TODO we should not have to know the transport's wire-type here
+            converter::UnambiguousConverterMap<std::string> converters
+              = converter::stringConverterRepository()
+              ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
+            RSCDEBUG(logger, "Selected converters for transport `"
+                         << transportIt->getName() << "': " << converters);
+            options["converters"] = converters;
             connectors.push_back(transport::OutConnectorPtr(
                     getOutFactoryInstance().createInst(transportIt->getName(),
                             options)));

@@ -21,12 +21,15 @@
 
 #include <string>
 #include <stdexcept>
+#include <set>
 
 #include <boost/format.hpp>
 
 #include <rsc/runtime/NoSuchObject.h>
+#include <rsc/logging/Logger.h>
 
 #include "Converter.h"
+#include "UnambiguousConverterMap.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -44,38 +47,84 @@ namespace converter {
 template<class WireType>
 class Repository {
 public:
-
-    typedef typename Converter<WireType>::Ptr Converter;
+    typedef typename Converter<WireType>::Ptr ConverterPtr;
 
     /** WireSchema and DataType */
     typedef std::pair<std::string, std::string> ConverterSignature;
 
-    std::list<ConverterSignature> getConverterSignatures() const {
-        std::list<ConverterSignature> result;
-        for (typename ConverterMap::const_iterator it = this->converters.begin();
-             it != this->converters.end(); ++it) {
-            result.push_back(it->first);
-        }
-        return result;
+    typedef std::map<std::string, std::string> ConverterSelectionMap;
+
+    Repository() :
+        logger(rsc::logging::Logger::getLogger("rsb.converter.Repository")) {
     }
 
-    std::list<ConverterSignature> getConverterSignaturesForWireSchema(const std::string &wireSchema) const {
-        std::list<ConverterSignature> result;
+    UnambiguousConverterMap<WireType> getConvertersForSerialization(const ConverterSelectionMap &selection
+                                                                    = ConverterSelectionMap()) const {
+        UnambiguousConverterMap<WireType> result;
         for (typename ConverterMap::const_iterator it = this->converters.begin();
              it != this->converters.end(); ++it) {
-            if (it->first.first == wireSchema) {
-                result.push_back(it->first);
+            std::string wireSchema = it->first.first;
+            std::string dataType   = it->first.second;
+            // The data-type is not mentioned in the explicit
+            // selection. Try to add the converter. This may throw in
+            // case of ambiguity.
+            if (selection.find(dataType) == selection.end()) {
+                try {
+                    result.addConverter(dataType, it->second);
+                } catch (const std::invalid_argument &e) {
+                    std::set<std::string> wireSchemas;
+                    for (typename ConverterMap::const_iterator it_ = this->converters.begin();
+                         it_ != this->converters.end(); ++it_) {
+                        if (dataType == it_->first.second)
+                            wireSchemas.insert(it_->first.first);
+                    }
+                    throw std::runtime_error(boost::str(boost::format("Ambiguous converter set for wire-type `%1%' and data-type `%2%': candidate wire-schemas are %3%; hint: add a configuration option `transport.<name>.converter.cpp.<one of %3%> = %2%' to resolve the ambiguity.")
+                                                        % rsc::runtime::typeName<WireType>()
+                                                        % dataType
+                                                        % wireSchemas));
+                }
+            }
+            // There is an entry for data-type in the explicit
+            // selection. Add the converter if the wire-schema matches.
+            else if (wireSchema == selection.find(dataType)->second) {
+                RSCDEBUG(this->logger, "Found configured converter signature " << it->first);
+                result.addConverter(dataType, it->second);
             }
         }
         return result;
     }
 
-    std::list<ConverterSignature> getConverterSignaturesForDataType(const std::string &dataType) const {
-        std::list<ConverterSignature> result;
+    UnambiguousConverterMap<WireType> getConvertersForDeserialization(const ConverterSelectionMap &selection
+                                                                      = ConverterSelectionMap()) const {
+        UnambiguousConverterMap<WireType> result;
         for (typename ConverterMap::const_iterator it = this->converters.begin();
              it != this->converters.end(); ++it) {
-            if (it->first.second == dataType) {
-                result.push_back(it->first);
+            std::string wireSchema = it->first.first;
+            std::string dataType   = it->first.second;
+            // The wire-schema is not mentioned in the explicit
+            // selection. Try to add the converter. This may throw in
+            // case of ambiguity.
+            if (selection.find(wireSchema) == selection.end()) {
+                try {
+                    result.addConverter(wireSchema, it->second);
+                } catch (const std::invalid_argument &e) {
+                    std::set<std::string> dataTypes;
+                    for (typename ConverterMap::const_iterator it_ = this->converters.begin();
+                         it_ != this->converters.end(); ++it_) {
+                        if (wireSchema == it_->first.first)
+                            dataTypes.insert(it_->first.second);
+                    }
+                    throw std::runtime_error(boost::str(boost::format("Ambiguous converter set for wire-type `%1%' and wire-schema `%2%': candidate data-types are %3%; hint: add a configuration option `transport.<name>.converter.cpp.%2% = <one of %3%>' to resolve the ambiguity.")
+                                                        % rsc::runtime::typeName<WireType>()
+                                                        % wireSchema
+                                                        % dataTypes));
+                }
+            }
+            // There is an entry for wire-schema in the explicit
+            // selection. Add the converter if the data-type matches.
+            else if (dataType == selection.find(wireSchema)->second) {
+                RSCDEBUG(this->logger, "Found configured converter signature " << it->first);
+                result.addConverter(wireSchema, it->second);
             }
         }
         return result;
@@ -88,12 +137,12 @@ public:
      * @throw std::invalid_argument if there is already a converter registered
      *                              with the same wire type or data type
      */
-    void registerConverter(Converter converter) {
+    void registerConverter(ConverterPtr converter) {
         std::string wireSchema = converter->getWireSchema();
         std::string dataType   = converter->getDataType();
-        typename ConverterMap::const_iterator it
-            = this->converters.find(std::make_pair(wireSchema, dataType));
-        if (it != this->converters.end()) {
+        if (this->converters.find(std::make_pair(wireSchema, dataType))
+            != this->converters.end()) {
+            // TODO use RSB execption; but do we have one for invalid argument?
             throw std::invalid_argument(boost::str(boost::format("There already is a converter for wire-schema `%1%' and data-type `%2%'")
                                                    % wireSchema % dataType));
         }
@@ -101,7 +150,7 @@ public:
             = converter;
     }
 
-    Converter getConverter(const std::string &wireSchema, const std::string &dataType) const {
+    ConverterPtr getConverter(const std::string &wireSchema, const std::string &dataType) const {
         std::cout << this->converters << std::endl;
         typename ConverterMap::const_iterator it
             = this->converters.find(std::make_pair(wireSchema, dataType));
@@ -112,16 +161,20 @@ public:
         return it->second;
     }
 
-    Converter getConverter(const ConverterSignature &signature) const {
+    ConverterPtr getConverter(const ConverterSignature &signature) const {
         return getConverter(signature.first, signature.second);
     }
 
+    void clear() {
+        this->converters.clear();
+    }
 
     typedef boost::shared_ptr<Repository<WireType> > Ptr;
 
 private:
-    typedef std::map<ConverterSignature, Converter> ConverterMap;
+    typedef std::map<ConverterSignature, ConverterPtr> ConverterMap;
 
+    rsc::logging::LoggerPtr logger;
     ConverterMap converters;
 };
 

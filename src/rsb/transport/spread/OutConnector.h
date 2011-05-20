@@ -23,7 +23,8 @@
 
 #include <rsc/runtime/Properties.h>
 
-#include "../ConverterSelectingOutConnector.h"
+#include "../OutConnector.h"
+#include "../ConverterSelectingConnector.h"
 #include "SpreadConnector.h"
 #include "rsb/rsbexports.h"
 
@@ -33,12 +34,13 @@ namespace spread {
 /**
  * @author jmoringe
  */
-class RSB_EXPORT OutConnector: public rsb::transport::ConverterSelectingOutConnector<std::string> {
+class RSB_EXPORT OutConnector: public transport::OutConnector,
+                               public rsb::transport::ConverterSelectingConnector<std::string> {
 public:
-    OutConnector(const std::string& host = defaultHost(),
-            const unsigned int &port = defaultPort(),
-                 const ConverterNames &converters = ConverterNames(),
-                 const unsigned int &maxDataSize = 100000);
+    OutConnector(const converter::UnambiguousConverterMap<std::string> &converters,
+                 const std::string& host = defaultHost(),
+                 unsigned int port = defaultPort(),
+                 unsigned int maxDataSize = 100000);
     virtual ~OutConnector();
 
     std::string getClassName() const;

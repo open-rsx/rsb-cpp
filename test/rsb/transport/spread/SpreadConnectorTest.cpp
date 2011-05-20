@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "rsb/converter/Repository.h"
 #include "rsb/transport/spread/InConnector.h"
 #include "rsb/transport/spread/OutConnector.h"
 
@@ -29,16 +30,19 @@
 using namespace std;
 using namespace rsb::spread;
 using namespace rsb::transport;
+using namespace rsb::converter;
 using namespace testing;
 
 InConnectorPtr createSpreadInConnector() {
-    return InConnectorPtr(new rsb::spread::InConnector(defaultHost(),
-            SPREAD_PORT));
+    return InConnectorPtr(new rsb::spread::InConnector(stringConverterRepository()->getConvertersForDeserialization(),
+						       defaultHost(),
+						       SPREAD_PORT));
 }
 
 OutConnectorPtr createSpreadOutConnector() {
-    return OutConnectorPtr(new rsb::spread::OutConnector(defaultHost(),
-            SPREAD_PORT));
+    return OutConnectorPtr(new rsb::spread::OutConnector(stringConverterRepository()->getConvertersForSerialization(),
+							 defaultHost(),
+							 SPREAD_PORT));
 }
 
 const ConnectorTestSetup spreadSetup(createSpreadInConnector,

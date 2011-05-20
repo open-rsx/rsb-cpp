@@ -20,90 +20,53 @@
 #pragma once
 
 #include <string>
-#include <map>
 
 #include <rsc/logging/Logger.h>
 
 #include "../converter/Repository.h"
 #include "../converter/Converter.h"
+#include "../converter/UnambiguousConverterMap.h"
 
 namespace rsb {
 namespace transport {
 
 /**
+ * This base class enables look up of suitable
+ * @ref rsb::converter::Converter s in
+ * @ref rsb::transport::Connector classes.
+ *
  * @author jmoringe
  */
 template <typename WireType>
 class ConverterSelectingConnector {
 protected:
-    typedef typename rsb::converter::Repository<WireType> RepositoryType;
-    typedef typename RepositoryType::Ptr RepositoryPtr;
-    typedef typename RepositoryType::ConverterSignature SignatureType;
-    typedef typename RepositoryType::Converter ConverterPtr;
+    typedef typename converter::Converter<WireType>::Ptr ConverterPtr;
 
-    /** WireType and DataType for @ref InConnector
-     * DataType and WireType for @ref OutConnector
-     */
-    typedef std::map<std::string, std::string> ConverterNames;
-
-    /** maps WireType -> Converter for @ref InConnector
-     * maps DataType -> Converter for @ref OutConnector
-     */
-    typedef std::map<std::string, ConverterPtr> ConverterMap;
-
-    ConverterSelectingConnector(const std::string &kind,
-                                const ConverterMap &converters) :
+    ConverterSelectingConnector(const converter::UnambiguousConverterMap<WireType> &converters) :
         logger(rsc::logging::Logger::getLogger("rsb.transport.ConverterSelectingConnector")),
-        kind(kind),
-        repository(converter::stringConverterRepository()),
         converters(converters) {
     }
 
-    ConverterSelectingConnector(const std::string &kind,
-                                const ConverterNames &converterNames) :
-        logger(rsc::logging::Logger::getLogger("rsb.transport.ConverterSelectingConnector")),
-        kind(kind),
-        repository(converter::stringConverterRepository()),
-        converterNames(converterNames) {
-    }
-
-    virtual ConverterPtr resolveConverter(const std::string &key) = 0;
-
-    /** Try to find a suitable converter for @a key by
-     * -# looking in the cache of known converters
-     * -# call @ref resolveConverter if necessary
+    /**
+     * Try to find a suitable converter for @a key . It is considered
+     * a program error if no such converter can be found. The error
+     * condition can be avoided by:
+     * -# registering converters for all occuring wire-schemas or data-types
+     * -# registering a dummy converter that accepts but discard anything.
      *
-     * @param key the WireSchema or DataType of the converter being
+     * @param key the wire-schema or data-type of the converter being
      *            requested.
      * @return The requested converter.
-     * @throw rsc::runtime::NoSuchObject If no could be found for @a key.
-     * @throw srd::runtime_error If multiple converters where found
-     * for @a key.
-     *
-     * @see resolveConverter
+     * @throw rsc::runtime::NoSuchObject If no converter could be
+     * found for @a key.
      */
-    ConverterPtr getConverter(const std::string &key) {
-        // Try to find the converter in our cache.
-        typename ConverterMap::const_iterator it = this->converters.find(key);
-
-        // Cache hit; we are done.
-        if (it != this->converters.end())
-            return it->second;
-
-        // Cache miss; Ask repository.
-        RSCDEBUG(logger, "No cache entry for " << this->kind
-                 << " `" << key << "'; initiating lookup");
-        ConverterPtr converter = resolveConverter(key);
-        this->converters[key] = converter;
-        return converter;
+    ConverterPtr getConverter(const std::string &key) const {
+        return this->converters.getConverter(key);
     }
 private:
     rsc::logging::LoggerPtr logger;
-    std::string kind;
-protected:
-    RepositoryPtr repository;
-    ConverterMap converters;
-    ConverterNames converterNames;
+
+    converter::UnambiguousConverterMap<WireType> converters;
 };
 
 }

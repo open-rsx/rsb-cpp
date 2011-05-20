@@ -29,6 +29,8 @@ using namespace std;
 using namespace rsc::logging;
 using namespace rsc::runtime;
 
+using namespace rsb::converter;
+
 namespace rsb {
 
 Factory::Factory() :
@@ -65,10 +67,17 @@ ListenerPtr Factory::createListener(const Scope &scope,
             != configuredTransports.end(); ++transportIt) {
         RSCDEBUG(logger, "Trying to add connector " << *transportIt);
         Properties options = transportIt->getOptions();
-        if (!transportIt->getConverters().empty()) {
-            options["converters"]
-                    = pairsToMap<1> (transportIt->getConverters());
-        }
+
+        // Take care of converters
+        RSCDEBUG(logger, "Converter configuration for transport `"
+                 << transportIt->getName() << "': " << transportIt->getConverters());
+        // TODO we should not have to know the transport's wire-type here
+        UnambiguousConverterMap<string> converters
+          = converter::stringConverterRepository()
+          ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
+        RSCDEBUG(logger, "Selected converters for transport `"
+                 << transportIt->getName() << "': " << converters);
+        options["converters"] = converters;
         connectors.push_back(transport::InConnectorPtr(
                 transport::InFactory::getInstance().createInst(
                         transportIt->getName(), options)));

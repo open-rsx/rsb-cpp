@@ -143,8 +143,6 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/InConnector.h
             rsb/transport/OutConnector.h
             rsb/transport/ConverterSelectingConnector.h
-            rsb/transport/ConverterSelectingInConnector.h
-            rsb/transport/ConverterSelectingOutConnector.h
             rsb/transport/Factory.h
             rsb/transport/transports.h
 

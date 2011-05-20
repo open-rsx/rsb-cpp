@@ -27,6 +27,7 @@ using namespace rsc::runtime;
 using namespace rsc::logging;
 
 using namespace rsb::protocol;
+using namespace rsb::converter;
 
 namespace rsb {
 namespace spread {
@@ -35,14 +36,16 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(args.get<string> ("host", defaultHost()), args.getAs<
-            unsigned int> ("port", defaultPort()), args.get<ConverterNames> (
-            "converters", ConverterNames()));
+    return new OutConnector(args.get<UnambiguousConverterMap<string> > ("converters"),
+			    args.get<string> ("host", defaultHost()),
+			    args.getAs<unsigned int> ("port", defaultPort()));
 }
 
-OutConnector::OutConnector(const string &host, const unsigned int &port,
-        const ConverterNames &converters, const unsigned int &maxDataSize) :
-    transport::ConverterSelectingOutConnector<string>(converters), logger(
+  OutConnector::OutConnector(const UnambiguousConverterMap<string> &converters,
+			     const string &host,
+			     unsigned int port,
+			     unsigned int maxDataSize) :
+    transport::ConverterSelectingConnector<string>(converters), logger(
             Logger::getLogger("rsb.spread.OutConnector")), active(false),
             connector(new SpreadConnector(host, port)),
             maxDataSize(maxDataSize) {

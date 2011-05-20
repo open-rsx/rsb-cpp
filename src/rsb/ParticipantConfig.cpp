@@ -74,15 +74,19 @@ bool ParticipantConfig::Transport::isEnabled() const {
 
 void ParticipantConfig::Transport::handleOption(const vector<string> &key,
         const string &value) {
-    if (key[0] == "converter") {
-        if (key.size() != 2) {
+    if ((key.size() >= 2)
+        && (key[0] == "converter")
+        && (key[1] == "cpp")) {
+        if (key.size() != 3) {
             throw invalid_argument(
                     str(
                             format(
-                                    "Option key `%1%' has invalid number of components; converter-related keys for transports has to have two components")
+                                    "Option key `%1%' has invalid number of components; converter-related keys for transports has to have three components")
                                     % key));
         }
-        this->converters.insert(make_pair(key[1], value));
+        this->converters.insert(make_pair(key[2], value));
+    } else if ((key.size() >= 2) && (key[0] == "converter")) {
+        // ignore converters for other languages
     } else {
         if (key.size() != 1) {
             throw invalid_argument(

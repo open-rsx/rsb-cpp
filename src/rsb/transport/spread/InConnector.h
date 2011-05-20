@@ -25,7 +25,8 @@
 #include <rsc/threading/TaskExecutor.h>
 
 #include "../../filter/ScopeFilter.h"
-#include "../ConverterSelectingInConnector.h"
+#include "../InConnector.h"
+#include "../ConverterSelectingConnector.h"
 #include "SpreadConnector.h"
 #include "rsb/rsbexports.h"
 
@@ -35,12 +36,13 @@ namespace spread {
 /**
  * @author jmoringe
  */
-class RSB_EXPORT InConnector: public rsb::transport::ConverterSelectingInConnector<std::string> {
+class RSB_EXPORT InConnector: public transport::InConnector,
+                              public transport::ConverterSelectingConnector<std::string> {
     friend class ReceiverTask;
 public:
-    InConnector(const std::string &host = defaultHost(),
-                unsigned int port = defaultPort(),
-                const ConverterNames &converters = ConverterNames());
+    InConnector(const converter::UnambiguousConverterMap<std::string> &converters,
+                const std::string &host = defaultHost(),
+                unsigned int port = defaultPort());
     virtual ~InConnector();
 
     std::string getClassName() const;

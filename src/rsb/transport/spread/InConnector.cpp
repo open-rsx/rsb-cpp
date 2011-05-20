@@ -23,10 +23,12 @@
 
 using namespace std;
 
-using namespace rsb::eventprocessing;
 using namespace rsc::logging;
 using namespace rsc::runtime;
 using namespace rsc::threading;
+
+using namespace rsb::eventprocessing;
+using namespace rsb::converter;
 
 namespace rsb {
 namespace spread {
@@ -35,14 +37,15 @@ rsb::transport::InConnector *InConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
-    return new InConnector(args.get<string> ("host", defaultHost()), args.getAs<
-            unsigned int> ("port", defaultPort()), args.get<ConverterNames> (
-            "converters", ConverterNames()));
+    return new InConnector(args.get<UnambiguousConverterMap<string> > ("converters"),
+			   args.get<string>                           ("host", defaultHost()),
+			   args.getAs<unsigned int>                   ("port", defaultPort()));
 }
 
-InConnector::InConnector(const string &host, unsigned int port,
-        const ConverterNames &converters) :
-    transport::ConverterSelectingInConnector<string>(converters), logger(
+InConnector::InConnector(const UnambiguousConverterMap<string> &converters,
+			 const string		       &host,
+			 unsigned int                   port) :
+    transport::ConverterSelectingConnector<string>(converters), logger(
             Logger::getLogger("rsb.spread.InConnector")), active(false),
             connector(new SpreadConnector(host, port)) {
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
