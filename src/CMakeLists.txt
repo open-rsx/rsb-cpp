@@ -107,6 +107,7 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/BoolConverter.h
             rsb/converter/Converter.h
             rsb/converter/ProtocolBufferConverter.h
+            rsb/converter/UnambiguousConverterMap.h
             rsb/converter/Repository.h
             rsb/converter/SerializationException.h
             rsb/converter/StringConverter.h
