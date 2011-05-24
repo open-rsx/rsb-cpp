@@ -95,6 +95,9 @@ FIND_PACKAGE(ProtocolBuffers REQUIRED)
 IF(NOT PROTOBUF_PROTOC_EXECUTABLE)
     MESSAGE(FATAL_ERROR "protoc executable not found")
 ENDIF()
+IF(NOT PROTOBUF_FOUND)
+    MESSAGE(FATAL_ERROR "protocol buffers not found")
+ENDIF()
 
 FIND_PACKAGE(RSBProtocol REQUIRED)
 
