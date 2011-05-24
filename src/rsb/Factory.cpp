@@ -35,7 +35,6 @@ namespace rsb {
 
 Factory::Factory() :
     logger(Logger::getLogger("rsb.Factory")) {
-    cout << "Factory constructor called" << endl;
     introspection::registerIntrospectionConverters();
     converter::registerDefaultConverters();
     transport::registerDefaultTransports();

@@ -151,7 +151,6 @@ public:
     }
 
     ConverterPtr getConverter(const std::string &wireSchema, const std::string &dataType) const {
-        std::cout << this->converters << std::endl;
         typename ConverterMap::const_iterator it
             = this->converters.find(std::make_pair(wireSchema, dataType));
         if (it == this->converters.end()) {
