@@ -22,9 +22,12 @@
 #include <string>
 #include <stdexcept>
 #include <set>
+#include <iomanip>
 
 #include <boost/format.hpp>
 
+#include <rsc/runtime/Printable.h>
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/runtime/NoSuchObject.h>
 #include <rsc/logging/Logger.h>
 
@@ -45,7 +48,7 @@ namespace converter {
  * @tparam WireType the wire-type of the collected converters.
  */
 template<class WireType>
-class Repository {
+class Repository: public rsc::runtime::Printable {
 public:
     typedef typename Converter<WireType>::Ptr ConverterPtr;
 
@@ -175,6 +178,22 @@ private:
 
     rsc::logging::LoggerPtr logger;
     ConverterMap converters;
+
+    std::string getClassName() const {
+	return "Repository<" + rsc::runtime::typeName<WireType>() + ">";
+    }
+
+    void printContents(std::ostream &stream) const {
+	stream << std::endl;
+	for (typename ConverterMap::const_iterator it = this->converters.begin();
+	     it != this->converters.end(); ++it) {
+	    stream << "\t"
+		   << std::setw(16) << std::left << it->first.first
+		   << " <-> "
+		   << std::setw(16) << std::left << it->first.second
+		   << ": " << *it->second << std::endl;
+	}
+    }
 };
 
 RSB_EXPORT Repository<std::string>::Ptr stringConverterRepository();
