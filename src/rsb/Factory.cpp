@@ -82,7 +82,7 @@ ListenerPtr Factory::createListener(const Scope &scope,
                         transportIt->getName(), options)));
     }
 
-    return ListenerPtr(new Listener(connectors, scope, defaultConfig));
+    return ListenerPtr(new Listener(connectors, scope, config));
 }
 
 patterns::ServerPtr Factory::createServer(const Scope &scope) {

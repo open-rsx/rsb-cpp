@@ -111,7 +111,7 @@ public:
         }
 
         return typename Informer<DataType>::Ptr(new Informer<DataType> (
-                connectors, scope, defaultConfig, dataType));
+                connectors, scope, config, dataType));
     }
 
     /**
