@@ -40,7 +40,7 @@ public:
     OutConnector(const converter::UnambiguousConverterMap<std::string> &converters,
                  const std::string& host = defaultHost(),
                  unsigned int port = defaultPort(),
-                 unsigned int maxDataSize = 100000);
+                 unsigned int maxFragmentSize = 100000);
     virtual ~OutConnector();
 
     std::string getClassName() const;

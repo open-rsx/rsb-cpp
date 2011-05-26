@@ -38,17 +38,18 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
 
     return new OutConnector(args.get<UnambiguousConverterMap<string> > ("converters"),
 			    args.get<string> ("host", defaultHost()),
-			    args.getAs<unsigned int> ("port", defaultPort()));
+			    args.getAs<unsigned int> ("port", defaultPort())
+			    args.getAs<unsigned int> ("maxfragmentsize", 100000));
 }
 
   OutConnector::OutConnector(const UnambiguousConverterMap<string> &converters,
 			     const string &host,
 			     unsigned int port,
-			     unsigned int maxDataSize) :
+			     unsigned int maxFragmentSize) :
     transport::ConverterSelectingConnector<string>(converters), logger(
             Logger::getLogger("rsb.spread.OutConnector")), active(false),
             connector(new SpreadConnector(host, port)),
-            maxDataSize(maxDataSize) {
+            maxFragmentSize(maxFragmentSize) {
 }
 
 OutConnector::~OutConnector() {
