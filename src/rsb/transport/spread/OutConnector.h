@@ -75,7 +75,7 @@ private:
     rsc::logging::LoggerPtr logger;
     bool active;
     SpreadConnectorPtr connector;
-    unsigned int maxDataSize;
+    unsigned int maxFragmentSize;
 
 };
 

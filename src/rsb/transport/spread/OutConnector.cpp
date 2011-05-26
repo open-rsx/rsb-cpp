@@ -38,7 +38,7 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
 
     return new OutConnector(args.get<UnambiguousConverterMap<string> > ("converters"),
 			    args.get<string> ("host", defaultHost()),
-			    args.getAs<unsigned int> ("port", defaultPort())
+			    args.getAs<unsigned int> ("port", defaultPort()),
 			    args.getAs<unsigned int> ("maxfragmentsize", 100000));
 }
 
@@ -114,7 +114,7 @@ void OutConnector::handle(EventPtr event) {
 
     // ---- Begin split message implementation ----
     RSCDEBUG(logger, "Whole message size (data only): " << wire.size());
-    unsigned int numDataParts = wire.size() / maxDataSize + 1;
+    unsigned int numDataParts = wire.size() / this->maxFragmentSize + 1;
     RSCDEBUG(logger, "Number of message parts (data only): " << numDataParts);
 
     size_t curPos = 0;
@@ -122,11 +122,11 @@ void OutConnector::handle(EventPtr event) {
 
         // extract the data for this message part
         string dataPart;
-        if (curPos < (wire.size() - (wire.size() % maxDataSize))) {
-            dataPart = wire.substr(curPos, maxDataSize);
-            curPos = (i * maxDataSize) + maxDataSize;
+        if (curPos < (wire.size() - (wire.size() % this->maxFragmentSize))) {
+            dataPart = wire.substr(curPos, this->maxFragmentSize);
+            curPos = (i * this->maxFragmentSize) + this->maxFragmentSize;
         } else {
-            dataPart = wire.substr(curPos, wire.size() % maxDataSize);
+            dataPart = wire.substr(curPos, wire.size() % this->maxFragmentSize);
         }
         RSCTRACE(logger, "Size of message[" << i << "] (data only): " << dataPart.size());
 
