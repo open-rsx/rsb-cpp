@@ -22,17 +22,38 @@
 #include <stdlib.h>
 
 #include <rsb/Version.h>
+#include <rsb/Factory.h>
+#include <rsb/transport/Factory.h>
+#include <rsb/converter/Repository.h>
 
 using namespace std;
 using namespace rsb;
 
-int main(int /*argc*/, char **/*argv*/) {
+int main(int argc, char **argv) {
+        bool verbose = false;
+	if (argc == 2 && string(argv[1]) == "--verbose") {
+	    verbose = true;
+	}
 
 	cout << "Version: " << Version::string() << ", build "
 			<< Version::buildString() << ", abi " << Version::abi()
 			<< endl;
 
+        if (verbose) {
+                rsb::Factory::getInstance();
+
+                cout << endl;
+
+                cout << endl << "Connectors" << endl;
+
+                cout << rsb::transport::InFactory::getInstance() << endl;
+                cout << rsb::transport::OutFactory::getInstance() << endl;
+
+                cout << endl << "Converters" << endl;
+
+		cout << *rsb::converter::stringConverterRepository() << endl;
+        }
+
 	return EXIT_SUCCESS;
 
 }
-
