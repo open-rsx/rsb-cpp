@@ -40,16 +40,32 @@ void registerDefaultTransports() {
 
         {
             InFactory &factory = InFactory::getInstance();
-            factory.impls().register_("inprocess", &rsb::inprocess::InConnector::create);
-            factory.impls().register_("spread",
-                    &rsb::spread::InConnector::create);
+            factory.registerConnector("inprocess",
+				      &rsb::inprocess::InConnector::create,
+				      "inprocess");
+
+	    std::set<std::string> options;
+	    options.insert("host");
+	    options.insert("port");
+	    factory.registerConnector("spread",
+				      &rsb::spread::InConnector::create,
+				      "spread",
+				      options);
         }
 
         {
             OutFactory &factory = OutFactory::getInstance();
-            factory.impls().register_("inprocess", &rsb::inprocess::OutConnector::create);
-            factory.impls().register_("spread",
-                    &rsb::spread::OutConnector::create);
+            factory.registerConnector("inprocess",
+				      &rsb::inprocess::OutConnector::create,
+				      "inprocess");
+
+	    std::set<std::string> options;
+	    options.insert("host");
+	    options.insert("port");
+            factory.registerConnector("spread",
+				      &rsb::spread::OutConnector::create,
+				      "spread",
+				      options);
         }
 
         registered = true;

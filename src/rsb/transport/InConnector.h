@@ -44,6 +44,7 @@ class RSB_EXPORT InConnector : public Connector,
                                public rsb::filter::FilterObserver,
                                public boost::enable_shared_from_this<InConnector> {
 public:
+    typedef boost::shared_ptr<InConnector> Ptr;
 
     /**
      * Sets the scope this connector will receive events from.
@@ -61,7 +62,7 @@ protected:
     HandlerList handlers;
 };
 
-typedef boost::shared_ptr<InConnector> InConnectorPtr;
+typedef InConnector::Ptr InConnectorPtr;
 
 }
 }
