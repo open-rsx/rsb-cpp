@@ -222,14 +222,19 @@ public:
      * A simple configuration file may look like this:
      * @verbatim
      [transport.spread]
-     host = azurit # default type is string
-     port = <uint>5301 # types can be specified in angle brackets
+     host = azurit
+     port = 5301
      # A comment
      @endverbatim
      *
-     * @param path File of path
-     * @param defaults  defaults
-     * @return
+     * @param path The path of a file from which configuration options
+     * should be loaded.
+     * @param defaults A @ref ParticipantConfig object that supplies
+     * values for configuration options which are not present in @a
+     * path.
+     * @return A new @ref ParticipantConfig object reflecting the
+     * contents of @a path possibly merged with options from @a
+     * defaults.
      *
      * @see fromEnvironment, fromConfiguration
      */
