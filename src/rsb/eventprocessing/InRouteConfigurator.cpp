@@ -33,8 +33,7 @@ namespace eventprocessing {
 
 InRouteConfigurator::InRouteConfigurator(const Scope &scope) :
     logger(Logger::getLogger("rsb.eventprocessing.InRouteConfigurator")),
-            scope(scope), errorStrategy(ParticipantConfig::LOG),
-            shutdown(false) {
+            scope(scope), shutdown(false) {
 }
 
 InRouteConfigurator::~InRouteConfigurator() {
@@ -65,9 +64,7 @@ void InRouteConfigurator::activate() {
 
     // Create the event processing strategy and attach it to all
     // connectors.
-    this->eventReceivingStrategy = EventReceivingStrategyPtr(
-            new ParallelEventReceivingStrategy());
-    this->eventReceivingStrategy->setHandlerErrorStrategy(errorStrategy);
+    this->eventReceivingStrategy = createEventReceivingStrategy();
     for (ConnectorList::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         (*it)->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(
@@ -90,6 +87,10 @@ void InRouteConfigurator::deactivate() {
     this->shutdown = true;
 }
 
+EventReceivingStrategyPtr InRouteConfigurator::getEventReceivingStrategy() const {
+    return this->eventReceivingStrategy;
+}
+
 void InRouteConfigurator::addConnector(InConnectorPtr connector) {
     RSCDEBUG(logger, "Adding connector " << connector);
     this->connectors.push_back(connector);
@@ -98,14 +99,6 @@ void InRouteConfigurator::addConnector(InConnectorPtr connector) {
 void InRouteConfigurator::removeConnector(InConnectorPtr connector) {
     RSCDEBUG(logger, "Removing connector " << connector);
     this->connectors.remove(connector);
-}
-
-void InRouteConfigurator::handlerAdded(rsb::HandlerPtr handler, const bool &wait) {
-    eventReceivingStrategy->addHandler(handler, wait);
-}
-
-void InRouteConfigurator::handlerRemoved(rsb::HandlerPtr handler, const bool &wait) {
-    eventReceivingStrategy->removeHandler(handler, wait);
 }
 
 void InRouteConfigurator::filterAdded(filter::FilterPtr filter) {
@@ -130,14 +123,6 @@ void InRouteConfigurator::setQualityOfServiceSpecs(
             != this->connectors.end(); ++it) {
         (*it)->setQualityOfServiceSpecs(specs);
     }
-}
-
-void InRouteConfigurator::setErrorStrategy(
-        const ParticipantConfig::ErrorStrategy &strategy) {
-    if (eventReceivingStrategy) {
-        eventReceivingStrategy->setHandlerErrorStrategy(strategy);
-    }
-    this->errorStrategy = strategy;
 }
 
 }

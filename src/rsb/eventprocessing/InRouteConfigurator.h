@@ -30,7 +30,6 @@
 #include "../QualityOfServiceSpec.h"
 #include "../transport/InConnector.h"
 #include "EventReceivingStrategy.h"
-#include "../Handler.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -53,31 +52,13 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;
 
-    void activate();
-    void deactivate();
+    virtual void activate();
+    virtual void deactivate();
+
+    EventReceivingStrategyPtr getEventReceivingStrategy() const;
 
     void addConnector(transport::InConnectorPtr connector);
     void removeConnector(transport::InConnectorPtr connector);
-
-    /**
-     * Adds a new handler that will be notified about received events.
-     *
-     * @param handler the handler to add
-     * @param wait if set to @c true, this call will return only after the
-     *             handler has been completely installed and will receive the
-     *             next available event
-     */
-    void handlerAdded(rsb::HandlerPtr handler, const bool &wait);
-
-    /**
-     * Removes a previously registered handle.
-     *
-     * @param handler handler to remove
-     * @param wait if set to @c true, this call will return only after the
-     *             handler has been completely removed and will not be notified
-     *             anymore
-     */
-    void handlerRemoved(rsb::HandlerPtr handler, const bool &wait);
 
     void filterAdded(filter::FilterPtr filter);
     void filterRemoved(filter::FilterPtr filter);
@@ -90,14 +71,6 @@ public:
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
-
-    /**
-     * Sets the desired error strategy to use.
-     *
-     * @param strategy the strategy to use
-     */
-    void setErrorStrategy(const ParticipantConfig::ErrorStrategy &strategy);
-
 private:
     typedef std::list<transport::InConnectorPtr> ConnectorList;
 
@@ -106,9 +79,8 @@ private:
     ConnectorList connectors;
     // ep for observation model
     EventReceivingStrategyPtr eventReceivingStrategy;
-    ParticipantConfig::ErrorStrategy errorStrategy;
     volatile bool shutdown;
-
+    virtual EventReceivingStrategyPtr createEventReceivingStrategy() = 0;
 };
 
 typedef boost::shared_ptr<InRouteConfigurator> InRouteConfiguratorPtr;

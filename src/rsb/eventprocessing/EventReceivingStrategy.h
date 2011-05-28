@@ -25,7 +25,6 @@
 #include "../Handler.h"
 #include "../filter/Filter.h"
 #include "rsb/rsbexports.h"
-#include "../ParticipantConfig.h"
 
 namespace rsb {
 namespace eventprocessing {
@@ -42,40 +41,11 @@ public:
 
     virtual ~EventReceivingStrategy();
 
-    /**
-     * Defines the strategy to use for handling dispatching errors to the client
-     * handler.
-     *
-     * @param strategy the new strategy to use
-     */
-    virtual void setHandlerErrorStrategy(
-            const ParticipantConfig::ErrorStrategy &strategy) = 0;
-
-    /**
-     * Adds a new handler that will be notified about new events.
-     *
-     * @param handler handler to add
-     * @param wait if set to @c true, this method must only return after the
-     *             handler has been install completely so that the next event
-     *             will be delivered to it
-     */
-    virtual void addHandler(rsb::HandlerPtr handler, const bool &wait) = 0;
-
-    /**
-     * Removes a handler that will will then not be notified anymore.
-     *
-     * @param handler handler to remove
-     * @param wait if set to @c true, this method must only return after the
-     *             handler has been removed completely and will not receive
-     *             any more notifications
-     */
-    virtual void removeHandler(rsb::HandlerPtr handler, const bool &wait) = 0;
-
     virtual void addFilter(filter::FilterPtr filter) = 0;
     virtual void removeFilter(filter::FilterPtr filter) = 0;
 
     // if invoked, the event is dispatched to listeners, typically called by ports
-    virtual void handle(rsb::EventPtr event) = 0;
+    virtual void handle(EventPtr event) = 0; // TODO inherited via Handler?
 };
 
 typedef boost::shared_ptr<EventReceivingStrategy> EventReceivingStrategyPtr;

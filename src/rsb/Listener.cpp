@@ -22,8 +22,6 @@
 #include <algorithm>
 #include <iterator>
 
-#include "filter/ScopeFilter.h"
-
 using namespace std;
 
 using namespace rsb::transport;
@@ -47,7 +45,7 @@ string Listener::getClassName() const {
 void Listener::initialize(const vector<InConnectorPtr> &connectors,
         const Scope &scope) {
     // TODO evaluate configuration
-    this->configurator.reset(new eventprocessing::InRouteConfigurator(scope));
+    this->configurator.reset(new eventprocessing::PushInRouteConfigurator(scope));
     this->configurator->setErrorStrategy(getConfig().getErrorStrategy());
     for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
             != connectors.end(); ++it) {
@@ -65,11 +63,11 @@ set<HandlerPtr> Listener::getHandlers() const {
     return result;
 }
 
-void Listener::addHandler(HandlerPtr h, const bool &wait) {
+void Listener::addHandler(HandlerPtr h, bool wait) {
     this->configurator->handlerAdded(h, wait);
 }
 
-void Listener::removeHandler(HandlerPtr h, const bool &wait) {
+void Listener::removeHandler(HandlerPtr h, bool wait) {
     this->configurator->handlerRemoved(h, wait);
 }
 

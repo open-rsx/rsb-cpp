@@ -50,7 +50,7 @@ namespace eventprocessing {
  *
  * @author swrede
  */
-class RSB_EXPORT ParallelEventReceivingStrategy: public EventReceivingStrategy {
+class RSB_EXPORT ParallelEventReceivingStrategy: public PushEventReceivingStrategy {
 public:
     ParallelEventReceivingStrategy();
     // TODO make threadpool size configurable
@@ -63,8 +63,10 @@ public:
     void setHandlerErrorStrategy(
             const ParticipantConfig::ErrorStrategy &strategy);
 
-    virtual void addHandler(HandlerPtr handler, const bool &wait);
-    virtual void removeHandler(HandlerPtr handler, const bool &wait);
+    // Qualification of HandlerPtr is required since there is another
+    // HandlerPtr type in eventprocessing.
+    virtual void addHandler(rsb::HandlerPtr handler, const bool &wait);
+    virtual void removeHandler(rsb::HandlerPtr handler, const bool &wait);
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
@@ -73,14 +75,15 @@ public:
     void handle(EventPtr e);
 
 private:
-
-    bool filter(HandlerPtr handler, EventPtr event);
-    void deliver(HandlerPtr handler, EventPtr event);
+    // Qualification of HandlerPtr is required since there is another
+    // HandlerPtr type in eventprocessing.
+    bool filter(rsb::HandlerPtr handler, EventPtr event);
+    void deliver(rsb::HandlerPtr handler, EventPtr event);
 
     void handleDispatchError(const std::string &message);
 
     rsc::logging::LoggerPtr logger;
-    rsc::threading::OrderedQueueDispatcherPool<EventPtr, Handler> pool;
+    rsc::threading::OrderedQueueDispatcherPool<EventPtr, rsb::Handler> pool;
 
     mutable boost::shared_mutex filtersMutex;
     std::set<filter::FilterPtr> filters;

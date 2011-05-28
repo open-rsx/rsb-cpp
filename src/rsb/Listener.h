@@ -28,7 +28,7 @@
 #include "Event.h"
 #include "Participant.h"
 #include "Handler.h"
-#include "eventprocessing/InRouteConfigurator.h"
+#include "eventprocessing/PushInRouteConfigurator.h"
 #include "transport/Connector.h"
 #include "rsb/rsbexports.h"
 
@@ -64,6 +64,9 @@ public:
      *                   use to communicate with the bus.
      * @param scope the scope where the data is received from.
      * @param config the configuration that was used to setup this listener
+     *
+     * @note This constructor is exposed for unit tests and such. Use
+     * @ref Factory::createListener instead of calling this directly.
      */
     Listener(const std::vector<transport::InConnectorPtr> &connectors,
             const Scope &scope, const ParticipantConfig &config);
@@ -104,7 +107,7 @@ public:
      *             handler has completely been installed and will receive the
      *             next available message. Otherwise it may return earlier.
      */
-    virtual void addHandler(HandlerPtr h, const bool &wait = true);
+    virtual void addHandler(HandlerPtr h, bool wait = true);
 
     /**
      * Removes a Handler instance to process newly received events.
@@ -112,14 +115,14 @@ public:
      * @param h handler to remove if present (comparison based on pointer)
      * @param wait if set to @c true, this method will return only after the
      *             handler has been completely removed from the event processing
-     *             and will not be called anymore from this listener
+     *             and will not be called anymore from this listener.
      */
-    void removeHandler(HandlerPtr h, const bool &wait = true);
+    void removeHandler(HandlerPtr h, bool wait = true);
 
 private:
     rsc::logging::LoggerPtr logger;
     std::set<HandlerPtr> handlers;
-    eventprocessing::InRouteConfiguratorPtr configurator;
+    eventprocessing::PushInRouteConfiguratorPtr configurator;
 
     void initialize(const std::vector<transport::InConnectorPtr> &connectors,
             const Scope &scope);
