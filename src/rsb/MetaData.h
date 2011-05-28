@@ -25,6 +25,8 @@
 
 #include <boost/cstdint.hpp>
 
+#include "rsb/rsbexports.h"
+
 namespace rsb {
 
 /**
@@ -33,7 +35,7 @@ namespace rsb {
  *
  * @author jwienke
  */
-class MetaData {
+  class RSB_EXPORT MetaData {
 public:
 
     MetaData();
@@ -70,4 +72,3 @@ private:
 };
 
 }
-
