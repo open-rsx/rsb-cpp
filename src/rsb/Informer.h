@@ -77,6 +77,9 @@ public:
      * @param type string describing the default type of data sent by this
      *             informer. It is used to find a converter that can convert
      *             these data to the port
+     *
+     * @note This constructor is exposed for unit tests and such. Use
+     * @ref Factory::createInformer instead of calling this directly.
      */
     Informer(const std::vector<transport::OutConnectorPtr> &connectors,
             const Scope &scope, const ParticipantConfig &config,
