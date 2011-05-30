@@ -34,7 +34,6 @@ TEST(MetaDataTest, testConstruction)
 {
 
     MetaData meta;
-    EXPECT_TRUE(meta.getSenderId().empty());
     EXPECT_GT(meta.getEventCreationTime(), rsc::misc::currentTimeMicros() - 100000);
     EXPECT_LE(meta.getEventCreationTime(), rsc::misc::currentTimeMicros());
     EXPECT_EQ((boost::uint64_t) 0, meta.getRawReceiveTime());
@@ -46,7 +45,7 @@ TEST(MetaDataTest, testConstruction)
 
 TEST(MetaDataTest, testSenderId)
 {
-    const string id = "fsfadsfasdf";
+    const rsc::misc::UUID id;
     MetaData meta;
     meta.setSenderId(id);
     EXPECT_EQ(id, meta.getSenderId());
@@ -114,5 +113,20 @@ TEST(MetaDataTest, testUserTimes)
 
     EXPECT_GT(meta.getUserTime(autoKey), rsc::misc::currentTimeMicros() - 100000);
     EXPECT_LE(meta.getUserTime(autoKey), rsc::misc::currentTimeMicros());
+
+}
+
+TEST(MetaDataTest, testComparison)
+{
+
+    MetaData meta1;
+    MetaData meta2;
+    meta2.setEventCreationTime(meta1.getEventCreationTime());
+    EXPECT_EQ(meta1, meta2);
+
+    meta1.setSenderId(rsc::misc::UUID());
+    EXPECT_NE(meta1, meta2);
+    meta2.setSenderId(meta1.getSenderId());
+    EXPECT_EQ(meta1, meta2);
 
 }

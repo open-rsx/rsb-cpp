@@ -22,6 +22,7 @@
 #include <stdexcept>
 
 #include <rsc/misc/langutils.h>
+#include <rsc/runtime/ContainerIO.h>
 
 using namespace std;
 
@@ -35,11 +36,22 @@ MetaData::MetaData() :
 MetaData::~MetaData() {
 }
 
-string MetaData::getSenderId() const {
+string MetaData::getClassName() const {
+    return "MetaData";
+}
+
+void MetaData::printContents(std::ostream &stream) const {
+    stream << "senderId = " << senderId << ", eventCreationTime = "
+            << eventCreationTime << ", sendTime = " << sendTime
+            << ", rawReceiveTime = " << rawReceiveTime << ", receiveTime = "
+            << receiveTime << ", userTimes = " << userTimes;
+}
+
+rsc::misc::UUID MetaData::getSenderId() const {
     return senderId;
 }
 
-void MetaData::setSenderId(const string &senderId) {
+void MetaData::setSenderId(const rsc::misc::UUID &senderId) {
     this->senderId = senderId;
 }
 
@@ -100,11 +112,11 @@ set<string> MetaData::userTimeKeys() const {
     return keys;
 }
 
-bool MetaData::hasUserTime(const std::string &key) const {
+bool MetaData::hasUserTime(const string &key) const {
     return userTimes.count(key) > 0;
 }
 
-boost::uint64_t MetaData::getUserTime(const std::string &key) const {
+boost::uint64_t MetaData::getUserTime(const string &key) const {
     map<string, boost::uint64_t>::const_iterator it = userTimes.find(key);
     if (it == userTimes.end()) {
         throw invalid_argument("There is no user time with key '" + key + "'.");
@@ -113,13 +125,25 @@ boost::uint64_t MetaData::getUserTime(const std::string &key) const {
     }
 }
 
-void MetaData::setUserTime(const std::string &key, const boost::uint64_t &time) {
+void MetaData::setUserTime(const string &key, const boost::uint64_t &time) {
     userTimes.erase(key);
     if (time == 0) {
         userTimes[key] = rsc::misc::currentTimeMicros();
     } else {
         userTimes[key] = time;
     }
+}
+
+bool MetaData::operator==(const MetaData &other) const {
+    return (senderId == other.senderId) && (eventCreationTime
+            == other.eventCreationTime) && (sendTime == other.sendTime)
+            && (rawReceiveTime == other.rawReceiveTime) && (receiveTime
+            == other.receiveTime) && (userTimes == other.userTimes);
+}
+
+ostream &operator<<(ostream &stream, const MetaData &meta) {
+    meta.print(stream);
+    return stream;
 }
 
 }

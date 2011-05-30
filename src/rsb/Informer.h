@@ -157,7 +157,7 @@ public:
         event->setScope(getScope());
         RSCDEBUG(logger, "Publishing event");
         checkedPublish(event);
-	return event;
+        return event;
     }
 
     /**
@@ -175,7 +175,7 @@ public:
         event->setType(type);
         RSCDEBUG(logger, "Publishing event");
         checkedPublish(event);
-	return event;
+        return event;
     }
 
 private:
@@ -186,6 +186,7 @@ private:
             s << "Event type cannot be empty: " << event;
             throw std::invalid_argument(s.str());
         }
+        event->mutableMetaData().setSenderId(getId());
         configurator->publish(event);
     }
 

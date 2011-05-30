@@ -60,6 +60,8 @@ using namespace rsc::threading;
 class UserInformerTask: public rsc::threading::RepetitiveTask {
 public:
 
+    vector<EventPtr> events;
+
     UserInformerTask(Informer<string>::Ptr informer,
             const unsigned int &numEvents) :
         informer(informer), numEvents(numEvents), sentEvents(0) {
@@ -70,7 +72,9 @@ public:
     }
 
     void execute() {
-        informer->publish(boost::shared_ptr<string>(new string("hello world")));
+        EventPtr e = informer->publish(
+                boost::shared_ptr<string>(new string("hello world")));
+        events.push_back(e);
         ++sentEvents;
         if (sentEvents == numEvents) {
             cancel();
@@ -93,9 +97,12 @@ TEST(RoundtripTest, testRoundtrip)
     ParticipantConfig::Transport spreadTransport =
             config.getTransport("spread");
     rsc::runtime::Properties p = spreadTransport.getOptions();
-    p.set<string> ("port", lexical_cast<string>(SPREAD_PORT));
+    p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
     spreadTransport.setOptions(p);
     config.addTransport(spreadTransport);
+    config.setQualityOfServiceSpec(
+            QualityOfServiceSpec(QualityOfServiceSpec::ORDERED,
+                    QualityOfServiceSpec::RELIABLE));
     factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/blah");
@@ -113,7 +120,7 @@ TEST(RoundtripTest, testRoundtrip)
             rsb::HandlerPtr(
                     new EventFunctionHandler(
                             boost::bind(&WaitingObserver::handler, &observer,
-                                    _1))));
+                                    _1))), true);
 
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
@@ -121,6 +128,30 @@ TEST(RoundtripTest, testRoundtrip)
 
     source->waitDone();
     observer.waitReceived();
+
+    // compare events
+    vector<EventPtr> receivedEvents = observer.getEvents();
+    ASSERT_EQ(source->events.size(), receivedEvents.size());
+
+    for (size_t i = 0; i < receivedEvents.size(); ++i) {
+
+        EventPtr sent = source->events[i];
+        EventPtr received = receivedEvents[i];
+
+        EXPECT_EQ(sent->getId(), received->getId());
+        EXPECT_EQ(sent->getType(), received->getType());
+        EXPECT_EQ(*(boost::static_pointer_cast<string>(sent->getData())), *(boost::static_pointer_cast<string>(received->getData())));
+
+        EXPECT_EQ(informer->getId(), sent->getMetaData().getSenderId());
+        EXPECT_GT(sent->getMetaData().getEventCreationTime(), (boost::uint64_t) 0);
+        EXPECT_GT(sent->getMetaData().getSendTime(), (boost::uint64_t) 0);
+        EXPECT_GE(sent->getMetaData().getSendTime(), sent->getMetaData().getEventCreationTime());
+        EXPECT_GT(received->getMetaData().getRawReceiveTime(), (boost::uint64_t) 0);
+        EXPECT_GT(received->getMetaData().getReceiveTime(), (boost::uint64_t) 0);
+        EXPECT_GE(received->getMetaData().getReceiveTime(), received->getMetaData().getRawReceiveTime());
+        EXPECT_GE(received->getMetaData().getRawReceiveTime(), sent->getMetaData().getSendTime());
+
+    }
 
 }
 
@@ -130,24 +161,26 @@ TEST(InformerTest, testReturnValue)
     Factory &factory = Factory::getInstance();
     ParticipantConfig config = factory.getDefaultParticipantConfig();
     ParticipantConfig::Transport spreadTransport =
-	config.getTransport("spread");
+            config.getTransport("spread");
     rsc::runtime::Properties p = spreadTransport.getOptions();
-    p.set<string> ("port", lexical_cast<string>(SPREAD_PORT));
+    p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
     spreadTransport.setOptions(p);
     config.addTransport(spreadTransport);
     factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/return/value/test");
-    Informer<string>::Ptr informer = factory.createInformer<string> (scope, Factory::getInstance().getDefaultParticipantConfig());
+    Informer<string>::Ptr informer = factory.createInformer<string> (scope,
+            Factory::getInstance().getDefaultParticipantConfig());
 
     {
-	EventPtr event = informer->publish(shared_ptr<string> (new string("foo")));
-	EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
+        EventPtr event = informer->publish(
+                shared_ptr<string> (new string("foo")));
+        EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
 
     {
-	EventPtr event = informer->publish(shared_ptr<void> (new string("foo")), rsc::runtime::typeName<std::string>());
-	EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
+        EventPtr event = informer->publish(shared_ptr<void> (new string("foo")), rsc::runtime::typeName<std::string>());
+        EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
 }
 
@@ -160,7 +193,7 @@ TEST(InformerTest, testConversionException)
     ParticipantConfig::Transport spreadTransport =
             config.getTransport("spread");
     rsc::runtime::Properties p = spreadTransport.getOptions();
-    p.set<string> ("port", lexical_cast<string>(SPREAD_PORT));
+    p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
     spreadTransport.setOptions(p);
     config.addTransport(spreadTransport);
     factory.setDefaultParticipantConfig(config);

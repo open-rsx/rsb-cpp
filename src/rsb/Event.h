@@ -29,6 +29,7 @@
 #include <rsc/runtime/Printable.h>
 
 #include "rsb/rsbexports.h"
+#include "MetaData.h"
 #include "Scope.h"
 
 namespace rsb {
@@ -98,6 +99,34 @@ public:
     std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
     std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
 
+    /**
+     * @name meta-data access
+     */
+    //@{
+
+    /**
+     * Returns a copy of the current meta-data state of this event.
+     *
+     * @return copy of event's meta-data
+     */
+    MetaData getMetaData() const;
+
+    /**
+     * Returns an in-place mutable version of the event's meta-data
+     *
+     * @return meta-data reference to modify
+     */
+    MetaData &mutableMetaData();
+
+    /**
+     * Replaces the event's meta-data with a new instance.
+     *
+     * @param metaData new meta-data to set
+     */
+    void setMetaData(const MetaData &metaData);
+
+    //@}
+
 private:
     rsc::misc::UUID id;
     Scope scope;
@@ -110,6 +139,8 @@ private:
     std::string method;
 
     std::map<std::string, std::string> metaInfos;
+
+    MetaData metaData;
 
 };
 

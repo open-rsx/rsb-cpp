@@ -21,6 +21,7 @@
 
 #include <rsc/debug/DebugTools.h>
 #include <rsc/runtime/ContainerIO.h>
+#include <rsc/misc/langutils.h>
 
 using namespace std;
 
@@ -175,6 +176,7 @@ void ParallelEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e
 }
 
 void ParallelEventReceivingStrategy::handle(EventPtr event) {
+    event->mutableMetaData().setReceiveTime(rsc::misc::currentTimeMicros());
     pool.push(event);
 }
 

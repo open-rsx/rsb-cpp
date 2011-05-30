@@ -24,6 +24,10 @@
 #include <string>
 
 #include <boost/cstdint.hpp>
+#include <boost/operators.hpp>
+
+#include <rsc/runtime/Printable.h>
+#include <rsc/misc/UUID.h>
 
 #include "rsb/rsbexports.h"
 
@@ -35,14 +39,18 @@ namespace rsb {
  *
  * @author jwienke
  */
-  class RSB_EXPORT MetaData {
+class RSB_EXPORT MetaData: public virtual rsc::runtime::Printable,
+        boost::equality_comparable<MetaData> {
 public:
 
     MetaData();
     virtual ~MetaData();
 
-    std::string getSenderId() const;
-    void setSenderId(const std::string &senderId);
+    std::string getClassName() const;
+    void printContents(std::ostream &stream) const;
+
+    rsc::misc::UUID getSenderId() const;
+    void setSenderId(const rsc::misc::UUID &senderId);
 
     boost::uint64_t getEventCreationTime() const;
     void setEventCreationTime(const boost::uint64_t &time = 0);
@@ -58,9 +66,11 @@ public:
     boost::uint64_t getUserTime(const std::string &key) const;
     void setUserTime(const std::string &key, const boost::uint64_t &time = 0);
 
+    bool operator==(const MetaData &other) const;
+
 private:
 
-    std::string senderId;
+    rsc::misc::UUID senderId;
 
     boost::uint64_t eventCreationTime;
     boost::uint64_t sendTime;
@@ -70,5 +80,7 @@ private:
     std::map<std::string, boost::uint64_t> userTimes;
 
 };
+
+RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const MetaData &meta);
 
 }

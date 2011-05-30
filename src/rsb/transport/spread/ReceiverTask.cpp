@@ -19,6 +19,8 @@
 
 #include "ReceiverTask.h"
 
+#include <rsc/misc/langutils.h>
+
 #include "../../converter/Converter.h"
 #include "../../CommException.h"
 #include "SpreadConnection.h"
@@ -115,6 +117,8 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
         boost::shared_ptr<string> data) {
 
     EventPtr e(new Event());
+
+    e->mutableMetaData().setRawReceiveTime(rsc::misc::currentTimeMicros());
 
     e->setId(rsc::misc::UUID(notification->id()));
     e->setScope(Scope(notification->scope()));
