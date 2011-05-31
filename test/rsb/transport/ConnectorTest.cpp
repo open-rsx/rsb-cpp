@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 
 #include <rsc/threading/ThreadedTaskExecutor.h>
+#include <rsc/misc/langutils.h>
 
 #include "rsb/transport/Connector.h"
 #include "rsb/transport/spread/SpreadConnector.h"
@@ -78,6 +79,27 @@ TEST_P(ConnectorTest, testSendLongGroupNames)
 
 }
 
+TEST_P(ConnectorTest, testSetSendTime)
+{
+
+    OutConnectorPtr out = GetParam().createOutConnector();
+    out->activate();
+
+    EventPtr e(new Event());
+    e->setScope(Scope("/random/useless/scope"));
+    e->setType(rsc::runtime::typeName<string>());
+    e->setData(boost::shared_ptr<string>(new string("fooo")));
+
+    boost::uint64_t beforeSend = rsc::misc::currentTimeMicros();
+    out->handle(e);
+    boost::uint64_t afterSend = rsc::misc::currentTimeMicros();
+
+    EXPECT_NE(boost::uint64_t(0), e->getMetaData().getSendTime());
+    EXPECT_GE(e->getMetaData().getSendTime(), beforeSend);
+    EXPECT_LE(e->getMetaData().getSendTime(), afterSend);
+
+}
+
 TEST_P(ConnectorTest, testHierarchySending)
 {
 
@@ -89,13 +111,13 @@ TEST_P(ConnectorTest, testHierarchySending)
 
     OutConnectorPtr out = GetParam().createOutConnector();
     out->setQualityOfServiceSpecs(qosSpecs);
-    ASSERT_NO_THROW(out->activate());
-
+    out->activate();
     vector<boost::shared_ptr<WaitingObserver> > observers;
     vector<InConnectorPtr> inConnectors;
 
     vector<Scope> receiveScopes = sendScope.superScopes(true);
-    for (vector<Scope>::const_iterator receiveScopeIt = receiveScopes.begin(); receiveScopeIt != receiveScopes.end(); ++receiveScopeIt) {
+    for (vector<Scope>::const_iterator receiveScopeIt = receiveScopes.begin(); receiveScopeIt
+            != receiveScopes.end(); ++receiveScopeIt) {
 
         Scope receiveScope = *receiveScopeIt;
 
@@ -110,8 +132,13 @@ TEST_P(ConnectorTest, testHierarchySending)
             expectedEvents = 2 * numEvents;
         }
 
-        boost::shared_ptr<WaitingObserver> observer(new WaitingObserver(expectedEvents, receiveScope));
-        in->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, observer, _1))));
+        boost::shared_ptr<WaitingObserver> observer(
+                new WaitingObserver(expectedEvents, receiveScope));
+        in->addHandler(
+                HandlerPtr(
+                        new EventFunctionHandler(
+                                boost::bind(&WaitingObserver::handler,
+                                        observer, _1))));
         observers.push_back(observer);
 
         inConnectors.push_back(in);
@@ -123,17 +150,20 @@ TEST_P(ConnectorTest, testHierarchySending)
     boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
     // send events
-    boost::shared_ptr<InformerTask> source(new InformerTask(out, sendScope, numEvents, 10000));
+    boost::shared_ptr<InformerTask> source(
+            new InformerTask(out, sendScope, numEvents, 10000));
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
     exec->schedule(source);
     source->waitDone();
 
-    for (vector<boost::shared_ptr<WaitingObserver> >::iterator observerIt = observers.begin();
-            observerIt != observers.end(); ++observerIt) {
+    for (vector<boost::shared_ptr<WaitingObserver> >::iterator observerIt =
+            observers.begin(); observerIt != observers.end(); ++observerIt) {
 
         boost::shared_ptr<WaitingObserver> observer = *observerIt;
         bool ok = observer->waitReceived(40000);
-        ASSERT_TRUE(ok) << "Observer on scope " << observer->getScope() << " did not receive events.";
+        ASSERT_TRUE(ok)
+            << "Observer on scope " << observer -> getScope ( )
+            << " did not receive events.";
 
         // the root observer will get all events, also the garbage created by
         // the informer task...
@@ -181,7 +211,6 @@ TEST_P(ConnectorTest, testRoundtrip)
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(scope);
         ASSERT_NO_THROW(in->activate());
-
         OutConnectorPtr out = GetParam().createOutConnector();
         out->setQualityOfServiceSpecs(qosSpecs);
         ASSERT_NO_THROW(out->activate());
@@ -193,6 +222,7 @@ TEST_P(ConnectorTest, testRoundtrip)
         in->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
         // activate port and schedule informer
+        boost::uint64_t sendTime = rsc::misc::currentTimeMicros();
         exec->schedule(source);
 
         observer.waitReceived();
@@ -207,6 +237,11 @@ TEST_P(ConnectorTest, testRoundtrip)
             EXPECT_EQ(sent->getId(), received->getId()) << "Error matching event id for index " << i << " and message size " << *sizeIt;
             EXPECT_EQ(sent->getType(), received->getType()) << "Error matching event type for index " << i << " and message size " << *sizeIt;
             EXPECT_EQ(sent->getScope(), received->getScope()) << "Error matching event scope for index " << i << " and message size " << *sizeIt;
+
+
+            // timing met data
+            EXPECT_GE(received->getMetaData().getRawReceiveTime(), sendTime);
+            EXPECT_LE(received->getMetaData().getRawReceiveTime(), rsc::misc::currentTimeMicros());
         }
 
     }

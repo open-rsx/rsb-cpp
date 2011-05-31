@@ -35,8 +35,8 @@ public:
     ConnectorTestSetup(
             boost::function<rsb::transport::InConnectorPtr()> createInConnector,
             boost::function<rsb::transport::OutConnectorPtr()> createOutConnector) :
-        createInConnector(createInConnector), createOutConnector(
-                createOutConnector) {
+        createInConnector(createInConnector),
+                createOutConnector(createOutConnector) {
 
     }
     boost::function<rsb::transport::InConnectorPtr()> createInConnector;

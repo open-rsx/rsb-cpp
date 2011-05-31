@@ -1,3 +1,22 @@
+/* ============================================================
+ *
+ * This file is part of the RSB project
+ *
+ * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ *
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation;
+ * either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * ============================================================ */
+
 #include "Bus.h"
 
 using namespace std;
@@ -73,7 +92,8 @@ void Bus::handle(EventPtr event) {
         if (it_ != this->sinks.end()) {
             const SinkList& connectors = it_->second;
 
-            for (SinkList::const_iterator it__ = connectors.begin(); it__ != connectors.end(); ++it__) {
+            for (SinkList::const_iterator it__ = connectors.begin(); it__
+                    != connectors.end(); ++it__) {
                 InConnectorPtr connector = it__->lock();
                 if (connector) {
                     RSCDEBUG(logger, "Delivering to " << connector << " in " << *it);
