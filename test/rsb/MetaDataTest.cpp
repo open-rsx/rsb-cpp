@@ -121,12 +121,14 @@ TEST(MetaDataTest, testComparison)
 
     MetaData meta1;
     MetaData meta2;
+    EXPECT_NE(meta1, meta2); // distinct times + UUIDs
+
     meta2.setEventCreationTime(meta1.getEventCreationTime());
-    EXPECT_EQ(meta1, meta2);
+    EXPECT_NE(meta1, meta2); // still distinct UUIDs
+
+    meta2.setSenderId(meta1.getSenderId());
+    EXPECT_EQ(meta1, meta2); // identical
 
     meta1.setSenderId(rsc::misc::UUID());
-    EXPECT_NE(meta1, meta2);
-    meta2.setSenderId(meta1.getSenderId());
-    EXPECT_EQ(meta1, meta2);
-
+    EXPECT_NE(meta1, meta2); // distinct UUIDs, again
 }
