@@ -26,7 +26,7 @@ Assembly::~Assembly() {
 }
 
 string Assembly::getData(const unsigned int &i) const {
-    return this->store[i]->data().binary();
+    return this->store[i]->data();
 }
 
 string *Assembly::getCompleteData() const {

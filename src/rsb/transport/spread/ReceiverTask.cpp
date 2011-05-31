@@ -107,7 +107,7 @@ boost::shared_ptr<string> ReceiverTask::handleAndJoinNotification(
     if (multiPartNotification) {
         completeData = this->assemblyPool->add(notification);
     } else {
-        completeData.reset(new string(notification->data().binary()));
+        completeData.reset(new string(notification->data()));
     }
     return completeData;
 
@@ -119,13 +119,15 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     EventPtr e(new Event());
 
     e->mutableMetaData().setRawReceiveTime(rsc::misc::currentTimeMicros());
+    e->mutableMetaData().setSenderId(rsc::misc::UUID(
+            (boost::uint8_t*) notification->meta_data().sender_id().c_str()));
 
-    e->setId(rsc::misc::UUID(notification->id()));
+    e->setId(rsc::misc::UUID((boost::uint8_t*) notification->id().c_str()));
     e->setScope(Scope(notification->scope()));
 
-    for (int i = 0; i < notification->meta_infos_size(); ++i) {
-        e->addMetaInfo(notification->meta_infos(i).key(),
-                notification->meta_infos(i).value());
+    for (int i = 0; i < notification->meta_data().user_infos_size(); ++i) {
+        e->mutableMetaData().setUserInfo(notification->meta_data().user_infos(i).key(),
+                notification->meta_data().user_infos(i).value());
     }
 
     // TODO error handling

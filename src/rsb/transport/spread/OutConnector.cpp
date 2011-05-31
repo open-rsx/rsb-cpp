@@ -38,19 +38,18 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(
-            args.get<UnambiguousConverterMap<string> > ("converters"),
-            args.get<string> ("host", defaultHost()),
-            args.getAs<unsigned int> ("port", defaultPort()),
-            args.getAs<unsigned int> ("maxfragmentsize", 100000));
+    return new OutConnector(args.get<UnambiguousConverterMap<string> > (
+            "converters"), args.get<string> ("host", defaultHost()),
+            args.getAs<unsigned int> ("port", defaultPort()), args.getAs<
+                    unsigned int> ("maxfragmentsize", 100000));
 }
 
 OutConnector::OutConnector(const UnambiguousConverterMap<string> &converters,
         const string &host, unsigned int port, unsigned int maxFragmentSize) :
-    transport::ConverterSelectingConnector<string>(converters),
-            logger(Logger::getLogger("rsb.spread.OutConnector")),
-            active(false), connector(new SpreadConnector(host, port)),
-            maxFragmentSize(maxFragmentSize) {
+    transport::ConverterSelectingConnector<string>(converters), logger(
+            Logger::getLogger("rsb.spread.OutConnector")), active(false),
+            connector(new SpreadConnector(host, port)), maxFragmentSize(
+                    maxFragmentSize) {
 }
 
 OutConnector::~OutConnector() {
@@ -86,26 +85,29 @@ void OutConnector::fillNotification(protocol::Notification &notification,
         const unsigned int &numDataParts, const unsigned int &dataPart,
         const string &data) {
 
-    notification.set_id(event->getId().getIdAsString());
+    notification.set_id(event->getId().getId().data,
+            event->getId().getId().size());
     notification.set_scope(event->getScope().toString());
     notification.set_wire_schema(wireSchema);
-    notification.mutable_meta_data()->set_sender_id(event->getMetaData().getSenderId().getId().data,
-                                                    event->getMetaData().getSenderId().getId().size());
+    notification.mutable_meta_data()->set_sender_id(
+            event->getMetaData().getSenderId().getId().data,
+            event->getMetaData().getSenderId().getId().size());
     notification.mutable_meta_data()->set_create_time(
             event->getMetaData().getEventCreationTime());
     notification.mutable_meta_data()->set_send_time(
             event->getMetaData().getSendTime());
-    for (map<string, string>::const_iterator it = event->metaInfoBegin(); it
-            != event->metaInfoEnd(); ++it) {
-        MetaInfo *info = notification.mutable_meta_infos()->Add();
+    for (map<string, string>::const_iterator it =
+            event->mutableMetaData().userInfosBegin(); it
+            != event->mutableMetaData().userInfosEnd(); ++it) {
+        UserInfo *info =
+                notification.mutable_meta_data()->mutable_user_infos()->Add();
         info->set_key(it->first);
         info->set_value(it->second);
     }
     notification.set_num_data_parts(numDataParts);
     notification.set_data_part(dataPart);
 
-    notification.mutable_data()->set_binary(data);
-    notification.mutable_data()->set_length(data.size());
+    notification.set_data(data);
 
 }
 
@@ -116,8 +118,8 @@ void OutConnector::handle(EventPtr event) {
     // TODO exception handling if converter is not available
     ConverterPtr c = getConverter(event->getType());
     string wire;
-    string wireSchema = c->serialize(
-            make_pair(event->getType(), event->getData()), wire);
+    string wireSchema = c->serialize(make_pair(event->getType(),
+            event->getData()), wire);
 
     // ---- Begin split message implementation ----
     RSCDEBUG(logger, "Whole message size (data only): " << wire.size());

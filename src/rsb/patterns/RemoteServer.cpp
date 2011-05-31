@@ -58,12 +58,16 @@ public:
     void handle(EventPtr event) {
         {
             boost::mutex::scoped_lock lock(mutex);
-            if (event && event->hasMetaInfo("ServerRequestId")
+            if (event
+                    && event->mutableMetaData().hasUserInfo("ServerRequestId")
                     && waitForEvents.count(
-                            event->getMetaInfo("ServerRequestId"))) {
+                            event->mutableMetaData().getUserInfo(
+                                    "ServerRequestId"))) {
                 RSCDEBUG(logger, "Received reply event " << *event);
-                waitForEvents.erase(event->getMetaInfo("ServerRequestId"));
-                storedEvents[event->getMetaInfo("ServerRequestId")] = event;
+                waitForEvents.erase(event->mutableMetaData().getUserInfo(
+                        "ServerRequestId"));
+                storedEvents[event->mutableMetaData().getUserInfo(
+                        "ServerRequestId")] = event;
             } else {
                 RSCTRACE(logger, "Received uninteresting event " << *event);
             }
@@ -176,7 +180,7 @@ EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
 
     string requestId = rsc::misc::UUID().getIdAsString();
     // TODO duplicated string from Server
-    data->addMetaInfo("ServerRequestId", requestId, true);
+    data->mutableMetaData().setUserInfo("ServerRequestId", requestId);
 
     MethodSet methodSet = getMethodSet(methodName, data->getType());
     methodSet.handler->expectReply(requestId);
@@ -185,7 +189,7 @@ EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
 
     // wait for the reply
     EventPtr result = methodSet.handler->getReply(requestId);
-    if (result->hasMetaInfo("isException")) {
+    if (result->mutableMetaData().hasUserInfo("isException")) {
         assert(result->getType() == "string");
         throw RemoteTargetInvocationException("Error calling remote method '"
                 + methodName + "': " + *(boost::static_pointer_cast<string>(

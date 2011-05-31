@@ -44,8 +44,7 @@ string Event::getClassName() const {
 
 void Event::printContents(ostream &stream) const {
     stream << "id = " << id.getIdAsString() << " type = " << type
-            << " scope = " << scope << " meta-infos = " << this->metaInfos
-            << ", metaData = " << metaData;
+            << " scope = " << scope << ", metaData = " << metaData;
 }
 
 void Event::setId(const rsc::misc::UUID &id) {
@@ -86,36 +85,6 @@ string Event::getMethod() const {
 
 void Event::setMethod(const string &method) {
     this->method = method;
-}
-
-bool Event::hasMetaInfo(const string &key) const {
-    return metaInfos.count(key);
-}
-
-string Event::getMetaInfo(const string &key) const {
-    if (metaInfos.count(key)) {
-        return metaInfos.find(key)->second;
-    } else {
-        throw runtime_error("No meta info registered under key '" + key + "'");
-    }
-}
-
-void Event::addMetaInfo(const string &key, const string &value, bool override) {
-
-    if (metaInfos.count(key) && !override) {
-        throw runtime_error(
-                "There already is meta info registered under key '" + key + "'");
-    }
-    metaInfos[key] = value;
-
-}
-
-map<string, string>::const_iterator Event::metaInfoBegin() const {
-    return metaInfos.begin();
-}
-
-map<string, string>::const_iterator Event::metaInfoEnd() const {
-    return metaInfos.end();
 }
 
 MetaData Event::getMetaData() const {

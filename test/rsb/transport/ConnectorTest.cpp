@@ -238,8 +238,8 @@ TEST_P(ConnectorTest, testRoundtrip)
             EXPECT_EQ(sent->getType(), received->getType()) << "Error matching event type for index " << i << " and message size " << *sizeIt;
             EXPECT_EQ(sent->getScope(), received->getScope()) << "Error matching event scope for index " << i << " and message size " << *sizeIt;
 
-
-            // timing met data
+            // meta data
+            EXPECT_EQ(sent->getMetaData().getSenderId(), received->getMetaData().getSenderId());
             EXPECT_GE(received->getMetaData().getRawReceiveTime(), sendTime);
             EXPECT_LE(received->getMetaData().getRawReceiveTime(), rsc::misc::currentTimeMicros());
         }

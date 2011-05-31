@@ -70,21 +70,20 @@ int main(void) {
     }
 
     // Create Informer and Event
-    Informer<string>::Ptr informer = factory.createInformer<string> (
-            Scope("/example/informer"));
+    Informer<string>::Ptr informer = factory.createInformer<string> (Scope(
+            "/example/informer"));
     Informer<string>::DataPtr data(bin_doc);
 
     cout << "sending " << data->length() << " bytes" << endl;
 
-    EventPtr event = EventPtr(
-            new Event(Scope("/example/informer"),
-                    boost::static_pointer_cast<void>(data),
-                    rsc::runtime::typeName<string>()));
-    event->addMetaInfo("file", file);
+    EventPtr event = EventPtr(new Event(Scope("/example/informer"),
+            boost::static_pointer_cast<void>(data), rsc::runtime::typeName<
+                    string>()));
+    event->mutableMetaData().setUserInfo("file", file);
     for (unsigned int j = 0; j < numMsg; j++) {
         // Get current time
-        event->addMetaInfo("startTime",
-                to_iso_string(microsec_clock::local_time()), true);
+        event->mutableMetaData().setUserInfo("startTime", to_iso_string(
+                microsec_clock::local_time()));
 
         // Send event
         informer->publish(event);

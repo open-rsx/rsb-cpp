@@ -116,13 +116,34 @@ TEST(MetaDataTest, testUserTimes)
 
 }
 
+TEST(MetaDataTest, testUserInfos)
+{
+
+    MetaData meta;
+    const string key = "afdadfasfd";
+    const string value = "213123";
+
+    EXPECT_FALSE(meta.hasUserInfo(key));
+    meta.setUserInfo(key, value);
+    EXPECT_TRUE(meta.hasUserInfo(key));
+    EXPECT_EQ(value, meta.getUserInfo(key));
+    const string updatedInfo = "foobar";
+    meta.setUserInfo(key, updatedInfo);
+    EXPECT_EQ(updatedInfo, meta.getUserInfo(key));
+
+    EXPECT_EQ(size_t(1), meta.userInfoKeys().size());
+    EXPECT_TRUE(meta.userInfoKeys().count(key) > 0);
+
+    EXPECT_THROW(meta.getUserInfo("unknown"), invalid_argument);
+
+}
+
 TEST(MetaDataTest, testComparison)
 {
 
     MetaData meta1;
     MetaData meta2;
     EXPECT_NE(meta1, meta2); // distinct times + UUIDs
-    meta2.setSenderId(meta1.getSenderId());
     meta2.setEventCreationTime(meta1.getEventCreationTime());
     EXPECT_NE(meta1, meta2); // still distinct UUIDs
 
@@ -131,4 +152,12 @@ TEST(MetaDataTest, testComparison)
 
     meta1.setSenderId(rsc::misc::UUID());
     EXPECT_NE(meta1, meta2); // distinct UUIDs, again
+
+    meta2 = meta1;
+    EXPECT_EQ(meta1, meta2);
+    meta2.setUserInfo("foo", "bar");
+    EXPECT_NE(meta1, meta2);
+    meta1.setUserInfo("foo", "bar");
+    EXPECT_EQ(meta1, meta2);
+
 }

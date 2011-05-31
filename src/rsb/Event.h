@@ -92,13 +92,6 @@ public:
      */
     void setMethod(const std::string &method);
 
-    bool hasMetaInfo(const std::string &key) const;
-    std::string getMetaInfo(const std::string &key) const;
-    void addMetaInfo(const std::string &key, const std::string &value,
-            bool override = false);
-    std::map<std::string, std::string>::const_iterator metaInfoBegin() const;
-    std::map<std::string, std::string>::const_iterator metaInfoEnd() const;
-
     /**
      * @name meta-data access
      */
@@ -137,8 +130,6 @@ private:
     std::string type;
 
     std::string method;
-
-    std::map<std::string, std::string> metaInfos;
 
     MetaData metaData;
 

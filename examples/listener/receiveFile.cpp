@@ -57,12 +57,13 @@ public:
 
         counter++;
         ptime receiveTime = microsec_clock::local_time();
-        string file = e->getMetaInfo("file");
+        string file = e->mutableMetaData().getUserInfo("file");
         string fileLoc = "/tmp/" + file;
 
         boost::shared_ptr<string> data = boost::static_pointer_cast<string>(
                 e->getData());
-        ptime sendTime = from_iso_string(e->getMetaInfo("startTime"));
+        ptime sendTime = from_iso_string(e->mutableMetaData().getUserInfo(
+                "startTime"));
         cout << "Received message [" << counter << "] - " << file << endl;
         cout << "... elapsed time between SEND -> RECEIVE: "
                 << to_simple_string(receiveTime - sendTime) << endl;

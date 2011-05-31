@@ -27,7 +27,7 @@
 #include <rsc/misc/UUID.h>
 
 #include "rsb/transport/spread/Assembly.h"
-#include "rsb/protocol/Notification.pb.h"
+#include "rsb/protocol/Protocol.pb.h"
 
 #include "../../InformerTask.h"
 
@@ -53,21 +53,22 @@ TEST(AssemblyTest, testAssembly)
     initialNotification->set_id(id);
 
     const string initialString = rsc::misc::randAlnumStr(10);
-    initialNotification->mutable_data()->set_binary(initialString);
+    initialNotification->set_data(initialString);
     containedData << initialString;
 
     const unsigned int dataParts = 5;
     initialNotification->set_num_data_parts(dataParts);
     initialNotification->set_data_part(0);
     Assembly assembly(initialNotification);
-    EXPECT_FALSE(assembly.isComplete());
+    EXPECT_FALSE(assembly.isComplete())
+        ;
 
-    for(unsigned int i = 1; i < dataParts; ++i) {
+    for (unsigned int i = 1; i < dataParts; ++i) {
 
         protocol::NotificationPtr newNotification(new protocol::Notification);
 
         const string newString = rsc::misc::randAlnumStr(30);
-        newNotification->mutable_data()->set_binary(newString);
+        newNotification->set_data(newString);
         containedData << newString;
 
         newNotification->set_id(id);
@@ -77,10 +78,13 @@ TEST(AssemblyTest, testAssembly)
         assembly.add(newNotification);
 
         if (i == (dataParts - 1)) {
-            EXPECT_TRUE(assembly.isComplete());
-            EXPECT_EQ(containedData.str(), *(assembly.getCompleteData()));
+            EXPECT_TRUE(assembly.isComplete())
+                ;
+            EXPECT_EQ(containedData.str(), *(assembly.getCompleteData()))
+                ;
         } else {
-            EXPECT_FALSE(assembly.isComplete());
+            EXPECT_FALSE(assembly.isComplete())
+                ;
         }
 
     }
@@ -96,16 +100,19 @@ TEST(AssemblyTest, testAge)
     initialNotification->set_id(id);
 
     const string initialString = rsc::misc::randAlnumStr(10);
-    initialNotification->mutable_data()->set_binary(initialString);
+    initialNotification->set_data(initialString);
 
     const unsigned int dataParts = 5;
     initialNotification->set_num_data_parts(dataParts);
     initialNotification->set_data_part(0);
     Assembly assembly(initialNotification);
-    EXPECT_LT(assembly.age(), (unsigned int) 1);
+    EXPECT_LT(assembly.age(), (unsigned int) 1)
+        ;
     boost::this_thread::sleep(boost::posix_time::seconds(3));
-    EXPECT_GE(assembly.age(), (unsigned int) 3);
-    EXPECT_LE(assembly.age(), (unsigned int) 5);
+    EXPECT_GE(assembly.age(), (unsigned int) 3)
+        ;
+    EXPECT_LE(assembly.age(), (unsigned int) 5)
+        ;
 
 }
 
@@ -123,14 +130,16 @@ TEST(AssemblyPoolTest, testAssembly)
         initialNotification->set_id(id);
 
         const string initialString = rsc::misc::randAlnumStr(10);
-        initialNotification->mutable_data()->set_binary(initialString);
+        initialNotification->set_data(initialString);
 
         initialNotification->set_num_data_parts(1);
         initialNotification->set_data_part(0);
 
         boost::shared_ptr<string> result = pool.add(initialNotification);
-        ASSERT_TRUE(result);
-        EXPECT_EQ(initialString, *result);
+        ASSERT_TRUE(result)
+            ;
+        EXPECT_EQ(initialString, *result)
+            ;
 
     }
 
@@ -139,26 +148,29 @@ TEST(AssemblyPoolTest, testAssembly)
 
         stringstream containedData;
 
-        protocol::NotificationPtr initialNotification(new protocol::Notification);
+        protocol::NotificationPtr initialNotification(
+                new protocol::Notification);
 
         const string id = rsc::misc::UUID().getIdAsString();
         initialNotification->set_id(id);
 
         const string initialString = rsc::misc::randAlnumStr(10);
-        initialNotification->mutable_data()->set_binary(initialString);
+        initialNotification->set_data(initialString);
         containedData << initialString;
 
         const unsigned int dataParts = 5;
         initialNotification->set_num_data_parts(dataParts);
         initialNotification->set_data_part(0);
-        EXPECT_FALSE(pool.add(initialNotification));
+        EXPECT_FALSE(pool.add(initialNotification))
+            ;
 
-        for(unsigned int i = 1; i < dataParts; ++i) {
+        for (unsigned int i = 1; i < dataParts; ++i) {
 
-            protocol::NotificationPtr newNotification(new protocol::Notification);
+            protocol::NotificationPtr newNotification(
+                    new protocol::Notification);
 
             const string newString = rsc::misc::randAlnumStr(30);
-            newNotification->mutable_data()->set_binary(newString);
+            newNotification->set_data(newString);
             containedData << newString;
 
             newNotification->set_id(id);
@@ -168,10 +180,13 @@ TEST(AssemblyPoolTest, testAssembly)
             boost::shared_ptr<string> result = pool.add(newNotification);
 
             if (i == (dataParts - 1)) {
-                EXPECT_TRUE(result);
-                EXPECT_EQ(containedData.str(), *result);
+                EXPECT_TRUE(result)
+                    ;
+                EXPECT_EQ(containedData.str(), *result)
+                    ;
             } else {
-                EXPECT_FALSE(result);
+                EXPECT_FALSE(result)
+                    ;
             }
 
         }
@@ -196,12 +211,13 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
         initialNotification->set_id(id);
 
         const string initialString = rsc::misc::randAlnumStr(10);
-        initialNotification->mutable_data()->set_binary(initialString);
+        initialNotification->set_data(initialString);
 
         initialNotification->set_num_data_parts(dataParts);
         initialNotification->set_data_part(0);
 
-        EXPECT_FALSE(pool.add(initialNotification));
+        EXPECT_FALSE(pool.add(initialNotification))
+            ;
     }
 
     // wait longer than the pruning time
@@ -212,7 +228,7 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
         protocol::NotificationPtr newNotification(new protocol::Notification);
 
         const string newString = rsc::misc::randAlnumStr(30);
-        newNotification->mutable_data()->set_binary(newString);
+        newNotification->set_data(newString);
 
         newNotification->set_id(id);
         newNotification->set_num_data_parts(dataParts);
@@ -220,7 +236,8 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
 
         boost::shared_ptr<string> result = pool.add(newNotification);
 
-        EXPECT_TRUE(result);
+        EXPECT_TRUE(result)
+            ;
 
     }
 
@@ -244,12 +261,13 @@ TEST(AssemblyPoolTest, testPruning)
             initialNotification->set_id(id);
 
             const string initialString = rsc::misc::randAlnumStr(10);
-            initialNotification->mutable_data()->set_binary(initialString);
+            initialNotification->set_data(initialString);
 
             initialNotification->set_num_data_parts(dataParts);
             initialNotification->set_data_part(0);
 
-            EXPECT_FALSE(pool.add(initialNotification));
+            EXPECT_FALSE(pool.add(initialNotification))
+                ;
         }
 
         // wait longer than the pruning time
@@ -257,10 +275,11 @@ TEST(AssemblyPoolTest, testPruning)
 
         // add the missing message fragment and expect no result
         {
-            protocol::NotificationPtr newNotification(new protocol::Notification);
+            protocol::NotificationPtr newNotification(
+                    new protocol::Notification);
 
             const string newString = rsc::misc::randAlnumStr(30);
-            newNotification->mutable_data()->set_binary(newString);
+            newNotification->set_data(newString);
 
             newNotification->set_id(id);
             newNotification->set_num_data_parts(dataParts);
@@ -268,7 +287,8 @@ TEST(AssemblyPoolTest, testPruning)
 
             boost::shared_ptr<string> result = pool.add(newNotification);
 
-            EXPECT_FALSE(result);
+            EXPECT_FALSE(result)
+                ;
 
         }
     }
@@ -287,12 +307,13 @@ TEST(AssemblyPoolTest, testPruning)
             initialNotification->set_id(id);
 
             const string initialString = rsc::misc::randAlnumStr(10);
-            initialNotification->mutable_data()->set_binary(initialString);
+            initialNotification->set_data(initialString);
 
             initialNotification->set_num_data_parts(dataParts);
             initialNotification->set_data_part(0);
 
-            EXPECT_FALSE(pool.add(initialNotification));
+            EXPECT_FALSE(pool.add(initialNotification))
+                ;
         }
 
         // wait longer than the pruning time
@@ -300,10 +321,11 @@ TEST(AssemblyPoolTest, testPruning)
 
         // add the missing message fragment and expect a result
         {
-            protocol::NotificationPtr newNotification(new protocol::Notification);
+            protocol::NotificationPtr newNotification(
+                    new protocol::Notification);
 
             const string newString = rsc::misc::randAlnumStr(30);
-            newNotification->mutable_data()->set_binary(newString);
+            newNotification->set_data(newString);
 
             newNotification->set_id(id);
             newNotification->set_num_data_parts(dataParts);
@@ -311,7 +333,8 @@ TEST(AssemblyPoolTest, testPruning)
 
             boost::shared_ptr<string> result = pool.add(newNotification);
 
-            EXPECT_TRUE(result);
+            EXPECT_TRUE(result)
+                ;
 
         }
     }

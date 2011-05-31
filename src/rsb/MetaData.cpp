@@ -44,7 +44,8 @@ void MetaData::printContents(std::ostream &stream) const {
     stream << "senderId = " << senderId << ", eventCreationTime = "
             << eventCreationTime << ", sendTime = " << sendTime
             << ", rawReceiveTime = " << rawReceiveTime << ", receiveTime = "
-            << receiveTime << ", userTimes = " << userTimes;
+            << receiveTime << ", userTimes = " << userTimes << ", userInfos = "
+            << userInfos;
 }
 
 rsc::misc::UUID MetaData::getSenderId() const {
@@ -134,11 +135,46 @@ void MetaData::setUserTime(const string &key, const boost::uint64_t &time) {
     }
 }
 
+set<string> MetaData::userInfoKeys() const {
+    set<string> keys;
+    for (map<string, string>::const_iterator it = userInfos.begin(); it
+            != userInfos.end(); ++it) {
+        keys.insert(it->first);
+    }
+    return keys;
+}
+
+bool MetaData::hasUserInfo(const string &key) const {
+    return userInfos.count(key);
+}
+
+string MetaData::getUserInfo(const string &key) const {
+    if (userInfos.count(key)) {
+        return userInfos.find(key)->second;
+    } else {
+        throw invalid_argument("No meta info registered under key '" + key + "'");
+    }
+}
+
+void MetaData::setUserInfo(const string &key, const string &value) {
+    userInfos.erase(key);
+    userInfos[key] = value;
+}
+
+map<string, string>::const_iterator MetaData::userInfosBegin() const {
+    return userInfos.begin();
+}
+
+map<string, string>::const_iterator MetaData::userInfosEnd() const {
+    return userInfos.end();
+}
+
 bool MetaData::operator==(const MetaData &other) const {
     return (senderId == other.senderId) && (eventCreationTime
             == other.eventCreationTime) && (sendTime == other.sendTime)
             && (rawReceiveTime == other.rawReceiveTime) && (receiveTime
-            == other.receiveTime) && (userTimes == other.userTimes);
+            == other.receiveTime) && (userTimes == other.userTimes)
+            && (userInfos == other.userInfos);
 }
 
 ostream &operator<<(ostream &stream, const MetaData &meta) {

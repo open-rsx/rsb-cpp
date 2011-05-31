@@ -69,7 +69,7 @@ public:
             return;
         }
 
-        if (!event->hasMetaInfo(requestIdKey)) {
+        if (!event->mutableMetaData().hasUserInfo(requestIdKey)) {
             RSCERROR(logger,
                     "Request event does not contain a valid request ID "
                     << "to answer to.");
@@ -82,8 +82,8 @@ public:
             EventPtr returnEvent(new Event());
             returnEvent->setType(callback->getReplyType());
             returnEvent->setData(returnData);
-            returnEvent ->addMetaInfo(requestIdKey, event->getMetaInfo(
-                    requestIdKey));
+            returnEvent->mutableMetaData().setUserInfo(requestIdKey,
+                    event->mutableMetaData().getUserInfo(requestIdKey));
             informer->publish(returnEvent);
         } catch (exception &e) {
             EventPtr returnEvent(new Event());
@@ -91,9 +91,9 @@ public:
             string exceptionType = typeid(e).name();
             returnEvent->setData(boost::shared_ptr<string>(new string(
                     exceptionType + ": " + e.what())));
-            returnEvent->addMetaInfo(requestIdKey, event->getMetaInfo(
-                    requestIdKey));
-            returnEvent->addMetaInfo("isException", "");
+            returnEvent->mutableMetaData().setUserInfo(requestIdKey,
+                    event->mutableMetaData().getUserInfo(requestIdKey));
+            returnEvent->mutableMetaData().setUserInfo("isException", "");
             informer->publish(returnEvent);
         }
 

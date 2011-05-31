@@ -66,6 +66,13 @@ public:
     boost::uint64_t getUserTime(const std::string &key) const;
     void setUserTime(const std::string &key, const boost::uint64_t &time = 0);
 
+    std::set<std::string> userInfoKeys() const;
+    bool hasUserInfo(const std::string &key) const;
+    std::string getUserInfo(const std::string &key) const;
+    void setUserInfo(const std::string &key, const std::string &value);
+    std::map<std::string, std::string>::const_iterator userInfosBegin() const;
+    std::map<std::string, std::string>::const_iterator userInfosEnd() const;
+
     bool operator==(const MetaData &other) const;
 
 private:
@@ -78,6 +85,7 @@ private:
     boost::uint64_t receiveTime;
 
     std::map<std::string, boost::uint64_t> userTimes;
+    std::map<std::string, std::string> userInfos;
 
 };
 
