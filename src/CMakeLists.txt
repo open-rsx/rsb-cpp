@@ -11,10 +11,6 @@ IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
     SET_TARGET_PROPERTIES(${SPREAD_PROTOCOL_NAME} PROPERTIES COMPILE_FLAGS -fPIC)
 ENDIF()
 
-# TODO why do we need to install them? they should be fully internal
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Notification.pb.h DESTINATION include/rsb/protocol)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol/Attachment.pb.h DESTINATION include/rsb/protocol)
-
 CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/rsb)
 CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @ONLY)
