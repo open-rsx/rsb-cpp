@@ -89,8 +89,8 @@ void OutConnector::fillNotification(protocol::Notification &notification,
     notification.set_id(event->getId().getIdAsString());
     notification.set_scope(event->getScope().toString());
     notification.set_wire_schema(wireSchema);
-    notification.mutable_meta_data()->set_sender_id(
-            event->getMetaData().getSenderId().getIdAsString());
+    notification.mutable_meta_data()->set_sender_id(event->getMetaData().getSenderId().getId().data,
+                                                    event->getMetaData().getSenderId().getId().size());
     notification.mutable_meta_data()->set_create_time(
             event->getMetaData().getEventCreationTime());
     notification.mutable_meta_data()->set_send_time(
