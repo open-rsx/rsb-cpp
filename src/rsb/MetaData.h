@@ -49,29 +49,145 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;
 
+    /**
+     * Returns the ID (a UUID) of the sending participant.
+     *
+     * @return UUID
+     */
     rsc::misc::UUID getSenderId() const;
+    /**
+     * Sets the ID (a UUID) of the sending participant.
+     *
+     * @param senderId id of the sending participant
+     */
     void setSenderId(const rsc::misc::UUID &senderId);
 
+    /**
+     * @name framework time stamps
+     *
+     * Timestamps supplied by the rrameowrk itself.
+     */
+    //@{
+    /**
+     * Returns a time stamp that is automatically filled with the time the event
+     * instance was created by the language binding. This should usually reflect
+     * the time at which the notified condition most likely occurred in the
+     * sender. If event instances are reused, it has to be reset manually by the
+     * client.
+     *
+     * @return timestamp in microseconds
+     */
     boost::uint64_t getCreateTime() const;
+    /**
+     * Sets the time stamp that is automatically filled with the time the event
+     * instance was created by the language binding. This should usually reflect
+     * the time at which the notified condition most likely occurred in the
+     * sender. If event instances are reused, it has to be reset manually by the
+     * client.
+     *
+     * @param time timestamp in microseconds or 0 to use current system time
+     */
     void setCreateTime(const boost::uint64_t &time = 0);
+
+    /**
+     * Returns the time at which the generated notification for an event was
+     * sent on the bus (after serialization).
+     *
+     * @return timestamp in microseconds
+     */
     boost::uint64_t getSendTime() const;
+    /**
+     * Sets the time at which the generated notification for an event was
+     * sent on the bus (after serialization).
+     *
+     * @param time timestamp in microseconds or 0 to use current system time
+     */
     void setSendTime(const boost::uint64_t &time = 0);
+
+    /**
+     * Returns the time at which an event is received by listener in its encoded
+     * form.
+     *
+     * @return timestamp in microseconds
+     */
     boost::uint64_t getReceiveTime() const;
+    /**
+     * Sets the time at which an event is received by listener in its encoded
+     * form.
+     *
+     * @param time timestamp in microseconds or 0 to use current system time
+     */
     void setReceiveTime(const boost::uint64_t &time = 0);
+
+    /**
+     * Returns the time at which an event was decoded and will be dispatched to
+     * the client as soon as possible (set directly before passing it to the
+     * client handler).
+     *
+     * @return timestamp in microseconds
+     */
     boost::uint64_t getDeliverTime() const;
+    /**
+     * Sets the time at which an event was decoded and will be dispatched to
+     * the client as soon as possible (set directly before passing it to the
+     * client handler).
+     *
+     * @param time timestamp in microseconds or 0 to use current system time
+     */
     void setDeliverTime(const boost::uint64_t &time = 0);
+    //@}
 
+    /**
+     * @name user timestamps
+     *
+     * Additional timestamps that can be filled by the framework client. Keys
+     * are unique.
+     */
+    //@{
+    /**
+     * Returns the keys of all available user times.
+     *
+     * @return set of all keys
+     */
     std::set<std::string> userTimeKeys() const;
+    /**
+     * Checks whether a user-provided timestamp with the given key exists
+     *
+     * @param key the key to check
+     * @return @c true if a timestamp for the given key exists, else @c false
+     */
     bool hasUserTime(const std::string &key) const;
+    /**
+     * Returns the user timestamp stored under the provided key.
+     *
+     * @param key key of the user-provided timestamp
+     * @return timetamp
+     * @throw std::invalid_argument no timestamp stored und the provided key
+     */
     boost::uint64_t getUserTime(const std::string &key) const;
+    /**
+     * Sets a user timestamp and replaces existing entries.
+     *
+     * @param key the key for the timestamp
+     * @param time time in microseconds or 0 to use current system time
+     */
     void setUserTime(const std::string &key, const boost::uint64_t &time = 0);
+    //@}
 
+    /**
+     * @name user infos
+     *
+     * A set of key-value style string infos that can be used by the client.
+     * Keys are unique.
+     */
+    //@{
     std::set<std::string> userInfoKeys() const;
     bool hasUserInfo(const std::string &key) const;
     std::string getUserInfo(const std::string &key) const;
     void setUserInfo(const std::string &key, const std::string &value);
     std::map<std::string, std::string>::const_iterator userInfosBegin() const;
     std::map<std::string, std::string>::const_iterator userInfosEnd() const;
+    //@}
 
     bool operator==(const MetaData &other) const;
 
