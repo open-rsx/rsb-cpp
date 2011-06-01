@@ -29,8 +29,8 @@ using namespace std;
 namespace rsb {
 
 MetaData::MetaData() :
-    eventCreationTime(rsc::misc::currentTimeMicros()), sendTime(0),
-            rawReceiveTime(0), receiveTime(0) {
+    createTime(rsc::misc::currentTimeMicros()), sendTime(0), receiveTime(0),
+            deliverTime(0) {
 }
 
 MetaData::~MetaData() {
@@ -41,11 +41,10 @@ string MetaData::getClassName() const {
 }
 
 void MetaData::printContents(std::ostream &stream) const {
-    stream << "senderId = " << senderId << ", eventCreationTime = "
-            << eventCreationTime << ", sendTime = " << sendTime
-            << ", rawReceiveTime = " << rawReceiveTime << ", receiveTime = "
-            << receiveTime << ", userTimes = " << userTimes << ", userInfos = "
-            << userInfos;
+    stream << "senderId = " << senderId << ", creationTime = " << createTime
+            << ", sendTime = " << sendTime << ", receiveTime = " << receiveTime
+            << ", deliverTime = " << deliverTime << ", userTimes = "
+            << userTimes << ", userInfos = " << userInfos;
 }
 
 rsc::misc::UUID MetaData::getSenderId() const {
@@ -56,15 +55,15 @@ void MetaData::setSenderId(const rsc::misc::UUID &senderId) {
     this->senderId = senderId;
 }
 
-boost::uint64_t MetaData::getEventCreationTime() const {
-    return eventCreationTime;
+boost::uint64_t MetaData::getCreateTime() const {
+    return createTime;
 }
 
-void MetaData::setEventCreationTime(const boost::uint64_t &time) {
+void MetaData::setCreateTime(const boost::uint64_t &time) {
     if (time == 0) {
-        eventCreationTime = rsc::misc::currentTimeMicros();
+        createTime = rsc::misc::currentTimeMicros();
     } else {
-        eventCreationTime = time;
+        createTime = time;
     }
 }
 
@@ -80,18 +79,6 @@ void MetaData::setSendTime(const boost::uint64_t &time) {
     }
 }
 
-boost::uint64_t MetaData::getRawReceiveTime() const {
-    return rawReceiveTime;
-}
-
-void MetaData::setRawReceiveTime(const boost::uint64_t &time) {
-    if (time == 0) {
-        rawReceiveTime = rsc::misc::currentTimeMicros();
-    } else {
-        rawReceiveTime = time;
-    }
-}
-
 boost::uint64_t MetaData::getReceiveTime() const {
     return receiveTime;
 }
@@ -101,6 +88,18 @@ void MetaData::setReceiveTime(const boost::uint64_t &time) {
         receiveTime = rsc::misc::currentTimeMicros();
     } else {
         receiveTime = time;
+    }
+}
+
+boost::uint64_t MetaData::getDeliverTime() const {
+    return deliverTime;
+}
+
+void MetaData::setDeliverTime(const boost::uint64_t &time) {
+    if (time == 0) {
+        deliverTime = rsc::misc::currentTimeMicros();
+    } else {
+        deliverTime = time;
     }
 }
 
@@ -152,7 +151,8 @@ string MetaData::getUserInfo(const string &key) const {
     if (userInfos.count(key)) {
         return userInfos.find(key)->second;
     } else {
-        throw invalid_argument("No meta info registered under key '" + key + "'");
+        throw invalid_argument("No meta info registered under key '" + key
+                + "'");
     }
 }
 
@@ -170,11 +170,10 @@ map<string, string>::const_iterator MetaData::userInfosEnd() const {
 }
 
 bool MetaData::operator==(const MetaData &other) const {
-    return (senderId == other.senderId) && (eventCreationTime
-            == other.eventCreationTime) && (sendTime == other.sendTime)
-            && (rawReceiveTime == other.rawReceiveTime) && (receiveTime
-            == other.receiveTime) && (userTimes == other.userTimes)
-            && (userInfos == other.userInfos);
+    return (senderId == other.senderId) && (createTime == other.createTime)
+            && (sendTime == other.sendTime) && (receiveTime
+            == other.receiveTime) && (deliverTime == other.deliverTime)
+            && (userTimes == other.userTimes) && (userInfos == other.userInfos);
 }
 
 ostream &operator<<(ostream &stream, const MetaData &meta) {

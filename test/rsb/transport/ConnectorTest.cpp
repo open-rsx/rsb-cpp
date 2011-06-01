@@ -240,8 +240,8 @@ TEST_P(ConnectorTest, testRoundtrip)
 
             // meta data
             EXPECT_EQ(sent->getMetaData().getSenderId(), received->getMetaData().getSenderId());
-            EXPECT_GE(received->getMetaData().getRawReceiveTime(), sendTime);
-            EXPECT_LE(received->getMetaData().getRawReceiveTime(), rsc::misc::currentTimeMicros());
+            EXPECT_GE(received->getMetaData().getReceiveTime(), sendTime);
+            EXPECT_LE(received->getMetaData().getReceiveTime(), rsc::misc::currentTimeMicros());
         }
 
     }

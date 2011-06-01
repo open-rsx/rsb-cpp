@@ -93,7 +93,7 @@ void OutConnector::fillNotification(protocol::Notification &notification,
             event->getMetaData().getSenderId().getId().data,
             event->getMetaData().getSenderId().getId().size());
     notification.mutable_meta_data()->set_create_time(
-            event->getMetaData().getEventCreationTime());
+            event->getMetaData().getCreateTime());
     notification.mutable_meta_data()->set_send_time(
             event->getMetaData().getSendTime());
     for (map<string, string>::const_iterator it =

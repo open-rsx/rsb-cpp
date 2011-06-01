@@ -36,6 +36,11 @@ using namespace rsb;
 
 int main(void) {
 
+    rsc::misc::UUID id("2a4b89df-d5a2-4671-af2e-7e7f7ff8961d");
+    cout << "ID: " << id << endl;
+    boost::uint8_t data[16];
+    memcpy(data, id.getId().data, 16);
+
     Factory &factory = Factory::getInstance();
 
     LoggerPtr l = Logger::getLogger("informer");

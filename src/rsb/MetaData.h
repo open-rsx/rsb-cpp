@@ -52,14 +52,14 @@ public:
     rsc::misc::UUID getSenderId() const;
     void setSenderId(const rsc::misc::UUID &senderId);
 
-    boost::uint64_t getEventCreationTime() const;
-    void setEventCreationTime(const boost::uint64_t &time = 0);
+    boost::uint64_t getCreateTime() const;
+    void setCreateTime(const boost::uint64_t &time = 0);
     boost::uint64_t getSendTime() const;
     void setSendTime(const boost::uint64_t &time = 0);
-    boost::uint64_t getRawReceiveTime() const;
-    void setRawReceiveTime(const boost::uint64_t &time = 0);
     boost::uint64_t getReceiveTime() const;
     void setReceiveTime(const boost::uint64_t &time = 0);
+    boost::uint64_t getDeliverTime() const;
+    void setDeliverTime(const boost::uint64_t &time = 0);
 
     std::set<std::string> userTimeKeys() const;
     bool hasUserTime(const std::string &key) const;
@@ -79,10 +79,10 @@ private:
 
     rsc::misc::UUID senderId;
 
-    boost::uint64_t eventCreationTime;
+    boost::uint64_t createTime;
     boost::uint64_t sendTime;
-    boost::uint64_t rawReceiveTime;
     boost::uint64_t receiveTime;
+    boost::uint64_t deliverTime;
 
     std::map<std::string, boost::uint64_t> userTimes;
     std::map<std::string, std::string> userInfos;

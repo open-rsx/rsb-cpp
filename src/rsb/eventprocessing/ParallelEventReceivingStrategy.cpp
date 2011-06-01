@@ -176,7 +176,7 @@ void ParallelEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e
 }
 
 void ParallelEventReceivingStrategy::handle(EventPtr event) {
-    event->mutableMetaData().setReceiveTime(rsc::misc::currentTimeMicros());
+    event->mutableMetaData().setDeliverTime(rsc::misc::currentTimeMicros());
     pool.push(event);
 }
 

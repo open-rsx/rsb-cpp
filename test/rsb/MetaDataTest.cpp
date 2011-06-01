@@ -34,10 +34,10 @@ TEST(MetaDataTest, testConstruction)
 {
 
     MetaData meta;
-    EXPECT_GT(meta.getEventCreationTime(), rsc::misc::currentTimeMicros() - 100000);
-    EXPECT_LE(meta.getEventCreationTime(), rsc::misc::currentTimeMicros());
-    EXPECT_EQ((boost::uint64_t) 0, meta.getRawReceiveTime());
+    EXPECT_GT(meta.getCreateTime(), rsc::misc::currentTimeMicros() - 100000);
+    EXPECT_LE(meta.getCreateTime(), rsc::misc::currentTimeMicros());
     EXPECT_EQ((boost::uint64_t) 0, meta.getReceiveTime());
+    EXPECT_EQ((boost::uint64_t) 0, meta.getDeliverTime());
     EXPECT_EQ((boost::uint64_t) 0, meta.getSendTime());
     EXPECT_TRUE(meta.userTimeKeys().empty());
 
@@ -55,19 +55,19 @@ TEST(MetaDataTest, testDefaultTimesAuto)
 {
 
     MetaData meta;
-    meta.setEventCreationTime();
+    meta.setCreateTime();
     meta.setSendTime();
-    meta.setRawReceiveTime();
     meta.setReceiveTime();
+    meta.setDeliverTime();
 
-    EXPECT_GT(meta.getEventCreationTime(), rsc::misc::currentTimeMicros() - 100000);
-    EXPECT_LE(meta.getEventCreationTime(), rsc::misc::currentTimeMicros());
+    EXPECT_GT(meta.getCreateTime(), rsc::misc::currentTimeMicros() - 100000);
+    EXPECT_LE(meta.getCreateTime(), rsc::misc::currentTimeMicros());
     EXPECT_GT(meta.getSendTime(), rsc::misc::currentTimeMicros() - 100000);
     EXPECT_LE(meta.getSendTime(), rsc::misc::currentTimeMicros());
-    EXPECT_GT(meta.getRawReceiveTime(), rsc::misc::currentTimeMicros() - 100000);
-    EXPECT_LE(meta.getRawReceiveTime(), rsc::misc::currentTimeMicros());
     EXPECT_GT(meta.getReceiveTime(), rsc::misc::currentTimeMicros() - 100000);
     EXPECT_LE(meta.getReceiveTime(), rsc::misc::currentTimeMicros());
+    EXPECT_GT(meta.getDeliverTime(), rsc::misc::currentTimeMicros() - 100000);
+    EXPECT_LE(meta.getDeliverTime(), rsc::misc::currentTimeMicros());
 
 }
 
@@ -76,15 +76,15 @@ TEST(MetaDataTest, testDefaultTimesManual)
 
     MetaData meta;
     const boost::uint64_t time = 13123;
-    meta.setEventCreationTime(time);
+    meta.setCreateTime(time);
     meta.setSendTime(time);
-    meta.setRawReceiveTime(time);
     meta.setReceiveTime(time);
+    meta.setDeliverTime(time);
 
-    EXPECT_EQ(time, meta.getEventCreationTime());
+    EXPECT_EQ(time, meta.getCreateTime());
     EXPECT_EQ(time, meta.getSendTime());
-    EXPECT_EQ(time, meta.getRawReceiveTime());
     EXPECT_EQ(time, meta.getReceiveTime());
+    EXPECT_EQ(time, meta.getDeliverTime());
 
 }
 
@@ -144,7 +144,7 @@ TEST(MetaDataTest, testComparison)
     MetaData meta1;
     MetaData meta2;
     EXPECT_NE(meta1, meta2); // distinct times + UUIDs
-    meta2.setEventCreationTime(meta1.getEventCreationTime());
+    meta2.setCreateTime(meta1.getCreateTime());
     EXPECT_NE(meta1, meta2); // still distinct UUIDs
 
     meta2.setSenderId(meta1.getSenderId());

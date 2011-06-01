@@ -143,13 +143,13 @@ TEST(RoundtripTest, testRoundtrip)
         EXPECT_EQ(*(boost::static_pointer_cast<string>(sent->getData())), *(boost::static_pointer_cast<string>(received->getData())));
 
         EXPECT_EQ(informer->getId(), sent->getMetaData().getSenderId());
-        EXPECT_GT(sent->getMetaData().getEventCreationTime(), (boost::uint64_t) 0);
+        EXPECT_GT(sent->getMetaData().getCreateTime(), (boost::uint64_t) 0);
         EXPECT_GT(sent->getMetaData().getSendTime(), (boost::uint64_t) 0);
-        EXPECT_GE(sent->getMetaData().getSendTime(), sent->getMetaData().getEventCreationTime());
-        EXPECT_GT(received->getMetaData().getRawReceiveTime(), (boost::uint64_t) 0);
+        EXPECT_GE(sent->getMetaData().getSendTime(), sent->getMetaData().getCreateTime());
         EXPECT_GT(received->getMetaData().getReceiveTime(), (boost::uint64_t) 0);
-        EXPECT_GE(received->getMetaData().getReceiveTime(), received->getMetaData().getRawReceiveTime());
-        EXPECT_GE(received->getMetaData().getRawReceiveTime(), sent->getMetaData().getSendTime());
+        EXPECT_GT(received->getMetaData().getDeliverTime(), (boost::uint64_t) 0);
+        EXPECT_GE(received->getMetaData().getDeliverTime(), received->getMetaData().getReceiveTime());
+        EXPECT_GE(received->getMetaData().getReceiveTime(), sent->getMetaData().getSendTime());
 
     }
 

@@ -85,7 +85,7 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/
 
 void InConnector::handle(EventPtr event) {
 
-    event->mutableMetaData().setRawReceiveTime();
+    event->mutableMetaData().setReceiveTime();
     for (HandlerList::iterator it = this->handlers.begin(); it
             != this->handlers.end(); ++it) {
         (*it)->handle(event);
