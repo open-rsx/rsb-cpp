@@ -129,6 +129,10 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
         e->mutableMetaData().setUserInfo(notification->meta_data().user_infos(i).key(),
                 notification->meta_data().user_infos(i).value());
     }
+    for (int i = 0; i < notification->meta_data().user_times_size(); ++i) {
+        e->mutableMetaData().setUserTime(notification->meta_data().user_times(i).key(),
+                notification->meta_data().user_times(i).timestamp());
+    }
 
     // TODO error handling
     InConnector::ConverterPtr c = this->connector->getConverter(

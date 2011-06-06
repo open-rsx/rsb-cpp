@@ -134,6 +134,14 @@ void MetaData::setUserTime(const string &key, const boost::uint64_t &time) {
     }
 }
 
+map<string, boost::uint64_t>::const_iterator MetaData::userTimesBegin() const {
+    return userTimes.begin();
+}
+
+map<string, boost::uint64_t>::const_iterator MetaData::userTimesEnd() const {
+    return userTimes.end();
+}
+
 set<string> MetaData::userInfoKeys() const {
     set<string> keys;
     for (map<string, string>::const_iterator it = userInfos.begin(); it

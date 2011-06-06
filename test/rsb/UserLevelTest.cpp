@@ -72,8 +72,13 @@ public:
     }
 
     void execute() {
-        EventPtr e = informer->publish(
-                boost::shared_ptr<string>(new string("hello world")));
+        EventPtr e(new Event);
+        e->setType(rsc::runtime::typeName<string>());
+        e->setData(boost::shared_ptr<string>(new string("hello world")));
+        e->mutableMetaData().setUserInfo("foo", "blubb");
+        e->mutableMetaData().setUserTime("tttt");
+        e->mutableMetaData().setUserTime("xxxx", 42);
+        informer->publish(e);
         events.push_back(e);
         ++sentEvents;
         if (sentEvents == numEvents) {
@@ -100,9 +105,8 @@ TEST(RoundtripTest, testRoundtrip)
     p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
     spreadTransport.setOptions(p);
     config.addTransport(spreadTransport);
-    config.setQualityOfServiceSpec(
-            QualityOfServiceSpec(QualityOfServiceSpec::ORDERED,
-                    QualityOfServiceSpec::RELIABLE));
+    config.setQualityOfServiceSpec(QualityOfServiceSpec(
+            QualityOfServiceSpec::ORDERED, QualityOfServiceSpec::RELIABLE));
     factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/blah");
@@ -112,15 +116,12 @@ TEST(RoundtripTest, testRoundtrip)
 
     // domain objects
     unsigned int numEvents = 10;
-    boost::shared_ptr<UserInformerTask> source(
-            new UserInformerTask(informer, 10));
+    boost::shared_ptr<UserInformerTask> source(new UserInformerTask(informer,
+            10));
     WaitingObserver observer(numEvents, scope);
 
-    listener->addHandler(
-            rsb::HandlerPtr(
-                    new EventFunctionHandler(
-                            boost::bind(&WaitingObserver::handler, &observer,
-                                    _1))), true);
+    listener->addHandler(rsb::HandlerPtr(new EventFunctionHandler(boost::bind(
+            &WaitingObserver::handler, &observer, _1))), true);
 
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
@@ -150,6 +151,16 @@ TEST(RoundtripTest, testRoundtrip)
         EXPECT_GT(received->getMetaData().getDeliverTime(), (boost::uint64_t) 0);
         EXPECT_GE(received->getMetaData().getDeliverTime(), received->getMetaData().getReceiveTime());
         EXPECT_GE(received->getMetaData().getReceiveTime(), sent->getMetaData().getSendTime());
+        set<string> userInfoKeys = received->getMetaData().userInfoKeys();
+        EXPECT_EQ(sent->getMetaData().userInfoKeys(), userInfoKeys);
+        for (set<string>::const_iterator keyIt = userInfoKeys.begin(); keyIt != userInfoKeys.end(); ++keyIt) {
+            EXPECT_EQ(sent->getMetaData().getUserInfo(*keyIt), received->getMetaData().getUserInfo(*keyIt));
+        }
+        set<string> userTimeKeys = received->getMetaData().userTimeKeys();
+        EXPECT_EQ(sent->getMetaData().userTimeKeys(), userTimeKeys);
+        for (set<string>::const_iterator keyIt = userTimeKeys.begin(); keyIt != userTimeKeys.end(); ++keyIt) {
+            EXPECT_EQ(sent->getMetaData().getUserTime(*keyIt), received->getMetaData().getUserTime(*keyIt));
+        }
 
     }
 
@@ -173,13 +184,15 @@ TEST(InformerTest, testReturnValue)
             Factory::getInstance().getDefaultParticipantConfig());
 
     {
-        EventPtr event = informer->publish(
-                shared_ptr<string> (new string("foo")));
+        EventPtr event = informer->publish(shared_ptr<string> (
+                new string("foo")));
         EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
 
     {
-        EventPtr event = informer->publish(shared_ptr<void> (new string("foo")), rsc::runtime::typeName<std::string>());
+        EventPtr event = informer->publish(
+                shared_ptr<void> (new string("foo")), rsc::runtime::typeName<
+                        std::string>());
         EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
 }

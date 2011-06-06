@@ -172,6 +172,9 @@ public:
      * @param time time in microseconds or 0 to use current system time
      */
     void setUserTime(const std::string &key, const boost::uint64_t &time = 0);
+
+    std::map<std::string, boost::uint64_t>::const_iterator userTimesBegin() const;
+    std::map<std::string, boost::uint64_t>::const_iterator userTimesEnd() const;
     //@}
 
     /**

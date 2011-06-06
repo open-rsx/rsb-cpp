@@ -104,6 +104,14 @@ void OutConnector::fillNotification(protocol::Notification &notification,
         info->set_key(it->first);
         info->set_value(it->second);
     }
+    for (map<string, boost::uint64_t>::const_iterator it =
+            event->mutableMetaData().userTimesBegin(); it
+            != event->mutableMetaData().userTimesEnd(); ++it) {
+        UserTime *info =
+                notification.mutable_meta_data()->mutable_user_times()->Add();
+        info->set_key(it->first);
+        info->set_timestamp(it->second);
+    }
     notification.set_num_data_parts(numDataParts);
     notification.set_data_part(dataPart);
 
