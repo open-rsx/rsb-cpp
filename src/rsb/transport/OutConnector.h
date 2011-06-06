@@ -28,13 +28,17 @@
 namespace rsb {
 namespace transport {
 
-/** Objects of classes which implement this interface can be used to
+/**
+ * Objects of classes which implement this interface can be used to
  * send events by means of one transport mechanism.
+ *
+ * The handle method of this class has to update the send time of the event
+ * meta data according to the time the event was sent on the wire.
  *
  * @author jmoringe
  */
-class RSB_EXPORT OutConnector : public Connector,
-                                public eventprocessing::Handler {
+class RSB_EXPORT OutConnector: public Connector,
+        public eventprocessing::Handler {
 public:
     typedef boost::shared_ptr<OutConnector> Ptr;
 };
