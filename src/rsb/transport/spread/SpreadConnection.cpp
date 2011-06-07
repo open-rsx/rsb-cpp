@@ -43,13 +43,9 @@ namespace spread {
 
 SpreadConnection::SpreadConnection(const string &id, const string &host,
         unsigned int port) :
-            logger(Logger::getLogger("rsb.spread.SpreadConnection")),
-            connected(false),
-            host(host),
-            port(port),
-            spreadhost(
-                    (port == 0) ? host : str(format("%1%@%2%") % port % host)),
-            conId(id), msgCount(0) {
+    logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
+            host(host), port(port), spreadhost((port == 0) ? host : str(format(
+                    "%1%@%2%") % port % host)), conId(id), msgCount(0) {
     RSCDEBUG(logger, "instantiated spread connection with id " << conId
             << " to spread daemon at " << spreadhost);
 }
@@ -60,7 +56,7 @@ SpreadConnection::~SpreadConnection() {
 }
 
 void SpreadConnection::activate() {
-    // spread init and group join - not threadsafe
+    // XXX spread init and group join - not threadsafe, what to do about this?
     if (!connected) {
         RSCDEBUG(logger, "connecting to spread daemon at " << spreadhost);
         char spreadPrivateGroup[MAX_GROUP_NAME];
@@ -70,7 +66,6 @@ void SpreadConnection::activate() {
         if (ret != ACCEPT_SESSION) {
             switch (ret) {
             case ILLEGAL_SPREAD:
-                // TODO throw initialization exception
                 RSCFATAL(logger,
                         "spread connect error: connection to spread daemon at "
                         << spreadhost
@@ -78,40 +73,32 @@ void SpreadConnection::activate() {
                 ;
                 break;
             case COULD_NOT_CONNECT:
-                // TODO throw initialization exception
                 RSCFATAL(logger,
                         "spread connect error: connection to spread daemon failed due to socket errors")
                 ;
                 break;
             case CONNECTION_CLOSED:
-                // CHECK throw initialize exception?
                 RSCFATAL(
                         logger,
                         "spread connect error: communication errors occurred during setup of connection")
                 ;
-                throw CommException(
-                        "spread connect error: communication errors occurred during setup of connection");
             case REJECT_VERSION:
-                // TODO throw initialization exception
                 RSCFATAL(logger,
                         "spread connect error: daemon or library version mismatch")
                 ;
                 break;
             case REJECT_NO_NAME:
-                // TODO throw initialization exception
                 RSCFATAL(logger,
                         "spread connect error: protocol error during setup")
                 ;
                 break;
             case REJECT_ILLEGAL_NAME:
-                // TODO throw initialization exception
                 RSCFATAL(
                         logger,
                         "spread connect error: name provided violated requirement, length or illegal character")
                 ;
                 break;
             case REJECT_NOT_UNIQUE:
-                // TODO throw name exists exception
                 RSCFATAL(logger,
                         "spread connect error: name provided is not unique on this daemon")
                 ;
@@ -120,11 +107,9 @@ void SpreadConnection::activate() {
                 RSCFATAL(logger, "unknown spread connect error, value: " << ret)
                 ;
             }
-            // TODO throw exception
             SP_error(ret);
             throw CommException("Error during connection to spread daemon");
         } else {
-            // TODO return private group id as result of this function
             RSCDEBUG(logger, "success, private group id is " << spreadpg);
         }
         RSCINFO(logger, "connected to spread daemon");
