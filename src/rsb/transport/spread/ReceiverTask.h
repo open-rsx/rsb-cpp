@@ -21,6 +21,8 @@
 
 #include <map>
 
+#include <boost/thread.hpp>
+
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/RepetitiveTask.h>
 #include <rsc/misc/UUID.h>
@@ -48,7 +50,7 @@ class InConnector;
  * if Notifications are lost. As a default this pruning is disabled.
  *
  * @author swrede
- * @todo does action need locking if it is set while the task is running?
+ * @author jwienke
  */
 class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
@@ -98,9 +100,11 @@ private:
     rsc::logging::LoggerPtr logger;
     volatile bool cancelRequested;
     SpreadConnectionPtr con;
-    InConnector* connector;
+    InConnector *connector;
     AssemblyPoolPtr assemblyPool;
+    boost::recursive_mutex handlerMutex;
     eventprocessing::HandlerPtr handler;
+
 };
 
 }

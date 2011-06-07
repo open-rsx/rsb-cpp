@@ -71,7 +71,6 @@ public:
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
 
-    // if invoked, the event is dispatched to listeners, typically called by ports
     void handle(EventPtr e);
 
 private:

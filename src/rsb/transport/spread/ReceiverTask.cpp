@@ -126,11 +126,13 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     e->setScope(Scope(notification->scope()));
 
     for (int i = 0; i < notification->meta_data().user_infos_size(); ++i) {
-        e->mutableMetaData().setUserInfo(notification->meta_data().user_infos(i).key(),
+        e->mutableMetaData().setUserInfo(
+                notification->meta_data().user_infos(i).key(),
                 notification->meta_data().user_infos(i).value());
     }
     for (int i = 0; i < notification->meta_data().user_times_size(); ++i) {
-        e->mutableMetaData().setUserTime(notification->meta_data().user_times(i).key(),
+        e->mutableMetaData().setUserTime(
+                notification->meta_data().user_times(i).key(),
                 notification->meta_data().user_times(i).timestamp());
     }
 
@@ -142,6 +144,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     e->setType(deserialized.first);
     e->setData(deserialized.second);
 
+    boost::recursive_mutex::scoped_lock lock(handlerMutex);
     if (this->handler) {
         this->handler->handle(e);
     }
@@ -149,6 +152,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
 }
 
 void ReceiverTask::setHandler(HandlerPtr handler) {
+    boost::recursive_mutex::scoped_lock lock(handlerMutex);
     this->handler = handler;
 }
 
