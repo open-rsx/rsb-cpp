@@ -49,9 +49,6 @@ namespace rsb {
  *
  * @author swrede
  * @tparam T default data type to send by this informer
- *
- * @todo check thread-safety, e.g. setting router to active and setting the
- *       passive flag must be atomic
  */
 template<class T>
 class Informer: public Participant {
