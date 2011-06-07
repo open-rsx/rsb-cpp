@@ -28,7 +28,7 @@
 #include <rsc/runtime/NoSuchObject.h>
 #include <rsc/runtime/Printable.h>
 
-#include "Converter.h"
+#include "ConverterSelectionStrategy.h"
 
 namespace rsb {
 namespace converter {
@@ -42,9 +42,9 @@ namespace converter {
  * @author jmoringe
  */
 template <typename WireType>
-class UnambiguousConverterMap: public rsc::runtime::Printable {
+class UnambiguousConverterMap: public ConverterSelectionStrategy<WireType> {
 public:
-    typedef typename Converter<WireType>::Ptr ConverterPtr;
+    typedef typename ConverterSelectionStrategy<WireType>::ConverterPtr ConverterPtr;
 
     /**
      * Tries to look up the converter designator by @a key.

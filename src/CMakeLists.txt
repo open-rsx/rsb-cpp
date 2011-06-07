@@ -35,6 +35,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/BoolConverter.cpp
             rsb/converter/Converter.cpp
             rsb/converter/Repository.cpp
+            rsb/converter/RegexConverterPredicate.cpp
             rsb/converter/SerializationException.cpp
             rsb/converter/StringConverter.cpp
             rsb/converter/Uint64Converter.cpp
@@ -72,9 +73,9 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/inprocess/OutConnector.cpp
 
             rsb/transport/spread/InConnector.cpp
-            rsb/transport/spread/MembershipManager.cpp
             rsb/transport/spread/OutConnector.cpp
             rsb/transport/spread/ReceiverTask.cpp
+            rsb/transport/spread/MembershipManager.cpp
             rsb/transport/spread/SpreadConnection.cpp
             rsb/transport/spread/SpreadConnector.cpp
             rsb/transport/spread/SpreadGroup.cpp
@@ -106,7 +107,10 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/BoolConverter.h
             rsb/converter/Converter.h
             rsb/converter/ProtocolBufferConverter.h
+            rsb/converter/ConverterSelectionStrategy.h
             rsb/converter/UnambiguousConverterMap.h
+            rsb/converter/PredicateConverterList.h
+            rsb/converter/RegexConverterPredicate.h
             rsb/converter/Repository.h
             rsb/converter/SerializationException.h
             rsb/converter/StringConverter.h
@@ -152,9 +156,9 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/inprocess/OutConnector.h
 
             rsb/transport/spread/InConnector.h
-            rsb/transport/spread/MembershipManager.h
             rsb/transport/spread/OutConnector.h
             rsb/transport/spread/ReceiverTask.h
+            rsb/transport/spread/MembershipManager.h
             rsb/transport/spread/SpreadConnection.h
             rsb/transport/spread/SpreadConnector.h
             rsb/transport/spread/SpreadGroup.h
