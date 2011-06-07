@@ -166,7 +166,7 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
             if (num_groups < 0) {
                 // TODO check whether we shall implement a best effort strategy here
                 RSCWARN(logger,
-                        "error during message receival, group array too large, requested size "
+                        "error during message reception, group array too large, requested size "
                         << " configured size " << SPREAD_MAX_GROUPS);
             }
             for (int i = 0; i < num_groups; i++) {
@@ -220,66 +220,68 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 
 bool SpreadConnection::send(const SpreadMessage &msg) {
     // TODO check message size, if larger than ~100KB throw exception
-    // TODO add mutex, enqueue or send directly?
     // jwienke: no queuing please, this is part of a higher level of abstraction
     const int groupCount = msg.getGroupCount();
     if (groupCount == 0) {
         throw CommException("group information missing in message");
     }
-    if (isActive()) {
-        // TODO add error handling
-        int ret;
-        if (groupCount == 1) {
-            // use SP_multicast
-            string group = *msg.getGroupsBegin();
-            RSCDEBUG(logger, "sending message to group with name " << group);
-            ret = SP_multicast(con, msg.getQOS(), group.c_str(), 0,
-                    msg.getSize(), msg.getData());
-        } else {
-            // use SP_multigroup_multicast
-            char *groups = new char[groupCount * MAX_GROUP_NAME];
-            memset(groups, 0, groupCount * MAX_GROUP_NAME);
-            int j = 0;
-            for (list<string>::const_iterator it = msg.getGroupsBegin(); it
-                    != msg.getGroupsEnd(); ++it) {
-                string group = *it;
-                strcpy(groups + j * MAX_GROUP_NAME, group.c_str());
-                j++;
-            }
-            ret = SP_multigroup_multicast(con, msg.getQOS(), groupCount,
-                    (const char(*)[MAX_GROUP_NAME]) groups, 0, msg.getSize(),
-                    msg.getData());
-            delete[] groups;
-        }
-        // TODO shouldn't msgCount be incremented only in case of success?
-        msgCount++;
-        // FIXME check return code of the above call
-        if (ret >= 0) {
-            return true;
-        } else {
-            // TODO missing default case
-            // TODO generate exceptions
-            switch (ret) {
-            case ILLEGAL_SESSION:
-                // TODO throw exception
-                RSCWARN(logger, "Send: Illegal Session! ")
-                ;
-                break;
-            case ILLEGAL_MESSAGE:
-                RSCWARN(logger, "Send: Illegal Message! ")
-                ;
-                break;
-            case CONNECTION_CLOSED:
-                RSCWARN(logger, "Send: Connection Closed! ")
-                ;
-                break;
-            }
-            return false;
-        }
 
-    } else {
+    if (!isActive()) {
         return false;
     }
+
+    int ret;
+    if (groupCount == 1) {
+        // use SP_multicast
+        string group = *msg.getGroupsBegin();
+        RSCDEBUG(logger, "sending message to group with name " << group);
+        ret = SP_multicast(con, msg.getQOS(), group.c_str(), 0, msg.getSize(),
+                msg.getData());
+    } else {
+        // use SP_multigroup_multicast
+        char *groups = new char[groupCount * MAX_GROUP_NAME];
+        memset(groups, 0, groupCount * MAX_GROUP_NAME);
+        int j = 0;
+        for (list<string>::const_iterator it = msg.getGroupsBegin(); it
+                != msg.getGroupsEnd(); ++it) {
+            string group = *it;
+            strcpy(groups + j * MAX_GROUP_NAME, group.c_str());
+            j++;
+        }
+        ret = SP_multigroup_multicast(con, msg.getQOS(), groupCount,
+                (const char(*)[MAX_GROUP_NAME]) groups, 0, msg.getSize(),
+                msg.getData());
+        delete[] groups;
+    }
+
+    // TODO shouldn't msgCount be incremented only in case of success?
+    msgCount++;
+
+    if (ret >= 0) {
+        return true;
+    } else {
+        // TODO generate exceptions instead of return code?
+        switch (ret) {
+        case ILLEGAL_SESSION:
+            RSCWARN(logger, "Send: Illegal Session")
+            ;
+            break;
+        case ILLEGAL_MESSAGE:
+            RSCWARN(logger, "Send: Illegal Message")
+            ;
+            break;
+        case CONNECTION_CLOSED:
+            RSCWARN(logger, "Send: Connection Closed")
+            ;
+            break;
+        default:
+            RSCWARN(logger, "Send: Unknown spread error with code " << ret)
+            ;
+            break;
+        }
+        return false;
+    }
+
 }
 
 string SpreadConnection::generateId(const string &prefix) {
