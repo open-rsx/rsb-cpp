@@ -20,6 +20,7 @@
 #include "ReceiverTask.h"
 
 #include <rsc/misc/langutils.h>
+#include <rsc/debug/DebugTools.h>
 
 #include "../../converter/Converter.h"
 #include "../../CommException.h"
@@ -39,8 +40,8 @@ namespace spread {
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
         InConnector* connector) :
     logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-            cancelRequested(false), con(s), connector(connector),
-            assemblyPool(new AssemblyPool()), handler(handler) {
+            cancelRequested(false), con(s), connector(connector), assemblyPool(
+                    new AssemblyPool()), handler(handler) {
 
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
@@ -88,7 +89,11 @@ void ReceiverTask::execute() {
 
     } catch (rsb::CommException &e) {
         if (!isCancelRequested()) {
-            RSCERROR(logger, "Error receiving spread message: " << e.what());
+            // TODO QoS would not like swallowing the exception
+            // TODO maybe at least use the ErrorHandlingStrategy here?
+            rsc::debug::DebugToolsPtr tools =
+                    rsc::debug::DebugTools::newInstance();
+            RSCERROR(logger, "Error receiving spread message: " << e.what() << endl << tools->exceptionInfo(e));
         } else {
             // safely ignore, invalid mbox just signals in this context
             // that the connection to spread was deactivated
@@ -118,9 +123,8 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     EventPtr e(new Event());
 
     e->mutableMetaData().setReceiveTime(rsc::misc::currentTimeMicros());
-    e->mutableMetaData().setSenderId(
-            rsc::misc::UUID(
-                    (boost::uint8_t*) notification->meta_data().sender_id().c_str()));
+    e->mutableMetaData().setSenderId(rsc::misc::UUID(
+            (boost::uint8_t*) notification->meta_data().sender_id().c_str()));
 
     e->setId(rsc::misc::UUID((boost::uint8_t*) notification->id().c_str()));
     e->setScope(Scope(notification->scope()));
