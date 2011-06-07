@@ -58,7 +58,6 @@ void SpreadConnector::init(const std::string& host, unsigned int port) {
     this->activated = false;
     // TODO ConnectionPool for SpreadConnections?!?
     // TODO Send Message over Managing / Introspection Channel
-    // TODO Generate Unique-IDs for Connectors
     this->con = SpreadConnectionPtr(
             new SpreadConnection(id.getIdAsString(), host, port));
     this->memberships = MembershipManagerPtr(new MembershipManager());
