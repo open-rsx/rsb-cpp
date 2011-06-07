@@ -39,8 +39,8 @@ namespace spread {
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
         InConnector* connector) :
     logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-            cancelRequested(false), con(s), connector(connector), assemblyPool(
-                    new AssemblyPool()), handler(handler) {
+            cancelRequested(false), con(s), connector(connector),
+            assemblyPool(new AssemblyPool()), handler(handler) {
 
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
@@ -118,8 +118,9 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     EventPtr e(new Event());
 
     e->mutableMetaData().setReceiveTime(rsc::misc::currentTimeMicros());
-    e->mutableMetaData().setSenderId(rsc::misc::UUID(
-            (boost::uint8_t*) notification->meta_data().sender_id().c_str()));
+    e->mutableMetaData().setSenderId(
+            rsc::misc::UUID(
+                    (boost::uint8_t*) notification->meta_data().sender_id().c_str()));
 
     e->setId(rsc::misc::UUID((boost::uint8_t*) notification->id().c_str()));
     e->setScope(Scope(notification->scope()));

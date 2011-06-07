@@ -29,7 +29,7 @@ namespace rsb {
 
 /**
  * A @ref rsb::Handler for @ref rsb::Listener s that pushes all
- * received data on a @ref rsc::SynchronizedQueue. This queue must
+ * received data on a rsc::SynchronizedQueue. This queue must
  * handle shared pointers of the data type.
  *
  * @author jwienke
@@ -47,6 +47,7 @@ public:
      * Constructs a new instance.
      *
      * @param queue the queue to push received data on
+     * @param method method of this handler to react on, empty means all events
      */
     QueuePushHandler(
             boost::shared_ptr<rsc::threading::SynchronizedQueue<

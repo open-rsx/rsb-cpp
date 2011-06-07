@@ -55,7 +55,7 @@ public:
     /**
      * Matches the given event against the constraints specified by this filter.
      *
-     * @param the event to match. Must not be changed!
+     * @param e the event to match. Must not be changed!
      * @return @c true if the event matches the restrictions specified by this
      *         filter and hence can be delivered to the client, @c false to
      *         remove the event from the stream.

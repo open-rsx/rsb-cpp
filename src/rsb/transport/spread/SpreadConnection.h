@@ -109,7 +109,7 @@ private:
     unsigned int port;
     /**
      * The composd name of the daemon made up from port and host, e.g.
-     * 4803@localhost,
+     * 4803\@localhost,
      */
     std::string spreadhost;
     /**

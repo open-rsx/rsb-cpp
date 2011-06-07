@@ -120,8 +120,8 @@ public:
      * Publishes the given data to the Informer's scope.
      *
      * @param data Pointer to the data to send.
-     * @return A @ref boost::shared_ptr to the @ref rsb::Event object
-     * that has been implicitly created.
+     * @return A boost::shared_ptr to the @ref rsb::Event object that has been
+     *         implicitly created.
      */
     EventPtr publish(boost::shared_ptr<T> data) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
@@ -134,8 +134,8 @@ public:
      * @param data Pointer to the data to send.
      * @param type string which defines the type of the data. I.e. "string"
      *        for strings.
-     * @return A @ref boost::shared_ptr to the @ref rsb::Event object
-     * that has been implicitly created.
+     * @return A boost::shared_ptr to the @ref rsb::Event object
+     *         that has been implicitly created.
      */
     template<class T1>
     EventPtr publish(boost::shared_ptr<T1> data, std::string type) {
@@ -148,7 +148,7 @@ public:
      * define additional meta data.
      *
      * @param event The event to publish.
-     * @return @a event.
+     * @return modified Event instance
      */
     EventPtr publish(EventPtr event) {
         event->setScope(getScope());
@@ -162,8 +162,8 @@ public:
      *
      * @param data Pointer to the data to send.
      * @param type Type of
-     * @return A @ref boost::shared_ptr to the @ref rsb::Event object
-     * that has been implicitly created.
+     * @return A boost::shared_ptr to the @ref rsb::Event object
+     *         that has been implicitly created.
      */
     EventPtr publish(VoidPtr data, const std::string &type) {
         EventPtr event(new Event());

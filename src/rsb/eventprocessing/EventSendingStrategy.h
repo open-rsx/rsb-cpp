@@ -40,27 +40,29 @@ class RSB_EXPORT EventSendingStrategy: public virtual rsc::runtime::Printable {
 public:
     virtual ~EventSendingStrategy();
 
-    /** Add @a connector to the list of connectors to which this
+    /**
+     * Add @a connector to the list of connectors to which this
      * strategy should deliver events.
      *
-     * @param connector The new @ref rsb::transport::OutConnector
-     * .
+     * @param connector The new @ref rsb::transport::OutConnector .
      */
     virtual void addConnector(transport::OutConnectorPtr connector) = 0;
 
-    /** Remove @a connector from the list of connectors to which
+    /**
+     * Remove @a connector from the list of connectors to which
      * this strategy should deliver events.
      *
      * @param connector The @ref rsb::transport::OutConnector that
-     * should be removed.
+     *                  should be removed.
      */
     virtual void removeConnector(transport::OutConnectorPtr connector) = 0;
 
-    /** Deliver @a event to all @ref rsb::transport::OutConnector
+    /**
+     * Deliver @a event to all @ref rsb::transport::OutConnector
      * objects associated to this strategy.
      *
      * @param event An @ref rsb::Event that should be delivered to
-     * the connectors.
+     *              the connectors.
      */
     virtual void process(EventPtr event) = 0;
 };

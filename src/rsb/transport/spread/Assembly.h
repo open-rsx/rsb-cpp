@@ -69,7 +69,7 @@ public:
      * start with these settings. It has to be enabled explicitly using the
      * appropriate method calls.
      *
-     * @param ageMs defines the max. allowed age of pooled fragments before they
+     * @param ageS defines the max. allowed age of pooled fragments before they
      *              are pruned (s) > 0
      * @param pruningIntervalMs the interval to use for checking the age (ms) > 0
      * @throw std::domain_error 0 given for ageMs or pruningIntervalMs

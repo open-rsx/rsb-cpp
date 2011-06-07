@@ -75,6 +75,8 @@ public:
      *
      * @tparam DataType the C++ data type this informer publishes
      * @param scope the scope of the informer
+     * @param config the configuration for the informer to use, defaults to the
+     *               general config held in this factory.
      * @param dataType the string representation of the data type used to select
      *                 converters
      * @return new informer instance
@@ -118,6 +120,8 @@ public:
      * Creates a new listener for the specified scope.
      *
      * @param scope the scope of the new listener
+     * @param config the configuration for the LISTENER to use, defaults to the
+     *               general config held in this factory.f
      * @return new listener instance
      */
     ListenerPtr createListener(const Scope &scope,

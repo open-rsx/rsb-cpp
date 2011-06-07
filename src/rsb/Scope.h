@@ -111,7 +111,7 @@ public:
      * The returned list of scopes is ordered by hierarchy with "/" being the
      * first entry.
      *
-     * @param includeSelf if set to @true, this scope is also included as last
+     * @param includeSelf if set to @c true, this scope is also included as last
      *                    element of the returned list
      * @return list of all super scopes ordered by hierarchy, "/" being first
      */

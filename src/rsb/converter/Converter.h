@@ -55,6 +55,7 @@ public:
      * Serialized the given domain object to the wire.
      *
      * @param data data to serialize
+     * @param wire the wire to serialize on
      * @return the wire schema the data is encoded with
      * @throw SerializationException if the serialization failed
      */
@@ -65,7 +66,7 @@ public:
      * Deserializes a domain object from a wire type.
      *
      * @param wireSchema type of the wire message
-     * @param wire the wire containing the date
+     * @param wire the wire containing the data
      * @return the deserialized domain object annotated with its data type name
      * @throw SerializationException if deserializing the message fails
      */
@@ -102,9 +103,9 @@ protected:
      * @param dataType data type this converter can serialize
      * @param wireSchema wire schema this converter can deserialize
      * @param dummy This parameter is used to disambiguate constructor
-     * signatures when WireType is @ref std::string .
+     *              signatures when WireType is std::string .
      */
-    Converter(const std::string &dataType, const std::string &wireSchema, bool /*dummy*/ = true) :
+    Converter(const std::string &dataType, const std::string &wireSchema, bool dummy = true) :
         dataType(dataType), wireSchema(wireSchema) {
     }
 

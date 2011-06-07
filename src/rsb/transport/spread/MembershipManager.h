@@ -53,7 +53,8 @@ public:
      * Joins the given Spread group if not previously done
      * and increments reference count for this group by one.
      *
-     * @param group
+     * @param group group name to join
+     * @param s spread connection to join on
      */
     void join(std::string group, SpreadConnectionPtr s);
 
@@ -62,7 +63,8 @@ public:
      * group identifier. If reference count for this identifier
      * drops to zero, the corresponding Spread group is left.
      *
-     * @param group
+     * @param group group name to leave
+     * @param s spread connection to leave on
      */
     void leave(std::string group, SpreadConnectionPtr s);
 

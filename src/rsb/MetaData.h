@@ -75,6 +75,9 @@ public:
      * sender. If event instances are reused, it has to be reset manually by the
      * client.
      *
+     * This timestamp is initially set to the creating time stamp of this
+     * instance.
+     *
      * @return timestamp in microseconds
      */
     boost::uint64_t getCreateTime() const;
@@ -184,9 +187,34 @@ public:
      * Keys are unique.
      */
     //@{
+    /**
+     * Returns all keys of user-defined infos.
+     *
+     * @return set of all defined keys
+     */
     std::set<std::string> userInfoKeys() const;
+    /**
+     * Checks whether a user info exists under the provided key.
+     *
+     * @param key key to check
+     * @return @c true if an info for the key is defined, else @c false
+     */
     bool hasUserInfo(const std::string &key) const;
+    /**
+     * Returns the user-defined string for the given key.
+     *
+     * @param key key to look up
+     * @return user info given for this key
+     * @throw std::invalid_argument no info set for the specified key
+     */
     std::string getUserInfo(const std::string &key) const;
+    /**
+     * Sets a user info with the specified key and value or replaces and already
+     * existing one
+     *
+     * @param key the key to set
+     * @param value the user value
+     */
     void setUserInfo(const std::string &key, const std::string &value);
     std::map<std::string, std::string>::const_iterator userInfosBegin() const;
     std::map<std::string, std::string>::const_iterator userInfosEnd() const;
