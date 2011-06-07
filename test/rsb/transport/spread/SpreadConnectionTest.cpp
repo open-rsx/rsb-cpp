@@ -38,10 +38,10 @@ TEST(SpreadConnectionTest, testErrorOnBufferSaturation)
 
     const unsigned int bufferSize = 8000;
 
-    SpreadConnectionPtr sendConnection(new SpreadConnection("send"));
+    SpreadConnectionPtr sendConnection(new SpreadConnection("send", "localhost", SPREAD_PORT));
     sendConnection->activate();
 
-    SpreadConnectionPtr receiveConnection(new SpreadConnection("receive"));
+    SpreadConnectionPtr receiveConnection(new SpreadConnection("receive", "localhost", SPREAD_PORT));
     receiveConnection->activate();
 
     const string groupName = "dasdasd";
