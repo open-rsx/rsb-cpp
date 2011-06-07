@@ -91,17 +91,11 @@ public:
     void removeFilter(filter::FilterPtr filter);
 
     /**
-     * @note modifying the returned set object does not affect the
-     * listener's actual set of handlers.
-     */
-    std::set<HandlerPtr> getHandlers() const;
-
-    /**
      * Adds a @ref rsb::Handler to the Listener. Events which
      * match the restrictions described by the associated
      * filters are passed to all handlers.
      *
-     * @param h a Pointer to the Handler.
+     * @param h a pointer to the Handler.
      * @param wait if set to @c true, this method will return only after the
      *             handler has completely been installed and will receive the
      *             next available message. Otherwise it may return earlier.

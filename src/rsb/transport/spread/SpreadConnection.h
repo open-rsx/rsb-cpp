@@ -49,7 +49,7 @@ public:
 
     /**
      * @name connection state management
-     * @todo is this really necesary?
+     * @todo is this really necessary?
      */
     //@{
     void activate();

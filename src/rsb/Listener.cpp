@@ -55,14 +55,6 @@ void Listener::initialize(const vector<InConnectorPtr> &connectors,
     this->configurator->activate();
 }
 
-set<HandlerPtr> Listener::getHandlers() const {
-    // TODO thread-safety
-    set<HandlerPtr> result;
-    copy(this->handlers.begin(), this->handlers.end(),
-            inserter(result, result.begin()));
-    return result;
-}
-
 void Listener::addHandler(HandlerPtr h, bool wait) {
     this->configurator->handlerAdded(h, wait);
 }
