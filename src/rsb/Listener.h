@@ -50,7 +50,6 @@ namespace rsb {
  *
  * @author swrede
  *
- * @todo how to deal with IDs of listeners? (it must be possible to reference them internally somehow
  * @todo use templates in subscriptions only? (however, they need the event info)
  */
 class RSB_EXPORT Listener: public Participant {
