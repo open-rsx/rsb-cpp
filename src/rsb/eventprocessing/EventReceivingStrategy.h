@@ -44,8 +44,12 @@ public:
     virtual void addFilter(filter::FilterPtr filter) = 0;
     virtual void removeFilter(filter::FilterPtr filter) = 0;
 
-    // if invoked, the event is dispatched to listeners, typically called by ports
-    virtual void handle(EventPtr event) = 0; // TODO inherited via Handler?
+    /**
+     * Dispatches the event to the listener.
+     *
+     * @param event the event to dispatch
+     */
+    virtual void handle(EventPtr event) = 0;
 };
 
 typedef boost::shared_ptr<EventReceivingStrategy> EventReceivingStrategyPtr;
