@@ -63,7 +63,6 @@ void SpreadConnection::activate() {
     // spread init and group join - not threadsafe
     if (!connected) {
         RSCDEBUG(logger, "connecting to spread daemon at " << spreadhost);
-        // TODO store connection ID
         char spreadPrivateGroup[MAX_GROUP_NAME];
         int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con,
                 spreadPrivateGroup);
