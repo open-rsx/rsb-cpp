@@ -22,6 +22,7 @@
 #include <boost/regex.hpp>
 
 #include "PredicateConverterList.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace converter {
@@ -32,7 +33,7 @@ namespace converter {
  *
  * @author jmoringe
  */
-class RegexConverterPredicate: public ConverterPredicate {
+class RSB_EXPORT RegexConverterPredicate: public ConverterPredicate {
 public:
     /** 
      * Construct a new RegexConverterPredicate that matches queries
