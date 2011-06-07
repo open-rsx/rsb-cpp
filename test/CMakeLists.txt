@@ -95,6 +95,7 @@ SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
                             rsb/transport/ConnectorTest.cpp
                             rsb/transport/ConnectorTest.h
                             rsb/transport/spread/AssemblyTest.cpp
+                            rsb/transport/spread/SpreadConnectionTest.cpp
                             rsb/transport/spread/SpreadConnectorTest.cpp
                             rsb/transport/spread/SpreadMessageTest.cpp
                             rsb/transport/spread/MembershipManagerTest.cpp
