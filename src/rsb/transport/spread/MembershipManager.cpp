@@ -27,9 +27,10 @@ using namespace rsc::logging;
 namespace rsb {
 namespace spread {
 
-MembershipManager::MembershipManager() : logger(Logger::getLogger("rsb.spread.MembershipManager")) {
+MembershipManager::MembershipManager() :
+    logger(Logger::getLogger("rsb.spread.MembershipManager")) {
     RSCTRACE(logger, "MembershipManager() entered");
-    groups = boost::shared_ptr< GroupMap >(new GroupMap());
+    groups = boost::shared_ptr<GroupMap>(new GroupMap());
 }
 
 MembershipManager::~MembershipManager() {
@@ -37,42 +38,44 @@ MembershipManager::~MembershipManager() {
 
 void MembershipManager::join(string group, SpreadConnectionPtr c) {
     RSCDEBUG(logger, "Trying to join group with id " << group << " on SpreadConnection " << c);
+    boost::recursive_mutex::scoped_lock lock(groupsMutex);
     GroupMap::iterator i = groups->find(group);
     if (groups->end() != i) {
-	int refs = i->second.second;
-	RSCDEBUG(logger, "Group object already existing, ref count: " << refs);
-	if (0 == refs) {
-	    // if count == 0 we re-join the group
-	    i->second.first->join(c);
-	    RSCINFO(logger, "Re-joined SpreadGroup with id " << group);
-	}
-	i->second.second = ++refs;
-	RSCTRACE(logger, "New group ref count: " << i->second.second);
+        int refs = i->second.second;
+        RSCDEBUG(logger, "Group object already existing, ref count: " << refs);
+        if (0 == refs) {
+            // if count == 0 we re-join the group
+            i->second.first->join(c);
+            RSCINFO(logger, "Re-joined SpreadGroup with id " << group);
+        }
+        i->second.second = ++refs;
+        RSCTRACE(logger, "New group ref count: " << i->second.second);
     } else {
-	RSCDEBUG(logger, "Group object not found, creating new one");
-	SpreadGroupPtr sg(new SpreadGroup(group));
-	sg->join(c);
-	RSCINFO(logger, "Joined SpreadGroup with id " << group);
-	(*groups)[group] = make_pair(sg,1);
+        RSCDEBUG(logger, "Group object not found, creating new one");
+        SpreadGroupPtr sg(new SpreadGroup(group));
+        sg->join(c);
+        RSCINFO(logger, "Joined SpreadGroup with id " << group);
+        (*groups)[group] = make_pair(sg, 1);
     }
 }
 
 void MembershipManager::leave(string group, SpreadConnectionPtr c) {
     RSCDEBUG(logger, "Checking if we want to leave group with id " << group << " on SpreadConnection " << c);
+    boost::recursive_mutex::scoped_lock lock(groupsMutex);
     GroupMap::iterator i = groups->find(group);
     if (groups->end() != i) {
-	int refs = i->second.second;
-	RSCDEBUG(logger, "Group object found, ref count: " << refs);
-	// if count-1 == 0 sg->leave
-	i->second.second = --refs;
-	RSCTRACE(logger, "New group ref count: " << i->second.second);
-	if (0 == refs) {
-	    RSCTRACE(logger, "Count is 0, leaving group");
-	    i->second.first->leave(c);
-	    RSCINFO(logger, "Left SpreadGroup with id " << group);
-	}
+        int refs = i->second.second;
+        RSCDEBUG(logger, "Group object found, ref count: " << refs);
+        // if count-1 == 0 sg->leave
+        i->second.second = --refs;
+        RSCTRACE(logger, "New group ref count: " << i->second.second);
+        if (0 == refs) {
+            RSCTRACE(logger, "Count is 0, leaving group");
+            i->second.first->leave(c);
+            RSCINFO(logger, "Left SpreadGroup with id " << group);
+        }
     } else {
-	RSCWARN(logger, "SpreadGroup with id " << group << " not found in GroupMap");
+        RSCWARN(logger, "SpreadGroup with id " << group << " not found in GroupMap");
     }
 }
 

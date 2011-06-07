@@ -39,7 +39,6 @@ namespace eventprocessing {
  *
  * @author swrede
  * @todo add configuration, provide preliminary set up interface
- * @todo implement abstract factory pattern for different port types
  */
 class RSB_EXPORT OutRouteConfigurator: public virtual rsc::runtime::Printable {
 public:

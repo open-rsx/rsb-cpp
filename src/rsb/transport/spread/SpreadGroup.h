@@ -30,21 +30,24 @@
 namespace rsb {
 namespace spread {
 
+/**
+ * @author swrede
+ */
 class SpreadGroup {
 public:
-	SpreadGroup(const std::string& n);
-	virtual ~SpreadGroup();
+    SpreadGroup(const std::string &n);
+    virtual ~SpreadGroup();
 
-	std::string getName() const;
-	// MembershipList getMembers();
+    std::string getName() const;
+    // MembershipList getMembers();
 
-	virtual void join(SpreadConnectionPtr con);
-	virtual void leave(SpreadConnectionPtr con);
+    virtual void join(SpreadConnectionPtr con);
+    virtual void leave(SpreadConnectionPtr con);
 
 private:
-	std::string name;
-	rsc::logging::LoggerPtr logger;
-	SpreadConnectionPtr con;
+    std::string name;
+    rsc::logging::LoggerPtr logger;
+    SpreadConnectionPtr con;
 };
 
 typedef boost::shared_ptr<SpreadGroup> SpreadGroupPtr;

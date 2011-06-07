@@ -23,6 +23,7 @@
 #include <string>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 
 #include <rsc/logging/Logger.h>
 
@@ -34,7 +35,7 @@
 namespace rsb {
 namespace spread {
 
-typedef std::map<std::string , std::pair<SpreadGroupPtr, int> > GroupMap;
+typedef std::map<std::string, std::pair<SpreadGroupPtr, int> > GroupMap;
 
 /**
  * Reference counting class for Spread group memberships.
@@ -42,33 +43,33 @@ typedef std::map<std::string , std::pair<SpreadGroupPtr, int> > GroupMap;
  * @author swrede
  * @todo think about adding SpreadConnectionPtr as a member, offering
  *       methods that operate on this connection only
- * @todo Threadsafety!!!
  */
 class RSB_EXPORT MembershipManager {
 public:
-	MembershipManager();
-	virtual ~MembershipManager();
+    MembershipManager();
+    virtual ~MembershipManager();
 
-	/**
-	 * Joins the given Spread group if not previously done
-	 * and increments reference count for this group by one.
-	 *
-	 * @param group
-	 */
-	void join(std::string group, SpreadConnectionPtr s);
+    /**
+     * Joins the given Spread group if not previously done
+     * and increments reference count for this group by one.
+     *
+     * @param group
+     */
+    void join(std::string group, SpreadConnectionPtr s);
 
-	/**
-	 * Decrements the reference count for the given Spread
-	 * group identifier. If reference count for this identifier
-	 * drops to zero, the corresponding Spread group is left.
-	 *
-	 * @param group
-	 */
-	void leave(std::string group, SpreadConnectionPtr s);
+    /**
+     * Decrements the reference count for the given Spread
+     * group identifier. If reference count for this identifier
+     * drops to zero, the corresponding Spread group is left.
+     *
+     * @param group
+     */
+    void leave(std::string group, SpreadConnectionPtr s);
 
 private:
-	rsc::logging::LoggerPtr logger;
-	boost::shared_ptr< GroupMap > groups;
+    rsc::logging::LoggerPtr logger;
+    boost::recursive_mutex groupsMutex;
+    boost::shared_ptr<GroupMap> groups;
 };
 
 typedef boost::shared_ptr<MembershipManager> MembershipManagerPtr;
