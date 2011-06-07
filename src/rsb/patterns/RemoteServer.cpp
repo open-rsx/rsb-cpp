@@ -85,7 +85,6 @@ public:
         RSCTRACE(logger, "Waiting for reply with id " << requestId);
 
         boost::mutex::scoped_lock lock(mutex);
-        // TODO duplicated string with Server
         while (!storedEvents.count(requestId)) {
             boost::xtime xt;
             xtime_get(&xt, boost::TIME_UTC);
