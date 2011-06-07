@@ -41,10 +41,25 @@ public:
     std::string getName() const;
     // MembershipList getMembers();
 
+    /**
+     * Joins it's group on the given connection.
+     *
+     * @param con the connection to join on
+     * @throw CommException spread error joining
+     */
     virtual void join(SpreadConnectionPtr con);
+    /**
+     * Leaves it's group on the given connection.
+     *
+     * @param con the connection to leave on
+     * @throw CommException spread error leaving
+     */
     virtual void leave(SpreadConnectionPtr con);
 
 private:
+
+    void handleRetCode(const int &code, const std::string &actionName);
+
     std::string name;
     rsc::logging::LoggerPtr logger;
     SpreadConnectionPtr con;

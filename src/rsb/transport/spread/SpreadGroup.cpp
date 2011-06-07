@@ -25,6 +25,8 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "../../CommException.h"
+
 using namespace std;
 using namespace rsc::logging;
 
@@ -51,11 +53,30 @@ void SpreadGroup::join(SpreadConnectionPtr con) {
     }
 
     int retCode = SP_join(*con->getMailbox(), name.c_str());
+    handleRetCode(retCode, "joining");
+
+}
+
+void SpreadGroup::leave(SpreadConnectionPtr con) {
+
+    if (!con->isActive()) {
+        throw CommException("Connection is not active, cannot leave " + name);
+    }
+
+    int retCode = SP_leave(*con->getMailbox(), name.c_str());
+    handleRetCode(retCode, "leaving");
+
+}
+
+void SpreadGroup::handleRetCode(const int &retCode,
+        const std::string &actionName) {
+
     if (!retCode) {
-        RSCDEBUG(logger, "joined spread group with name: " << name);
+        RSCDEBUG(logger, actionName << " spread group with name " << name << " successful");
     } else {
         stringstream msg;
-        msg << "Got error while joining spread group '" << name << "': ";
+        msg << "Got error while " << actionName << " spread group '" << name
+                << "': ";
         switch (retCode) {
         case ILLEGAL_GROUP:
             msg << "ILLEGAL_GROUP";
@@ -70,23 +91,11 @@ void SpreadGroup::join(SpreadConnectionPtr con) {
             msg << "Unknown spread error with code " << retCode;
             break;
         }
-        RSCERROR(logger, "Error joining spread group: " << msg.str());
-        // TODO real exception needed
-        throw runtime_error(msg.str());
+        RSCERROR(logger, "Error " << actionName << " spread group: " << msg.str());
+        throw CommException(msg.str());
     }
 
 }
 
-void SpreadGroup::leave(SpreadConnectionPtr con) {
-    if (!con->isActive()) {
-        throw runtime_error("Connection is not active, cannot leave " + name);
-    }
-
-    // TODO evaluate error codes and membership message
-    SP_leave(*con->getMailbox(), name.c_str());
-    RSCDEBUG(logger, "left spread group with name: " << name);
 }
-
-}
-
 }
