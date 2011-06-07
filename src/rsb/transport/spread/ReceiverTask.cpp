@@ -66,7 +66,6 @@ void ReceiverTask::execute() {
 
         RSCDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << message);
 
-        // TODO think about how to deal with non-data messages, e.g., membership
         if (message->getType() != SpreadMessage::REGULAR) {
             return;
         }
