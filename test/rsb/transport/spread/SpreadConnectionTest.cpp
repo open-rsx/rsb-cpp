@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <rsc/misc/IllegalStateException.h>
 #include <rsc/misc/langutils.h>
 
 #include "rsb/transport/spread/SpreadConnection.h"
@@ -66,5 +67,68 @@ TEST(SpreadConnectionTest, testErrorOnBufferSaturation)
     } catch (CommException &e) {
         // this is desired
     }
+
+}
+
+TEST(SpreadConnectionTest, testActivationStateChecks)
+{
+
+    SpreadConnection con("activity", "localhost", SPREAD_PORT);
+
+    SpreadMessage sendMsg("foo");
+    sendMsg.addGroup("blubb");
+    EXPECT_THROW(con.send(sendMsg), rsc::misc::IllegalStateException);
+
+    SpreadMessagePtr receiveMsg(new SpreadMessage);
+    EXPECT_THROW(con.receive(receiveMsg), rsc::misc::IllegalStateException);
+
+    EXPECT_THROW(con.interruptReceive(), rsc::misc::IllegalStateException);
+
+    EXPECT_THROW(con.getMailbox(), rsc::misc::IllegalStateException);
+
+    EXPECT_THROW(con.deactivate(), rsc::misc::IllegalStateException) << "duplicated deactivation must not be possible";
+
+    con.activate();
+    EXPECT_THROW(con.activate(), rsc::misc::IllegalStateException) << "duplicated activation must not be possible";
+
+}
+
+TEST(SpreadConnectionTest, testDeactivateDestructorNotRequired)
+{
+    SpreadConnection con("nothrow", "localhost", SPREAD_PORT);
+}
+
+void receiveTester(SpreadConnectionPtr con) {
+
+    try {
+        SpreadMessagePtr msg(new SpreadMessage);
+        while (true) {
+            con->receive(msg);
+        }
+    } catch (boost::thread_interrupted &e) {
+        // this is ok
+    } catch (rsc::misc::IllegalStateException &e) {
+        // this also, because the connectionmay have been disable before
+    }
+
+}
+
+TEST(SpreadConnectionTest, testInterruptReceive)
+{
+
+    SpreadConnectionPtr con(new SpreadConnection("interrupt", "localhost", SPREAD_PORT));
+    con->activate();
+
+    // should be ok
+    con->interruptReceive();
+
+    boost::thread receiveThread(boost::bind(&receiveTester, con));
+    // let the thread start to receive
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+    con->interruptReceive();
+    // the thread must be now join in the next time
+    receiveThread.join();
+
+    con->deactivate();
 
 }

@@ -86,8 +86,8 @@ void SpreadConnector::leave(const std::string &name) {
     this->memberships->leave(name, this->con);
 }
 
-bool SpreadConnector::send(const SpreadMessage &msg) {
-    return this->con->send(msg);
+void SpreadConnector::send(const SpreadMessage &msg) {
+    this->con->send(msg);
 }
 
 SpreadConnector::~SpreadConnector() {

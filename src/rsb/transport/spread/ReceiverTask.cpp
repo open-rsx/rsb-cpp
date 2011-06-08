@@ -88,16 +88,12 @@ void ReceiverTask::execute() {
         }
 
     } catch (rsb::CommException &e) {
-        if (!isCancelRequested()) {
-            // TODO QoS would not like swallowing the exception
-            // TODO maybe at least use the ErrorHandlingStrategy here?
-            rsc::debug::DebugToolsPtr tools =
-                    rsc::debug::DebugTools::newInstance();
-            RSCERROR(logger, "Error receiving spread message: " << e.what() << endl << tools->exceptionInfo(e));
-        } else {
-            // safely ignore, invalid mbox just signals in this context
-            // that the connection to spread was deactivated
-        }
+        // TODO QoS would not like swallowing the exception
+        // TODO maybe at least use the ErrorHandlingStrategy here?
+        rsc::debug::DebugToolsPtr tools = rsc::debug::DebugTools::newInstance();
+        RSCERROR(logger, "Error receiving spread message: " << e.what() << endl << tools->exceptionInfo(e));
+    } catch (boost::thread_interrupted &e) {
+        return;
     }
 
 }

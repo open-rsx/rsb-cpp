@@ -54,7 +54,10 @@ public:
     void join(const std::string &name);
     void leave(const std::string &name);
 
-    bool send(const SpreadMessage &msg);
+    /**
+     * @throw CommException error sending message
+     */
+    void send(const SpreadMessage &msg);
 
     void init(const std::string& host, unsigned int port);
 

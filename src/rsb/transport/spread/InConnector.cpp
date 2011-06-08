@@ -85,10 +85,9 @@ void InConnector::activate() {
 
 void InConnector::deactivate() {
     this->rec->cancel();
-    // killing spread connection, exception thrown to rec thread which
-    // should be handled specifically as the cancel flag was set
-    this->connector->deactivate();
+    this->connector->getConnection()->interruptReceive();
     this->rec->waitDone();
+    this->connector->deactivate();
     this->active = false;
 }
 

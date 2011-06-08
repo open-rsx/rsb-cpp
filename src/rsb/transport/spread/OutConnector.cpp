@@ -171,14 +171,11 @@ void OutConnector::handle(EventPtr event) {
 
         RSCTRACE(logger, "This is the serialized message size before send: " << spreadMessage.getSize());
 
-        if (!this->connector->send(spreadMessage)) {
-            // TODO implement queing or throw messages away?
-            // TODO maybe return exception with msg that was not sent
-            // TODO especially important to fulfill QoS specs
-            RSCWARN(logger, "Spread Connection inactive -> could not send message");
-        } else {
-            RSCDEBUG(logger, "event sent to spread");
-        }
+        this->connector->send(spreadMessage);
+        // TODO implement queing or throw messages away?
+        // TODO maybe return exception with msg that was not sent
+        // TODO especially important to fulfill QoS specs
+        RSCDEBUG(logger, "event sent to spread");
 
     }
 

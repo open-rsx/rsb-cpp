@@ -25,6 +25,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
+#include <rsc/misc/IllegalStateException.h>
+
 #include <sp.h>
 
 #include "../../CommException.h"
@@ -51,84 +53,87 @@ SpreadConnection::SpreadConnection(const string &id, const string &host,
 }
 
 SpreadConnection::~SpreadConnection() {
-    // this does not work with XcfAppender...
     RSCDEBUG(logger, "destroying SpreadConnection object");
+    if (connected) {
+        deactivate();
+    }
 }
 
 void SpreadConnection::activate() {
     // XXX spread init and group join - not threadsafe, what to do about this?
-    if (!connected) {
-        RSCDEBUG(logger, "connecting to spread daemon at " << spreadhost);
-        char spreadPrivateGroup[MAX_GROUP_NAME];
-        int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con,
-                spreadPrivateGroup);
-        spreadpg = string(spreadPrivateGroup);
-        if (ret != ACCEPT_SESSION) {
-            switch (ret) {
-            case ILLEGAL_SPREAD:
-                RSCFATAL(logger,
-                        "spread connect error: connection to spread daemon at "
-                        << spreadhost
-                        << " failed, check port and hostname")
-                ;
-                break;
-            case COULD_NOT_CONNECT:
-                RSCFATAL(logger,
-                        "spread connect error: connection to spread daemon failed due to socket errors")
-                ;
-                break;
-            case CONNECTION_CLOSED:
-                RSCFATAL(
-                        logger,
-                        "spread connect error: communication errors occurred during setup of connection")
-                ;
-            case REJECT_VERSION:
-                RSCFATAL(logger,
-                        "spread connect error: daemon or library version mismatch")
-                ;
-                break;
-            case REJECT_NO_NAME:
-                RSCFATAL(logger,
-                        "spread connect error: protocol error during setup")
-                ;
-                break;
-            case REJECT_ILLEGAL_NAME:
-                RSCFATAL(
-                        logger,
-                        "spread connect error: name provided violated requirement, length or illegal character")
-                ;
-                break;
-            case REJECT_NOT_UNIQUE:
-                RSCFATAL(logger,
-                        "spread connect error: name provided is not unique on this daemon")
-                ;
-                break;
-            default:
-                RSCFATAL(logger, "unknown spread connect error, value: " << ret)
-                ;
-            }
-            SP_error(ret);
-            throw CommException("Error during connection to spread daemon");
-        } else {
-            RSCDEBUG(logger, "success, private group id is " << spreadpg);
-        }
-        RSCINFO(logger, "connected to spread daemon");
-
-        connected = true;
-
+    if (connected) {
+        throw rsc::misc::IllegalStateException("Connection with id " + conId
+                + " is already active.");
     }
+
+    RSCDEBUG(logger, "connecting to spread daemon at " << spreadhost);
+    char spreadPrivateGroup[MAX_GROUP_NAME];
+    int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con, spreadPrivateGroup);
+    spreadpg = string(spreadPrivateGroup);
+    if (ret != ACCEPT_SESSION) {
+        switch (ret) {
+        case ILLEGAL_SPREAD:
+            RSCFATAL(logger,
+                    "spread connect error: connection to spread daemon at "
+                    << spreadhost
+                    << " failed, check port and hostname")
+            ;
+            break;
+        case COULD_NOT_CONNECT:
+            RSCFATAL(logger,
+                    "spread connect error: connection to spread daemon failed due to socket errors")
+            ;
+            break;
+        case CONNECTION_CLOSED:
+            RSCFATAL(
+                    logger,
+                    "spread connect error: communication errors occurred during setup of connection")
+            ;
+        case REJECT_VERSION:
+            RSCFATAL(logger,
+                    "spread connect error: daemon or library version mismatch")
+            ;
+            break;
+        case REJECT_NO_NAME:
+            RSCFATAL(logger,
+                    "spread connect error: protocol error during setup")
+            ;
+            break;
+        case REJECT_ILLEGAL_NAME:
+            RSCFATAL(
+                    logger,
+                    "spread connect error: name provided violated requirement, length or illegal character")
+            ;
+            break;
+        case REJECT_NOT_UNIQUE:
+            RSCFATAL(logger,
+                    "spread connect error: name provided is not unique on this daemon")
+            ;
+            break;
+        default:
+            RSCFATAL(logger, "unknown spread connect error, value: " << ret)
+            ;
+        }
+        SP_error(ret);
+        throw CommException("Error during connection to spread daemon");
+    } else {
+        RSCDEBUG(logger, "success, private group id is " << spreadpg);
+    }
+    RSCINFO(logger, "connected to spread daemon");
+
+    connected = true;
+
 }
 
 void SpreadConnection::deactivate() {
-    if (isActive()) {
-        //SP_disconnect(con);
-        SP_multicast(con, RELIABLE_MESS, spreadpg.c_str(), 0, 0, 0);
-        RSCDEBUG(logger, "Spread connection disconnected, id " << conId
-                << " private group " << spreadpg);
-        connected = false;
-    } else {
-        RSCWARN(logger, "Trying to deactivate a connection that was not active");
+
+    if (!connected) {
+        throw rsc::misc::IllegalStateException("Connection with id " + conId
+                + " is already deactivated.");
     }
+
+    connected = false;
+
 }
 
 bool SpreadConnection::isActive() {
@@ -137,52 +142,55 @@ bool SpreadConnection::isActive() {
 
 void SpreadConnection::receive(SpreadMessagePtr sm) {
 
+    if (!connected) {
+        throw rsc::misc::IllegalStateException("Connection with id " + conId
+                + " is not active.");
+    }
+
     sm->reset();
 
     // read from Spread multicast group
-    int service_type;
-    int num_groups;
+    int serviceType;
+    int numGroups;
     char sender[MAX_GROUP_NAME];
-    char ret_groups[SPREAD_MAX_GROUPS][MAX_GROUP_NAME];
-    int16 mess_type;
-    int dummy_endian_mismatch;
+    char retGroups[SPREAD_MAX_GROUPS][MAX_GROUP_NAME];
+    int16 messType;
+    int dummyEndianMismatch;
     char buf[SPREAD_MAX_MESSLEN];
-    int ret = SP_receive(con, &service_type, sender, SPREAD_MAX_GROUPS,
-            &num_groups, ret_groups, &mess_type, &dummy_endian_mismatch,
+    int ret = SP_receive(con, &serviceType, sender, SPREAD_MAX_GROUPS,
+            &numGroups, retGroups, &messType, &dummyEndianMismatch,
             SPREAD_MAX_MESSLEN, buf);
     if (ret >= 0) {
-        if (Is_regular_mess(service_type)) {
+        if (Is_regular_mess(serviceType)) {
             RSCINFO(logger, "regular spread message received");
 
             // cancel if requested
-            if (num_groups == 1 && string(ret_groups[0]) == string(spreadpg)) {
-                SP_disconnect(con);
-                connected = false;
-                throw CommException("Cancelled!");
+            if (numGroups == 1 && string(retGroups[0]) == string(spreadpg)) {
+                throw boost::thread_interrupted();
             }
 
             sm->setType(SpreadMessage::REGULAR);
             sm->setData(string(buf, ret));
-            if (num_groups < 0) {
+            if (numGroups < 0) {
                 // TODO check whether we shall implement a best effort strategy here
                 RSCWARN(logger,
                         "error during message reception, group array too large, requested size "
                         << " configured size " << SPREAD_MAX_GROUPS);
             }
-            for (int i = 0; i < num_groups; i++) {
-                if (ret_groups[i] != NULL) {
-                    string group = string(ret_groups[i]);
+            for (int i = 0; i < numGroups; i++) {
+                if (retGroups[i] != NULL) {
+                    string group = string(retGroups[i]);
                     RSCDEBUG(logger,
                             "received message, addressed at group with name "
                             << group);
                     sm->addGroup(group);
                 }
             }
-        } else if (Is_membership_mess(service_type)) {
+        } else if (Is_membership_mess(serviceType)) {
             RSCINFO(logger, "received spread membership message type");
             sm = SpreadMessagePtr(new SpreadMessage(SpreadMessage::MEMBERSHIP));
         } else {
-            RSCWARN(logger, "received unknown spread message type");
+            RSCWARN(logger, "received unknown spread message type with code " << serviceType);
         }
         RSCDEBUG(logger, "before returning spread message with content: "
                 + sm->getDataAsString());
@@ -211,23 +219,24 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
         }
         throw CommException("Spread communication error. Reason: " + err);
     }
-    if (!Is_regular_mess(service_type)) {
+    if (!Is_regular_mess(serviceType)) {
         // set flag to not process message - shouldn't be a data packet
         throw CommException("received unknown type of spread message");
     }
 
 }
 
-bool SpreadConnection::send(const SpreadMessage &msg) {
+void SpreadConnection::send(const SpreadMessage &msg) {
+
     // TODO check message size, if larger than ~100KB throw exception
-    // jwienke: no queuing please, this is part of a higher level of abstraction
-    const int groupCount = msg.getGroupCount();
-    if (groupCount == 0) {
-        throw CommException("group information missing in message");
+    if (!connected) {
+        throw rsc::misc::IllegalStateException("Connection with id " + conId
+                + " is not active.");
     }
 
-    if (!isActive()) {
-        return false;
+    const unsigned int groupCount = msg.getGroupCount();
+    if (groupCount == 0) {
+        throw CommException("Group information missing in message");
     }
 
     int ret;
@@ -255,32 +264,40 @@ bool SpreadConnection::send(const SpreadMessage &msg) {
     }
 
     // TODO shouldn't msgCount be incremented only in case of success?
-    msgCount++;
+    ++msgCount;
 
-    if (ret >= 0) {
-        return true;
-    } else {
-        // TODO generate exceptions instead of return code?
+    if (ret < 0) {
+
+        stringstream err;
         switch (ret) {
         case ILLEGAL_SESSION:
-            RSCWARN(logger, "Send: Illegal Session")
-            ;
+            err << "Illegal Session";
             break;
         case ILLEGAL_MESSAGE:
-            RSCWARN(logger, "Send: Illegal Message")
-            ;
+            err << "Illegal Message";
             break;
         case CONNECTION_CLOSED:
-            RSCWARN(logger, "Send: Connection Closed")
-            ;
+            err << "Connection Closed";
             break;
         default:
-            RSCWARN(logger, "Send: Unknown spread error with code " << ret)
-            ;
+            err << "Unknown spread error with code " << ret;
             break;
         }
-        return false;
+
+        throw CommException(err.str());
+
     }
+
+}
+
+void SpreadConnection::interruptReceive() {
+
+    if (!connected) {
+        throw rsc::misc::IllegalStateException("Connection with id " + conId
+                + " is not active.");
+    }
+
+    SP_multicast(con, RELIABLE_MESS, spreadpg.c_str(), 0, 0, 0);
 
 }
 
@@ -298,6 +315,10 @@ unsigned long SpreadConnection::getMsgCount() {
 }
 
 mailbox *SpreadConnection::getMailbox() {
+    if (!connected) {
+        throw rsc::misc::IllegalStateException("Connection with id " + conId
+                + " is not active.");
+    }
     return &con;
 }
 
