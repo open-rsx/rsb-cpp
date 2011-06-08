@@ -29,7 +29,7 @@ namespace converter {
 const string ByteArrayConverter::WIRE_SCHEMA = ".*";
 
 ByteArrayConverter::ByteArrayConverter() :
-    Converter<string> (WIRE_SCHEMA, "bytearray") {
+    Converter<string> ("bytearray", WIRE_SCHEMA, true) {
 }
 
 ByteArrayConverter::~ByteArrayConverter() {
