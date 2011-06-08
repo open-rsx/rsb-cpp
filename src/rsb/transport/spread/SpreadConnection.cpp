@@ -160,41 +160,10 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
     int ret = SP_receive(con, &serviceType, sender, SPREAD_MAX_GROUPS,
             &numGroups, retGroups, &messType, &dummyEndianMismatch,
             SPREAD_MAX_MESSLEN, buf);
-    if (ret >= 0) {
-        if (Is_regular_mess(serviceType)) {
-            RSCINFO(logger, "regular spread message received");
 
-            // cancel if requested
-            if (numGroups == 1 && string(retGroups[0]) == string(spreadpg)) {
-                throw boost::thread_interrupted();
-            }
+    // check for errors
+    if (ret < 0) {
 
-            sm->setType(SpreadMessage::REGULAR);
-            sm->setData(string(buf, ret));
-            if (numGroups < 0) {
-                // TODO check whether we shall implement a best effort strategy here
-                RSCWARN(logger,
-                        "error during message reception, group array too large, requested size "
-                        << " configured size " << SPREAD_MAX_GROUPS);
-            }
-            for (int i = 0; i < numGroups; i++) {
-                if (retGroups[i] != NULL) {
-                    string group = string(retGroups[i]);
-                    RSCDEBUG(logger,
-                            "received message, addressed at group with name "
-                            << group);
-                    sm->addGroup(group);
-                }
-            }
-        } else if (Is_membership_mess(serviceType)) {
-            RSCINFO(logger, "received spread membership message type");
-            sm = SpreadMessagePtr(new SpreadMessage(SpreadMessage::MEMBERSHIP));
-        } else {
-            RSCWARN(logger, "received unknown spread message type with code " << serviceType);
-        }
-        RSCDEBUG(logger, "before returning spread message with content: "
-                + sm->getDataAsString());
-    } else {
         string err;
         switch (ret) {
         case ILLEGAL_SESSION:
@@ -218,10 +187,52 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
             err = "unknown spread receive error";
         }
         throw CommException("Spread communication error. Reason: " + err);
+
     }
-    if (!Is_regular_mess(serviceType)) {
-        // set flag to not process message - shouldn't be a data packet
-        throw CommException("received unknown type of spread message");
+
+    // handle normal messages
+    if (Is_regular_mess(serviceType)) {
+
+        RSCINFO(logger, "regular spread message received");
+
+        // cancel if requested
+        if (numGroups == 1 && string(retGroups[0]) == string(spreadpg)) {
+            throw boost::thread_interrupted();
+        }
+
+        sm->setType(SpreadMessage::REGULAR);
+        sm->setData(string(buf, ret));
+        if (numGroups < 0) {
+            // TODO check whether we shall implement a best effort strategy here
+            RSCWARN(logger,
+                    "error during message reception, group array too large, requested size "
+                    << " configured size " << SPREAD_MAX_GROUPS);
+        }
+        for (int i = 0; i < numGroups; i++) {
+            if (retGroups[i] != NULL) {
+                string group = string(retGroups[i]);
+                RSCDEBUG(logger,
+                        "received message, addressed at group with name "
+                        << group);
+                sm->addGroup(group);
+            }
+        }
+
+    } else if (Is_membership_mess(serviceType)) {
+        // this will currently never happen as we do not want to have membership messages
+        // and this message does not contain any contents
+
+        RSCINFO(logger, "received spread membership message type");
+        sm.reset(new SpreadMessage(SpreadMessage::MEMBERSHIP));
+
+    } else {
+
+        RSCFATAL(logger, "received unknown spread message type with code " << serviceType);
+        assert(false);
+        throw CommException(
+                "Received a message that is neither membership nor data message. "
+                    "This should never happen according to the spread documentation.");
+
     }
 
 }
