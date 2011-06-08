@@ -26,6 +26,7 @@
 #include "StringConverter.h"
 #include "Uint64Converter.h"
 #include "VoidConverter.h"
+#include "ByteArrayConverter.h"
 
 namespace rsb {
 namespace converter {
@@ -45,6 +46,8 @@ void registerDefaultConverters() {
 	    Converter<std::string>::Ptr(new Uint64Converter));
 	stringConverterRepository()->registerConverter(
 	    Converter<std::string>::Ptr(new VoidConverter));
+        stringConverterRepository()->registerConverter(
+            Converter<std::string>::Ptr(new ByteArrayConverter));
 	registered = true;
     }
 
