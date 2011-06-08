@@ -98,15 +98,17 @@ public:
             rsc::runtime::Properties options = transportIt->getOptions();
 
             // Take care of converters
-            RSCDEBUG(logger, "Converter configuration for transport `"
+            if (!options.has("converters")) {
+                RSCDEBUG(logger, "Converter configuration for transport `"
                          << transportIt->getName() << "': " << transportIt->getConverters());
-            // TODO we should not have to know the transport's wire-type here
-            converter::UnambiguousConverterMap<std::string> converters
-              = converter::stringConverterRepository()
-              ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
-            RSCDEBUG(logger, "Selected converters for transport `"
+                // TODO we should not have to know the transport's wire-type here
+                converter::UnambiguousConverterMap<std::string> converters
+                    = converter::stringConverterRepository()
+                    ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
+                RSCDEBUG(logger, "Selected converters for transport `"
                          << transportIt->getName() << "': " << converters);
-            options["converters"] = converters;
+                options["converters"] = converters;
+            }
             connectors.push_back(transport::OutConnectorPtr(
                     getOutFactoryInstance().createInst(transportIt->getName(),
                             options)));

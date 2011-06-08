@@ -68,15 +68,17 @@ ListenerPtr Factory::createListener(const Scope &scope,
         Properties options = transportIt->getOptions();
 
         // Take care of converters
-        RSCDEBUG(logger, "Converter configuration for transport `"
-                 << transportIt->getName() << "': " << transportIt->getConverters());
-        // TODO we should not have to know the transport's wire-type here
-        UnambiguousConverterMap<string> converters
-          = converter::stringConverterRepository()
-          ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
-        RSCDEBUG(logger, "Selected converters for transport `"
-                 << transportIt->getName() << "': " << converters);
-        options["converters"] = converters;
+        if (!options.has("connectors")) {
+            RSCDEBUG(logger, "Converter configuration for transport `"
+                     << transportIt->getName() << "': " << transportIt->getConverters());
+            // TODO we should not have to know the transport's wire-type here
+            UnambiguousConverterMap<string> converters
+                = converter::stringConverterRepository()
+                ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
+            RSCDEBUG(logger, "Selected converters for transport `"
+                     << transportIt->getName() << "': " << converters);
+            options["converters"] = converters;
+        }
         connectors.push_back(transport::InConnectorPtr(
                 transport::InFactory::getInstance().createInst(
                         transportIt->getName(), options)));
