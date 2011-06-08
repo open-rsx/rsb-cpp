@@ -122,6 +122,8 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
 
     EventPtr e(new Event());
 
+    e->mutableMetaData().setCreateTime(notification->meta_data().create_time());
+    e->mutableMetaData().setSendTime(notification->meta_data().send_time());
     e->mutableMetaData().setReceiveTime(rsc::misc::currentTimeMicros());
     e->mutableMetaData().setSenderId(rsc::misc::UUID(
             (boost::uint8_t*) notification->meta_data().sender_id().c_str()));

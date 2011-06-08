@@ -215,6 +215,8 @@ TEST_P(ConnectorTest, testRoundtrip)
         out->setQualityOfServiceSpecs(qosSpecs);
         ASSERT_NO_THROW(out->activate());
 
+        boost::uint64_t sendTime = rsc::misc::currentTimeMicros();
+
         // domain objects
         const unsigned int numEvents = 100;
         boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, numEvents, *sizeIt));
@@ -222,7 +224,6 @@ TEST_P(ConnectorTest, testRoundtrip)
         in->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
 
         // activate port and schedule informer
-        boost::uint64_t sendTime = rsc::misc::currentTimeMicros();
         exec->schedule(source);
 
         observer.waitReceived();
@@ -240,8 +241,19 @@ TEST_P(ConnectorTest, testRoundtrip)
 
             // meta data
             EXPECT_EQ(sent->getMetaData().getSenderId(), received->getMetaData().getSenderId());
+
+            EXPECT_GE(received->getMetaData().getCreateTime(), sendTime);
+            EXPECT_LE(received->getMetaData().getCreateTime(), rsc::misc::currentTimeMicros());
+
+            EXPECT_GE(received->getMetaData().getSendTime(), sendTime);
+            EXPECT_LE(received->getMetaData().getSendTime(), rsc::misc::currentTimeMicros());
+            EXPECT_GE(received->getMetaData().getSendTime(),
+                      received->getMetaData().getCreateTime());
+
             EXPECT_GE(received->getMetaData().getReceiveTime(), sendTime);
             EXPECT_LE(received->getMetaData().getReceiveTime(), rsc::misc::currentTimeMicros());
+            EXPECT_GE(received->getMetaData().getReceiveTime(),
+                      received->getMetaData().getSendTime());
         }
 
     }
