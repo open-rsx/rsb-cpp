@@ -107,6 +107,16 @@ public:
     }
 
     /**
+     * Return the event payload type of this Informer.
+     *
+     * @return A string designating the event payload type of this
+     * Informer.
+     */
+    std::string getType() const {
+        return this->defaultType;
+    }
+
+    /**
      * Defines the desired quality of service settings for this informers.
      *
      * @param specs QoS specs
@@ -151,7 +161,6 @@ public:
      * @return modified Event instance
      */
     EventPtr publish(EventPtr event) {
-        event->setScope(getScope());
         RSCDEBUG(logger, "Publishing event");
         checkedPublish(event);
         return event;
@@ -179,9 +188,18 @@ private:
 
     void checkedPublish(EventPtr event) {
         if (event->getType().empty()) {
-            std::stringstream s;
-            s << "Event type cannot be empty: " << event;
-            throw std::invalid_argument(s.str());
+            throw std::invalid_argument(boost::str(boost::format("Event type cannot be empty: %1%")
+                                                   % event));
+        }
+        // Check event type against informer's declared type.
+        if (event->getType() != getType()) {
+            throw std::invalid_argument(boost::str(boost::format("Specified event type %1% does not match listener type %2%.")
+                                                   % event->getType() % getType()));
+        }
+        // Check event scope against informer's declared scope.
+        if (event->getScope() != getScope()) {
+            throw std::invalid_argument(boost::str(boost::format("Specified event scope %1% does not match listener scope %2%.")
+                                                   % event->getScope() % getScope()));
         }
         event->mutableMetaData().setSenderId(getId());
         configurator->publish(event);

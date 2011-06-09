@@ -72,9 +72,9 @@ public:
     }
 
     void execute() {
-        EventPtr e(new Event);
-        e->setType(rsc::runtime::typeName<string>());
-        e->setData(boost::shared_ptr<string>(new string("hello world")));
+        EventPtr e(new Event(Scope("/blah"),
+                             boost::shared_ptr<string>(new string("hello world")),
+                             rsc::runtime::typeName<string>()));
         e->mutableMetaData().setUserInfo("foo", "blubb");
         e->mutableMetaData().setUserTime("tttt");
         e->mutableMetaData().setUserTime("xxxx", 42);
@@ -166,6 +166,30 @@ TEST(RoundtripTest, testRoundtrip)
 
 }
 
+TEST(InformerTest, testTypeCheck)
+{
+    Factory &factory = Factory::getInstance();
+    shared_ptr<string> payload(new string("foo"));
+    {
+        Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
+        EXPECT_THROW(informer->publish(payload, "not-string"), invalid_argument);
+    }
+    {
+        Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
+        EventPtr event(new Event(Scope("/"), payload, "not-string"));
+        EXPECT_THROW(informer->publish(event), invalid_argument);
+    }
+}
+
+TEST(InformerTest, testScopeCheck)
+{
+    Factory &factory = Factory::getInstance();
+    Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/foo"));
+    shared_ptr<string> payload(new string("foo"));
+    EventPtr event(new Event(Scope("/wrong"), payload, "std::string"));
+    EXPECT_THROW(informer->publish(event), invalid_argument);
+}
+
 TEST(InformerTest, testReturnValue)
 {
     Factory::killInstance();
@@ -216,12 +240,11 @@ TEST(InformerTest, testConversionException)
             Factory::getInstance().getDefaultParticipantConfig(),
             "IAmNotConvertible");
     EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo"))), runtime_error);
-    EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo")), "AnotherInconvertibleType"), runtime_error);
+    EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo")), "IAmNotConvertible"), runtime_error);
 
-    EventPtr e(new Event);
-    e->setData(boost::shared_ptr<string> (new string("foo")));
-    e->setScope(scope);
-    e->setType("DamnThingThatDoesNotWork");
+    EventPtr e(new Event(scope,
+                         boost::shared_ptr<string> (new string("foo")),
+                         "IAmNotConvertible"));
     EXPECT_THROW(informer->publish(e), runtime_error);
 
 }
