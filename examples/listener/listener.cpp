@@ -45,24 +45,36 @@ void printData(boost::shared_ptr<string> e) {
 
 int main(int argc, char **argv) {
 
+    // first get a factory instance that is used to create RSB domain objects
     Factory &factory = Factory::getInstance();
-
-    LoggerPtr l = Logger::getLogger("receiver");
 
     boost::timer t;
 
+    // set up the scope to receive on either from the command line argument or
+    // use the default scope of the informer example
     Scope scope;
     if (argc > 1) {
         scope = Scope(argv[1]);
     } else {
         scope = Scope("/example/informer");
     }
+
+    // create a listener that asynchronously receives events from the bus and
+    // dispatches them to registered handlers
     ListenerPtr s = factory.createListener(scope);
+
+    // add a handler that is notified about every new event
+    // this time a special handler instance is used that wraps a function
+    // pointer of a function that is only interested in the received data
+    // contained in the event and not the additional meta data provided by the
+    // event instance. Other handlers exist that also receive Event instances,
+    // either as class instances or by wrapping function pointers.
     s->addHandler(HandlerPtr(new DataFunctionHandler<string> (&printData)));
 
     cerr << "Listener setup finished. Waiting for messages on scope " << scope
             << endl;
 
+    // as events are received asynchronously we have to wait here for them
     while (true) {
         boost::this_thread::sleep(boost::posix_time::seconds(1000));
     }

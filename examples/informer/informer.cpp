@@ -36,16 +36,22 @@ using namespace rsb;
 
 int main(void) {
 
+    // first get a factory instance that is used to create RSB domain objects
     Factory &factory = Factory::getInstance();
 
-    LoggerPtr l = Logger::getLogger("informer");
-
+    // create an informer that is capable of sending events containing string
+    // data on the scope "/example/informer".
     Informer<string>::Ptr informer = factory.createInformer<string> (
             Scope("/example/informer"));
+
+    // create data to send over the informer. Data is always maintained in
+    // shared_ptr instances. Informer provides a typedef DataPtr of the
+    // appropriate type according to its template parameter
     Informer<string>::DataPtr s(new string("blub"));
 
     boost::timer t;
 
+    // really send the data several times
     for (int j = 0; j < 1200; j++) {
         informer->publish(s);
     }
