@@ -80,6 +80,7 @@ public:
             VoidPtr returnData = callback->intlCall(methodName,
                     event->getData());
             EventPtr returnEvent(new Event());
+            returnEvent->setScope(informer->getScope());
             returnEvent->setType(callback->getReplyType());
             returnEvent->setData(returnData);
             returnEvent->mutableMetaData().setUserInfo(requestIdKey,
@@ -87,6 +88,7 @@ public:
             informer->publish(returnEvent);
         } catch (exception &e) {
             EventPtr returnEvent(new Event());
+            returnEvent->setScope(informer->getScope());
             returnEvent->setType("string");
             string exceptionType = typeid(e).name();
             returnEvent->setData(boost::shared_ptr<string>(new string(

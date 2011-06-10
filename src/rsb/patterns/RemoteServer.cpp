@@ -184,6 +184,7 @@ EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
     MethodSet methodSet = getMethodSet(methodName, data->getType());
     methodSet.handler->expectReply(requestId);
 
+    data->setScope(methodSet.requestInformer->getScope());
     methodSet.requestInformer->publish(data);
 
     // wait for the reply
