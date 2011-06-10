@@ -1,0 +1,20 @@
+global = 1
+
+[qualityofservice]
+reliability = UNRELIABLE
+ordering = UNORDERED
+
+[errorhandling]
+onhandlererror = EXIT
+
+[transport.spread]
+host    = localhost
+port    = 4803
+enabled = 1
+
+[transport.spread.converter.cpp]
+image = IplImage # wireSchema = dataType
+
+[transport.inprocess]
+foo     = bar
+factor  = 1.5

@@ -1,0 +1,19 @@
+
+SET(SEND_NAME rsb_send)
+SET(VERSION_NAME rsb_version)
+
+# --- send ---
+
+ADD_EXECUTABLE(${SEND_NAME} rsbsend/rsbsend.cpp)
+TARGET_LINK_LIBRARIES(${SEND_NAME} ${CMAKE_THREAD_LIBS_INIT} ${RSB_NAME})
+
+# --- version ---
+
+ADD_EXECUTABLE(${VERSION_NAME} rsbversion/rsbversion.cpp)
+TARGET_LINK_LIBRARIES(${VERSION_NAME} ${CMAKE_THREAD_LIBS_INIT} ${RSB_NAME})
+
+# --- install target ---
+
+INSTALL(TARGETS ${SEND_NAME} ${VERSION_NAME}
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib)
