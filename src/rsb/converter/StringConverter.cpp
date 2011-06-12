@@ -26,7 +26,7 @@ using namespace std;
 namespace rsb {
 namespace converter {
 
-const string StringConverter::WIRE_SCHEMA = "string";
+const string StringConverter::WIRE_SCHEMA = "utf-8-string";
 
 StringConverter::StringConverter() :
 	Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(string)) {
