@@ -51,14 +51,14 @@ protected:
      * Try to find a suitable converter for @a key . It is considered
      * a program error if no such converter can be found. The error
      * condition can be avoided by:
-     * -# registering converters for all occuring wire-schemas or data-types
+     * -# registering converters for all occurring wire-schemas or data-types
      * -# registering a dummy converter that accepts but discard anything.
      *
      * @param key the wire-schema or data-type of the converter being
      *            requested.
      * @return The requested converter.
      * @throw rsc::runtime::NoSuchObject If no converter could be
-     * found for @a key.
+     *                                   found for @a key.
      */
     ConverterPtr getConverter(const std::string &key) const {
         return this->converters.getConverter(key);

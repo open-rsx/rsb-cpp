@@ -30,7 +30,7 @@ namespace rsb {
 namespace converter {
 
 /**
- * "Converts" arbitrary payloads into a @ref std::string which should
+ * "Converts" arbitrary payloads into a std::string which should
  * be interpreted as an array of bytes.
  *
  * @author jmoringe

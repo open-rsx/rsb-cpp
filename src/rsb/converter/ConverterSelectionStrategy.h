@@ -49,8 +49,8 @@ public:
      * Tries to look up the converter designator by @a key.
      *
      * @param key A wire-schema or data-type desinated the desired
-     * converter.
-     * @return A @ref boost::shared_ptr holding the converter.
+     *            converter.
+     * @return A boost::shared_ptr holding the converter.
      * @throw rsc::runtime::NoSuchObject If there is no converter fo @a key.
      */
     virtual ConverterPtr getConverter(const std::string &key) const = 0;

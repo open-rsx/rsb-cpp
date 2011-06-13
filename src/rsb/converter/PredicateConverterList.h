@@ -45,7 +45,7 @@ public:
      * predicate should be selected for @a key.
      *
      * @param key Depending on the context, either a wire-schema or a
-     * data-type for which a converter has to be selected.
+     *            data-type for which a converter has to be selected.
      * @return @c true if the associated converter should be selected;
      * @c false otherwise.
      */
@@ -96,8 +96,8 @@ public:
      * @a start and @a end.
      *
      * @param begin A ForwardIterator the value type of which is a
-     * @ref std::pair of a @ref ConverterPredicatePtr and a @ref
-     * Converter<WireType>::Ptr.
+     *              std::pair of a @ref ConverterPredicatePtr and a @ref
+     *              Converter<WireType>::Ptr.
      * @param end An associated end iterator.
      */
     template <typename ForwardIterator>
