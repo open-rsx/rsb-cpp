@@ -107,6 +107,8 @@ private:
 
         this->nblocks = 0;
         this->count = 0;
+
+        memset(buf, 0, 64);
     }
 
     /**
