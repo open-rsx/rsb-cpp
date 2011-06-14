@@ -42,7 +42,7 @@ typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
 /**
  * @author swrede
  * @author jwienke
- * @tparam WireFormat is the serialization format, uchar, string, binary, ...
+ * @tparam WireType is the serialization format, uchar, string, binary, ...
  */
 template<class WireType>
 class Converter: public rsc::runtime::Printable {
