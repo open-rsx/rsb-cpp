@@ -27,9 +27,9 @@ ENDIF()
 CONFIGURE_FILE(spread.conf.in ${SPREAD_CONFIG_FILE} @ONLY)
 CONFIGURE_FILE(testconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/testconfig.h)
 
-# --- RSB (integration) test ---
+# --- integration test ---
 
-SET(RSB_TEST_SOURCES rsb/UserLevelTest.cpp
+SET(RSB_TEST_SOURCES rsb/integrationtest.cpp
                      rsb/InformerTask.cpp
                      rsb/InformerTask.h)
 

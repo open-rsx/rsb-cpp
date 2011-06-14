@@ -93,20 +93,24 @@ private:
 
 };
 
-TEST(RoundtripTest, testRoundtrip)
+class RoundtripTest: public ::testing::TestWithParam<string> {
+};
+
+
+TEST_P(RoundtripTest, testRoundtrip)
 {
 
     Factory::killInstance();
     Factory &factory = Factory::getInstance();
-    ParticipantConfig config = factory.getDefaultParticipantConfig();
-    ParticipantConfig::Transport spreadTransport =
-            config.getTransport("spread");
-    rsc::runtime::Properties p = spreadTransport.getOptions();
+    ParticipantConfig config;
+    ParticipantConfig::Transport transport(GetParam());
+    rsc::runtime::Properties p = transport.getOptions();
     p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
-    spreadTransport.setOptions(p);
-    config.addTransport(spreadTransport);
+    transport.setOptions(p);
+    config.addTransport(transport);
     config.setQualityOfServiceSpec(QualityOfServiceSpec(
             QualityOfServiceSpec::ORDERED, QualityOfServiceSpec::RELIABLE));
+    config.setErrorStrategy(ParticipantConfig::EXIT);
     factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/blah");
@@ -166,7 +170,43 @@ TEST(RoundtripTest, testRoundtrip)
 
 }
 
-TEST(InformerTest, testTypeCheck)
+INSTANTIATE_TEST_CASE_P(IntegrqationTest,
+                        RoundtripTest,
+                        ::testing::Values("spread", "inprocess"));
+
+// ------ informer test ------
+
+class InformerTest: public ::testing::Test {
+protected:
+
+    static void SetUpTestCase() {
+
+        Factory::killInstance();
+        Factory &factory = Factory::getInstance();
+        ParticipantConfig config = factory.getDefaultParticipantConfig();
+        ParticipantConfig::Transport spreadTransport = config.getTransport(
+                "spread");
+        rsc::runtime::Properties p = spreadTransport.getOptions();
+        p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
+        spreadTransport.setOptions(p);
+        config.addTransport(spreadTransport);
+        factory.setDefaultParticipantConfig(config);
+
+    }
+
+    static void TearDownTestCase() {
+
+    }
+
+    virtual void SetUp() {
+    }
+    virtual void TearDown() {
+    }
+
+};
+
+
+TEST_F(InformerTest, testTypeCheck)
 {
     Factory &factory = Factory::getInstance();
     shared_ptr<string> payload(new string("foo"));
@@ -181,7 +221,7 @@ TEST(InformerTest, testTypeCheck)
     }
 }
 
-TEST(InformerTest, testScopeCheck)
+TEST_F(InformerTest, testScopeCheck)
 {
     Factory &factory = Factory::getInstance();
     Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/foo"));
@@ -190,19 +230,9 @@ TEST(InformerTest, testScopeCheck)
     EXPECT_THROW(informer->publish(event), invalid_argument);
 }
 
-TEST(InformerTest, testReturnValue)
+TEST_F(InformerTest, testReturnValue)
 {
-    Factory::killInstance();
     Factory &factory = Factory::getInstance();
-    ParticipantConfig config = factory.getDefaultParticipantConfig();
-    ParticipantConfig::Transport spreadTransport =
-            config.getTransport("spread");
-    rsc::runtime::Properties p = spreadTransport.getOptions();
-    p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
-    spreadTransport.setOptions(p);
-    config.addTransport(spreadTransport);
-    factory.setDefaultParticipantConfig(config);
-
     const Scope scope("/return/value/test");
     Informer<string>::Ptr informer = factory.createInformer<string> (scope,
             Factory::getInstance().getDefaultParticipantConfig());
@@ -219,21 +249,13 @@ TEST(InformerTest, testReturnValue)
                         std::string>());
         EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
+
 }
 
-TEST(InformerTest, testConversionException)
+TEST_F(InformerTest, testConversionException)
 {
 
-    Factory::killInstance();
     Factory &factory = Factory::getInstance();
-    ParticipantConfig config = factory.getDefaultParticipantConfig();
-    ParticipantConfig::Transport spreadTransport =
-            config.getTransport("spread");
-    rsc::runtime::Properties p = spreadTransport.getOptions();
-    p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
-    spreadTransport.setOptions(p);
-    config.addTransport(spreadTransport);
-    factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/damn/strange/scope");
     Informer<string>::Ptr informer = factory.createInformer<string> (scope,

@@ -58,8 +58,8 @@ void InRouteConfigurator::activate() {
     // Activate all connectors.
     for (ConnectorList::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
-        (*it)->activate();
         (*it)->setScope(scope);
+        (*it)->activate();
     }
 
     // Create the event processing strategy and attach it to all
