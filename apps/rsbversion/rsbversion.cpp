@@ -30,30 +30,29 @@ using namespace std;
 using namespace rsb;
 
 int main(int argc, char **argv) {
-        bool verbose = false;
-	if (argc == 2 && string(argv[1]) == "--verbose") {
-	    verbose = true;
-	}
+    bool verbose = false;
+    if (argc == 2 && string(argv[1]) == "--verbose") {
+        verbose = true;
+    }
 
-	cout << "Version: " << Version::string() << ", build "
-			<< Version::buildString() << ", abi " << Version::abi()
-			<< endl;
+    cout << "Version: " << Version::string() << ", build "
+            << Version::buildString() << ", abi " << Version::abi() << endl;
 
-        if (verbose) {
-                rsb::Factory::getInstance();
+    if (verbose) {
+        rsb::Factory::getInstance();
 
-                cout << endl;
+        cout << endl;
 
-                cout << endl << "Connectors" << endl;
+        cout << endl << "Connectors" << endl;
 
-                cout << rsb::transport::InFactory::getInstance() << endl;
-                cout << rsb::transport::OutFactory::getInstance() << endl;
+        cout << rsb::transport::InFactory::getInstance() << endl;
+        cout << rsb::transport::OutFactory::getInstance() << endl;
 
-                cout << endl << "Converters" << endl;
+        cout << endl << "Converters" << endl;
 
-		cout << *rsb::converter::stringConverterRepository() << endl;
-        }
+        cout << *rsb::converter::stringConverterRepository() << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 
 }
