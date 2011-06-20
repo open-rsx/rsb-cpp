@@ -56,7 +56,7 @@ void InRouteConfigurator::activate() {
     RSCDEBUG(logger, "Activating");
 
     // Activate all connectors.
-    for (ConnectorList::iterator it = this->connectors.begin(); it
+    for (ConnectorSet::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         (*it)->setScope(scope);
         (*it)->activate();
@@ -77,7 +77,7 @@ void InRouteConfigurator::deactivate() {
     RSCDEBUG(logger, "Deactivating");
 
     // Deactivate all connectors.
-    for (ConnectorList::iterator it = this->connectors.begin(); it
+    for (ConnectorSet::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         (*it)->deactivate();
     }
@@ -91,18 +91,22 @@ EventReceivingStrategyPtr InRouteConfigurator::getEventReceivingStrategy() const
     return this->eventReceivingStrategy;
 }
 
+InRouteConfigurator::ConnectorSet InRouteConfigurator::getConnectors() {
+    return this->connectors;
+}
+
 void InRouteConfigurator::addConnector(InConnectorPtr connector) {
     RSCDEBUG(logger, "Adding connector " << connector);
-    this->connectors.push_back(connector);
+    this->connectors.insert(connector);
 }
 
 void InRouteConfigurator::removeConnector(InConnectorPtr connector) {
     RSCDEBUG(logger, "Removing connector " << connector);
-    this->connectors.remove(connector);
+    this->connectors.erase(connector);
 }
 
 void InRouteConfigurator::filterAdded(filter::FilterPtr filter) {
-    for (ConnectorList::iterator it = this->connectors.begin(); it
+    for (ConnectorSet::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         filter->notifyObserver(*it, filter::FilterAction::ADD);
     }
@@ -110,7 +114,7 @@ void InRouteConfigurator::filterAdded(filter::FilterPtr filter) {
 }
 
 void InRouteConfigurator::filterRemoved(filter::FilterPtr filter) {
-    for (ConnectorList::iterator it = this->connectors.begin(); it
+    for (ConnectorSet::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         filter->notifyObserver(*it, filter::FilterAction::REMOVE);
     }
@@ -119,7 +123,7 @@ void InRouteConfigurator::filterRemoved(filter::FilterPtr filter) {
 
 void InRouteConfigurator::setQualityOfServiceSpecs(
         const QualityOfServiceSpec &specs) {
-    for (ConnectorList::iterator it = this->connectors.begin(); it
+    for (ConnectorSet::iterator it = this->connectors.begin(); it
             != this->connectors.end(); ++it) {
         (*it)->setQualityOfServiceSpecs(specs);
     }

@@ -20,9 +20,10 @@
 #pragma once
 
 #include <string>
-#include <list>
+#include <set>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/Printable.h>
@@ -43,8 +44,10 @@ namespace eventprocessing {
  *
  * @author swrede
  */
-class RSB_EXPORT InRouteConfigurator: public virtual rsc::runtime::Printable {
+class RSB_EXPORT InRouteConfigurator: public virtual rsc::runtime::Printable,
+                                      private boost::noncopyable {
 public:
+    typedef std::set<transport::InConnectorPtr> ConnectorSet;
 
     InRouteConfigurator(const Scope &scope);
     virtual ~InRouteConfigurator();
@@ -56,6 +59,8 @@ public:
     virtual void deactivate();
 
     EventReceivingStrategyPtr getEventReceivingStrategy() const;
+
+    ConnectorSet getConnectors();
 
     void addConnector(transport::InConnectorPtr connector);
     void removeConnector(transport::InConnectorPtr connector);
@@ -72,11 +77,9 @@ public:
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 private:
-    typedef std::list<transport::InConnectorPtr> ConnectorList;
-
     rsc::logging::LoggerPtr logger;
     Scope scope;
-    ConnectorList connectors;
+    ConnectorSet connectors;
     // ep for observation model
     EventReceivingStrategyPtr eventReceivingStrategy;
     volatile bool shutdown;
