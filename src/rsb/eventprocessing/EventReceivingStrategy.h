@@ -20,6 +20,7 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 
 #include "../Event.h"
 #include "../Handler.h"
@@ -36,9 +37,9 @@ namespace eventprocessing {
  * @author swrede
  * @author jmoringe
  */
-class RSB_EXPORT EventReceivingStrategy: public Handler {
+class RSB_EXPORT EventReceivingStrategy: public Handler,
+                                         private boost::noncopyable {
 public:
-
     virtual ~EventReceivingStrategy();
 
     virtual void addFilter(filter::FilterPtr filter) = 0;
