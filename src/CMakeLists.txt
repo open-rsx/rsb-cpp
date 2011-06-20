@@ -79,6 +79,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/inprocess/OutConnector.cpp
 
             rsb/transport/spread/InConnector.cpp
+            rsb/transport/spread/InPullConnector.cpp
             rsb/transport/spread/OutConnector.cpp
             rsb/transport/spread/ReceiverTask.cpp
             rsb/transport/spread/MembershipManager.cpp
@@ -168,6 +169,7 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/inprocess/OutConnector.h
 
             rsb/transport/spread/InConnector.h
+            rsb/transport/spread/InPullConnector.h
             rsb/transport/spread/OutConnector.h
             rsb/transport/spread/ReceiverTask.h
             rsb/transport/spread/MembershipManager.h

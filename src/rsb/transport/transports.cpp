@@ -23,9 +23,12 @@
 #include "inprocess/OutConnector.h"
 
 #include "spread/InConnector.h"
+#include "spread/InPullConnector.h"
 #include "spread/OutConnector.h"
 
 #include "transports.h"
+
+using namespace std;
 
 namespace rsb {
 namespace transport {
@@ -55,8 +58,15 @@ void registerDefaultTransports() {
         }
 
         {
-	    InPullFactory &factory = InPullFactory::getInstance();
+            InPullFactory &factory = InPullFactory::getInstance();
 
+            set<string> options;
+            options.insert("host");
+            options.insert("port");
+            factory.registerConnector("spread",
+                                      &spread::InPullConnector::create,
+                                      "spread",
+                                      options);
         }
 
         {
