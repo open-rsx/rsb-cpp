@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/runtime/Printable.h>
@@ -36,7 +37,8 @@ namespace eventprocessing {
  * @author swrede
  * @author jmoringe
  */
-class RSB_EXPORT EventSendingStrategy: public virtual rsc::runtime::Printable {
+  class RSB_EXPORT EventSendingStrategy: public virtual rsc::runtime::Printable,
+                                         private boost::noncopyable {
 public:
     virtual ~EventSendingStrategy();
 
