@@ -28,7 +28,8 @@
 #include <rsc/runtime/Printable.h>
 #include <rsc/patterns/Factory.h>
 
-#include "InConnector.h"
+#include "InPullConnector.h"
+#include "InPushConnector.h"
 #include "OutConnector.h"
 
 namespace rsb {
@@ -179,7 +180,11 @@ private:
     }
 };
 
-typedef ConnectorFactory<InConnector> InFactory;
+typedef ConnectorFactory<InConnector> InFactory; // TODO will be removed
+
+typedef ConnectorFactory<InPullConnector> InPullFactory;
+
+typedef ConnectorFactory<InPushConnector> InPushFactory;
 
 typedef ConnectorFactory<OutConnector> OutFactory;
 
