@@ -33,8 +33,8 @@ using namespace rsb::transport;
 using namespace rsb::converter;
 using namespace testing;
 
-InConnectorPtr createSpreadInConnector() {
-    return InConnectorPtr(new rsb::spread::InConnector(stringConverterRepository()->getConvertersForDeserialization(),
+InPushConnectorPtr createSpreadInConnector() {
+    return InPushConnectorPtr(new rsb::spread::InConnector(stringConverterRepository()->getConvertersForDeserialization(),
 						       defaultHost(),
 						       SPREAD_PORT));
 }

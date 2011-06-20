@@ -122,7 +122,7 @@ TEST_P(ConnectorTest, testHierarchySending)
         Scope receiveScope = *receiveScopeIt;
 
         // in connector
-        InConnectorPtr in = GetParam().createInConnector();
+        InPushConnectorPtr in = GetParam().createInConnector();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(receiveScope);
         in->activate();
@@ -207,7 +207,7 @@ TEST_P(ConnectorTest, testRoundtrip)
             != sizes.end(); ++sizeIt) {
 
         // in connector
-        InConnectorPtr in = GetParam().createInConnector();
+        InPushConnectorPtr in = GetParam().createInConnector();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(scope);
         ASSERT_NO_THROW(in->activate());

@@ -31,8 +31,8 @@ using namespace rsb::inprocess;
 using namespace rsb::transport;
 using namespace testing;
 
-rsb::transport::InConnectorPtr createInProcessInConnector() {
-    return rsb::transport::InConnectorPtr(new rsb::inprocess::InConnector());
+rsb::transport::InPushConnectorPtr createInProcessInConnector() {
+    return rsb::transport::InPushConnectorPtr(new rsb::inprocess::InConnector());
 }
 
 rsb::transport::OutConnectorPtr createInProcessOutConnector() {
