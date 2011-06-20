@@ -69,6 +69,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/Connector.cpp
             rsb/transport/InConnector.cpp
             rsb/transport/InPullConnector.cpp
+            rsb/transport/InPushConnector.cpp
             rsb/transport/transports.cpp
 
             rsb/transport/inprocess/Bus.cpp
@@ -152,6 +153,7 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/Connector.h
             rsb/transport/InConnector.h
             rsb/transport/InPullConnector.h
+            rsb/transport/InPushConnector.h
             rsb/transport/OutConnector.h
             rsb/transport/ConverterSelectingConnector.h
             rsb/transport/Factory.h

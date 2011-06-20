@@ -25,7 +25,7 @@
 #include <rsc/threading/TaskExecutor.h>
 
 #include "../../filter/ScopeFilter.h"
-#include "../InConnector.h"
+#include "../InPushConnector.h"
 #include "../ConverterSelectingConnector.h"
 #include "SpreadConnector.h"
 #include "rsb/rsbexports.h"
@@ -36,7 +36,7 @@ namespace spread {
 /**
  * @author jmoringe
  */
-class RSB_EXPORT InConnector: public transport::InConnector,
+class RSB_EXPORT InConnector: public transport::InPushConnector,
                               public transport::ConverterSelectingConnector<std::string> {
     friend class ReceiverTask;
 public:
@@ -58,7 +58,7 @@ public:
     void addHandler(eventprocessing::HandlerPtr handler);
     void removeHandler(eventprocessing::HandlerPtr handler);
 
-    static rsb::transport::InConnector *create(
+    static transport::InPushConnector *create(
             const rsc::runtime::Properties &args);
 private:
     rsc::logging::LoggerPtr logger;

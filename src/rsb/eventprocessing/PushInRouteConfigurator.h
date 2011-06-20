@@ -24,13 +24,14 @@
 #include <rsc/logging/Logger.h>
 
 #include "../Handler.h"
+#include "../transport/InPushConnector.h"
 #include "InRouteConfigurator.h"
 #include "PushEventReceivingStrategy.h"
 
 namespace rsb {
 namespace eventprocessing {
 
-/** 
+/**
  * This specialization of @ref InRouteConfigurator creates and
  * maintains an event receiving setup in which @ref rsb::Event s are
  * delivered using a push-style data flow by invoking registered @ref

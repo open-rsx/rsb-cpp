@@ -33,7 +33,7 @@ InConnector::InConnector() :
     logger(Logger::getLogger("rsb.inprocess.InConnector")), active(false) {
 }
 
-rsb::transport::InConnector* InConnector::create(const Properties& args) {
+transport::InPushConnector* InConnector::create(const Properties& args) {
     LoggerPtr logger = Logger::getLogger("rsb.inprocess.InConnector");
     RSCDEBUG(logger, "Creating InConnector with properties " << args);
 

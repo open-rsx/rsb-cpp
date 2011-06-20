@@ -33,7 +33,7 @@ using namespace rsb::converter;
 namespace rsb {
 namespace spread {
 
-rsb::transport::InConnector *InConnector::create(const Properties& args) {
+transport::InPushConnector *InConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
@@ -42,7 +42,7 @@ rsb::transport::InConnector *InConnector::create(const Properties& args) {
 			   args.getAs<unsigned int>               ("port", defaultPort()));
 }
 
-InConnector::InConnector(ConverterSelectionStrategyPtr converters,
+InConnector::InConnector(const ConverterSelectionStrategyPtr converters,
 			 const string		       &host,
 			 unsigned int                   port) :
     transport::ConverterSelectingConnector<string>(converters), logger(
@@ -64,7 +64,7 @@ string InConnector::getClassName() const {
 }
 
 void InConnector::printContents(ostream &stream) const {
-    stream << "connector = " << connector;
+    stream << "connector = " << this->connector;
 }
 
 void InConnector::activate() {
@@ -102,12 +102,12 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
 
 void InConnector::addHandler(HandlerPtr handler) {
     assert(this->handlers.empty());
-    transport::InConnector::addHandler(handler);
+    transport::InPushConnector::addHandler(handler);
     this->rec->setHandler(this->handlers.front());
 }
 
 void InConnector::removeHandler(HandlerPtr handler) {
-    transport::InConnector::addHandler(handler);
+    transport::InPushConnector::addHandler(handler);
     this->rec->setHandler(HandlerPtr());
 }
 
