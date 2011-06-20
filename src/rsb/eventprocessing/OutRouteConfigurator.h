@@ -22,6 +22,7 @@
 #include <list>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/Printable.h>
@@ -40,7 +41,8 @@ namespace eventprocessing {
  * @author swrede
  * @todo add configuration, provide preliminary set up interface
  */
-class RSB_EXPORT OutRouteConfigurator: public virtual rsc::runtime::Printable {
+class RSB_EXPORT OutRouteConfigurator: public virtual rsc::runtime::Printable,
+                                       private boost::noncopyable {
 public:
     OutRouteConfigurator();
     virtual ~OutRouteConfigurator();
