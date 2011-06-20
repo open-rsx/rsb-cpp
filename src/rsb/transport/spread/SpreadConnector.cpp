@@ -90,6 +90,10 @@ void SpreadConnector::send(const SpreadMessage &msg) {
     this->con->send(msg);
 }
 
+void SpreadConnector::receive(SpreadMessagePtr msg) {
+    this->con->receive(msg);
+}
+
 SpreadConnector::~SpreadConnector() {
     if (this->activated) {
         deactivate();
