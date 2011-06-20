@@ -19,17 +19,10 @@
 
 #include "InConnector.h"
 
-using namespace rsb::eventprocessing;
-
 namespace rsb {
 namespace transport {
 
-void InConnector::addHandler(HandlerPtr handler) {
-    this->handlers.push_back(handler);
-}
-
-void InConnector::removeHandler(HandlerPtr handler) {
-    this->handlers.remove(handler);
+InConnector::~InConnector() {
 }
 
 }

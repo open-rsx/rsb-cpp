@@ -19,13 +19,10 @@
 
 #pragma once
 
-#include <list>
-
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
 #include "../filter/FilterObserver.h"
-#include "../eventprocessing/Handler.h"
 #include "Connector.h"
 #include "rsb/rsbexports.h"
 
@@ -46,20 +43,14 @@ class RSB_EXPORT InConnector : public Connector,
 public:
     typedef boost::shared_ptr<InConnector> Ptr;
 
+    virtual ~InConnector();
+
     /**
      * Sets the scope this connector will receive events from.
      *
      * @param scope scope of the connector
      */
     virtual void setScope(const Scope &scope) = 0;
-
-    virtual void addHandler(eventprocessing::HandlerPtr handler);
-    virtual void removeHandler(eventprocessing::HandlerPtr handler);
-
-protected:
-    typedef std::list<eventprocessing::HandlerPtr> HandlerList;
-
-    HandlerList handlers;
 };
 
 typedef InConnector::Ptr InConnectorPtr;
