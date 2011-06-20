@@ -58,32 +58,8 @@ transport::OutFactory &Factory::getOutFactoryInstance() {
 ListenerPtr Factory::createListener(const Scope &scope,
         const ParticipantConfig &config) {
     // Create requested connectors
-    std::vector<transport::InConnectorPtr> connectors;
-    set<ParticipantConfig::Transport> configuredTransports =
-            config.getTransports();
-    for (set<ParticipantConfig::Transport>::const_iterator transportIt =
-            configuredTransports.begin(); transportIt
-            != configuredTransports.end(); ++transportIt) {
-        RSCDEBUG(logger, "Trying to add connector " << *transportIt);
-        Properties options = transportIt->getOptions();
-
-        // Take care of converters
-        if (!options.has("converters")) {
-            RSCDEBUG(logger, "Converter configuration for transport `"
-                     << transportIt->getName() << "': " << transportIt->getConverters());
-            // TODO we should not have to know the transport's wire-type here
-            ConverterSelectionStrategy<string>::Ptr
-	      converters(converter::stringConverterRepository()
-			 ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters())));
-            RSCDEBUG(logger, "Selected converters for transport `"
-                     << transportIt->getName() << "': " << converters);
-            options["converters"] = converters;
-        }
-        connectors.push_back(transport::InConnectorPtr(
-                transport::InFactory::getInstance().createInst(
-                        transportIt->getName(), options)));
-    }
-
+    vector<transport::InPushConnectorPtr> connectors
+      = createConnectors<transport::InPushFactory>(config);
     return ListenerPtr(new Listener(connectors, scope, config));
 }
 

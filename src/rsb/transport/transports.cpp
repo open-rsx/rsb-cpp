@@ -39,8 +39,7 @@ void registerDefaultTransports() {
     if (!registered) {
 
         {
-	    // TODO will be changed to InPushFactory
-            InFactory &factory = InFactory::getInstance();
+            InPushFactory &factory = InPushFactory::getInstance();
 
             factory.registerConnector("inprocess",
 				      &rsb::inprocess::InConnector::create,

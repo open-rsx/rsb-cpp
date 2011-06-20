@@ -28,7 +28,7 @@ using namespace rsb::transport;
 
 namespace rsb {
 
-Listener::Listener(const vector<transport::InConnectorPtr> &connectors,
+Listener::Listener(const vector<InPushConnectorPtr> &connectors,
         const Scope &scope, const ParticipantConfig &config) :
     Participant(scope, config),
             logger(rsc::logging::Logger::getLogger("rsb.Listener")) {
@@ -42,12 +42,12 @@ string Listener::getClassName() const {
     return "Listener";
 }
 
-void Listener::initialize(const vector<InConnectorPtr> &connectors,
+void Listener::initialize(const vector<InPushConnectorPtr> &connectors,
         const Scope &scope) {
     // TODO evaluate configuration
     this->configurator.reset(new eventprocessing::PushInRouteConfigurator(scope));
     this->configurator->setErrorStrategy(getConfig().getErrorStrategy());
-    for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
+    for (vector<InPushConnectorPtr>::const_iterator it = connectors.begin(); it
             != connectors.end(); ++it) {
         this->configurator->addConnector(*it);
     }

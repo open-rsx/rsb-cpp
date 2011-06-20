@@ -36,7 +36,8 @@ int main(int argc, char **argv) {
     }
 
     cout << "Version: " << Version::string() << ", build "
-            << Version::buildString() << ", abi " << Version::abi() << endl;
+         << Version::buildString() << ", abi " << Version::abi()
+         << endl;
 
     if (verbose) {
         rsb::Factory::getInstance();
@@ -45,7 +46,8 @@ int main(int argc, char **argv) {
 
         cout << endl << "Connectors" << endl;
 
-        cout << rsb::transport::InFactory::getInstance() << endl;
+        cout << rsb::transport::InPullFactory::getInstance() << endl;
+        cout << rsb::transport::InPushFactory::getInstance() << endl;
         cout << rsb::transport::OutFactory::getInstance() << endl;
 
         cout << endl << "Converters" << endl;

@@ -180,8 +180,6 @@ private:
     }
 };
 
-typedef ConnectorFactory<InConnector> InFactory; // TODO will be removed
-
 typedef ConnectorFactory<InPullConnector> InPullFactory;
 
 typedef ConnectorFactory<InPushConnector> InPushFactory;

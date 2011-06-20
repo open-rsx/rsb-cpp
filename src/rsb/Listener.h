@@ -29,7 +29,7 @@
 #include "Participant.h"
 #include "Handler.h"
 #include "eventprocessing/PushInRouteConfigurator.h"
-#include "transport/Connector.h"
+#include "transport/InPushConnector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -67,7 +67,7 @@ public:
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createListener instead of calling this directly.
      */
-    Listener(const std::vector<transport::InConnectorPtr> &connectors,
+    Listener(const std::vector<transport::InPushConnectorPtr> &connectors,
             const Scope &scope, const ParticipantConfig &config);
 
     virtual ~Listener();
@@ -117,7 +117,7 @@ private:
     std::set<HandlerPtr> handlers;
     eventprocessing::PushInRouteConfiguratorPtr configurator;
 
-    void initialize(const std::vector<transport::InConnectorPtr> &connectors,
+    void initialize(const std::vector<transport::InPushConnectorPtr> &connectors,
             const Scope &scope);
 };
 
