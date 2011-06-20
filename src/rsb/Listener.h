@@ -45,7 +45,7 @@ namespace rsb {
  * @code
  * ListenerPtr s(new Listener("rsb://example/informer"));
  * boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
- * s->appendHandler(dh);
+ * s->addHandler(dh);
  * @endcode
  *
  * @author swrede
