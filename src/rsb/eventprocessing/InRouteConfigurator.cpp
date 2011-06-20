@@ -20,7 +20,6 @@
 #include "InRouteConfigurator.h"
 
 #include "../Factory.h"
-#include "ParallelEventReceivingStrategy.h"
 
 using namespace std;
 using namespace rsc::logging;
