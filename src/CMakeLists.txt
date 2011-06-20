@@ -50,6 +50,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/eventprocessing/PullEventReceivingStrategy.cpp
             rsb/eventprocessing/ParallelEventReceivingStrategy.cpp
             rsb/eventprocessing/InRouteConfigurator.cpp
+            rsb/eventprocessing/PullInRouteConfigurator.cpp
             rsb/eventprocessing/PushInRouteConfigurator.cpp
             rsb/eventprocessing/OutRouteConfigurator.cpp
 
@@ -131,6 +132,7 @@ SET(HEADERS rsb/CommException.h
             rsb/eventprocessing/PushEventReceivingStrategy.h
             rsb/eventprocessing/ParallelEventReceivingStrategy.h
             rsb/eventprocessing/InRouteConfigurator.h
+            rsb/eventprocessing/PullInRouteConfigurator.h
             rsb/eventprocessing/PushInRouteConfigurator.h
             rsb/eventprocessing/OutRouteConfigurator.h
 
