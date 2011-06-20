@@ -37,7 +37,7 @@ namespace spread {
 class RSB_EXPORT OutConnector: public transport::OutConnector,
                                public rsb::transport::ConverterSelectingConnector<std::string> {
 public:
-  OutConnector(converter::ConverterSelectionStrategy<std::string>::Ptr converters,
+    OutConnector(ConverterSelectionStrategyPtr converters,
                  const std::string& host = defaultHost(),
                  unsigned int port = defaultPort(),
                  unsigned int maxFragmentSize = 100000);
