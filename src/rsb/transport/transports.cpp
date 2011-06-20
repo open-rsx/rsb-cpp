@@ -43,16 +43,15 @@ void registerDefaultTransports() {
 
         {
             InPushFactory &factory = InPushFactory::getInstance();
-
             factory.registerConnector("inprocess",
-				      &rsb::inprocess::InConnector::create,
+				      &inprocess::InConnector::create,
 				      "inprocess");
 
-	    std::set<std::string> options;
+	    set<string> options;
 	    options.insert("host");
 	    options.insert("port");
 	    factory.registerConnector("spread",
-				      &rsb::spread::InConnector::create,
+				      &spread::InConnector::create,
 				      "spread",
 				      options);
         }
@@ -64,24 +63,25 @@ void registerDefaultTransports() {
             options.insert("host");
             options.insert("port");
             factory.registerConnector("spread",
-                                      &spread::InPullConnector::create,
-                                      "spread",
-                                      options);
+				      &spread::InPullConnector::create,
+				      "spread",
+				      options);
         }
 
         {
             OutFactory &factory = OutFactory::getInstance();
             factory.registerConnector("inprocess",
-				      &rsb::inprocess::OutConnector::create,
+				      &inprocess::OutConnector::create,
 				      "inprocess");
 
-	    std::set<std::string> options;
-	    options.insert("host");
-	    options.insert("port");
+            set<string> options;
+            options.insert("host");
+            options.insert("port");
+            options.insert("maxfragmentsize");
             factory.registerConnector("spread",
-				      &rsb::spread::OutConnector::create,
-				      "spread",
-				      options);
+                                      &spread::OutConnector::create,
+                                      "spread",
+                                      options);
         }
 
         registered = true;
