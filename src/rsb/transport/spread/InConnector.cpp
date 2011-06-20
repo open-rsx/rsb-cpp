@@ -64,7 +64,8 @@ string InConnector::getClassName() const {
 }
 
 void InConnector::printContents(ostream &stream) const {
-    stream << "connector = " << this->connector;
+    stream << "active = " << this->active
+	   << "connector = " << this->connector;
 }
 
 void InConnector::activate() {
