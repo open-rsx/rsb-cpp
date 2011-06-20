@@ -65,12 +65,6 @@ void InRouteConfigurator::activate() {
     // Create the event processing strategy and attach it to all
     // connectors.
     this->eventReceivingStrategy = createEventReceivingStrategy();
-    for (ConnectorSet::iterator it = this->connectors.begin(); it
-            != this->connectors.end(); ++it) {
-        (*it)->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(
-                &EventReceivingStrategy::handle, this->eventReceivingStrategy,
-                _1))));
-    }
 }
 
 void InRouteConfigurator::deactivate() {

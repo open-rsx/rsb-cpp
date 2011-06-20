@@ -27,6 +27,8 @@ using namespace boost;
 
 using namespace rsc::logging;
 
+using namespace rsb::transport;
+
 namespace rsb {
 namespace eventprocessing {
 
@@ -50,9 +52,26 @@ void PushInRouteConfigurator::printContents(ostream &stream) const {
 
 void PushInRouteConfigurator::activate() {
     InRouteConfigurator::activate();
+
+    // The base class has instantiated an
+    // EventReceivingStrategy. Retrieve it and install our error
+    // handling strategy.
     this->eventReceivingStrategy
         = dynamic_pointer_cast<PushEventReceivingStrategy>(getEventReceivingStrategy());
     this->eventReceivingStrategy->setHandlerErrorStrategy(this->errorStrategy);
+
+    // Retrieve the set of connectors and ourselves to the list of
+    // handlers of each connector.
+    InRouteConfigurator::ConnectorSet connectors = getConnectors();
+    for (InRouteConfigurator::ConnectorSet::const_iterator it = connectors.begin();
+	 it != connectors.end(); ++it) {
+	InPushConnectorPtr connector = dynamic_pointer_cast<InPushConnector>(*it);
+	assert(connector);
+	connector->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(
+								      &PushEventReceivingStrategy::handle,
+								      this->eventReceivingStrategy,
+								      _1))));
+    }
 }
 
 void PushInRouteConfigurator::handlerAdded(rsb::HandlerPtr handler, const bool &wait) {
