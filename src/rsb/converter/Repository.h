@@ -32,6 +32,7 @@
 #include <rsc/logging/Logger.h>
 
 #include "Converter.h"
+#include "ConverterSelectionStrategy.h"
 #include "UnambiguousConverterMap.h"
 #include "rsb/rsbexports.h"
 
@@ -61,9 +62,9 @@ public:
         logger(rsc::logging::Logger::getLogger("rsb.converter.Repository")) {
     }
 
-    UnambiguousConverterMap<WireType> getConvertersForSerialization(const ConverterSelectionMap &selection
+    typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForSerialization(const ConverterSelectionMap &selection
                                                                     = ConverterSelectionMap()) const {
-        UnambiguousConverterMap<WireType> result;
+        UnambiguousConverterMap<WireType> *result = new UnambiguousConverterMap<WireType>();
         for (typename ConverterMap::const_iterator it = this->converters.begin();
              it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
@@ -73,7 +74,7 @@ public:
             // case of ambiguity.
             if (selection.find(dataType) == selection.end()) {
                 try {
-                    result.addConverter(dataType, it->second);
+                    result->addConverter(dataType, it->second);
                 } catch (const std::invalid_argument &e) {
                     std::set<std::string> wireSchemas;
                     for (typename ConverterMap::const_iterator it_ = this->converters.begin();
@@ -91,15 +92,15 @@ public:
             // selection. Add the converter if the wire-schema matches.
             else if (wireSchema == selection.find(dataType)->second) {
                 RSCDEBUG(this->logger, "Found configured converter signature " << it->first);
-                result.addConverter(dataType, it->second);
+                result->addConverter(dataType, it->second);
             }
         }
-        return result;
+        return typename ConverterSelectionStrategy<WireType>::Ptr(result);
     }
 
-    UnambiguousConverterMap<WireType> getConvertersForDeserialization(const ConverterSelectionMap &selection
+    typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForDeserialization(const ConverterSelectionMap &selection
                                                                       = ConverterSelectionMap()) const {
-        UnambiguousConverterMap<WireType> result;
+        UnambiguousConverterMap<WireType> *result = new UnambiguousConverterMap<WireType>();
         for (typename ConverterMap::const_iterator it = this->converters.begin();
              it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
@@ -109,7 +110,7 @@ public:
             // case of ambiguity.
             if (selection.find(wireSchema) == selection.end()) {
                 try {
-                    result.addConverter(wireSchema, it->second);
+                    result->addConverter(wireSchema, it->second);
                 } catch (const std::invalid_argument &e) {
                     std::set<std::string> dataTypes;
                     for (typename ConverterMap::const_iterator it_ = this->converters.begin();
@@ -127,10 +128,10 @@ public:
             // selection. Add the converter if the data-type matches.
             else if (dataType == selection.find(wireSchema)->second) {
                 RSCDEBUG(this->logger, "Found configured converter signature " << it->first);
-                result.addConverter(wireSchema, it->second);
+                result->addConverter(wireSchema, it->second);
             }
         }
-        return result;
+        return typename ConverterSelectionStrategy<WireType>::Ptr(result);
     }
 
     /**

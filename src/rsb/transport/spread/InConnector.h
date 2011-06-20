@@ -40,7 +40,7 @@ class RSB_EXPORT InConnector: public transport::InConnector,
                               public transport::ConverterSelectingConnector<std::string> {
     friend class ReceiverTask;
 public:
-    InConnector(const converter::UnambiguousConverterMap<std::string> &converters,
+    InConnector(converter::ConverterSelectionStrategy<std::string>::Ptr converters,
                 const std::string &host = defaultHost(),
                 unsigned int port = defaultPort());
     virtual ~InConnector();

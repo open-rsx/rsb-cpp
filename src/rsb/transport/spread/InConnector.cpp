@@ -37,12 +37,12 @@ rsb::transport::InConnector *InConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
-    return new InConnector(args.get<UnambiguousConverterMap<string> > ("converters"),
-			   args.get<string>                           ("host", defaultHost()),
-			   args.getAs<unsigned int>                   ("port", defaultPort()));
+    return new InConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
+			   args.get<string>                       ("host", defaultHost()),
+			   args.getAs<unsigned int>               ("port", defaultPort()));
 }
 
-InConnector::InConnector(const UnambiguousConverterMap<string> &converters,
+InConnector::InConnector(ConverterSelectionStrategyPtr converters,
 			 const string		       &host,
 			 unsigned int                   port) :
     transport::ConverterSelectingConnector<string>(converters), logger(

@@ -38,13 +38,13 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(args.get<UnambiguousConverterMap<string> > (
+    return new OutConnector(args.get<ConverterSelectionStrategyPtr> (
             "converters"), args.get<string> ("host", defaultHost()),
             args.getAs<unsigned int> ("port", defaultPort()), args.getAs<
                     unsigned int> ("maxfragmentsize", 100000));
 }
 
-OutConnector::OutConnector(const UnambiguousConverterMap<string> &converters,
+OutConnector::OutConnector(ConverterSelectionStrategyPtr converters,
         const string &host, unsigned int port, unsigned int maxFragmentSize) :
     transport::ConverterSelectingConnector<string>(converters), logger(
             Logger::getLogger("rsb.spread.OutConnector")), active(false),

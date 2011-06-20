@@ -102,9 +102,9 @@ public:
                 RSCDEBUG(logger, "Converter configuration for transport `"
                          << transportIt->getName() << "': " << transportIt->getConverters());
                 // TODO we should not have to know the transport's wire-type here
-                converter::UnambiguousConverterMap<std::string> converters
-                    = converter::stringConverterRepository()
-                    ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
+                converter::ConverterSelectionStrategy<std::string>::Ptr
+		  converters(converter::stringConverterRepository()
+			     ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters())));
                 RSCDEBUG(logger, "Selected converters for transport `"
                          << transportIt->getName() << "': " << converters);
                 options["converters"] = converters;

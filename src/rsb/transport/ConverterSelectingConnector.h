@@ -23,9 +23,8 @@
 
 #include <rsc/logging/Logger.h>
 
-#include "../converter/Repository.h"
 #include "../converter/Converter.h"
-#include "../converter/UnambiguousConverterMap.h"
+#include "../converter/ConverterSelectionStrategy.h"
 
 namespace rsb {
 namespace transport {
@@ -41,8 +40,9 @@ template <typename WireType>
 class ConverterSelectingConnector {
 protected:
     typedef typename converter::Converter<WireType>::Ptr ConverterPtr;
+    typedef typename converter::ConverterSelectionStrategy<WireType>::Ptr ConverterSelectionStrategyPtr;
 
-    ConverterSelectingConnector(const converter::UnambiguousConverterMap<WireType> &converters) :
+    ConverterSelectingConnector(ConverterSelectionStrategyPtr converters) :
         logger(rsc::logging::Logger::getLogger("rsb.transport.ConverterSelectingConnector")),
         converters(converters) {
     }
@@ -51,22 +51,22 @@ protected:
      * Try to find a suitable converter for @a key . It is considered
      * a program error if no such converter can be found. The error
      * condition can be avoided by:
-     * -# registering converters for all occurring wire-schemas or data-types
+     * -# registering converters for all occuring wire-schemas or data-types
      * -# registering a dummy converter that accepts but discard anything.
      *
      * @param key the wire-schema or data-type of the converter being
      *            requested.
      * @return The requested converter.
      * @throw rsc::runtime::NoSuchObject If no converter could be
-     *                                   found for @a key.
+     * found for @a key.
      */
     ConverterPtr getConverter(const std::string &key) const {
-        return this->converters.getConverter(key);
+        return this->converters->getConverter(key);
     }
 private:
     rsc::logging::LoggerPtr logger;
 
-    converter::UnambiguousConverterMap<WireType> converters;
+    ConverterSelectionStrategyPtr converters;
 };
 
 }
