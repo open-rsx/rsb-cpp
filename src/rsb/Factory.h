@@ -31,8 +31,9 @@
 #include <rsc/patterns/Singleton.h>
 
 #include "rsb/rsbexports.h"
-#include "Informer.h"
+#include "Reader.h"
 #include "Listener.h"
+#include "Informer.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
 #include "converter/UnambiguousConverterMap.h"
@@ -106,6 +107,21 @@ public:
     ListenerPtr createListener(const Scope &scope,
             const ParticipantConfig &config =
                     Factory::getInstance().getDefaultParticipantConfig());
+
+    /**
+     * Creates a new @ref Reader object for the specified scope.
+     *
+     * @ref Reader objects receive event via a pull-style interface
+     * by calls to @ref Reader::read.
+     *
+     * @param scope the scope of the new receiver
+     * @throw RSBError when the requested connection cannot be
+     * established.
+     * @return A shared_ptr to the new @ref Reader object.
+     **/
+    ReaderPtr createReader(const Scope &scope,
+                           const ParticipantConfig &config =
+                           Factory::getInstance().getDefaultParticipantConfig());
 
     /**
      * Creates a Service instance operating on the given scope.

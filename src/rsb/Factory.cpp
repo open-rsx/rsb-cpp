@@ -63,6 +63,14 @@ ListenerPtr Factory::createListener(const Scope &scope,
     return ListenerPtr(new Listener(connectors, scope, config));
 }
 
+ReaderPtr Factory::createReader(const Scope &scope,
+				const ParticipantConfig &config) {
+    // Create requested connectors
+    vector<transport::InPullConnectorPtr> connectors
+	= createConnectors<transport::InPullFactory>(config);
+    return ReaderPtr(new Reader(connectors, scope, config));
+}
+
 patterns::ServerPtr Factory::createServer(const Scope &scope) {
     return patterns::ServerPtr(new patterns::Server(scope));
 }

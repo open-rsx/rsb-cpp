@@ -21,6 +21,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/Factory.cpp
             rsb/Handler.cpp
             rsb/Informer.cpp
+            rsb/Reader.cpp
             rsb/Listener.cpp
             rsb/LocalService.cpp
             rsb/MetaData.cpp
@@ -97,6 +98,7 @@ SET(HEADERS rsb/CommException.h
             rsb/Factory.h
             rsb/Handler.h
             rsb/Informer.h
+            rsb/Reader.h
             rsb/Listener.h
             rsb/LocalService.h
             rsb/MetaData.h
