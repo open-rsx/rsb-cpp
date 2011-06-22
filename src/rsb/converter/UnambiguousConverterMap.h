@@ -58,7 +58,8 @@ public:
         typename ConverterMap::const_iterator it
             = this->converters.find(key);
         if (it == this->converters.end()) {
-            throw rsc::runtime::NoSuchObject(key);
+	  throw rsc::runtime::NoSuchObject(boost::str(boost::format("No converter for wire-schema or data-type `%1%'.\nAvailable converters: %2%")
+						      % key % this->converters));
         }
         return it->second;
     }
