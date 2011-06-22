@@ -4,10 +4,8 @@
 
 namespace converter_tutorial {
 
-/** @TODO(jmoringe): document
- *
- *
- * @author jmoringe
+/**
+ * A simple converter for the SimpleImage struct. For educational use only.
  */
 class SimpleImageConverter: public rsb::converter::Converter<std::string> {
 public:
