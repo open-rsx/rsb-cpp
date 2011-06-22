@@ -95,7 +95,9 @@ public:
          */
         void setOptions(const rsc::runtime::Properties &options);
 
-        bool isEnabled() const;
+	bool isEnabled() const;
+
+	void setEnabled(bool value);
 
         bool operator==(const Transport &other) const;
         bool operator<(const Transport &other) const;

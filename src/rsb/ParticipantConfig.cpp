@@ -72,6 +72,12 @@ bool ParticipantConfig::Transport::isEnabled() const {
     return this->getOptions().getAs<bool> ("enabled", true);
 }
 
+void ParticipantConfig::Transport::setEnabled(bool value) {
+    Properties options = this->getOptions();
+    options["enabled"] = lexical_cast<string>(value);
+    setOptions(options);
+}
+
 void ParticipantConfig::Transport::handleOption(const vector<string> &key,
         const string &value) {
     if ((key.size() >= 2)
