@@ -3,7 +3,6 @@
 #include <rsb/Factory.h>
 
 #include "SimpleImage.h"
-#include "SimpleImageConverter.h"
 
 using namespace boost;
 
@@ -11,6 +10,8 @@ using namespace rsb;
 
 using namespace converter_tutorial;
 
+// This program demonstrates the effect of using a data-type for which
+// no converter is available.
 int main() {
     Informer<SimpleImage>::Ptr informer
 	= Factory::getInstance().createInformer<SimpleImage>(Scope("/tutorial/converter"));
