@@ -1,0 +1,10 @@
+// This is the protocol buffer version of the SimpleImage struct from
+// the custom_converter example (in ../custom_converter/SimpleImage.h).
+
+package tutorial.protobuf_converter;
+
+message SimpleImage {
+    required uint32 width  = 1;
+    required uint32 height = 2;
+    required bytes  data   = 3;
+};

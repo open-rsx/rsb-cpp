@@ -12,6 +12,9 @@ SET(EX7 rsb_simpleImageSenderNoConverter)
 SET(EX8 rsb_interTransportInprocessAndSpread)
 SET(EX9 rsb_interTransportSpreadOnly)
 
+SET(EX10 rsb_simpleImagePBSender)
+SET(EX11 rsb_simpleImagePBReceiver)
+
 ADD_EXECUTABLE(${EX1} informer/informer.cpp)
 ADD_EXECUTABLE(${EX2} listener/listener.cpp)
 ADD_EXECUTABLE(${EX3} reader/reader.cpp)
@@ -25,17 +28,26 @@ ADD_EXECUTABLE(${EX7} custom_converter/senderNoConverter.cpp)
 ADD_EXECUTABLE(${EX8} inter_transport/inprocessAndSpread.cpp)
 ADD_EXECUTABLE(${EX9} inter_transport/spreadOnly.cpp)
 
-TARGET_LINK_LIBRARIES(${EX1} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX2} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX3} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX4} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX5} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX6} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX7} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX8} ${RSB_NAME})
-TARGET_LINK_LIBRARIES(${EX9} ${RSB_NAME})
+# Protocol Buffers as domain objects
+PROTOBUF_GENERATE_CPP(protobuf_converter/SimpleImage.pb.cc
+                      protobuf_converter/SimpleImage.pb.h
+                      PROTOFILES protobuf_converter/SimpleImage.proto
+                      PROTOROOT  ${CMAKE_CURRENT_SOURCE_DIR}
+                      OUTPATH    ${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-INSTALL(TARGETS ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9}
+ADD_EXECUTABLE(${EX10} protobuf_converter/sender.cpp
+                       protobuf_converter/SimpleImage.pb.cc)
+ADD_EXECUTABLE(${EX11} protobuf_converter/receiver.cpp
+                       protobuf_converter/SimpleImage.pb.cc)
+
+SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11})
+
+FOREACH(EXAMPLE ${EXAMPLES})
+    TARGET_LINK_LIBRARIES(${EXAMPLE} ${RSB_NAME})
+ENDFOREACH()
+
+INSTALL(TARGETS ${EXAMPLES}
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib)
 
