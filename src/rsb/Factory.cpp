@@ -68,7 +68,7 @@ ListenerPtr Factory::createListener(const Scope &scope,
         Properties options = transportIt->getOptions();
 
         // Take care of converters
-        if (!options.has("connectors")) {
+        if (!options.has("converters")) {
             RSCDEBUG(logger, "Converter configuration for transport `"
                      << transportIt->getName() << "': " << transportIt->getConverters());
             // TODO we should not have to know the transport's wire-type here
