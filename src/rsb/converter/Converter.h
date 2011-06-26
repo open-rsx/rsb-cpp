@@ -107,6 +107,7 @@ protected:
      */
     Converter(const std::string &dataType, const std::string &wireSchema, bool dummy = true) :
         dataType(dataType), wireSchema(wireSchema) {
+        ((void) dummy);
     }
 
     /**

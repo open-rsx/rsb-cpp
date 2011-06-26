@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
     while (true) {
         EventPtr event = reader->read();
-	RSCINFO(logger, "Received event " << event);
+        RSCINFO(logger, "Received event " << event);
     }
 
     return EXIT_SUCCESS;
