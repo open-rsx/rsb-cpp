@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is part of the RSB project
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -29,13 +29,13 @@ using namespace rsb::converter;
 
 namespace converter_tutorial {
 
-// We have to pass to argument to the base-class constructor:
+// We have to pass two arguments to the base-class constructor:
 // 1. The data-type
 // 2. The wire-schema
 //
 // Note: this could also be written as
 // Converter<string>("simple-image", RSB_TYPE_TAG(SimpleImage))
-// to infer the "string" name of the data-type using RTTI
+// to infer the "string" name of the data-type using RTTI.
 SimpleImageConverter::SimpleImageConverter() :
     Converter<string> ("converter_tutorial::SimpleImage", "simple-image", true) {
 }
@@ -46,12 +46,15 @@ string SimpleImageConverter::serialize(const AnnotatedData &data, string &wire) 
     assert(data.first == getDataType()); // this->getDataType() == "converter_tutorial::SimpleImage"
 
     // Force conversion to the expected data-type.
+    //
     // NOTE: a dynamic_pointer_cast cannot be used from void*
     shared_ptr<const SimpleImage> image =
             static_pointer_cast<const SimpleImage> (data.second);
 
     // Store the content of IMAGE in WIRE according to the selected
     // binary layout.
+    //
+    // NOTE: do not use this kind of "serialization" for any real code.
     int numPixels = image->width * image->height;
     wire.resize(4 + 4 + numPixels);
     copy((char*) &image->width, ((char*) &image->width) + 4, wire.begin());
@@ -71,6 +74,9 @@ AnnotatedData SimpleImageConverter::deserialize(const string &wireSchema,
 
     // Allocate a new SimpleImage object and set its data members from
     // the content of WIRE.
+    //
+    // NOTE: do not use this kind of "deserialization" for any real
+    // code.
     SimpleImage *image = new SimpleImage();
     image->width = *((int*) &*wire.begin());
     image->height = *((int*) &*(wire.begin() + 4));

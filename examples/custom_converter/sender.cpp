@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of the RSB project
+ * This file is part of the RSB project
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -48,7 +48,7 @@ int main() {
             Factory::getInstance().createInformer<SimpleImage> (
                     Scope("/tutorial/converter"));
 
-    // Construct an send a SimpleImage object.
+    // Construct and send a SimpleImage object.
     shared_ptr<SimpleImage> image(new SimpleImage());
     image->width = 10;
     image->height = 10;
