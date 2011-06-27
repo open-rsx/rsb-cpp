@@ -37,14 +37,15 @@ int main() {
     // Register a specific template instanciation of the
     // ProtocolBufferConverter for our SimpleImage protocol buffer
     // message.
-    shared_ptr< ProtocolBufferConverter<SimpleImage> >
-	converter(new ProtocolBufferConverter<SimpleImage>());
+    shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
+            new ProtocolBufferConverter<SimpleImage> ());
     stringConverterRepository()->registerConverter(converter);
 
     // Create an informer which has the SimpleImage protocol buffer
     // message as its data type.
-    Informer<SimpleImage>::Ptr informer
-	= Factory::getInstance().createInformer<SimpleImage>(Scope("/tutorial/converter"));
+    Informer<SimpleImage>::Ptr informer =
+            Factory::getInstance().createInformer<SimpleImage> (
+                    Scope("/tutorial/converter"));
 
     // Create and publish an instance of SimpleImage. To see the
     // event, you can, for example use the RSB logger utility or the

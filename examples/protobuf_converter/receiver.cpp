@@ -19,6 +19,8 @@
 
 #include <iostream>
 
+#include <boost/thread.hpp>
+
 #include <rsb/Factory.h>
 #include <rsb/converter/Repository.h>
 #include <rsb/converter/ProtocolBufferConverter.h>
@@ -38,24 +40,26 @@ using namespace rsb::converter;
 using namespace tutorial::protobuf_converter;
 
 void printImage(shared_ptr<SimpleImage> image) {
-    cout << "received " << image->width() << "x" << image->height() << " image" << endl;
+    cout << "received " << image->width() << "x" << image->height() << " image"
+            << endl;
 }
 
 int main() {
     // Register a specific template instanciation of the
     // ProtocolBufferConverter for our SimpleImage protocol buffer
     // message.
-    shared_ptr< ProtocolBufferConverter<SimpleImage> >
-	converter(new ProtocolBufferConverter<SimpleImage>());
+    shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
+            new ProtocolBufferConverter<SimpleImage> ());
     stringConverterRepository()->registerConverter(converter);
 
     // Create a listener to receive SimpleImage protocol buffer
     // messages.
-    ListenerPtr listener
-	= Factory::getInstance().createListener(Scope("/tutorial/converter"));
-    listener->addHandler(HandlerPtr(new DataFunctionHandler<SimpleImage>(&printImage)));
+    ListenerPtr listener = Factory::getInstance().createListener(
+            Scope("/tutorial/converter"));
+    listener->addHandler(
+            HandlerPtr(new DataFunctionHandler<SimpleImage> (&printImage)));
 
-    sleep(20);
+    boost::this_thread::sleep(boost::posix_time::seconds(20));
 
     return EXIT_SUCCESS;
 }
