@@ -86,8 +86,10 @@ void InConnector::activate() {
 
 void InConnector::deactivate() {
     this->rec->cancel();
-    this->connector->getConnection()->interruptReceive();
-    this->rec->waitDone();
+    if (this->connector->getConnection()->isActive()) {
+	this->connector->getConnection()->interruptReceive();
+	this->rec->waitDone();
+    }
     this->connector->deactivate();
     this->active = false;
 }

@@ -72,7 +72,9 @@ void SpreadConnector::activate() {
 
 void SpreadConnector::deactivate() {
     RSCDEBUG(logger, "deactivate() entered");
-    this->con->deactivate();
+    if (this->con->isActive()) {
+	this->con->deactivate();
+    }
     // memberships->leaveAll();
     RSCTRACE(logger, "deactivate() finished"); // << *id);
     this->activated = false;
