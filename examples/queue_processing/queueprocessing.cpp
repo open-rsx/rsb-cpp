@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 
     // create a listener that *listens* for incoming data on the scope specified
     // before
-    ListenerPtr s = factory.createListener(inputScope);
+    ListenerPtr listener = factory.createListener(inputScope);
 
     // in this example we assume that the data type we receive is std::string
 
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     // This is accomplished by installing a special handler which is called by
     // the Listener each time new data is available. The handler fills the
     // queue with the new data.
-    s->addHandler(HandlerPtr(new QueuePushHandler<string> (queue)));
+    listener->addHandler(HandlerPtr(new QueuePushHandler<string> (queue)));
 
     // for being able to publish processing results (which means informing other
     // components in the system) we also need an RSB object that can inform
