@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
         // do some heavy processing with the data to generate new results to
         // publish on RSB
         boost::shared_ptr<string> resultData(
-                new string("heavily processed: " + data));
+                new string("heavily processed: " + *data));
 
         // and inform the world about the newly generated data by sending them
         // over the informer
