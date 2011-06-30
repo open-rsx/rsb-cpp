@@ -83,7 +83,8 @@ int main(int argc, char **argv) {
 
     // for being able to publish processing results (which means informing other
     // components in the system) we also need an RSB object that can inform
-    Informer<string>::Ptr informer = factory.createInformer(outputScope);
+    Informer<string>::Ptr informer = factory.createInformer<string> (
+            outputScope);
 
     // Now we start the (endless) main loop that processes the data
     while (true) {
