@@ -15,6 +15,8 @@ SET(EX9 rsb_interTransportSpreadOnly)
 SET(EX10 rsb_simpleImagePBSender)
 SET(EX11 rsb_simpleImagePBReceiver)
 
+SET(EX12 rsb_queueProcessing)
+
 ADD_EXECUTABLE(${EX1} informer/informer.cpp)
 ADD_EXECUTABLE(${EX2} listener/listener.cpp)
 ADD_EXECUTABLE(${EX3} reader/reader.cpp)
@@ -40,8 +42,10 @@ ADD_EXECUTABLE(${EX10} protobuf_converter/sender.cpp
                        protobuf_converter/SimpleImage.pb.cc)
 ADD_EXECUTABLE(${EX11} protobuf_converter/receiver.cpp
                        protobuf_converter/SimpleImage.pb.cc)
+                       
+ADD_EXECUTABLE(${EX12} queue_processing/queueprocessing.cpp)
 
-SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11})
+SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11} ${EX12})
 
 FOREACH(EXAMPLE ${EXAMPLES})
     TARGET_LINK_LIBRARIES(${EXAMPLE} ${RSB_NAME})
