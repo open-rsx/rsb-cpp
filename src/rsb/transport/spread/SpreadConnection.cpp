@@ -129,7 +129,7 @@ void SpreadConnection::deactivate() {
 
     if (!connected) {
         throw rsc::misc::IllegalStateException("Connection with id " + conId
-                + " is already deactivated.");
+                + " is not active.");
     }
 
     connected = false;
