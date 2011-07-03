@@ -71,6 +71,9 @@ protected:
 
     virtual ~Handler();
 
+    std::string getClassName() const {
+        return rsc::runtime::typeName(typeid(*this));
+    }
 private:
     std::set<std::string> methods;
 };
