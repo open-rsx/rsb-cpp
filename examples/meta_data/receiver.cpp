@@ -17,6 +17,8 @@
  *
  * ============================================================ */
 
+#include <boost/thread/thread.hpp>
+
 #include <rsb/Event.h>
 #include <rsb/Listener.h>
 #include <rsb/Factory.h>
@@ -60,7 +62,7 @@ int main() {
     // Wait here, while the Listener object asynchronously receives
     // and processes events.
     while (true) {
-        sleep(1);
+        boost::this_thread::sleep(boost::posix_time::seconds(1000));
     };
 
     return EXIT_SUCCESS;
