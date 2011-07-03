@@ -19,6 +19,8 @@
 
 #include <string>
 
+#include <boost/thread/thread.hpp>
+
 #include <rsc/misc/langutils.h>
 
 #include <rsb/Event.h>
@@ -40,7 +42,7 @@ int main() {
         // we get distinct timestamps at the start and end of the
         // processing.
         boost::uint64_t processingStart = rsc::misc::currentTimeMicros();
-	sleep(1);
+        boost::this_thread::sleep(boost::posix_time::seconds(1));
 	string data = "result of processing";
         boost::uint64_t processingDone = rsc::misc::currentTimeMicros();
 
