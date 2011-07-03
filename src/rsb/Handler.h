@@ -46,7 +46,7 @@ public:
      * Returns the desired set of methods this handler can handle. An empty set
      * means no restrictions on methods are placed.
      *
-     * @return set of diesred methods or empty for all methods
+     * @return set of desired methods or empty for all methods
      */
     std::set<std::string> getMethods() const;
     bool acceptsMethod(const std::string &method) const;
