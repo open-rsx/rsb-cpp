@@ -85,8 +85,7 @@ void OutConnector::fillNotification(protocol::Notification &notification,
         const unsigned int &numDataParts, const unsigned int &dataPart,
         const string &data) {
 
-    notification.set_id(event->getId().getId().data,
-            event->getId().getId().size());
+    notification.set_sequence_number(event->getSequenceNumber());
     notification.set_scope(event->getScope().toString());
     notification.set_wire_schema(wireSchema);
     notification.mutable_meta_data()->set_sender_id(

@@ -21,9 +21,12 @@
 
 #include <ostream>
 
+#include <boost/format.hpp>
+
 #include <rsc/runtime/ContainerIO.h>
 
 using namespace std;
+using namespace boost;
 
 namespace rsb {
 
@@ -43,24 +46,32 @@ string Event::getClassName() const {
 }
 
 void Event::printContents(ostream &stream) const {
-    stream << "id = " << id.getIdAsString() << " type = " << type
+    stream << "id = " << getId().getIdAsString() << " type = " << type
             << " scope = " << scope << ", metaData = " << metaData;
 }
 
-void Event::setId(const rsc::misc::UUID &id) {
-    this->id = id;
+boost::uint64_t Event::getSequenceNumber() const {
+    return this->sequenceNumber;
 }
 
-rsc::misc::UUID Event::getId() {
-    return id;
+void Event::setSequenceNumber(boost::uint64_t number) {
+    this->sequenceNumber = number;
+}
+
+rsc::misc::UUID Event::getId() const {
+    if (!this->id) {
+        this->id.reset(new rsc::misc::UUID(this->metaData.getSenderId(),
+                                           str(format("%1$8x") % this->sequenceNumber)));
+    }
+    return *this->id;
 }
 
 void Event::setScope(const Scope &s) {
-    scope = s;
+    this->scope = s;
 }
 
-Scope Event::getScope() {
-    return scope;
+Scope Event::getScope() const {
+    return this->scope;
 }
 
 void Event::setData(VoidPtr d) {
@@ -68,10 +79,10 @@ void Event::setData(VoidPtr d) {
 }
 
 VoidPtr Event::getData() {
-    return content;
+    return this->content;
 }
 
-string Event::getType() {
+string Event::getType() const {
     return type;
 }
 

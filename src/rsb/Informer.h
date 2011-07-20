@@ -21,6 +21,7 @@
 
 #include <string>
 
+#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
@@ -82,8 +83,9 @@ public:
             const Scope &scope, const ParticipantConfig &config,
             const std::string &type = rsc::runtime::typeName<T>()) :
         Participant(scope, config),
-                logger(rsc::logging::Logger::getLogger("rsb.Informer")),
-                defaultType(type) {
+        logger(rsc::logging::Logger::getLogger("rsb.Informer")),
+        defaultType(type),
+        currentSequenceNumber(0) {
         // TODO evaluate configuration
         this->configurator.reset(new eventprocessing::OutRouteConfigurator());
         for (std::vector<transport::OutConnectorPtr>::const_iterator it =
@@ -201,13 +203,19 @@ private:
             throw std::invalid_argument(boost::str(boost::format("Specified event scope %1% does not match listener scope %2%.")
                                                    % event->getScope() % getScope()));
         }
+        event->setSequenceNumber(nextSequenceNumber());
         event->mutableMetaData().setSenderId(getId());
         configurator->publish(event);
+    }
+
+    boost::uint32_t nextSequenceNumber() {
+        return ++this->currentSequenceNumber; /** TODO(jmoringe): needs atomic increment */
     }
 
     rsc::logging::LoggerPtr logger;
     std::string defaultType;
     eventprocessing::OutRouteConfiguratorPtr configurator;
+    boost::uint32_t currentSequenceNumber;
 };
 
 }

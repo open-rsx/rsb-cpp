@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/misc/UUID.h>
@@ -65,13 +66,15 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;
 
-    void setId(const rsc::misc::UUID &id);
-    rsc::misc::UUID getId();
+    boost::uint64_t getSequenceNumber() const;
+    void setSequenceNumber(boost::uint64_t number);
 
-    Scope getScope();
+    rsc::misc::UUID getId() const;
+
+    Scope getScope() const;
     void setScope(const Scope &scope);
 
-    std::string getType();
+    std::string getType() const;
     void setType(const std::string &type);
 
     VoidPtr getData();
@@ -121,7 +124,8 @@ public:
     //@}
 
 private:
-    rsc::misc::UUID id;
+    boost::uint32_t sequenceNumber;
+    mutable rsc::misc::UUIDPtr id;
     Scope scope;
 
     VoidPtr content;
@@ -138,4 +142,3 @@ private:
 typedef boost::shared_ptr<Event> EventPtr;
 
 }
-

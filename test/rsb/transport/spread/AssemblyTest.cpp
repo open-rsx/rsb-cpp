@@ -49,8 +49,8 @@ TEST(AssemblyTest, testAssembly)
 
     protocol::NotificationPtr initialNotification(new protocol::Notification);
 
-    const string id = rsc::misc::UUID().getIdAsString();
-    initialNotification->set_id(id);
+    boost::uint32_t seqnum = 0;
+    initialNotification->set_sequence_number(seqnum);
 
     const string initialString = rsc::misc::randAlnumStr(10);
     initialNotification->set_data(initialString);
@@ -60,8 +60,7 @@ TEST(AssemblyTest, testAssembly)
     initialNotification->set_num_data_parts(dataParts);
     initialNotification->set_data_part(0);
     Assembly assembly(initialNotification);
-    EXPECT_FALSE(assembly.isComplete())
-        ;
+    EXPECT_FALSE(assembly.isComplete());
 
     for (unsigned int i = 1; i < dataParts; ++i) {
 
@@ -71,7 +70,7 @@ TEST(AssemblyTest, testAssembly)
         newNotification->set_data(newString);
         containedData << newString;
 
-        newNotification->set_id(id);
+        newNotification->set_sequence_number(seqnum);
         newNotification->set_num_data_parts(dataParts);
         newNotification->set_data_part(i);
 
@@ -96,8 +95,8 @@ TEST(AssemblyTest, testAge)
 
     protocol::NotificationPtr initialNotification(new protocol::Notification);
 
-    const string id = rsc::misc::UUID().getIdAsString();
-    initialNotification->set_id(id);
+    boost::uint32_t seqnum = 0;
+    initialNotification->set_sequence_number(seqnum);
 
     const string initialString = rsc::misc::randAlnumStr(10);
     initialNotification->set_data(initialString);
@@ -126,8 +125,8 @@ TEST(AssemblyPoolTest, testAssembly)
         protocol::NotificationPtr initialNotification(
                 new protocol::Notification);
 
-        const string id = rsc::misc::UUID().getIdAsString();
-        initialNotification->set_id(id);
+        boost::uint32_t seqnum = 0;
+        initialNotification->set_sequence_number(seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
         initialNotification->set_data(initialString);
@@ -151,8 +150,8 @@ TEST(AssemblyPoolTest, testAssembly)
         protocol::NotificationPtr initialNotification(
                 new protocol::Notification);
 
-        const string id = rsc::misc::UUID().getIdAsString();
-        initialNotification->set_id(id);
+        boost::uint32_t seqnum = 0;
+        initialNotification->set_sequence_number(seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
         initialNotification->set_data(initialString);
@@ -173,7 +172,7 @@ TEST(AssemblyPoolTest, testAssembly)
             newNotification->set_data(newString);
             containedData << newString;
 
-            newNotification->set_id(id);
+            newNotification->set_sequence_number(seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(i);
 
@@ -200,7 +199,7 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
 
     AssemblyPool pool(1, 500);
 
-    const string id = rsc::misc::UUID().getIdAsString();
+    boost::uint32_t seqnum = 0;
     const unsigned int dataParts = 2;
 
     // add an initial multi-part message
@@ -208,7 +207,7 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
         protocol::NotificationPtr initialNotification(
                 new protocol::Notification);
 
-        initialNotification->set_id(id);
+        initialNotification->set_sequence_number(seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
         initialNotification->set_data(initialString);
@@ -230,7 +229,7 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
         const string newString = rsc::misc::randAlnumStr(30);
         newNotification->set_data(newString);
 
-        newNotification->set_id(id);
+        newNotification->set_sequence_number(seqnum);
         newNotification->set_num_data_parts(dataParts);
         newNotification->set_data_part(1);
 
@@ -252,13 +251,13 @@ TEST(AssemblyPoolTest, testPruning)
     const unsigned int dataParts = 2;
 
     {
-        const string id = rsc::misc::UUID().getIdAsString();
+        boost::uint32_t seqnum = 0;
         // add an initial multi-part message
         {
             protocol::NotificationPtr initialNotification(
                     new protocol::Notification);
 
-            initialNotification->set_id(id);
+            initialNotification->set_sequence_number(seqnum);
 
             const string initialString = rsc::misc::randAlnumStr(10);
             initialNotification->set_data(initialString);
@@ -266,8 +265,7 @@ TEST(AssemblyPoolTest, testPruning)
             initialNotification->set_num_data_parts(dataParts);
             initialNotification->set_data_part(0);
 
-            EXPECT_FALSE(pool.add(initialNotification))
-                ;
+            EXPECT_FALSE(pool.add(initialNotification));
         }
 
         // wait longer than the pruning time
@@ -281,14 +279,13 @@ TEST(AssemblyPoolTest, testPruning)
             const string newString = rsc::misc::randAlnumStr(30);
             newNotification->set_data(newString);
 
-            newNotification->set_id(id);
+            newNotification->set_sequence_number(seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(1);
 
             boost::shared_ptr<string> result = pool.add(newNotification);
 
-            EXPECT_FALSE(result)
-                ;
+            EXPECT_FALSE(result);
 
         }
     }
@@ -298,13 +295,13 @@ TEST(AssemblyPoolTest, testPruning)
 
     // and check again that pruning is really of
     {
-        const string id = rsc::misc::UUID().getIdAsString();
+        boost::uint32_t seqnum = 1;
         // add an initial multi-part message
         {
             protocol::NotificationPtr initialNotification(
                     new protocol::Notification);
 
-            initialNotification->set_id(id);
+            initialNotification->set_sequence_number(seqnum);
 
             const string initialString = rsc::misc::randAlnumStr(10);
             initialNotification->set_data(initialString);
@@ -312,8 +309,7 @@ TEST(AssemblyPoolTest, testPruning)
             initialNotification->set_num_data_parts(dataParts);
             initialNotification->set_data_part(0);
 
-            EXPECT_FALSE(pool.add(initialNotification))
-                ;
+            EXPECT_FALSE(pool.add(initialNotification));
         }
 
         // wait longer than the pruning time
@@ -327,7 +323,7 @@ TEST(AssemblyPoolTest, testPruning)
             const string newString = rsc::misc::randAlnumStr(30);
             newNotification->set_data(newString);
 
-            newNotification->set_id(id);
+            newNotification->set_sequence_number(seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(1);
 

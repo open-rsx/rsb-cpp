@@ -75,7 +75,7 @@ void ReceiverTask::execute() {
         if (!notification->ParseFromString(message->getDataAsString())) {
             throw CommException("Failed to parse notification in pbuf format");
         }
-        RSCTRACE(logger, "Parsed event ID: " << notification->id());
+        RSCTRACE(logger, "Parsed event seqnum: " << notification->sequence_number());
         RSCTRACE(logger, "Binary length: " << notification->data().length());
         RSCTRACE(logger, "Number of split message parts: " << notification->num_data_parts());
         RSCTRACE(logger, "... received message part    : " << notification->data_part());
@@ -124,7 +124,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     e->mutableMetaData().setSenderId(rsc::misc::UUID(
             (boost::uint8_t*) notification->meta_data().sender_id().c_str()));
 
-    e->setId(rsc::misc::UUID((boost::uint8_t*) notification->id().c_str()));
+    e->setSequenceNumber(notification->sequence_number());
     e->setScope(Scope(notification->scope()));
 
     for (int i = 0; i < notification->meta_data().user_infos_size(); ++i) {
