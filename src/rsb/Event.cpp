@@ -61,7 +61,7 @@ void Event::setSequenceNumber(boost::uint64_t number) {
 rsc::misc::UUID Event::getId() const {
     if (!this->id) {
         this->id.reset(new rsc::misc::UUID(this->metaData.getSenderId(),
-                                           str(format("%1$8x") % this->sequenceNumber)));
+                                           str(format("%1$08x") % this->sequenceNumber)));
     }
     return *this->id;
 }
