@@ -122,7 +122,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     e->mutableMetaData().setSendTime(notification->meta_data().send_time());
     e->mutableMetaData().setReceiveTime(rsc::misc::currentTimeMicros());
     e->mutableMetaData().setSenderId(rsc::misc::UUID(
-            (boost::uint8_t*) notification->meta_data().sender_id().c_str()));
+            (boost::uint8_t*) notification->sender_id().c_str()));
 
     e->setSequenceNumber(notification->sequence_number());
     e->setScope(Scope(notification->scope()));
