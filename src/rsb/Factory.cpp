@@ -75,8 +75,9 @@ patterns::ServerPtr Factory::createServer(const Scope &scope) {
     return patterns::ServerPtr(new patterns::Server(scope));
 }
 
-patterns::RemoteServerPtr Factory::createRemoteServer(const Scope &scope) {
-    return patterns::RemoteServerPtr(new patterns::RemoteServer(scope));
+patterns::RemoteServerPtr Factory::createRemoteServer(const Scope &scope,
+                                                      unsigned int maxReplyWaitTime) {
+    return patterns::RemoteServerPtr(new patterns::RemoteServer(scope, maxReplyWaitTime));
 }
 
 ParticipantConfig Factory::getDefaultParticipantConfig() const {

@@ -133,7 +133,19 @@ public:
 
     patterns::ServerPtr createServer(const Scope &scope);
 
-    patterns::RemoteServerPtr createRemoteServer(const Scope &scope);
+
+    /**
+     * Creates a @ref RemoteServer object for the server at scope @a
+     * scope.
+     *
+     * @param scope The scope at which the remote server object
+     * exposes itself.
+     * @param maxReplyWaitTime Maximum number of seconds to wait for a
+     * reply from the server when calling a method.
+     * @return A shared_ptr to the new @ref RemoteServer object.
+     */
+    patterns::RemoteServerPtr createRemoteServer(const Scope &scope,
+                                                 unsigned int maxReplyWaitTime = 25);
 
     /**
      * Returns the default configuration for new participants.

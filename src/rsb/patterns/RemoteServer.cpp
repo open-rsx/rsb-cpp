@@ -21,6 +21,7 @@
 
 #include <stdexcept>
 
+#include <boost/format.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
 
@@ -30,6 +31,8 @@
 #include "../Handler.h"
 
 using namespace std;
+
+using namespace boost;
 
 namespace rsb {
 namespace patterns {
@@ -45,10 +48,12 @@ private:
     set<string> waitForEvents;
     map<string, EventPtr> storedEvents;
 
+    unsigned int maxWaitTime;
 public:
 
-    WaitingEventHandler(rsc::logging::LoggerPtr logger) :
-        logger(logger) {
+    WaitingEventHandler(rsc::logging::LoggerPtr logger,
+                        unsigned int maxWaitTime) :
+        logger(logger), maxWaitTime(maxWaitTime) {
     }
 
     string getClassName() const {
@@ -88,13 +93,12 @@ public:
         while (!storedEvents.count(requestId)) {
             boost::xtime xt;
             xtime_get(&xt, boost::TIME_UTC);
-            // TODO make max time a configuration property
-            xt.sec += 25;
+            xt.sec += this->maxWaitTime;
             if (!condition.timed_wait(lock, xt)) {
                 RSCERROR(logger, "Timeout while waiting");
                 throw RemoteServer::TimeoutException(
-                        "Error calling method and waiting for reply with id "
-                                + requestId + ". Waited 25 seconds.");
+                    str(format("Error calling method and waiting for reply with id %1%. Waited %2% seconds.")
+                        % requestId % this->maxWaitTime));
             }
         }
 
@@ -116,9 +120,11 @@ RemoteServer::RemoteTargetInvocationException::RemoteTargetInvocationException(
     Exception(message) {
 }
 
-RemoteServer::RemoteServer(const Scope &scope) :
+RemoteServer::RemoteServer(const Scope &scope,
+                           unsigned int maxReplyWaitTime) :
     logger(rsc::logging::Logger::getLogger("rsc.patterns.RemoteServer."
-            + scope.toString())), scope(scope) {
+                                           + scope.toString())),
+    scope(scope), maxReplyWaitTime(maxReplyWaitTime) {
     // TODO check that this server is alive...
     // TODO probably it would be a good idea to request some method infos from
     //      the server, e.g. for type checking
@@ -140,8 +146,8 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
         ListenerPtr listener =
                 Factory::getInstance().createListener(replyScope);
 
-        boost::shared_ptr<WaitingEventHandler> handler(new WaitingEventHandler(
-                logger));
+        boost::shared_ptr<WaitingEventHandler>
+            handler(new WaitingEventHandler(logger, this->maxReplyWaitTime));
         listener->addHandler(handler);
 
         // informer for requests

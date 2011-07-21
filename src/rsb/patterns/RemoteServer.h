@@ -46,51 +46,63 @@ class WaitingEventHandler;
 class RSB_EXPORT RemoteServer: public boost::noncopyable {
 public:
 
-	/**
-	 * Thrown if a remote calle timed out.
-	 *
-	 * @author jwienke
-	 */
-	class TimeoutException: public Exception {
-	public:
-		explicit TimeoutException(const std::string &message);
-	};
+    /**
+     * Thrown if a remote calle timed out.
+     *
+     * @author jwienke
+     */
+    class TimeoutException: public Exception {
+    public:
+        explicit TimeoutException(const std::string &message);
+    };
 
-	/**
-	 * Thrown if a remote method call resulted in an exception.
-	 *
-	 * @author jwienke
-	 */
-	class RemoteTargetInvocationException: public Exception {
-	public:
-		explicit RemoteTargetInvocationException(const std::string &message);
-	};
+    /**
+     * Thrown if a remote method call resulted in an exception.
+     *
+     * @author jwienke
+     */
+    class RemoteTargetInvocationException: public Exception {
+    public:
+        explicit RemoteTargetInvocationException(const std::string &message);
+    };
 
-	RemoteServer(const Scope &scope);
-	virtual ~RemoteServer();
+    /**
+     * Construct a new @c RemoteServer object which can be used to
+     * call methods of the server at @a scope.
+     *
+     * @param scope The base scope of the server the methods of which
+     * will be called.
+     * @param maxReplyWaitTime Maximum number of seconds to wait for a
+     * reply from the server when calling a method.
+     */
+    RemoteServer(const Scope &scope,
+                 unsigned int maxReplyWaitTime = 25);
+    virtual ~RemoteServer();
 
-	EventPtr callMethod(const std::string &methodName, EventPtr data);
+    EventPtr callMethod(const std::string &methodName, EventPtr data);
 
 private:
 
-	rsc::logging::LoggerPtr logger;
+    rsc::logging::LoggerPtr logger;
 
-	Scope scope;
+    Scope scope;
 
-	class MethodSet {
-	public:
-		std::string methodName;
-		std::string sendType;
-		boost::shared_ptr<WaitingEventHandler> handler;
-		ListenerPtr replyListener;
-		Informer<void>::Ptr requestInformer;
-	};
+    class MethodSet {
+    public:
+        std::string methodName;
+        std::string sendType;
+        boost::shared_ptr<WaitingEventHandler> handler;
+        ListenerPtr replyListener;
+        Informer<void>::Ptr requestInformer;
+    };
 
-	boost::mutex methodSetMutex;
-	std::map<std::string, MethodSet> methodSets;
+    boost::mutex methodSetMutex;
+    std::map<std::string, MethodSet> methodSets;
 
-	MethodSet getMethodSet(const std::string &methodName,
-			const std::string &sendType);
+    unsigned int maxReplyWaitTime;
+
+    MethodSet getMethodSet(const std::string &methodName,
+                           const std::string &sendType);
 
 };
 
