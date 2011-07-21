@@ -31,6 +31,12 @@ namespace rsb {
 
 const string Scope::COMPONENT_SEPARATOR = "/";
 
+// This should use COMPONENT_SEPARATOR, but that would create
+// dependencies during static initialization.
+// Also note that this object is shared between threads, which is OK
+// according to the Boost.Regex documentation.
+boost::regex SCOPE_EXPRESSION("/([a-zA-Z0-9]+/)*");
+
 Scope::Scope(const string &s) {
 
     string scope = s;
@@ -41,10 +47,8 @@ Scope::Scope(const string &s) {
         scope.append(COMPONENT_SEPARATOR);
     }
 
-    // validate fully formal scope syntax
-    boost::regex expression(
-            COMPONENT_SEPARATOR + "([a-zA-Z0-9]+" + COMPONENT_SEPARATOR + ")*");
-    if (!boost::regex_match(scope, expression)) {
+    // Validate scope syntax
+    if (!boost::regex_match(scope, SCOPE_EXPRESSION)) {
         throw invalid_argument("Invalid scope syntax for '" + scope + "'");
     }
 
