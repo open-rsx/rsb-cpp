@@ -130,7 +130,7 @@ public:
             rsb::protocol::NotificationPtr notification);
 
 private:
-    typedef std::map<boost::uint32_t, boost::shared_ptr<Assembly> > Pool;
+    typedef std::map<std::string, boost::shared_ptr<Assembly> > Pool;
 
     class PruningTask: public rsc::threading::PeriodicTask {
     public:

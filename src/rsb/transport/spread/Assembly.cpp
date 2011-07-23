@@ -143,7 +143,12 @@ void AssemblyPool::setPruning(const bool &prune) {
 shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
     boost::recursive_mutex::scoped_lock lock(this->poolMutex);
 
-    Pool::iterator it = this->pool.find(notification->sequence_number());
+    string key = notification->sender_id();
+    key.push_back(notification->sequence_number() & 0x000000ff);
+    key.push_back(notification->sequence_number() & 0x0000ff00);
+    key.push_back(notification->sequence_number() & 0x00ff0000);
+    key.push_back(notification->sequence_number() & 0xff000000);
+    Pool::iterator it = this->pool.find(key);
     string *result = 0;
     AssemblyPtr assembly;
     if (it != this->pool.end()) {
@@ -156,7 +161,7 @@ shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
         // Create new Assembly
         RSCTRACE(logger, "Creating new assembly for notification " << notification->sequence_number());
         assembly.reset(new Assembly(notification));
-        it = this->pool.insert(make_pair(notification->sequence_number(), assembly)).first;
+        it = this->pool.insert(make_pair(key, assembly)).first;
     }
 
     if (assembly->isComplete()) {
