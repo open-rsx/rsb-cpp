@@ -25,6 +25,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/thread/mutex.hpp>
 
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
 #include "../Event.h"
@@ -80,6 +81,28 @@ public:
     virtual ~RemoteServer();
 
     EventPtr callMethod(const std::string &methodName, EventPtr data);
+
+    /**
+     * Call the method named @a methodName on the remote server,
+     * passing it the argument object @a args and returning the value
+     * returned by the remote method.
+     *
+     * @tparam I type of the method call argument object.
+     * @tparam O type of the method return value.
+     * @param methodName Name of the method that should be called.
+     * @param args The argument object that should be passed to the called method.
+     * @return The result of the method call.
+     * @throw RemoteTargetInvocationException if the method call fails.
+     */
+    template <typename O, typename I>
+    boost::shared_ptr<O> call(const std::string    &methodName,
+                              boost::shared_ptr<I> args) {
+        EventPtr request(new Event);
+        request->setType(rsc::runtime::typeName<I>());
+        request->setData(args);
+        EventPtr reply = callMethod(methodName, request);
+        return boost::static_pointer_cast<O>(reply->getData());
+    }
 
 private:
 
