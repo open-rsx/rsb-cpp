@@ -80,6 +80,20 @@ public:
                  unsigned int maxReplyWaitTime = 25);
     virtual ~RemoteServer();
 
+    /**
+     * Call the method named @a methodName on the remote server,
+     * passing it the event @a data as argument and returning an event
+     * which contains the value returned by the remote method.
+     *
+     * @param methodName Name of the method that should be called.
+     * @param data An @ref Event object containing the argument object
+     * that should be passed to the called method.
+     * @return An @ref Event object containing the result of the
+     * method call.
+     * @throw TimeoutException if the method call is not completed
+     * within the maximum waiting time.
+     * @throw RemoteTargetInvocationException if the method call fails.
+     */
     EventPtr callMethod(const std::string &methodName, EventPtr data);
 
     /**
@@ -90,8 +104,11 @@ public:
      * @tparam I type of the method call argument object.
      * @tparam O type of the method return value.
      * @param methodName Name of the method that should be called.
-     * @param args The argument object that should be passed to the called method.
+     * @param args The argument object that should be passed to the
+     * called method.
      * @return The result of the method call.
+     * @throw TimeoutException if the method call is not completed
+     * within the maximum waiting time.
      * @throw RemoteTargetInvocationException if the method call fails.
      */
     template <typename O, typename I>
