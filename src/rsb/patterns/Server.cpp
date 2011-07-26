@@ -21,12 +21,15 @@
 
 #include <stdexcept>
 
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
 #include "../Factory.h"
 #include "MethodExistsException.h"
 
 using namespace std;
+
+using namespace rsc::runtime;
 
 namespace rsb {
 namespace patterns {
@@ -76,29 +79,23 @@ public:
             return;
         }
 
+        EventPtr returnEvent(new Event());
+        returnEvent->setScope(informer->getScope());
+        returnEvent->mutableMetaData()
+            .setUserInfo(requestIdKey,
+                         event->mutableMetaData().getUserInfo(requestIdKey));
         try {
-            VoidPtr returnData = callback->intlCall(methodName,
-                    event->getData());
-            EventPtr returnEvent(new Event());
-            returnEvent->setScope(informer->getScope());
+            VoidPtr returnData
+                = callback->intlCall(methodName, event->getData());
             returnEvent->setType(callback->getReplyType());
             returnEvent->setData(returnData);
-            returnEvent->mutableMetaData().setUserInfo(requestIdKey,
-                    event->mutableMetaData().getUserInfo(requestIdKey));
-            informer->publish(returnEvent);
-        } catch (exception &e) {
-            EventPtr returnEvent(new Event());
-            returnEvent->setScope(informer->getScope());
-            returnEvent->setType("string");
-            string exceptionType = typeid(e).name();
+        } catch (const exception &e) {
+            returnEvent->setType(typeName<string>());
             returnEvent->setData(boost::shared_ptr<string>(new string(
-                    exceptionType + ": " + e.what())));
-            returnEvent->mutableMetaData().setUserInfo(requestIdKey,
-                    event->mutableMetaData().getUserInfo(requestIdKey));
+                                                               typeName(e) + ": " + e.what())));
             returnEvent->mutableMetaData().setUserInfo("isException", "");
-            informer->publish(returnEvent);
         }
-
+        informer->publish(returnEvent);
     }
 
 };
