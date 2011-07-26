@@ -25,6 +25,7 @@
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
 
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/misc/UUID.h>
 
 #include "../Factory.h"
@@ -33,6 +34,8 @@
 using namespace std;
 
 using namespace boost;
+
+using namespace rsc::runtime;
 
 namespace rsb {
 namespace patterns {
@@ -196,7 +199,7 @@ EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
     // wait for the reply
     EventPtr result = methodSet.handler->getReply(requestId);
     if (result->mutableMetaData().hasUserInfo("isException")) {
-        assert(result->getType() == "string");
+        assert(result->getType() == typeName<string>());
         throw RemoteTargetInvocationException("Error calling remote method '"
                 + methodName + "': " + *(boost::static_pointer_cast<string>(
                 result->getData())));
