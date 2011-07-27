@@ -67,3 +67,6 @@ TARGET_LINK_LIBRARIES(doublecheck ${RSB_NAME})
 
 ADD_EXECUTABLE(server server/server.cpp)
 TARGET_LINK_LIBRARIES(server ${RSB_NAME})
+
+ADD_EXECUTABLE(client server/client.cpp)
+TARGET_LINK_LIBRARIES(client ${RSB_NAME})

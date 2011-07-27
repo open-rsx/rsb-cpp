@@ -21,9 +21,11 @@
 #include <rsb/patterns/Server.h>
 #include <rsb/Factory.h>
 
+#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/LoggerFactory.h>
 
 using namespace std;
+
 using namespace rsb;
 using namespace rsb::patterns;
 
@@ -36,86 +38,41 @@ public:
         methodName(methodName) {
     }
 
-    string getRequestType() const {
-        return "string";
-    }
+    boost::shared_ptr<string> call(const string &methodName,
+                                   boost::shared_ptr<string> input) {
+        assert(methodName == this->methodName);
 
-    string getReplyType() const {
-        return "string";
-    }
+        if (methodName == "methodError") {
+            throw runtime_error("Intentionally failing.");
+        }
 
-    boost::shared_ptr<string> call(const string &/*methodName*/,
-            boost::shared_ptr<string> input) {
         return boost::shared_ptr<string>(
-                new string("reply to '" + *input + "'"));
+                new string("reply to '" + *input + "' (method is '" + methodName + "')"));
     }
 
 };
 
 int main(int /*argc*/, char **/*argv*/) {
-
+    // Use the RSB factory to create a Server instance that provides
+    // callable methods under the scope /example/server.
     Factory &factory = Factory::getInstance();
-
-    rsc::logging::LoggerFactory::getInstance()->reconfigure(
-            rsc::logging::Logger::FATAL);
-
-    const Scope scope("/sxy");
+    const Scope scope("/example/server");
     ServerPtr server = factory.createServer(scope);
 
+    // Register callable methods which dispatch method calls to
+    // instances of TestCallback.
     const string methodName1 = "methodOne";
     Server::CallbackPtr m1(new TestCallback(methodName1));
+    server->registerMethod(methodName1, m1);
 
     const string methodName2 = "methodTwo";
     Server::CallbackPtr m2(new TestCallback(methodName2));
-
-    server->registerMethod(methodName1, m1);
     server->registerMethod(methodName2, m2);
 
-    RemoteServerPtr remoteServer = factory.createRemoteServer(scope);
+    const string methodName3 = "methodError";
+    Server::CallbackPtr m3(new TestCallback(methodName3));
+    server->registerMethod(methodName3, m3);
 
-    int iteration = 1;
-    while (true) {
-        //usleep(500000);
-
-        cout << "++++++++++++ new iteration" << endl;
-
-        EventPtr request1(new Event);
-        request1->setType("string");
-        stringstream s1;
-        s1 << "This is request 1 in iteration " << iteration;
-        request1->setData(VoidPtr(new string(s1.str())));
-        cout << "+++ Calling method " << methodName1 << endl;
-        try {
-            EventPtr result = remoteServer->callMethod(methodName1, request1);
-            cout << "+++ got result: " << *result << ": "
-                    << *(boost::static_pointer_cast<string>(result->getData()))
-                    << endl;
-        } catch (exception &e) {
-            cerr << "+++ Error calling method: " << e.what() << endl;
-        }
-
-        EventPtr request2(new Event);
-        request2->setType("string");
-        stringstream s2;
-        s2 << "This is request 2 in iteration " << iteration;
-        request2->setData(VoidPtr(new string(s2.str())));
-        cout << "+++ Calling method " << methodName2 << endl;
-        try {
-            EventPtr result = remoteServer->callMethod(methodName2, request2);
-            cout << "+++ got result: " << *result << ": "
-                    << *(boost::static_pointer_cast<string>(result->getData()))
-                    << endl;
-        } catch (exception &e) {
-            cerr << "+++ Error calling method: " << e.what() << endl;
-        }
-
-        ++iteration;
-
-        if (iteration == 10000) {
-            break;
-        }
-
-    }
-
+    // Wait here so incoming method calls can be processed.
+    sleep(1000);
 }
-
