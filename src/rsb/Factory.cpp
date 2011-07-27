@@ -20,8 +20,13 @@
 #include "Factory.h"
 
 #include "introspection/introspection.h"
+
 #include "converter/converters.h"
+#include "converter/Repository.h"
+#include "converter/UnambiguousConverterMap.h"
+
 #include "transport/transports.h"
+
 #include "LocalService.h"
 
 using namespace std;
@@ -30,6 +35,29 @@ using namespace rsc::logging;
 using namespace rsc::runtime;
 
 using namespace rsb::converter;
+using namespace rsb::transport;
+
+namespace {
+
+template<unsigned int which, typename C>
+std::map<typename C::value_type::first_type,
+         typename C::value_type::second_type> pairsToMap(const C &container) {
+    typedef typename C::value_type::first_type first_type;
+    typedef typename C::value_type::second_type second_type;
+
+    typedef typename C::const_iterator const_iterator;
+
+    std::map<first_type, second_type> result;
+    for (const_iterator it = container.begin(); it != container.end(); ++it) {
+        if (which == 1)
+            result[it->first] = it->second;
+        else
+            result[it->second] = it->first;
+        }
+    return result;
+}
+
+}
 
 namespace rsb {
 
@@ -57,18 +85,12 @@ transport::OutFactory &Factory::getOutFactoryInstance() {
 
 ListenerPtr Factory::createListener(const Scope &scope,
         const ParticipantConfig &config) {
-    // Create requested connectors
-    vector<transport::InPushConnectorPtr> connectors
-      = createConnectors<transport::InPushFactory>(config);
-    return ListenerPtr(new Listener(connectors, scope, config));
+    return ListenerPtr(new Listener(createInPushConnectors(config), scope, config));
 }
 
 ReaderPtr Factory::createReader(const Scope &scope,
 				const ParticipantConfig &config) {
-    // Create requested connectors
-    vector<transport::InPullConnectorPtr> connectors
-	= createConnectors<transport::InPullFactory>(config);
-    return ReaderPtr(new Reader(connectors, scope, config));
+    return ReaderPtr(new Reader(createInPullConnectors(config), scope, config));
 }
 
 patterns::ServerPtr Factory::createServer(const Scope &scope) {
@@ -92,6 +114,90 @@ void Factory::setDefaultParticipantConfig(const ParticipantConfig &config) {
 
 ServicePtr Factory::createService(const Scope &scope) {
     return ServicePtr(new LocalService(scope));
+}
+
+vector<InPullConnectorPtr>
+Factory::createInPullConnectors(const ParticipantConfig &config) {
+    vector<InPullConnectorPtr> connectors;
+    set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
+    for (set<ParticipantConfig::Transport>::const_iterator transportIt =
+             configuredTransports.begin(); transportIt
+             != configuredTransports.end(); ++transportIt) {
+        RSCDEBUG(logger, "Trying to add connector " << *transportIt);
+        Properties options = transportIt->getOptions();
+        RSCDEBUG(logger, "Supplied connector options " << transportIt->getOptions());
+
+        // Take care of converters
+        if (!options.has("converters")) {
+            RSCDEBUG(logger, "Converter configuration for transport `"
+                     << transportIt->getName() << "': " << transportIt->getConverters());
+            // TODO we should not have to know the transport's wire-type here
+            ConverterSelectionStrategy<string>::Ptr converters
+                = stringConverterRepository()
+                ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
+            RSCDEBUG(logger, "Selected converters for transport `"
+                     << transportIt->getName() << "': " << converters);
+            options["converters"] = converters;
+        }
+        connectors.push_back(InPullConnectorPtr(InPullFactory::getInstance().createInst(transportIt->getName(), options)));
+    }
+    return connectors;
+}
+
+vector<InPushConnectorPtr>
+Factory::createInPushConnectors(const ParticipantConfig &config) {
+    vector<InPushConnectorPtr> connectors;
+    set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
+    for (set<ParticipantConfig::Transport>::const_iterator transportIt =
+             configuredTransports.begin(); transportIt
+             != configuredTransports.end(); ++transportIt) {
+        RSCDEBUG(logger, "Trying to add connector " << *transportIt);
+        Properties options = transportIt->getOptions();
+        RSCDEBUG(logger, "Supplied connector options " << transportIt->getOptions());
+
+        // Take care of converters
+        if (!options.has("converters")) {
+            RSCDEBUG(logger, "Converter configuration for transport `"
+                     << transportIt->getName() << "': " << transportIt->getConverters());
+            // TODO we should not have to know the transport's wire-type here
+            ConverterSelectionStrategy<string>::Ptr converters
+                = stringConverterRepository()
+                ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
+            RSCDEBUG(logger, "Selected converters for transport `"
+                     << transportIt->getName() << "': " << converters);
+            options["converters"] = converters;
+        }
+        connectors.push_back(InPushConnectorPtr(InPushFactory::getInstance().createInst(transportIt->getName(), options)));
+    }
+    return connectors;
+}
+
+vector<OutConnectorPtr>
+Factory::createOutConnectors(const ParticipantConfig &config) {
+    vector<OutConnectorPtr> connectors;
+    set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
+    for (set<ParticipantConfig::Transport>::const_iterator transportIt =
+             configuredTransports.begin(); transportIt
+             != configuredTransports.end(); ++transportIt) {
+        RSCDEBUG(logger, "Trying to add connector " << *transportIt);
+        Properties options = transportIt->getOptions();
+        RSCDEBUG(logger, "Supplied connector options " << transportIt->getOptions());
+
+        // Take care of converters
+        if (!options.has("converters")) {
+            RSCDEBUG(logger, "Converter configuration for transport `"
+                     << transportIt->getName() << "': " << transportIt->getConverters());
+            // TODO we should not have to know the transport's wire-type here
+            ConverterSelectionStrategy<string>::Ptr converters
+                = stringConverterRepository()
+                ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
+            RSCDEBUG(logger, "Selected converters for transport `"
+                     << transportIt->getName() << "': " << converters);
+            options["converters"] = converters;
+        }
+        connectors.push_back(OutConnectorPtr(OutFactory::getInstance().createInst(transportIt->getName(), options)));
+    }
+    return connectors;
 }
 
 }

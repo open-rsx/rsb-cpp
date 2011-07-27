@@ -23,7 +23,6 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
 #include <rsc/logging/Logger.h>
@@ -36,31 +35,11 @@
 #include "Informer.h"
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
-#include "converter/UnambiguousConverterMap.h"
-#include "converter/Repository.h"
 #include "transport/Connector.h"
 #include "ParticipantConfig.h"
 #include "Service.h"
 
 namespace rsb {
-
-template<unsigned int which, typename C>
-std::map<typename C::value_type::first_type,
-        typename C::value_type::second_type> pairsToMap(const C &container) {
-    typedef typename C::value_type::first_type first_type;
-    typedef typename C::value_type::second_type second_type;
-
-    typedef typename C::const_iterator const_iterator;
-
-    std::map<first_type, second_type> result;
-    for (const_iterator it = container.begin(); it != container.end(); ++it) {
-        if (which == 1)
-            result[it->first] = it->second;
-        else
-            result[it->second] = it->first;
-    }
-    return result;
-}
 
 /**
  * Factory for RSB user-level domain objects for communication patterns.
@@ -89,11 +68,8 @@ public:
                     Factory::getInstance().getDefaultParticipantConfig(),
             const std::string &dataType = rsc::runtime::typeName(
                     typeid(DataType))) {
-        // Create requested connectors
-        std::vector<transport::OutConnectorPtr> connectors
-            = createConnectors<transport::OutFactory>(config);
         return typename Informer<DataType>::Ptr(new Informer<DataType> (
-                connectors, scope, config, dataType));
+            createOutConnectors(config), scope, config, dataType));
     }
 
     /**
@@ -187,43 +163,14 @@ private:
     ParticipantConfig defaultConfig;
     mutable boost::recursive_mutex configMutex;
 
-    template <typename Factory>
-    std::vector<typename Factory::InterfaceType::Ptr> createConnectors(const ParticipantConfig &config) {
-        typedef typename Factory::InterfaceType::Ptr ConnectorPtr;
-        // Create requested connectors
-        std::vector<ConnectorPtr> connectors;
-        std::set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
-        for (std::set<ParticipantConfig::Transport>::const_iterator transportIt =
-                 configuredTransports.begin(); transportIt
-                 != configuredTransports.end(); ++transportIt) {
-            RSCDEBUG(logger, "Trying to add connector " << *transportIt);
-            rsc::runtime::Properties options = transportIt->getOptions();
-            RSCDEBUG(logger, "Supplied connector options " << transportIt->getOptions());
+    std::vector<transport::OutConnectorPtr>
+        createOutConnectors(const ParticipantConfig &config);
 
-            // Take care of converters
-            if (!options.has("converters")) {
-                RSCDEBUG(logger, "Converter configuration for transport `"
-                         << transportIt->getName() << "': " << transportIt->getConverters());
-                // TODO we should not have to know the transport's wire-type here
-                converter::ConverterSelectionStrategy<std::string>::Ptr converters;
-                if (boost::is_same<Factory, transport::InPushFactory>::value
-                    || boost::is_same<Factory, transport::InPullFactory>::value) {
-                    converters = converter::stringConverterRepository()
-		      ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
-                } else {
-		    converters = converter::stringConverterRepository()
-			->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
-                }
-                RSCDEBUG(logger, "Selected converters for transport `"
-                         << transportIt->getName() << "': " << converters);
-                options["converters"] = converters;
-            }
-            connectors.push_back(ConnectorPtr(
-                                     Factory::getInstance().createInst(
-                                         transportIt->getName(), options)));
-        }
-        return connectors;
-    }
+    std::vector<transport::InPullConnectorPtr>
+        createInPullConnectors(const ParticipantConfig &config);
+
+    std::vector<transport::InPushConnectorPtr>
+        createInPushConnectors(const ParticipantConfig &config);
 
 };
 
