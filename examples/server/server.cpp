@@ -17,8 +17,6 @@
  *
  * ============================================================ */
 
-#include <rsb/patterns/RemoteServer.h>
-#include <rsb/patterns/Server.h>
 #include <rsb/Factory.h>
 
 #include <rsc/runtime/TypeStringTools.h>

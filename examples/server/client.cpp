@@ -19,6 +19,8 @@
 
 #include <boost/format.hpp>
 
+#include <boost/thread.hpp>
+
 #include <rsb/Factory.h>
 
 using namespace std;
@@ -40,7 +42,7 @@ int main(int /*argc*/, char **/*argv*/) {
     string methodName2 = "methodTwo";
     string methodName3 = "methodError";
 
-    for (int iteration = 1; iteration < 5; sleep(10), ++iteration) {
+    for (int iteration = 1; iteration < 5; ++iteration) {
         // Call the method "methodOne", passing it a string value as
         // argument and accepting a string value as result. Note that
         // the types of arguments and return values are defined by the
@@ -85,6 +87,9 @@ int main(int /*argc*/, char **/*argv*/) {
         } catch (std::exception &e) {
             cout << "Got error: " << e.what() << endl;
         }
+
+        // Wait a little bit.
+        boost::this_thread::sleep(boost::posix_time::seconds(10));
     }
 
 }
