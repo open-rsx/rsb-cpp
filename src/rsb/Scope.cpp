@@ -44,9 +44,10 @@ const char Scope::COMPONENT_SEPARATOR = '/';
 inline void verifyAndSplit(const string &s, vector<string> &components) {
     string::const_iterator prev = s.begin();
     // The scope string has to start with a '/'.
-    if (*prev != Scope::COMPONENT_SEPARATOR)
+    if (*prev != Scope::COMPONENT_SEPARATOR) {
         throw invalid_argument(str(format("Invalid scope syntax for '%1%': has to begin with '%2%'")
                                    % s % Scope::COMPONENT_SEPARATOR));
+    }
 
     // Process remainder of s.  If we are at the end of s already, it
     // denotes the root scope and we do not have to create any
