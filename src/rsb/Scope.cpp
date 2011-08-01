@@ -57,7 +57,7 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
         // If we encounter a '/', make sure that we accumulated at
         // least one character in the current scope component.
         if (*next == Scope::COMPONENT_SEPARATOR) {
-            if (distance(prev,next) == 1) {
+            if (distance(prev, next) == 1) {
                 throw invalid_argument(str(format("Invalid scope syntax for '%1%' at char %2%: zero-length component between two '%3%'")
                                            % s % distance(s.begin(), next) % Scope::COMPONENT_SEPARATOR));
             }
@@ -82,6 +82,9 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
 }
 
 Scope::Scope(const string &s) {
+    // reserve a number of vetor components that should be enough for most
+    // realistic scopes. This speeds up parsing.
+    components.reserve(10);
     verifyAndSplit(s, this->components);
 }
 
