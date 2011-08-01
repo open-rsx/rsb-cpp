@@ -19,6 +19,8 @@
 
 #include <rsb/Factory.h>
 
+#include <boost/thread.hpp>
+
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/LoggerFactory.h>
 
@@ -29,6 +31,9 @@ using namespace rsb::patterns;
 
 class TestCallback: public Server::Callback<string, string> {
 public:
+
+    virtual ~TestCallback() {
+    }
 
     string methodName;
 
@@ -72,5 +77,7 @@ int main(int /*argc*/, char **/*argv*/) {
     server->registerMethod(methodName3, m3);
 
     // Wait here so incoming method calls can be processed.
-    sleep(1000);
+    boost::this_thread::sleep(boost::posix_time::seconds(1000));
+
+    return EXIT_SUCCESS;
 }

@@ -92,4 +92,6 @@ int main(int /*argc*/, char **/*argv*/) {
         boost::this_thread::sleep(boost::posix_time::seconds(10));
     }
 
+    return EXIT_SUCCESS;
+
 }
