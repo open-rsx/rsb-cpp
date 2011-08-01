@@ -30,7 +30,7 @@ namespace rsb {
 namespace converter {
 
 /**
- * Implementations of this interface can be used to perfrom @ref
+ * Implementations of this interface can be used to perform @ref
  * Converter selection based on predicate evaluation. Depending on the
  * context, the @ref match method of predicates is invoked with either
  * a wire-schema string or a data-type string in order to decide
@@ -40,6 +40,9 @@ namespace converter {
  */
 class ConverterPredicate: public rsc::runtime::Printable {
 public:
+    virtual ~ConverterPredicate() {
+    }
+
     /**
      * Return @c true if the @ref Converter associated to this
      * predicate should be selected for @a key.

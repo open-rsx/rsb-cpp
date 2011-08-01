@@ -40,6 +40,7 @@ namespace transport {
 class RSB_EXPORT OutConnector: public Connector,
         public eventprocessing::Handler {
 public:
+    virtual ~OutConnector();
     typedef boost::shared_ptr<OutConnector> Ptr;
 };
 

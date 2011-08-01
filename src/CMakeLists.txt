@@ -71,6 +71,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/protocol/ProtocolException.cpp
 
             rsb/transport/Connector.cpp
+            rsb/transport/OutConnector.cpp
             rsb/transport/InConnector.cpp
             rsb/transport/InPullConnector.cpp
             rsb/transport/InPushConnector.cpp
