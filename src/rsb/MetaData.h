@@ -34,8 +34,8 @@
 namespace rsb {
 
 /**
- * Framework-supplied meta data attached to each event that give information
- * e.g. about timing issues.
+ * Framework-supplied meta data attached to each event that give
+ * information e.g. about timing issues.
  *
  * @author jwienke
  */
@@ -52,9 +52,10 @@ public:
     /**
      * Returns the ID (a UUID) of the sending participant.
      *
-     * @return UUID
+     * @return A copy of the sender id UUID object.
      */
     rsc::misc::UUID getSenderId() const;
+
     /**
      * Sets the ID (a UUID) of the sending participant.
      *
@@ -63,9 +64,9 @@ public:
     void setSenderId(const rsc::misc::UUID &senderId);
 
     /**
-     * @name framework time stamps
+     * @name framework timestamps
      *
-     * Timestamps supplied by the rrameowrk itself.
+     * Timestamps supplied by the framework itself.
      */
     //@{
     /**
@@ -164,7 +165,7 @@ public:
      * Returns the user timestamp stored under the provided key.
      *
      * @param key key of the user-provided timestamp
-     * @return timetamp
+     * @return timestamp
      * @throw std::invalid_argument no timestamp stored und the provided key
      */
     boost::uint64_t getUserTime(const std::string &key) const;
@@ -223,7 +224,6 @@ public:
     bool operator==(const MetaData &other) const;
 
 private:
-
     rsc::misc::UUID senderId;
 
     boost::uint64_t createTime;
