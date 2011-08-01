@@ -56,6 +56,7 @@ boost::uint64_t Event::getSequenceNumber() const {
 
 void Event::setSequenceNumber(boost::uint64_t number) {
     this->sequenceNumber = number;
+    this->id.reset();
 }
 
 rsc::misc::UUID Event::getId() const {
