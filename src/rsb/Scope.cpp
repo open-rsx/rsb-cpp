@@ -21,48 +21,67 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <iterator>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/regex.hpp>
+#include <boost/format.hpp>
 
 using namespace std;
 
+using namespace boost;
+
 namespace rsb {
 
-const string Scope::COMPONENT_SEPARATOR = "/";
+const char Scope::COMPONENT_SEPARATOR = '/';
 
-// This should use COMPONENT_SEPARATOR, but that would create
-// dependencies during static initialization.
-// Also note that this object is shared between threads, which is OK
-// according to the Boost.Regex documentation.
-boost::regex SCOPE_EXPRESSION("/([a-zA-Z0-9]+/)*");
+/**
+ * Validate that @a s satisfies the regular expression
+ * /([a-zA-Z0-9]+/)* and split at '/' characters.
+ *
+ * @param s String representation that should be verified and split.
+ * @param components A vector in which the extracted scope components
+ * should be stored
+ */
+inline void verifyAndSplit(const string &s, vector<string> &components) {
+    string::const_iterator prev = s.begin();
+    // The scope string has to start with a '/'.
+    if (*prev != Scope::COMPONENT_SEPARATOR)
+        throw invalid_argument(str(format("Invalid scope syntax for '%1%': has to begin with '%2%'")
+                                   % s % Scope::COMPONENT_SEPARATOR));
+
+    // Process remainder of s.  If we are at the end of s already, it
+    // denotes the root scope and we do not have to create any
+    // components.
+    string::const_iterator next = prev + 1;
+    for (; next != s.end(); ++next) {
+        // If we encounter a '/', make sure that we accumulated at
+        // least one character in the current scope component.
+        if (*next == Scope::COMPONENT_SEPARATOR) {
+            if (distance(prev,next) == 1) {
+                throw invalid_argument(str(format("Invalid scope syntax for '%1%' at char %2%: zero-length component between two '%3%'")
+                                           % s % distance(s.begin(), next) % Scope::COMPONENT_SEPARATOR));
+            }
+            components.push_back(string(prev + 1, next));
+            prev = next;
+        }
+        // The current character is not a '/' and we want to append it
+        // to the current scope component. Verify that it is a legal
+        // scope component character.
+        else if (!(('a' <= *next && *next <= 'z')
+                     || ('A' <= *next && *next <= 'Z')
+                     || ('0' <= *next && *next <= '9'))) {
+            throw invalid_argument(str(format("Invalid scope syntax for '%1%' at char %2%: invalid character '%3%'")
+                                       % s % distance(s.begin(), next) % *next));
+        }
+        // The current character is a valid scope component
+        // character. Append it to the current scope component.
+    }
+    if (prev + 1 != next) {
+        components.push_back(string(prev + 1, next));
+    }
+}
 
 Scope::Scope(const string &s) {
-
-    string scope = s;
-
-    // allow the shortcut syntax with a missing slash in the end
-    if (!scope.empty() && (scope.substr(scope.size() - 1, 1)
-            != COMPONENT_SEPARATOR)) {
-        scope.append(COMPONENT_SEPARATOR);
-    }
-
-    // Validate scope syntax
-    if (!boost::regex_match(scope, SCOPE_EXPRESSION)) {
-        throw invalid_argument("Invalid scope syntax for '" + scope + "'");
-    }
-
-    // split also creates empty components in front of the leading slash and
-    // after the trailing one, so skip them for processing
-    string withoutSlahses = scope.substr(1, scope.size() - 2);
-
-    // splitting an empty string would result in one component, which we do not
-    // want to have
-    if (!withoutSlahses.empty()) {
-        boost::split(components, withoutSlahses,
-                boost::is_any_of(COMPONENT_SEPARATOR));
-    }
-
+    verifyAndSplit(s, this->components);
 }
 
 Scope::Scope() {

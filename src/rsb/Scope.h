@@ -120,15 +120,13 @@ public:
     bool operator==(const Scope &other) const;
     bool operator<(const Scope &other) const;
 
+    static const char COMPONENT_SEPARATOR;
 private:
 
     std::vector<std::string> components;
-
-    static const std::string COMPONENT_SEPARATOR;
 
 };
 
 RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const Scope &scope);
 
 }
-
