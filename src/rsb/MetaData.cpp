@@ -29,8 +29,9 @@ using namespace std;
 namespace rsb {
 
 MetaData::MetaData() :
+    senderId(false),
     createTime(rsc::misc::currentTimeMicros()), sendTime(0), receiveTime(0),
-            deliverTime(0) {
+    deliverTime(0) {
 }
 
 MetaData::~MetaData() {

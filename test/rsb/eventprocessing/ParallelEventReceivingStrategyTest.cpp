@@ -19,6 +19,7 @@
 
 #include <string>
 
+#include <rsc/misc/UUID.h>
 #include <rsc/threading/SynchronizedQueue.h>
 
 #include <gtest/gtest.h>
@@ -53,13 +54,14 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
         EventPtr event(new Event);
         event->setScope(okScope);
         event->setData(boost::shared_ptr<string>(new string("hello")));
-
+        event->mutableMetaData().setSenderId(rsc::misc::UUID());
         processor.handle(event);
     }
     {
         EventPtr event(new Event);
         event->setScope(Scope("/This/Is/wrong"));
         event->setData(boost::shared_ptr<string>(new string("hello")));
+        event->mutableMetaData().setSenderId(rsc::misc::UUID());
 
         processor.handle(event);
     }
@@ -91,6 +93,7 @@ TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
         event->setScope(okScope);
         event->setMethod(desiredMethod);
         event->setData(boost::shared_ptr<string>(new string("hello")));
+        event->mutableMetaData().setSenderId(rsc::misc::UUID());
 
         processor.handle(event);
     }
@@ -99,6 +102,7 @@ TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
         EventPtr event(new Event);
         event->setScope(okScope);
         event->setData(boost::shared_ptr<string>(new string("hello")));
+        event->mutableMetaData().setSenderId(rsc::misc::UUID());
 
         processor.handle(event);
     }
@@ -108,6 +112,7 @@ TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
         event->setScope(okScope);
         event->setMethod("wrong method");
         event->setData(boost::shared_ptr<string>(new string("hello")));
+        event->mutableMetaData().setSenderId(rsc::misc::UUID());
 
         processor.handle(event);
     }
@@ -157,6 +162,8 @@ TEST(ParallelEventReceivingStrategyTest, testHandlerErrorStrategyException)
     // default should log
     EventPtr event(new Event);
     event->setData(boost::shared_ptr<string>(new string("hello")));
+    event->mutableMetaData().setSenderId(rsc::misc::UUID());
+
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
@@ -180,6 +187,8 @@ TEST(ParallelEventReceivingStrategyTest, testHandlerErrorStrategyCatchAll)
     // default should log
     EventPtr event(new Event);
     event->setData(boost::shared_ptr<string>(new string("hello")));
+    event->mutableMetaData().setSenderId(rsc::misc::UUID());
+
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 

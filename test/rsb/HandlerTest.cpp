@@ -19,10 +19,14 @@
 
 #include "rsb/Handler.h"
 
-#include <boost/bind.hpp>
 #include <iostream>
+
+#include <boost/bind.hpp>
+
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+#include <rsc/misc/UUID.h>
 
 using namespace std;
 using namespace rsb;
@@ -46,6 +50,8 @@ TEST(HandlerTest, testDispatch)
     e->setData(boost::shared_ptr<string>(new string("blub")));
     e->setScope(Scope("/blah"));
     e->setType("string");
+    e->mutableMetaData().setSenderId(rsc::misc::UUID());
+
     eh->handle(e);
     dh->handle(e);
 }
