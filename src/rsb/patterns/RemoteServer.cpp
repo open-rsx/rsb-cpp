@@ -71,7 +71,6 @@ public:
     }
 
     void handle(EventPtr event) {
-        std::cout << "event " << event << std::endl;
         if (!event || !event->getMetaData().hasUserInfo("rsb:reply")) {
             return;
         }
