@@ -61,9 +61,6 @@ public:
     }
 
     void handle(EventPtr event) {
-
-        const string requestIdKey = "ServerRequestId";
-
         if (event->getType() != callback->getRequestType()) {
             RSCERROR(logger, "Request type '" << event->getType()
                     << "' does not match expected request type '"
@@ -72,18 +69,10 @@ public:
             return;
         }
 
-        if (!event->mutableMetaData().hasUserInfo(requestIdKey)) {
-            RSCERROR(logger,
-                    "Request event does not contain a valid request ID "
-                    << "to answer to.");
-            return;
-        }
-
         EventPtr returnEvent(new Event());
         returnEvent->setScope(informer->getScope());
         returnEvent->mutableMetaData()
-            .setUserInfo(requestIdKey,
-                         event->mutableMetaData().getUserInfo(requestIdKey));
+            .setUserInfo("rsb:reply", event->getId().getIdAsString());
         try {
             VoidPtr returnData
                 = callback->intlCall(methodName, event->getData());
@@ -93,7 +82,7 @@ public:
             returnEvent->setType(typeName<string>());
             returnEvent->setData(boost::shared_ptr<string>(new string(
                                                                typeName(e) + ": " + e.what())));
-            returnEvent->mutableMetaData().setUserInfo("isException", "");
+            returnEvent->mutableMetaData().setUserInfo("rsb:error?", "");
         }
         informer->publish(returnEvent);
     }

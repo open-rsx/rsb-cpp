@@ -41,17 +41,20 @@ namespace rsb {
 namespace patterns {
 
 class WaitingEventHandler: public Handler {
+public:
+    typedef boost::recursive_mutex MutexType;
+    typedef boost::recursive_mutex::scoped_lock LockType;
 private:
-
     rsc::logging::LoggerPtr logger;
 
-    boost::mutex mutex;
+    boost::recursive_mutex mutex;
     boost::condition condition;
 
     set<string> waitForEvents;
     map<string, EventPtr> storedEvents;
 
     unsigned int maxWaitTime;
+
 public:
 
     WaitingEventHandler(rsc::logging::LoggerPtr logger,
@@ -63,28 +66,32 @@ public:
         return "WaitingEventHandler";
     }
 
+    boost::recursive_mutex& getMutex() {
+        return this->mutex;
+    }
+
     void handle(EventPtr event) {
+        std::cout << "event " << event << std::endl;
+        if (!event || !event->getMetaData().hasUserInfo("rsb:reply")) {
+            return;
+        }
+        string requestId = event->getMetaData().getUserInfo("rsb:reply");
         {
-            boost::mutex::scoped_lock lock(mutex);
-            if (event
-                    && event->mutableMetaData().hasUserInfo("ServerRequestId")
-                    && waitForEvents.count(
-                            event->mutableMetaData().getUserInfo(
-                                    "ServerRequestId"))) {
-                RSCDEBUG(logger, "Received reply event " << *event);
-                waitForEvents.erase(event->mutableMetaData().getUserInfo(
-                        "ServerRequestId"));
-                storedEvents[event->mutableMetaData().getUserInfo(
-                        "ServerRequestId")] = event;
-            } else {
+            LockType lock(mutex);
+            if (!waitForEvents.count(requestId)) {
                 RSCTRACE(logger, "Received uninteresting event " << *event);
+                return;
             }
+
+            RSCDEBUG(logger, "Received reply event " << *event);
+            waitForEvents.erase(requestId);
+            storedEvents[requestId] = event;
         }
         condition.notify_all();
     }
 
     void expectReply(const string &requestId) {
-        boost::mutex::scoped_lock lock(mutex);
+        LockType lock(mutex);
         waitForEvents.insert(requestId);
     }
 
@@ -92,7 +99,7 @@ public:
 
         RSCTRACE(logger, "Waiting for reply with id " << requestId);
 
-        boost::mutex::scoped_lock lock(mutex);
+        LockType lock(mutex);
         while (!storedEvents.count(requestId)) {
             boost::xtime xt;
             xtime_get(&xt, boost::TIME_UTC);
@@ -185,20 +192,20 @@ EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
     RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
     // TODO check that the desired method exists
-
-    string requestId = rsc::misc::UUID().getIdAsString();
-    // TODO duplicated string from Server
-    data->mutableMetaData().setUserInfo("ServerRequestId", requestId);
-
     MethodSet methodSet = getMethodSet(methodName, data->getType());
-    methodSet.handler->expectReply(requestId);
+    string requestId;
+    {
+        WaitingEventHandler::LockType lock(methodSet.handler->getMutex());
 
-    data->setScope(methodSet.requestInformer->getScope());
-    methodSet.requestInformer->publish(data);
+        data->setScope(methodSet.requestInformer->getScope());
+        methodSet.requestInformer->publish(data);
+        requestId = data->getId().getIdAsString();
+        methodSet.handler->expectReply(requestId);
+    }
 
     // wait for the reply
     EventPtr result = methodSet.handler->getReply(requestId);
-    if (result->mutableMetaData().hasUserInfo("isException")) {
+    if (result->mutableMetaData().hasUserInfo("rsb:error?")) {
         assert(result->getType() == typeName<string>());
         throw RemoteTargetInvocationException("Error calling remote method '"
                 + methodName + "': " + *(boost::static_pointer_cast<string>(
