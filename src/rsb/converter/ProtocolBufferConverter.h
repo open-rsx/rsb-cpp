@@ -26,37 +26,16 @@
 #include <rsc/runtime/TypeStringTools.h>
 
 #include "Converter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace converter {
 
 namespace detail {
 
-std::string typeNameToProtoName(const std::string& type_name) {
-    std::string result = ".";
-    bool colon = false;
-    for (std::string::const_iterator it = type_name.begin(); it
-             != type_name.end(); ++it) {
-        // Consume two (hopefully adjacent) ':', emit one '.'
-        if (*it == ':') {
-            if (colon) {
-                colon = false;
-            } else {
-                result.push_back('.');
-                colon = true;
-            }
-        } else {
-            result.push_back(*it);
-        }
-    }
-    return result;
-}
+RSB_EXPORT std::string typeNameToProtoName(const std::string& type_name);
 
-std::string typeNameToWireSchema(const std::string& type_name) {
-    // See https://code.cor-lab.de/projects/rsb/wiki/Types/diff?version=6&version_from=4&commit=View+differences
-    // return "protocol-buffer:" + typeNameToProtoName(type_name);
-    return typeNameToProtoName(type_name);
-}
+RSB_EXPORT std::string typeNameToWireSchema(const std::string& type_name);
 
 }
 
