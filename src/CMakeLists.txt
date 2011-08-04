@@ -34,6 +34,7 @@ SET(SOURCES rsb/CommException.cpp
 
             rsb/converter/BoolConverter.cpp
             rsb/converter/Converter.cpp
+            rsb/converter/ProtocolBufferConverter.cpp
             rsb/converter/Repository.cpp
             rsb/converter/RegexConverterPredicate.cpp
             rsb/converter/SerializationException.cpp
