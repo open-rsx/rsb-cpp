@@ -61,6 +61,9 @@ public:
     }
 
     void handle(EventPtr event) {
+        if (event->getMethod() != "REQUEST") {
+            return;
+        }
         if (event->getType() != callback->getRequestType()) {
             RSCERROR(logger, "Request type '" << event->getType()
                     << "' does not match expected request type '"
@@ -71,6 +74,7 @@ public:
 
         EventPtr returnEvent(new Event());
         returnEvent->setScope(informer->getScope());
+        returnEvent->setMethod("REPLY");
         returnEvent->mutableMetaData()
             .setUserInfo("rsb:reply", event->getId().getIdAsString());
         try {

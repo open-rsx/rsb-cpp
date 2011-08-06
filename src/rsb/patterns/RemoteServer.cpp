@@ -71,7 +71,9 @@ public:
     }
 
     void handle(EventPtr event) {
-        if (!event || !event->getMetaData().hasUserInfo("rsb:reply")) {
+        if (!event
+            || !event->getMetaData().hasUserInfo("rsb:reply")
+            || (event->getMethod() != "REPLY")) {
             return;
         }
         string requestId = event->getMetaData().getUserInfo("rsb:reply");
@@ -131,8 +133,8 @@ RemoteServer::RemoteTargetInvocationException::RemoteTargetInvocationException(
 
 RemoteServer::RemoteServer(const Scope &scope,
                            unsigned int maxReplyWaitTime) :
-    logger(rsc::logging::Logger::getLogger("rsc.patterns.RemoteServer."
-                                           + scope.toString())),
+    logger(rsc::logging::Logger::getLogger("rsb.patterns.RemoteServer["
+                                           + scope.toString() + "]")),
     scope(scope), maxReplyWaitTime(maxReplyWaitTime) {
     // TODO check that this server is alive...
     // TODO probably it would be a good idea to request some method infos from
@@ -197,6 +199,7 @@ EventPtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
         WaitingEventHandler::LockType lock(methodSet.handler->getMutex());
 
         data->setScope(methodSet.requestInformer->getScope());
+        data->setMethod("REQUEST");
         methodSet.requestInformer->publish(data);
         requestId = data->getId().getIdAsString();
         methodSet.handler->expectReply(requestId);

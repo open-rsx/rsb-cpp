@@ -126,6 +126,9 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
 
     e->setSequenceNumber(notification->sequence_number());
     e->setScope(Scope(notification->scope()));
+    if (notification->has_method()) {
+        e->setMethod(notification->method());
+    }
 
     for (int i = 0; i < notification->meta_data().user_infos_size(); ++i) {
         e->mutableMetaData().setUserInfo(

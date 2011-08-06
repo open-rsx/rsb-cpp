@@ -87,6 +87,9 @@ void OutConnector::fillNotification(protocol::Notification &notification,
 
     notification.set_sequence_number(event->getSequenceNumber());
     notification.set_scope(event->getScope().toString());
+    if (!event->getMethod().empty()) {
+        notification.set_method(event->getMethod());
+    }
     notification.set_wire_schema(wireSchema);
     notification.set_sender_id(
             event->getMetaData().getSenderId().getId().data,
