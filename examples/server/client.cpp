@@ -32,11 +32,10 @@ using namespace rsb::patterns;
 
 int main(int /*argc*/, char **/*argv*/) {
     // Use the RSB factory to create a RemoteServer instance for the
-    // server at scope /example/server. Specify a timeout of 10
-    // seconds for method calls.
+    // server at scope /example/server.
     Factory &factory = Factory::getInstance();
     RemoteServerPtr remoteServer
-        = factory.createRemoteServer(Scope("/example/server"), 10);
+        = factory.createRemoteServer(Scope("/example/server"));
 
     string methodName1 = "methodOne";
     string methodName2 = "methodTwo";
@@ -48,12 +47,14 @@ int main(int /*argc*/, char **/*argv*/) {
         // the types of arguments and return values are defined by the
         // server providing the respective methods and have to be
         // matched in method calls.
+        //
+        // Specify a timeout of 10 seconds for the method call.
         cout << "Calling method " << methodName1 << endl;
         try {
             shared_ptr<string> request(new string(str(format("This is request 1 in iteration %1%")
                                                       % iteration)));
             shared_ptr<string> result
-                = remoteServer->call<string>(methodName1, request);
+                = remoteServer->callAndWait<string>(methodName1, request, 10);
             cout << "Got result: " << *result << endl;
         } catch (std::exception &e) {
             cerr << "Error calling method: " << e.what() << endl;
@@ -69,7 +70,7 @@ int main(int /*argc*/, char **/*argv*/) {
                                                  % iteration))));
         cout << "Calling method " << methodName2 << endl;
         try {
-            EventPtr result = remoteServer->callMethod(methodName2, request2);
+            EventPtr result = remoteServer->callMethodAndWait(methodName2, request2);
             cout << "Got result: " << *result << ": "
                     << *(boost::static_pointer_cast<string>(result->getData()))
                     << endl;

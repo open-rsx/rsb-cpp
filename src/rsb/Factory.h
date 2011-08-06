@@ -107,8 +107,15 @@ public:
      */
     ServicePtr createService(const Scope &scope);
 
+    /**
+     * Creates a @ref Server object that exposes methods under the
+     * scope @a scope.
+     *
+     * @param scope The scope under which the new server exposes its
+     * methods.
+     * @return A shared_ptr to the new @ref Server object.
+     */
     patterns::ServerPtr createServer(const Scope &scope);
-
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
@@ -116,12 +123,9 @@ public:
      *
      * @param scope The scope at which the remote server object
      * exposes itself.
-     * @param maxReplyWaitTime Maximum number of seconds to wait for a
-     * reply from the server when calling a method.
      * @return A shared_ptr to the new @ref RemoteServer object.
      */
-    patterns::RemoteServerPtr createRemoteServer(const Scope &scope,
-                                                 unsigned int maxReplyWaitTime = 25);
+    patterns::RemoteServerPtr createRemoteServer(const Scope &scope);
 
     /**
      * Returns the default configuration for new participants.
