@@ -3,6 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -72,7 +73,7 @@ int main(int /*argc*/, char **/*argv*/) {
         try {
             EventPtr result = remoteServer->callMethodAndWait(methodName2, request2);
             cout << "Got result: " << *result << ": "
-                    << *(boost::static_pointer_cast<string>(result->getData()))
+                    << *(static_pointer_cast<string>(result->getData()))
                     << endl;
         } catch (std::exception &e) {
             cerr << "Error calling method: " << e.what() << endl;
@@ -83,14 +84,14 @@ int main(int /*argc*/, char **/*argv*/) {
         // locally.
         cout << "Calling method " << methodName3 << endl;
         try {
-            remoteServer->call<string>(methodName3, shared_ptr<string>(new string("bla")));
+            remoteServer->callAndWait<string>(methodName3, shared_ptr<string>(new string("bla")));
             cout << "Method call succeeded; This should not happen" << endl;
         } catch (std::exception &e) {
             cout << "Got error: " << e.what() << endl;
         }
 
         // Wait a little bit.
-        boost::this_thread::sleep(boost::posix_time::seconds(10));
+        this_thread::sleep(posix_time::seconds(10));
     }
 
     return EXIT_SUCCESS;
