@@ -157,7 +157,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 
 }
 
-RemoteServer::FuturePtr RemoteServer::callMethod(const string &methodName, EventPtr data) {
+RemoteServer::FuturePtr RemoteServer::callAsync(const string &methodName, EventPtr data) {
 
     RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
@@ -178,10 +178,10 @@ RemoteServer::FuturePtr RemoteServer::callMethod(const string &methodName, Event
     return result;
 }
 
-EventPtr RemoteServer::callMethodAndWait(const string &methodName,
-                                         EventPtr      data,
-                                         unsigned int  maxReplyWaitTime) {
-    return callMethod(methodName, data)->get(maxReplyWaitTime);
+EventPtr RemoteServer::call(const string &methodName,
+                            EventPtr      data,
+                            unsigned int  maxReplyWaitTime) {
+    return callAsync(methodName, data)->get(maxReplyWaitTime);
 }
 
 }

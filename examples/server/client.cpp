@@ -55,7 +55,7 @@ int main(int /*argc*/, char **/*argv*/) {
             shared_ptr<string> request(new string(str(format("This is request 1 in iteration %1%")
                                                       % iteration)));
             shared_ptr<string> result
-                = remoteServer->callAndWait<string>(methodName1, request, 10);
+                = remoteServer->call<string>(methodName1, request, 10);
             cout << "Got result: " << *result << endl;
         } catch (std::exception &e) {
             cerr << "Error calling method: " << e.what() << endl;
@@ -71,7 +71,7 @@ int main(int /*argc*/, char **/*argv*/) {
                                                  % iteration))));
         cout << "Calling method " << methodName2 << endl;
         try {
-            EventPtr result = remoteServer->callMethodAndWait(methodName2, request2);
+            EventPtr result = remoteServer->call(methodName2, request2);
             cout << "Got result: " << *result << ": "
                     << *(static_pointer_cast<string>(result->getData()))
                     << endl;
@@ -84,7 +84,7 @@ int main(int /*argc*/, char **/*argv*/) {
         // locally.
         cout << "Calling method " << methodName3 << endl;
         try {
-            remoteServer->callAndWait<string>(methodName3, shared_ptr<string>(new string("bla")));
+            remoteServer->call<string>(methodName3, shared_ptr<string>(new string("bla")));
             cout << "Method call succeeded; This should not happen" << endl;
         } catch (std::exception &e) {
             cout << "Got error: " << e.what() << endl;

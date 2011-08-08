@@ -95,7 +95,7 @@ public:
      * the result (an @ref EventPtr) of the method call can be
      * obtained at the caller's discretion.
      */
-    FuturePtr callMethod(const std::string &methodName, EventPtr data);
+    FuturePtr callAsync(const std::string &methodName, EventPtr data);
 
     /**
      * Call the method named @a methodName on the remote server,
@@ -112,12 +112,12 @@ public:
      * obtained at the caller's discretion.
      */
     template <typename O, typename I>
-    DataFuture<O> call(const std::string    &methodName,
-                       boost::shared_ptr<I> args) {
+    DataFuture<O> callAsync(const std::string    &methodName,
+                            boost::shared_ptr<I> args) {
         EventPtr request(new Event);
         request->setType(rsc::runtime::typeName<I>());
         request->setData(args);
-        return DataFuture<O>(callMethod(methodName, request));
+        return DataFuture<O>(callAsync(methodName, request));
     }
 
     /**
@@ -140,9 +140,9 @@ public:
      * @throw rsc::threading::FutureTaskExecutionException if the
      * method call fails.
      */
-    EventPtr callMethodAndWait(const std::string &methodName,
-                               EventPtr          data,
-                               unsigned int      maxReplyWaitTime = 25);
+    EventPtr call(const std::string &methodName,
+                  EventPtr          data,
+                  unsigned int      maxReplyWaitTime = 25);
 
     /**
      * Call the method named @a methodName on the remote server,
@@ -166,10 +166,10 @@ public:
      * method call fails.
      */
     template <typename O, typename I>
-    boost::shared_ptr<O> callAndWait(const std::string    &methodName,
-                                     boost::shared_ptr<I> args,
-                                     unsigned int         maxReplyWaitTime = 25) {
-        return call<O>(methodName, args).get(maxReplyWaitTime);
+    boost::shared_ptr<O> call(const std::string    &methodName,
+                              boost::shared_ptr<I> args,
+                              unsigned int         maxReplyWaitTime = 25) {
+        return callAsync<O>(methodName, args).get(maxReplyWaitTime);
     }
 private:
     rsc::logging::LoggerPtr logger;
