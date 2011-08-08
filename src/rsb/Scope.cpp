@@ -81,14 +81,16 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
     }
 }
 
-Scope::Scope(const string &s) {
+Scope::Scope(const string &s) :
+    scopestring() {
     // reserve a number of vetor components that should be enough for most
     // realistic scopes. This speeds up parsing.
     components.reserve(10);
     verifyAndSplit(s, this->components);
 }
 
-Scope::Scope() {
+Scope::Scope() :
+    scopestring() {
 }
 
 Scope::~Scope() {
@@ -99,21 +101,26 @@ vector<string> Scope::getComponents() const {
 }
 
 string Scope::toString() const {
-    stringstream s;
-    s << COMPONENT_SEPARATOR;
-    for (vector<string>::const_iterator it = components.begin(); it
-            != components.end(); ++it) {
-        s << *it << COMPONENT_SEPARATOR;
+    if (this->scopestring.empty()) {
+        stringstream s;
+        s << COMPONENT_SEPARATOR;
+        for (vector<string>::const_iterator it = components.begin(); it
+                != components.end(); ++it) {
+            s << *it << COMPONENT_SEPARATOR;
+        }
+        this->scopestring = s.str();
     }
-    return s.str();
+    return this->scopestring;
 }
 
 Scope Scope::concat(const Scope &childScope) const {
     Scope result = *this;
+
     for (vector<string>::const_iterator it = childScope.components.begin(); it
             != childScope.components.end(); ++it) {
         result.components.push_back(*it);
     }
+
     return result;
 }
 
@@ -130,7 +137,6 @@ bool Scope::isSubScopeOf(const Scope &other) const {
     }
 
     return true;
-
 }
 
 bool Scope::isSuperScopeOf(const Scope &other) const {
@@ -146,7 +152,6 @@ bool Scope::isSuperScopeOf(const Scope &other) const {
     }
 
     return true;
-
 }
 
 vector<Scope> Scope::superScopes(const bool &includeSelf) const {
@@ -174,11 +179,10 @@ vector<Scope> Scope::superScopes(const bool &includeSelf) const {
     }
 
     return result;
-
 }
 
 bool Scope::operator==(const Scope &other) const {
-    return components == other.components;
+    return toString() == other.toString();
 }
 
 bool Scope::operator<(const Scope &other) const {

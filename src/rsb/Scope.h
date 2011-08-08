@@ -122,7 +122,8 @@ public:
 
     static const char COMPONENT_SEPARATOR;
 private:
-
+    
+    mutable std::string scopestring;
     std::vector<std::string> components;
 
 };
