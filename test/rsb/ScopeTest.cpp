@@ -99,9 +99,21 @@ TEST(ScopeTest, testConcat)
 {
 
     EXPECT_EQ(Scope("/"), Scope("/").concat(Scope("/")));
+    EXPECT_EQ("/", Scope("/").concat(Scope("/")).toString());
+
     EXPECT_EQ(Scope("/a/test/"), Scope("/").concat(Scope("/a/test/")));
+    EXPECT_EQ("/a/test/", Scope("/").concat(Scope("/a/test/")).toString());
+
     EXPECT_EQ(Scope("/a/test/"), Scope("/a/test/").concat(Scope("/")));
+    EXPECT_EQ("/a/test/", Scope("/a/test/").concat(Scope("/")).toString());
+
+    // Test concat with warm string caches.
     EXPECT_EQ(Scope("/a/test/example"), Scope("/a/test/").concat(Scope("/example/")));
+    Scope left("/a/test/");
+    left.toString();
+    Scope right("/example/");
+    right.toString();
+    EXPECT_EQ("/a/test/example/", left.concat(right).toString());
 
 }
 

@@ -114,7 +114,8 @@ string Scope::toString() const {
 }
 
 Scope Scope::concat(const Scope &childScope) const {
-    Scope result = *this;
+    Scope result; // start with empty string cache
+    result.components = this->components;
 
     for (vector<string>::const_iterator it = childScope.components.begin(); it
             != childScope.components.end(); ++it) {
