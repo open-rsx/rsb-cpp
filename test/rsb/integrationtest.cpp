@@ -47,15 +47,20 @@
 #include "testhelpers.h"
 
 using namespace std;
+
 using namespace boost;
+
+using namespace testing;
+
+using namespace rsc::subprocess;
+using namespace rsc::threading;
+using namespace rsc::runtime;
+
 using namespace rsb;
 using namespace rsb::test;
 using namespace rsb::filter;
 using namespace rsb::transport;
 using namespace rsb::eventprocessing;
-using namespace rsc::subprocess;
-using namespace testing;
-using namespace rsc::threading;
 
 class UserInformerTask: public rsc::threading::RepetitiveTask {
 public:
@@ -219,6 +224,18 @@ TEST_F(InformerTest, testTypeCheck)
         EventPtr event(new Event(Scope("/"), payload, "not-string"));
         EXPECT_THROW(informer->publish(event), invalid_argument);
     }
+
+    // AnyType can be used for "disable type check"
+
+    // We have to catch the NoSuchObject exception which is thrown in
+    // the converter selection step after we get through the checks
+    // employed by the Informer.
+    {
+        Informer<AnyType>::Ptr informer = factory.createInformer<AnyType> (Scope("/"));
+        EXPECT_THROW(informer->publish(payload, "arbitrary-type"), rsc::runtime::NoSuchObject);
+        EventPtr event(new Event(Scope("/"), payload, "arbitrary-type"));
+        EXPECT_THROW(informer->publish(event), rsc::runtime::NoSuchObject);
+    }
 }
 
 TEST_F(InformerTest, testScopeCheck)
@@ -226,8 +243,24 @@ TEST_F(InformerTest, testScopeCheck)
     Factory &factory = Factory::getInstance();
     Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/foo"));
     shared_ptr<string> payload(new string("foo"));
-    EventPtr event(new Event(Scope("/wrong"), payload, "std::string"));
-    EXPECT_THROW(informer->publish(event), invalid_argument);
+
+    // Wrong: unrelated scope
+    {
+        EventPtr event(new Event(Scope("/wrong"), payload, typeName<string>()));
+        EXPECT_THROW(informer->publish(event), invalid_argument);
+    }
+
+    // OK: identical scope
+    {
+        EventPtr event(new Event(Scope("/foo"), payload, typeName<string>()));
+        informer->publish(event);
+    }
+
+    // OK: subscope
+    {
+        EventPtr event(new Event(Scope("/foo/subscope"), payload, typeName<string>()));
+        informer->publish(event);
+    }
 }
 
 TEST_F(InformerTest, testReturnValue)

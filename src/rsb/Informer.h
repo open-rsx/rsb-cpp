@@ -37,9 +37,40 @@
 namespace rsb {
 
 /**
- * A informer to publish data of a specified default type expressed through the
- * template parameter. All data in RSB is maintained as shared pointers to avoid
- * unnecessary copy operations. Typedefs simplify the use of the pointer types.
+ * A tag type for constructing @ref Informer instances that can
+ * publish data of arbitrary types.
+ *
+ * Usage example:
+ * @code
+ * Factory::getInstance().makeInformer<AnyType>();
+ * @endcode
+ */
+class AnyType {
+};
+
+namespace detail {
+
+template <typename T>
+struct TypeName {
+    std::string operator()() const {
+        return rsc::runtime::typeName<T>();
+    }
+};
+
+template <>
+struct TypeName<AnyType> {
+    std::string operator()() const {
+        return "";
+    }
+};
+
+}
+
+/**
+ * A informer to publish data of a specified type expressed through
+ * the template parameter. All data in RSB is maintained as shared
+ * pointers to avoid unnecessary copy operations. Typedefs simplify
+ * the use of the pointer types.
  *
  * The basic usage pattern is explained with this example code:
  * @code
@@ -49,7 +80,7 @@ namespace rsb {
  * @endcode
  *
  * @author swrede
- * @tparam T default data type to send by this informer
+ * @tparam T Data type to send by this informer.
  */
 template<class T>
 class Informer: public Participant {
@@ -72,16 +103,16 @@ public:
      *                   to connect to the bus
      * @param scope the scope under which the data are published
      * @param config the config that was used to setup this informer
-     * @param type string describing the default type of data sent by this
-     *             informer. It is used to find a converter that can convert
-     *             these data to the port
+     * @param type string describing the type of data sent by this
+     *             informer. The emtpy string indicates that data of
+     *             arbitry type can be sent through this informer.
      *
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createInformer instead of calling this directly.
      */
     Informer(const std::vector<transport::OutConnectorPtr> &connectors,
-            const Scope &scope, const ParticipantConfig &config,
-            const std::string &type = rsc::runtime::typeName<T>()) :
+             const Scope &scope, const ParticipantConfig &config,
+             const std::string &type = detail::TypeName<T>()()) :
         Participant(scope, config),
         logger(rsc::logging::Logger::getLogger("rsb.Informer")),
         defaultType(type),
@@ -137,7 +168,11 @@ public:
      */
     EventPtr publish(boost::shared_ptr<T> data) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
-        return publish(p, defaultType);
+        if (this->defaultType.empty()) {
+            return publish(p, rsc::runtime::typeName<T>());
+        } else {
+            return publish(p, defaultType);
+        }
     }
 
     /**
@@ -156,19 +191,6 @@ public:
     }
 
     /**
-     * Publishes the given event to the Informer's scope with the ability to
-     * define additional meta data.
-     *
-     * @param event The event to publish.
-     * @return modified Event instance
-     */
-    EventPtr publish(EventPtr event) {
-        RSCDEBUG(logger, "Publishing event");
-        checkedPublish(event);
-        return event;
-    }
-
-    /**
      * Publishes the given data to the Informer's scope.
      *
      * @param data Pointer to the data to send.
@@ -181,7 +203,18 @@ public:
         event->setData(data);
         event->setScope(getScope());
         event->setType(type);
-        RSCDEBUG(logger, "Publishing event");
+        checkedPublish(event);
+        return event;
+    }
+
+    /**
+     * Publishes the given event to the Informer's scope with the ability to
+     * define additional meta data.
+     *
+     * @param event The event to publish.
+     * @return modified Event instance
+     */
+    EventPtr publish(EventPtr event) {
         checkedPublish(event);
         return event;
     }
@@ -194,12 +227,13 @@ private:
                                                    % event));
         }
         // Check event type against informer's declared type.
-        if (event->getType() != getType()) {
+        if (!getType().empty() && event->getType() != getType()) {
             throw std::invalid_argument(boost::str(boost::format("Specified event type %1% does not match listener type %2%.")
                                                    % event->getType() % getType()));
         }
         // Check event scope against informer's declared scope.
-        if (event->getScope() != getScope()) {
+        if (event->getScope() != getScope()
+            && !event->getScope().isSubScopeOf(getScope())) {
             throw std::invalid_argument(boost::str(boost::format("Specified event scope %1% does not match listener scope %2%.")
                                                    % event->getScope() % getScope()));
         }

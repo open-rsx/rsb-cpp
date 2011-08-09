@@ -52,22 +52,26 @@ public:
     virtual ~Factory();
 
     /**
-     * Creates a new informer in the specified scope.
+     * Creates and returns a new @ref Informer that publishes @ref
+     * Event s under the @ref Scope @a scope.
      *
      * @tparam DataType the C++ data type this informer publishes
      * @param scope the scope of the informer
      * @param config the configuration for the informer to use, defaults to the
      *               general config held in this factory.
-     * @param dataType the string representation of the data type used to select
-     *                 converters
-     * @return new informer instance
+     * @param type A string representation of the type of data sent
+     *             via the new @ref Informer
+     * @return a shared_ptr pointing to the new @ref Informer
+     *         instance.
+     * @throw RSBError If the requested informer cannot be created.
      */
     template<class DataType>
-    typename Informer<DataType>::Ptr createInformer(const Scope &scope,
-            const ParticipantConfig &config =
-                    Factory::getInstance().getDefaultParticipantConfig(),
-            const std::string &dataType = rsc::runtime::typeName(
-                    typeid(DataType))) {
+    typename Informer<DataType>::Ptr
+    createInformer(const Scope &scope,
+                   const ParticipantConfig &config
+                   = Factory::getInstance().getDefaultParticipantConfig(),
+                   const std::string &dataType
+                   = detail::TypeName<DataType>()()) {
         return typename Informer<DataType>::Ptr(new Informer<DataType> (
             createOutConnectors(config), scope, config, dataType));
     }
