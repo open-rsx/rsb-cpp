@@ -72,6 +72,7 @@ ENDIF()
 # --- user options ---
 
 OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
+OPTION(BUILD_EXAMPLES "Decide if the examples shall be built or not" ON)
 
 # --- project settings ---
 
@@ -126,7 +127,9 @@ FIND_PACKAGE(Doxygen)
 ADD_SUBDIRECTORY(3rdparty)
 
 ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(examples)
+IF(BUILD_EXAMPLES)
+    ADD_SUBDIRECTORY(examples)
+ENDIF()
 ADD_SUBDIRECTORY(apps)
 
 ENABLE_TESTING()
