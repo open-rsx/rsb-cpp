@@ -34,7 +34,7 @@ INCLUDE(GenerateCppcheck)
 
 # version information
 SET(RSB_VERSION_MAJOR "0")
-SET(RSB_VERSION_MINOR "4")
+SET(RSB_VERSION_MINOR "5")
 SET(RSB_VERSION_PATCH "0")
 SET(RSB_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH}")
 SET(RSB_ABI_VERSION "2")
@@ -105,7 +105,7 @@ ENDIF()
 
 # We abuse the "patch" component of the version to encode the wire
 # format version
-FIND_PACKAGE(RSBProtocol 0.4.5 REQUIRED)
+FIND_PACKAGE(RSBProtocol 0.5.5 REQUIRED)
 
 SET(SPREAD_USE_STATIC TRUE)
 FIND_PACKAGE(Spread REQUIRED)
