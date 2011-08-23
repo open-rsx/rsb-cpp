@@ -29,7 +29,7 @@ using namespace boost;
 
 using namespace rsb;
 
-void printEvent(shared_ptr<string> data) {
+void printEvent(boost::shared_ptr<string> data) {
     cout << "received " << *data << endl;
 }
 

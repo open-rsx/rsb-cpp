@@ -140,7 +140,7 @@ void AssemblyPool::setPruning(const bool &prune) {
 
 }
 
-shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
+boost::shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
     boost::recursive_mutex::scoped_lock lock(this->poolMutex);
 
     string key = notification->sender_id();
@@ -171,7 +171,7 @@ shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
 
     RSCTRACE(logger, "dataPool size: " << this->pool.size());
 
-    return shared_ptr<string> (result);
+    return boost::shared_ptr<string> (result);
 }
 
 }

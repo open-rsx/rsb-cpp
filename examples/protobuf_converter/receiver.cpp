@@ -39,7 +39,7 @@ using namespace rsb::converter;
 // The generated protocol buffer class is in this namespace.
 using namespace tutorial::protobuf_converter;
 
-void printImage(shared_ptr<SimpleImage> image) {
+void printImage(boost::shared_ptr<SimpleImage> image) {
     cout << "received " << image->width() << "x" << image->height() << " image"
             << endl;
 }
@@ -48,7 +48,7 @@ int main() {
     // Register a specific template instanciation of the
     // ProtocolBufferConverter for our SimpleImage protocol buffer
     // message.
-    shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
+    boost::shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
             new ProtocolBufferConverter<SimpleImage> ());
     stringConverterRepository()->registerConverter(converter);
 

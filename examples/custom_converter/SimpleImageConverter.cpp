@@ -48,7 +48,7 @@ string SimpleImageConverter::serialize(const AnnotatedData &data, string &wire) 
     // Force conversion to the expected data-type.
     //
     // NOTE: a dynamic_pointer_cast cannot be used from void*
-    shared_ptr<const SimpleImage> image =
+    boost::shared_ptr<const SimpleImage> image =
             static_pointer_cast<const SimpleImage> (data.second);
 
     // Store the content of IMAGE in WIRE according to the selected
@@ -86,7 +86,7 @@ AnnotatedData SimpleImageConverter::deserialize(const string &wireSchema,
 
     // Return (a shared_ptr to) the constructed object along with its
     // data-type.
-    return make_pair(getDataType(), shared_ptr<SimpleImage> (image));
+    return make_pair(getDataType(), boost::shared_ptr<SimpleImage> (image));
 }
 
 }

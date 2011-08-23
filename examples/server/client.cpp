@@ -52,9 +52,9 @@ int main(int /*argc*/, char **/*argv*/) {
         // Specify a timeout of 10 seconds for the method call.
         cout << "Calling method " << methodName1 << endl;
         try {
-            shared_ptr<string> request(new string(str(format("This is request 1 in iteration %1%")
+            boost::shared_ptr<string> request(new string(str(format("This is request 1 in iteration %1%")
                                                       % iteration)));
-            shared_ptr<string> result
+            boost:: shared_ptr<string> result
                 = remoteServer->call<string>(methodName1, request, 10);
             cout << "Got result: " << *result << endl;
         } catch (std::exception &e) {
@@ -84,7 +84,7 @@ int main(int /*argc*/, char **/*argv*/) {
         // locally.
         cout << "Calling method " << methodName3 << endl;
         try {
-            remoteServer->call<string>(methodName3, shared_ptr<string>(new string("bla")));
+            remoteServer->call<string>(methodName3, boost::shared_ptr<string>(new string("bla")));
             cout << "Method call succeeded; This should not happen" << endl;
         } catch (std::exception &e) {
             cout << "Got error: " << e.what() << endl;

@@ -29,7 +29,7 @@ using namespace boost;
 
 using namespace rsb;
 
-void printEvent(shared_ptr<string> data) {
+void printEvent(boost::shared_ptr<string> data) {
     cout << "received " << *data << endl;
 }
 
@@ -65,7 +65,7 @@ int main() {
     Informer<string>::Ptr informer = Factory::getInstance().createInformer<
             string> (Scope("/tutorial/transports"));
 
-    shared_ptr<string> data(new string("foo"));
+    boost::shared_ptr<string> data(new string("foo"));
     informer->publish(data);
 
     boost::this_thread::sleep(boost::posix_time::seconds(1));
