@@ -33,7 +33,7 @@ using namespace rsc::misc;
 using namespace rsb;
 
 int main(int argc, char **argv) {
-    LoggerFactory::getInstance()->reconfigure(Logger::TRACE);
+    LoggerFactory::getInstance()->reconfigure(Logger::LEVEL_TRACE);
     LoggerPtr logger = Logger::getLogger("reader");
 
     Scope scope;
