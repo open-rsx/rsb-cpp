@@ -42,7 +42,7 @@ namespace rsb {
  *
  * Usage example:
  * @code
- * Factory::getInstance().makeInformer<AnyType>();
+ * Factory::getInstance().createInformer<AnyType>();
  * @endcode
  */
 class AnyType {
@@ -50,14 +50,14 @@ class AnyType {
 
 namespace detail {
 
-template <typename T>
+template<typename T>
 struct TypeName {
     std::string operator()() const {
         return rsc::runtime::typeName<T>();
     }
 };
 
-template <>
+template<>
 struct TypeName<AnyType> {
     std::string operator()() const {
         return "";
@@ -111,12 +111,11 @@ public:
      * @ref Factory::createInformer instead of calling this directly.
      */
     Informer(const std::vector<transport::OutConnectorPtr> &connectors,
-             const Scope &scope, const ParticipantConfig &config,
-             const std::string &type = detail::TypeName<T>()()) :
+            const Scope &scope, const ParticipantConfig &config,
+            const std::string &type = detail::TypeName<T>()()) :
         Participant(scope, config),
-        logger(rsc::logging::Logger::getLogger("rsb.Informer")),
-        defaultType(type),
-        currentSequenceNumber(0) {
+                logger(rsc::logging::Logger::getLogger("rsb.Informer")),
+                defaultType(type), currentSequenceNumber(0) {
         // TODO evaluate configuration
         this->configurator.reset(new eventprocessing::OutRouteConfigurator());
         for (std::vector<transport::OutConnectorPtr>::const_iterator it =
@@ -180,12 +179,14 @@ public:
      *
      * @param data Pointer to the data to send.
      * @param type string which defines the type of the data. I.e. "string"
-     *        for strings.
+     *        for strings. If empty tries to get the type of first argument at
+     *        runtime.
      * @return A boost::shared_ptr to the @ref rsb::Event object
      *         that has been implicitly created.
      */
     template<class T1>
-    EventPtr publish(boost::shared_ptr<T1> data, std::string type) {
+    EventPtr publish(boost::shared_ptr<T1> data,
+            std::string type = rsc::runtime::typeName<T1>()) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
         return publish(p, type);
     }
@@ -223,19 +224,27 @@ private:
 
     void checkedPublish(EventPtr event) {
         if (event->getType().empty()) {
-            throw std::invalid_argument(boost::str(boost::format("Event type cannot be empty: %1%")
-                                                   % event));
+            throw std::invalid_argument(
+                    boost::str(
+                            boost::format("Event type cannot be empty: %1%")
+                                    % event));
         }
         // Check event type against informer's declared type.
         if (!getType().empty() && event->getType() != getType()) {
-            throw std::invalid_argument(boost::str(boost::format("Specified event type %1% does not match listener type %2%.")
-                                                   % event->getType() % getType()));
+            throw std::invalid_argument(
+                    boost::str(
+                            boost::format(
+                                    "Specified event type %1% does not match listener type %2%.")
+                                    % event->getType() % getType()));
         }
         // Check event scope against informer's declared scope.
-        if (event->getScope() != getScope()
-            && !event->getScope().isSubScopeOf(getScope())) {
-            throw std::invalid_argument(boost::str(boost::format("Specified event scope %1% does not match listener scope %2%.")
-                                                   % event->getScope() % getScope()));
+        if (event->getScope() != getScope() && !event->getScope().isSubScopeOf(
+                getScope())) {
+            throw std::invalid_argument(
+                    boost::str(
+                            boost::format(
+                                    "Specified event scope %1% does not match listener scope %2%.")
+                                    % event->getScope() % getScope()));
         }
         event->setSequenceNumber(nextSequenceNumber());
         event->mutableMetaData().setSenderId(getId());

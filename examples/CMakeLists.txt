@@ -1,5 +1,6 @@
 
 SET(EX1 rsb_informer)
+SET(EX15 rsb_anyInformer)
 SET(EX2 rsb_listener)
 SET(EX3 rsb_reader)
 
@@ -21,6 +22,7 @@ SET(EX13 rsb_metaDataSender)
 SET(EX14 rsb_metaDataReceiver)
 
 ADD_EXECUTABLE(${EX1} informer/informer.cpp)
+ADD_EXECUTABLE(${EX15} informer/anyInformer.cpp)
 ADD_EXECUTABLE(${EX2} listener/listener.cpp)
 ADD_EXECUTABLE(${EX3} reader/reader.cpp)
 
@@ -52,7 +54,7 @@ ADD_EXECUTABLE(${EX13} meta_data/sender.cpp)
 ADD_EXECUTABLE(${EX14} meta_data/receiver.cpp)
 
 
-SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11} ${EX12} ${EX13} ${EX14})
+SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11} ${EX12} ${EX13} ${EX14} ${EX15})
 
 FOREACH(EXAMPLE ${EXAMPLES})
     TARGET_LINK_LIBRARIES(${EXAMPLE} ${RSB_NAME})
