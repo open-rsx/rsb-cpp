@@ -45,8 +45,8 @@ namespace rsb {
  *
  * Usage example:
  * @code
- * ReaderPtr r(new Reader("/example/informer"));
- * r->read();
+ * ReaderPtr reader = Factory::getInstance().createReader(Scope("/example/informer"));
+ * reader->read();
  * @endcode
  *
  * @author jmoringe

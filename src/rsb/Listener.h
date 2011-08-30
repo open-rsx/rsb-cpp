@@ -43,9 +43,9 @@ namespace rsb {
  *
  * Usage example:
  * @code
- * ListenerPtr s(new Listener("rsb://example/informer"));
+ * ListenerPtr listener = Factory::getInstance().createListener(Scope("/example/informer"));
  * boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
- * s->addHandler(dh);
+ * listener->addHandler(dh);
  * @endcode
  *
  * @author swrede
