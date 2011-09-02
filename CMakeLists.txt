@@ -48,8 +48,8 @@ IF(Subversion_FOUND AND IS_SVN_VERSION)
     MESSAGE(STATUS "Current revision is ${RSB_WC_REVISION}")
 ENDIF()
 
-SET(RSB_NAME "RSBCore")
-SET(RSB_TEST_NAME "rsbtest")
+SET(RSB_NAME rsbcore)
+SET(RSB_TEST_NAME rsbtest)
 SET(CORE_TEST_NAME rsbtest_core)
 SET(SPREAD_PROTOCOL_NAME rsbspread_proto)
 SET(SPREADPORT_TEST_NAME rsbtest_spread)
@@ -153,7 +153,7 @@ IF(CMAKE_LINK_LIBRARY_SUFFIX)
     SET(LIB_SUFFIX ${CMAKE_LINK_LIBRARY_SUFFIX})
 ENDIF()
 CONFIGURE_FILE(RSBConfig.cmake.in ${CMAKE_BINARY_DIR}/RSBConfig.cmake @ONLY)
-INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake DESTINATION share/RSB)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake DESTINATION share/rsb)
 
 # --- documentation gneration ---
 
