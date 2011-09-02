@@ -30,14 +30,18 @@
 #include <rsc/patterns/Singleton.h>
 
 #include "rsb/rsbexports.h"
+
+#include "ParticipantConfig.h"
 #include "Reader.h"
 #include "Listener.h"
 #include "Informer.h"
+#include "Service.h"
+
+#include "transport/Connector.h"
+#include "transport/Factory.h"
+
 #include "patterns/Server.h"
 #include "patterns/RemoteServer.h"
-#include "transport/Connector.h"
-#include "ParticipantConfig.h"
-#include "Service.h"
 
 namespace rsb {
 
@@ -59,8 +63,8 @@ public:
      * @param scope the scope of the informer
      * @param config the configuration for the informer to use, defaults to the
      *               general config held in this factory.
-     * @param type A string representation of the type of data sent
-     *             via the new @ref Informer
+     * @param dataType A string representation of the type of data
+     *                 sent via the new @ref Informer
      * @return a shared_ptr pointing to the new @ref Informer
      *         instance.
      * @throw RSBError If the requested informer cannot be created.
@@ -75,6 +79,25 @@ public:
         return typename Informer<DataType>::Ptr(new Informer<DataType> (
             createOutConnectors(config), scope, config, dataType));
     }
+
+    /**
+     * Creates and returns a new @ref Informer that publishes @ref
+     * Event s under the @ref Scope @a scope.
+     *
+     * @param scope the scope of the informer
+     * @param dataType A string representation of the type of data
+     *                 sent via the new @ref Informer.
+     * @param config the configuration for the informer to use, defaults to the
+     *               general config held in this factory.
+     * @return a shared_ptr pointing to the a @ref InformerBase
+     *         instance.
+     * @throw RSBError If the requested informer cannot be created.
+     */
+    InformerBasePtr createInformerBase(const Scope             &scope,
+                                       const std::string       &dataType
+                                       = "",
+                                       const ParticipantConfig &config
+                                       = Factory::getInstance().getDefaultParticipantConfig());
 
     /**
      * Creates a new listener for the specified scope.

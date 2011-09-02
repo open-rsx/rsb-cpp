@@ -83,6 +83,13 @@ transport::OutFactory &Factory::getOutFactoryInstance() {
     return transport::OutFactory::getInstance();
 }
 
+InformerBasePtr Factory::createInformerBase(const Scope             &scope,
+                                            const string            &dataType,
+                                            const ParticipantConfig &config) {
+    return InformerBasePtr(new InformerBase(createOutConnectors(config), scope, config, dataType));
+}
+
+
 ListenerPtr Factory::createListener(const Scope &scope,
         const ParticipantConfig &config) {
     return ListenerPtr(new Listener(createInPushConnectors(config), scope, config));

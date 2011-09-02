@@ -218,11 +218,17 @@ TEST_F(InformerTest, testTypeCheck)
     {
         Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
         EXPECT_THROW(informer->publish(payload, "not-string"), invalid_argument);
+
+        InformerBasePtr informerBase = factory.createInformerBase(Scope("/"), "std::string");
+        EXPECT_THROW(informerBase->publish(payload, "not-string"), invalid_argument);
     }
     {
         Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
         EventPtr event(new Event(Scope("/"), payload, "not-string"));
         EXPECT_THROW(informer->publish(event), invalid_argument);
+
+        InformerBasePtr informerBase = factory.createInformerBase(Scope("/"), "std::string");
+        EXPECT_THROW(informerBase->publish(event), invalid_argument);
     }
 
     // AnyType can be used for "disable type check"

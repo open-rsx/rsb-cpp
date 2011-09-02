@@ -27,12 +27,15 @@
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
+#include "rsb/rsbexports.h"
+
 #include "Event.h"
-#include "Participant.h"
-#include "eventprocessing/OutRouteConfigurator.h"
-#include "transport/Connector.h"
-#include "transport/Factory.h"
 #include "QualityOfServiceSpec.h"
+#include "Participant.h"
+
+#include "eventprocessing/OutRouteConfigurator.h"
+
+#include "transport/Connector.h"
 
 namespace rsb {
 
@@ -67,6 +70,122 @@ struct TypeName<AnyType> {
 }
 
 /**
+ * A informer to publish data. All data in RSB is maintained as shared
+ * pointers to avoid unnecessary copy operations. Typedefs simplify
+ * the use of the pointer types.
+ *
+ * The basic usage pattern is explained with this example code:
+ * @code
+ * InformerBasePtr informer = Factory::getInstance().createInformerBase(Scope("/example/informer"));
+ * typename InformerBase::DataPtr<string>::type s(new string("blub"));
+ * informer->publish(s);
+ * @endcode
+ *
+ * @author swrede
+ * @author jmoringe
+ */
+class RSB_EXPORT InformerBase: public Participant {
+public:
+    template <typename T>
+    struct DataPtr {
+        typedef boost::shared_ptr<T> type;
+    };
+
+    InformerBase(const std::vector<transport::OutConnectorPtr> &connectors,
+                 const Scope                                   &scope,
+                 const ParticipantConfig                       &config,
+                 const std::string                             &defaultType);
+
+    virtual ~InformerBase();
+
+    void printContents(std::ostream &stream) const;
+
+    /**
+     * Return the event payload type of this Informer.
+     *
+     * @return A string designating the event payload type of this
+     *         Informer.
+     */
+    std::string getType() const;
+
+    /**
+     * Defines the desired quality of service settings for this informers.
+     *
+     * @param specs QoS specs
+     * @throw UnsupportedQualityOfServiceException requirements cannot be met
+     */
+    void setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs);
+
+    /**
+     * Published @a data in the channel in which the informer
+     * participates.
+     *
+     * @tparam T1 The type of @a data. The value of this parameter is
+     *            used infer the value of @a type.
+     * @param data Pointer to the data that should be sent. Arbitrary
+     *             pointer types are accepted at compile time, but may
+     *             lead to type or conversion errors at runtime.
+     * @param type A string indicating the type of @a
+     *             data. I.e. "std::string" for @ref std::string
+     *             objects. If omitted, the type of @a data is
+     *             inferred from @a T1.
+     * @return A boost::shared_ptr to the @ref rsb::Event object that
+     *         has been implicitly created.
+     * @throw std::invalid_argument If @a T1 or @a type is
+     *                              incompatible with the actual type
+     *                              of the informer.
+     */
+    template<class T1>
+    EventPtr publish(boost::shared_ptr<T1> data,
+                     std::string type = rsc::runtime::typeName<T1>()) {
+        VoidPtr p = boost::static_pointer_cast<void>(data);
+        return publish(p, type);
+    }
+
+    /**
+     * Publishes @a data to the Informer's scope.
+     *
+     * @param data Pointer to the data to send.
+     * @param type A string indicating the type of @a
+     *             data. I.e. "std::string" for @ref std::string
+     *             objects.
+     * @return A boost::shared_ptr to the @ref rsb::Event object
+     *         that has been implicitly created.
+     * @throw std::invalid_argument If @a type is incompatible with
+     *                              the actual type of the informer.
+     */
+    EventPtr publish(VoidPtr data, const std::string &type);
+
+    /**
+     * Publishes the @a event to the Informer's scope with the ability
+     * to define additional meta data.
+     *
+     * @param event The event to publish.
+     * @return modified @a event.
+     * @throw std::invalid_argument If the type of the payload of @a
+     *                              event is incompatible with the
+     *                              actual type of the informer or if
+     *                              the scope of @a event is not a
+     *                              subscope of the scope of the
+     *                              informer.
+     */
+    EventPtr publish(EventPtr event);
+
+protected:
+    void checkedPublish(EventPtr event);
+
+    boost::uint32_t nextSequenceNumber();
+
+    std::string defaultType;
+    eventprocessing::OutRouteConfiguratorPtr configurator;
+    boost::uint32_t currentSequenceNumber;
+private:
+    rsc::logging::LoggerPtr logger;
+};
+
+typedef boost::shared_ptr<InformerBase> InformerBasePtr;
+
+/**
  * A informer to publish data of a specified type expressed through
  * the template parameter. All data in RSB is maintained as shared
  * pointers to avoid unnecessary copy operations. Typedefs simplify
@@ -83,7 +202,7 @@ struct TypeName<AnyType> {
  * @tparam T Data type to send by this informer.
  */
 template<class T>
-class Informer: public Participant {
+class Informer: public InformerBase {
 public:
 
     /**
@@ -111,154 +230,42 @@ public:
      * @ref Factory::createInformer instead of calling this directly.
      */
     Informer(const std::vector<transport::OutConnectorPtr> &connectors,
-            const Scope &scope, const ParticipantConfig &config,
-            const std::string &type = detail::TypeName<T>()()) :
-        Participant(scope, config),
-                logger(rsc::logging::Logger::getLogger("rsb.Informer")),
-                defaultType(type), currentSequenceNumber(0) {
-        // TODO evaluate configuration
-        this->configurator.reset(new eventprocessing::OutRouteConfigurator());
-        for (std::vector<transport::OutConnectorPtr>::const_iterator it =
-                connectors.begin(); it != connectors.end(); ++it) {
-            this->configurator->addConnector(*it);
-        }
-
-        this->configurator->activate();
+             const Scope &scope, const ParticipantConfig &config,
+             const std::string &type = detail::TypeName<T>()()) :
+        InformerBase(connectors, scope, config, type),
+        logger(rsc::logging::Logger::getLogger(getClassName())) {
     }
 
     virtual ~Informer() {
     }
 
     std::string getClassName() const {
-        return "Informer";
-    }
-
-    void printContents(std::ostream &stream) const {
-        Participant::printContents(stream);
-        stream << ", type = " << defaultType;
+        return rsc::runtime::typeName< Informer<T> >();
     }
 
     /**
-     * Return the event payload type of this Informer.
-     *
-     * @return A string designating the event payload type of this
-     * Informer.
-     */
-    std::string getType() const {
-        return this->defaultType;
-    }
-
-    /**
-     * Defines the desired quality of service settings for this informers.
-     *
-     * @param specs QoS specs
-     * @throw UnsupportedQualityOfServiceException requirements cannot be met
-     */
-    void setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
-        configurator->setQualityOfServiceSpecs(specs);
-    }
-
-    /**
-     * Publishes the given data to the Informer's scope.
+     * Publishes @a data to the Informer's scope.
      *
      * @param data Pointer to the data to send.
-     * @return A boost::shared_ptr to the @ref rsb::Event object that has been
-     *         implicitly created.
+     * @return A boost::shared_ptr to the @ref rsb::Event object that
+     *         has been implicitly created.
      */
     EventPtr publish(boost::shared_ptr<T> data) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
-        if (this->defaultType.empty()) {
-            return publish(p, rsc::runtime::typeName<T>());
-        } else {
-            return publish(p, defaultType);
-        }
+        return InformerBase::publish(p, this->getType());
     }
 
-    /**
-     * Publishes the given data to the Informer's scope.
-     *
-     * @param data Pointer to the data to send.
-     * @param type string which defines the type of the data. I.e. "string"
-     *        for strings. If empty tries to get the type of first argument at
-     *        runtime.
-     * @return A boost::shared_ptr to the @ref rsb::Event object
-     *         that has been implicitly created.
-     */
     template<class T1>
     EventPtr publish(boost::shared_ptr<T1> data,
-            std::string type = rsc::runtime::typeName(typeid(T1))) {
-        VoidPtr p = boost::static_pointer_cast<void>(data);
-        return publish(p, type);
+                     std::string type = rsc::runtime::typeName(typeid(T1))) {
+        return InformerBase::publish(data, type);
     }
 
-    /**
-     * Publishes the given data to the Informer's scope.
-     *
-     * @param data Pointer to the data to send.
-     * @param type Type of
-     * @return A boost::shared_ptr to the @ref rsb::Event object
-     *         that has been implicitly created.
-     */
-    EventPtr publish(VoidPtr data, const std::string &type) {
-        EventPtr event(new Event());
-        event->setData(data);
-        event->setScope(getScope());
-        event->setType(type);
-        checkedPublish(event);
-        return event;
-    }
-
-    /**
-     * Publishes the given event to the Informer's scope with the ability to
-     * define additional meta data.
-     *
-     * @param event The event to publish.
-     * @return modified Event instance
-     */
     EventPtr publish(EventPtr event) {
-        checkedPublish(event);
-        return event;
+        return InformerBase::publish(event);
     }
-
 private:
-
-    void checkedPublish(EventPtr event) {
-        if (event->getType().empty()) {
-            throw std::invalid_argument(
-                    boost::str(
-                            boost::format("Event type cannot be empty: %1%")
-                                    % event));
-        }
-        // Check event type against informer's declared type.
-        if (!getType().empty() && event->getType() != getType()) {
-            throw std::invalid_argument(
-                    boost::str(
-                            boost::format(
-                                    "Specified event type %1% does not match listener type %2%.")
-                                    % event->getType() % getType()));
-        }
-        // Check event scope against informer's declared scope.
-        if (event->getScope() != getScope() && !event->getScope().isSubScopeOf(
-                getScope())) {
-            throw std::invalid_argument(
-                    boost::str(
-                            boost::format(
-                                    "Specified event scope %1% does not match listener scope %2%.")
-                                    % event->getScope() % getScope()));
-        }
-        event->setSequenceNumber(nextSequenceNumber());
-        event->mutableMetaData().setSenderId(getId());
-        configurator->publish(event);
-    }
-
-    boost::uint32_t nextSequenceNumber() {
-        return ++this->currentSequenceNumber; /** TODO(jmoringe): needs atomic increment */
-    }
-
     rsc::logging::LoggerPtr logger;
-    std::string defaultType;
-    eventprocessing::OutRouteConfiguratorPtr configurator;
-    boost::uint32_t currentSequenceNumber;
 };
 
 }
