@@ -186,7 +186,7 @@ public:
      */
     template<class T1>
     EventPtr publish(boost::shared_ptr<T1> data,
-            std::string type = rsc::runtime::typeName<T1>()) {
+            std::string type = rsc::runtime::typeName(typeid(T1))) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
         return publish(p, type);
     }
