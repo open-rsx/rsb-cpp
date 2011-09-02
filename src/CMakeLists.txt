@@ -1,6 +1,6 @@
 
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
-                           ${CMAKE_SOURCE_DIR}/src/rsb/protocol 
+                           ${CMAKE_SOURCE_DIR}/src/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb)
 
 PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
@@ -21,6 +21,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/Event.cpp
             rsb/Exception.cpp
             rsb/Factory.cpp
+            rsb/CreateFunctions.cpp
             rsb/Handler.cpp
             rsb/Informer.cpp
             rsb/Reader.cpp
@@ -101,6 +102,7 @@ SET(HEADERS rsb/CommException.h
             rsb/Event.h
             rsb/Exception.h
             rsb/Factory.h
+            rsb/CreateFunctions.h
             rsb/Handler.h
             rsb/Informer.h
             rsb/Reader.h
