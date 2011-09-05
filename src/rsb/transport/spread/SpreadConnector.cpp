@@ -73,7 +73,7 @@ void SpreadConnector::activate() {
 void SpreadConnector::deactivate() {
     RSCDEBUG(logger, "deactivate() entered");
     if (this->con->isActive()) {
-	this->con->deactivate();
+        this->con->deactivate();
     }
     // memberships->leaveAll();
     RSCTRACE(logger, "deactivate() finished"); // << *id);
@@ -150,7 +150,26 @@ void SpreadConnector::setQualityOfServiceSpecs(
     RSCDEBUG(logger, "Selected new message type " << messageQoS);
 }
 
-string SpreadConnector::makeGroupName(const Scope &scope) const {
+const std::vector<std::string>& SpreadConnector::makeGroupNames(
+        const Scope &scope) const {
+
+    GroupNameCache::const_iterator it;
+    if ((it = this->groupNameCache.find(scope)) != this->groupNameCache.end()) {
+        return it->second;
+    }
+
+    // Warm-up cache
+    std::vector<std::string> &cacheItem = this->groupNameCache[scope];
+    vector<Scope> scopes = scope.superScopes(true);
+    for (vector<Scope>::const_iterator scopeIt = scopes.begin(); scopeIt
+            != scopes.end(); ++scopeIt) {
+        cacheItem.push_back(this->makeGroupName(*scopeIt));
+    }
+
+    return cacheItem;
+}
+
+std::string SpreadConnector::makeGroupName(const Scope &scope) const {
     return MD5(scope.toString()).toHexString().substr(0, MAX_GROUP_NAME - 1);
 }
 

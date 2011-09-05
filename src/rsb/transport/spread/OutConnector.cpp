@@ -38,18 +38,19 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
-    return new OutConnector(args.get<ConverterSelectionStrategyPtr> (
-            "converters"), args.get<string> ("host", defaultHost()),
-            args.getAs<unsigned int> ("port", defaultPort()), args.getAs<
-                    unsigned int> ("maxfragmentsize", 100000));
+    return new OutConnector(
+            args.get<ConverterSelectionStrategyPtr> ("converters"),
+            args.get<string> ("host", defaultHost()),
+            args.getAs<unsigned int> ("port", defaultPort()),
+            args.getAs<unsigned int> ("maxfragmentsize", 100000));
 }
 
 OutConnector::OutConnector(ConverterSelectionStrategyPtr converters,
         const string &host, unsigned int port, unsigned int maxFragmentSize) :
-    transport::ConverterSelectingConnector<string>(converters), logger(
-            Logger::getLogger("rsb.spread.OutConnector")), active(false),
-            connector(new SpreadConnector(host, port)), maxFragmentSize(
-                    maxFragmentSize) {
+    transport::ConverterSelectingConnector<string>(converters),
+            logger(Logger::getLogger("rsb.spread.OutConnector")),
+            active(false), connector(new SpreadConnector(host, port)),
+            maxFragmentSize(maxFragmentSize) {
 }
 
 OutConnector::~OutConnector() {
@@ -91,8 +92,7 @@ void OutConnector::fillNotification(protocol::Notification &notification,
         notification.set_method(event->getMethod());
     }
     notification.set_wire_schema(wireSchema);
-    notification.set_sender_id(
-            event->getMetaData().getSenderId().getId().data,
+    notification.set_sender_id(event->getMetaData().getSenderId().getId().data,
             event->getMetaData().getSenderId().getId().size());
     notification.mutable_meta_data()->set_create_time(
             event->getMetaData().getCreateTime());
@@ -128,8 +128,8 @@ void OutConnector::handle(EventPtr event) {
     // TODO exception handling if converter is not available
     ConverterPtr c = getConverter(event->getType());
     string wire;
-    string wireSchema = c->serialize(make_pair(event->getType(),
-            event->getData()), wire);
+    string wireSchema = c->serialize(
+            make_pair(event->getType(), event->getData()), wire);
 
     // ---- Begin split message implementation ----
     RSCDEBUG(logger, "Whole message size (data only): " << wire.size());
@@ -149,7 +149,8 @@ void OutConnector::handle(EventPtr event) {
         } else {
             dataPart = wire.substr(curPos, wire.size() % this->maxFragmentSize);
         }
-        RSCTRACE(logger, "Size of message[" << i << "] (data only): " << dataPart.size());
+        RSCTRACE(logger,
+                "Size of message[" << i << "] (data only): " << dataPart.size());
 
         // create a notification
         Notification notification;
@@ -164,14 +165,18 @@ void OutConnector::handle(EventPtr event) {
         SpreadMessage spreadMessage(serializedMessageData);
 
         // send message to appropriate groups
-        vector<Scope> sendScopes = event->getScope()->superScopes(true);
-        for (vector<Scope>::const_iterator scopeIt = sendScopes.begin(); scopeIt
-                != sendScopes.end(); ++scopeIt) {
-            spreadMessage.addGroup(connector->makeGroupName(*scopeIt));
+        const vector<string> &groupNames = connector->makeGroupNames(
+                *event->getScope());
+        for (vector<string>::const_iterator groupIt = groupNames.begin(); groupIt
+                != groupNames.end(); ++groupIt) {
+            spreadMessage.addGroup(*groupIt);
         }
         spreadMessage.setQOS(this->connector->getMessageQoS());
 
-        RSCTRACE(logger, "This is the serialized message size before send: " << spreadMessage.getSize());
+        RSCTRACE(
+                logger,
+                "This is the serialized message size before send: "
+                        << spreadMessage.getSize());
 
         this->connector->send(spreadMessage);
         // TODO implement queing or throw messages away?
