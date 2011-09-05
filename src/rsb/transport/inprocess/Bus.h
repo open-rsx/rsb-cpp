@@ -41,7 +41,7 @@ namespace inprocess {
  * @author jmoringe
  */
 class RSB_EXPORT Bus: public rsc::patterns::Singleton<Bus>,
-                      public eventprocessing::Handler {
+        public eventprocessing::Handler {
 public:
     Bus();
     virtual ~Bus();
@@ -54,6 +54,8 @@ public:
 
     void handle(EventPtr event);
 private:
+    void handleNoLock(EventPtr event);
+
     typedef std::list<boost::weak_ptr<InConnector> > SinkList;
     typedef std::map<Scope, SinkList> SinkMap;
 
@@ -61,6 +63,8 @@ private:
 
     SinkMap sinks;
     boost::recursive_mutex mutex;
+
+    bool singleThreaded;
 };
 
 }

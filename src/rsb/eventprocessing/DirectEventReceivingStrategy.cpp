@@ -34,7 +34,7 @@ DirectEventReceivingStrategy::DirectEventReceivingStrategy() :
             logger(
                     Logger::getLogger(
                             "rsb.eventprocessing.DirectEventReceivingStrategy")),
-            errorStrategy(ParticipantConfig::LOG) {
+            errorStrategy(ParticipantConfig::LOG), singleThreaded(false) {
 }
 
 DirectEventReceivingStrategy::~DirectEventReceivingStrategy() {
@@ -56,11 +56,20 @@ bool DirectEventReceivingStrategy::filter(EventPtr e) {
     // match event
     try {
 
-        boost::shared_lock<boost::shared_mutex> lock(filtersMutex);
-        for (set<filter::FilterPtr>::const_iterator filterIt = filters.begin(); filterIt
-                != filters.end(); ++filterIt) {
-            if (!(*filterIt)->match(e)) {
-                return false;
+        if (singleThreaded) {
+            for (set<filter::FilterPtr>::const_iterator filterIt =
+                    filters.begin(); filterIt != filters.end(); ++filterIt) {
+                if (!(*filterIt)->match(e)) {
+                    return false;
+                }
+            }
+        } else {
+            boost::shared_lock<boost::shared_mutex> lock(filtersMutex);
+            for (set<filter::FilterPtr>::const_iterator filterIt =
+                    filters.begin(); filterIt != filters.end(); ++filterIt) {
+                if (!(*filterIt)->match(e)) {
+                    return false;
+                }
             }
         }
 
@@ -148,7 +157,13 @@ void DirectEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e) 
 void DirectEventReceivingStrategy::handle(EventPtr event) {
     event->mutableMetaData().setDeliverTime(rsc::misc::currentTimeMicros());
 
-    {
+    if (singleThreaded) {
+        if (filter(event)) {
+            for (HandlerList::const_iterator it = this->handlers.begin(); it
+                    != this->handlers.end(); ++it)
+                deliver(*it, event);
+        }
+    } else {
         boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
         if (filter(event)) {
             for (HandlerList::const_iterator it = this->handlers.begin(); it

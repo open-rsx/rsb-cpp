@@ -83,6 +83,8 @@ private:
 
     mutable boost::shared_mutex handlerMutex;
     HandlerList handlers;
+
+    bool singleThreaded;
 };
 
 }

@@ -29,7 +29,7 @@ namespace rsb {
 namespace inprocess {
 
 Bus::Bus() :
-    logger(Logger::getLogger("rsb.inprocess.Bus")) {
+    logger(Logger::getLogger("rsb.inprocess.Bus")), singleThreaded(false) {
 }
 
 Bus::~Bus() {
@@ -59,7 +59,7 @@ void Bus::addSink(InConnectorPtr sink) {
         RSCDEBUG(logger,
                 "No entry in sink map for event scope " << sink->getScope());
 
-        set < boost::weak_ptr<InConnector> > connectors;
+        set<boost::weak_ptr<InConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
                 != this->sinks.end(); ++it_) {
             RSCDEBUG(
@@ -96,7 +96,7 @@ void Bus::addSink(InConnectorPtr sink) {
 void Bus::removeSink(InConnector* sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
-    vector < Scope > scopes = sink->getScope().superScopes(true);
+    vector<Scope> scopes = sink->getScope().superScopes(true);
     RSCDEBUG(logger, "Removing sink " << sink);
 
     for (SinkMap::iterator it = this->sinks.begin(); it != this->sinks.end(); ++it) {
@@ -131,16 +131,25 @@ void Bus::removeSink(InConnector* sink) {
 }
 
 void Bus::handle(EventPtr event) {
-    boost::recursive_mutex::scoped_lock lock(this->mutex);
-
     //    RSCDEBUG(logger, "Delivering event " << *event);
+
+    if (singleThreaded) {
+        this->handleNoLock(event);
+    } else {
+        boost::recursive_mutex::scoped_lock lock(this->mutex);
+        this->handleNoLock(event);
+    }
+
+}
+
+void Bus::handleNoLock(EventPtr event) {
 
     SinkMap::const_iterator it = this->sinks.find(*event->getScope());
     if (it == this->sinks.end()) {
         RSCDEBUG(logger,
                 "No entry in sink map for event scope " << *event->getScope());
 
-        set < boost::weak_ptr<InConnector> > connectors;
+        set<boost::weak_ptr<InConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
                 != this->sinks.end(); ++it_) {
             RSCDEBUG(
