@@ -31,8 +31,10 @@ namespace rsb {
 namespace eventprocessing {
 
 DirectEventReceivingStrategy::DirectEventReceivingStrategy() :
-    logger(Logger::getLogger("rsb.eventprocessing.DirectEventReceivingStrategy")),
-    errorStrategy(ParticipantConfig::LOG) {
+            logger(
+                    Logger::getLogger(
+                            "rsb.eventprocessing.DirectEventReceivingStrategy")),
+            errorStrategy(ParticipantConfig::LOG) {
 }
 
 DirectEventReceivingStrategy::~DirectEventReceivingStrategy() {
@@ -94,8 +96,7 @@ void DirectEventReceivingStrategy::handleDispatchError(const string &message) {
     boost::recursive_mutex::scoped_lock strategyLock(errorStrategyMutex);
     switch (errorStrategy) {
     case ParticipantConfig::LOG:
-        RSCERROR(logger, message)
-        ;
+        RSCERROR(logger, message);
         break;
     case ParticipantConfig::PRINT:
         cerr << message << endl;
@@ -105,10 +106,8 @@ void DirectEventReceivingStrategy::handleDispatchError(const string &message) {
         exit(1);
         break;
     default:
-        RSCWARN(logger, "Unknown error strategy: " << errorStrategy)
-        ;
-        RSCERROR(logger, message)
-        ;
+        RSCWARN(logger, "Unknown error strategy: " << errorStrategy);
+        RSCERROR(logger, message);
         break;
     }
 
@@ -147,12 +146,15 @@ void DirectEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e) 
 }
 
 void DirectEventReceivingStrategy::handle(EventPtr event) {
-    boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
+    event->mutableMetaData().setDeliverTime(rsc::misc::currentTimeMicros());
 
-    if (filter(event)) {
-        for (HandlerList::const_iterator it = this->handlers.begin();
-             it != this->handlers.end(); ++it)
-            deliver(*it, event);
+    {
+        boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
+        if (filter(event)) {
+            for (HandlerList::const_iterator it = this->handlers.begin(); it
+                    != this->handlers.end(); ++it)
+                deliver(*it, event);
+        }
     }
 }
 
