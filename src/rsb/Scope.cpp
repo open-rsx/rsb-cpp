@@ -45,8 +45,11 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
     string::const_iterator prev = s.begin();
     // The scope string has to start with a '/'.
     if (*prev != Scope::COMPONENT_SEPARATOR) {
-        throw invalid_argument(str(format("Invalid scope syntax for '%1%': has to begin with '%2%'")
-                                   % s % Scope::COMPONENT_SEPARATOR));
+        throw invalid_argument(
+                str(
+                        format(
+                                "Invalid scope syntax for '%1%': has to begin with '%2%'")
+                                % s % Scope::COMPONENT_SEPARATOR));
     }
 
     // Process remainder of s.  If we are at the end of s already, it
@@ -58,8 +61,12 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
         // least one character in the current scope component.
         if (*next == Scope::COMPONENT_SEPARATOR) {
             if (distance(prev, next) == 1) {
-                throw invalid_argument(str(format("Invalid scope syntax for '%1%' at char %2%: zero-length component between two '%3%'")
-                                           % s % distance(s.begin(), next) % Scope::COMPONENT_SEPARATOR));
+                throw invalid_argument(
+                        str(
+                                format(
+                                        "Invalid scope syntax for '%1%' at char %2%: zero-length component between two '%3%'")
+                                        % s % distance(s.begin(), next)
+                                        % Scope::COMPONENT_SEPARATOR));
             }
             components.push_back(string(prev + 1, next));
             prev = next;
@@ -67,11 +74,13 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
         // The current character is not a '/' and we want to append it
         // to the current scope component. Verify that it is a legal
         // scope component character.
-        else if (!(('a' <= *next && *next <= 'z')
-                     || ('A' <= *next && *next <= 'Z')
-                     || ('0' <= *next && *next <= '9'))) {
-            throw invalid_argument(str(format("Invalid scope syntax for '%1%' at char %2%: invalid character '%3%'")
-                                       % s % distance(s.begin(), next) % *next));
+        else if (!(('a' <= *next && *next <= 'z') || ('A' <= *next && *next
+                <= 'Z') || ('0' <= *next && *next <= '9'))) {
+            throw invalid_argument(
+                    str(
+                            format(
+                                    "Invalid scope syntax for '%1%' at char %2%: invalid character '%3%'")
+                                    % s % distance(s.begin(), next) % *next));
         }
         // The current character is a valid scope component
         // character. Append it to the current scope component.
@@ -96,19 +105,28 @@ Scope::Scope() :
 Scope::~Scope() {
 }
 
-vector<string> Scope::getComponents() const {
+const vector<string>& Scope::getComponents() const {
     return components;
 }
 
-string Scope::toString() const {
+const std::string& Scope::toString() const {
     if (this->scopestring.empty()) {
-        stringstream s;
-        s << COMPONENT_SEPARATOR;
+
+        unsigned int scopesize = 1;
         for (vector<string>::const_iterator it = components.begin(); it
                 != components.end(); ++it) {
-            s << *it << COMPONENT_SEPARATOR;
+            scopesize += it->size() + 1;
         }
-        this->scopestring = s.str();
+
+        this->scopestring.resize(scopesize);
+        this->scopestring[0] = COMPONENT_SEPARATOR;
+        string::iterator cursor = scopestring.begin() + 1;
+        for (vector<string>::const_iterator it = components.begin(); it
+                != components.end(); ++it) {
+            std::copy(it->begin(), it->end(), cursor);
+            cursor += it->size();
+            *cursor++ = COMPONENT_SEPARATOR;
+        }
     }
     return this->scopestring;
 }

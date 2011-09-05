@@ -66,7 +66,7 @@ public:
      * @return components of the represented scope as ordered list with highest
      *         level as first entry
      */
-    std::vector<std::string> getComponents() const;
+    const std::vector<std::string>& getComponents() const;
 
     /**
      * Reconstructs a fully formal string representation of the scope with
@@ -74,7 +74,7 @@ public:
      *
      * @return string representation of the scope
      */
-    std::string toString() const;
+    const std::string& toString() const;
 
     /**
      * Creates a new scope that is a sub-scope of this one with the subordinated
