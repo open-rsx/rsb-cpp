@@ -26,17 +26,16 @@ using namespace std;
 
 namespace rsb {
 
-InformerBase::InformerBase(const vector<transport::OutConnectorPtr> &connectors,
-                           const Scope                              &scope,
-                           const ParticipantConfig                  &config,
-                           const string                             &defaultType)
-    : Participant(scope, config),
-      defaultType(defaultType),
-      currentSequenceNumber(0) {
+InformerBase::InformerBase(
+        const vector<transport::OutConnectorPtr> &connectors,
+        const Scope &scope, const ParticipantConfig &config,
+        const string &defaultType) :
+    Participant(scope, config), defaultType(defaultType),
+            currentSequenceNumber(0) {
     // TODO evaluate configuration
     this->configurator.reset(new eventprocessing::OutRouteConfigurator());
     for (vector<transport::OutConnectorPtr>::const_iterator it =
-             connectors.begin(); it != connectors.end(); ++it) {
+            connectors.begin(); it != connectors.end(); ++it) {
         this->configurator->addConnector(*it);
     }
 
@@ -68,6 +67,15 @@ EventPtr InformerBase::publish(VoidPtr data, const std::string &type) {
     return event;
 }
 
+EventPtr InformerBase::uncheckedPublish(VoidPtr data, const std::string &type) {
+    EventPtr event(new Event());
+    event->setData(data);
+    event->setScope(getScope());
+    event->setType(type);
+    uncheckedPublish(event);
+    return event;
+}
+
 EventPtr InformerBase::publish(EventPtr event) {
     checkedPublish(event);
     return event;
@@ -76,27 +84,32 @@ EventPtr InformerBase::publish(EventPtr event) {
 void InformerBase::checkedPublish(EventPtr event) {
     if (event->getType().empty()) {
         throw invalid_argument(
-            boost::str(
-                boost::format("Event type cannot be empty: %1%")
-                % event));
+                boost::str(
+                        boost::format("Event type cannot be empty: %1%")
+                                % event));
     }
     // Check event type against informer's declared type.
     if (!getType().empty() && event->getType() != getType()) {
         throw invalid_argument(
-            boost::str(
-                boost::format(
-                    "Specified event type %1% does not match listener type %2%.")
-                % event->getType() % getType()));
+                boost::str(
+                        boost::format(
+                                "Specified event type %1% does not match listener type %2%.")
+                                % event->getType() % getType()));
     }
     // Check event scope against informer's declared scope.
-    if (event->getScope() != getScope() && !event->getScope()->isSubScopeOf(
+    if (*event->getScope() != *getScope() && !event->getScope()->isSubScopeOf(
             *getScope())) {
         throw invalid_argument(
-            boost::str(
-                boost::format(
-                    "Specified event scope %1% does not match listener scope %2%.")
-                % event->getScope() % getScope()));
+                boost::str(
+                        boost::format(
+                                "Specified event scope %1% does not match listener scope %2%.")
+                                % event->getScope() % getScope()));
     }
+
+    this->uncheckedPublish(event);
+}
+
+void InformerBase::uncheckedPublish(EventPtr event) {
     event->setSequenceNumber(nextSequenceNumber());
     event->mutableMetaData().setSenderId(getId());
     configurator->publish(event);

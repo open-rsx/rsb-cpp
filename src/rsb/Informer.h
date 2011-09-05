@@ -86,15 +86,14 @@ struct TypeName<AnyType> {
  */
 class RSB_EXPORT InformerBase: public Participant {
 public:
-    template <typename T>
+    template<typename T>
     struct DataPtr {
         typedef boost::shared_ptr<T> type;
     };
 
     InformerBase(const std::vector<transport::OutConnectorPtr> &connectors,
-                 const Scope                                   &scope,
-                 const ParticipantConfig                       &config,
-                 const std::string                             &defaultType);
+            const Scope &scope, const ParticipantConfig &config,
+            const std::string &defaultType);
 
     virtual ~InformerBase();
 
@@ -137,9 +136,16 @@ public:
      */
     template<class T1>
     EventPtr publish(boost::shared_ptr<T1> data,
-                     std::string type = rsc::runtime::typeName<T1>()) {
+            std::string type = rsc::runtime::typeName<T1>()) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
         return publish(p, type);
+    }
+
+    template<class T1>
+    EventPtr uncheckedPublish(boost::shared_ptr<T1> data,
+            const std::string &type = rsc::runtime::typeName<T1>()) {
+        VoidPtr p = boost::static_pointer_cast<void>(data);
+        return uncheckedPublish(p, type);
     }
 
     /**
@@ -155,6 +161,7 @@ public:
      *                              the actual type of the informer.
      */
     EventPtr publish(VoidPtr data, const std::string &type);
+    EventPtr uncheckedPublish(VoidPtr data, const std::string &type);
 
     /**
      * Publishes the @a event to the Informer's scope with the ability
@@ -173,6 +180,7 @@ public:
 
 protected:
     void checkedPublish(EventPtr event);
+    void uncheckedPublish(EventPtr event);
 
     boost::uint32_t nextSequenceNumber();
 
@@ -230,17 +238,17 @@ public:
      * @ref Factory::createInformer instead of calling this directly.
      */
     Informer(const std::vector<transport::OutConnectorPtr> &connectors,
-             const Scope &scope, const ParticipantConfig &config,
-             const std::string &type = detail::TypeName<T>()()) :
+            const Scope &scope, const ParticipantConfig &config,
+            const std::string &type = detail::TypeName<T>()()) :
         InformerBase(connectors, scope, config, type),
-        logger(rsc::logging::Logger::getLogger(getClassName())) {
+                logger(rsc::logging::Logger::getLogger(getClassName())) {
     }
 
     virtual ~Informer() {
     }
 
     std::string getClassName() const {
-        return rsc::runtime::typeName< Informer<T> >();
+        return rsc::runtime::typeName<Informer<T> >();
     }
 
     /**
@@ -257,7 +265,7 @@ public:
 
     template<class T1>
     EventPtr publish(boost::shared_ptr<T1> data,
-                     std::string type = rsc::runtime::typeName(typeid(T1))) {
+            std::string type = rsc::runtime::typeName(typeid(T1))) {
         return InformerBase::publish(data, type);
     }
 
