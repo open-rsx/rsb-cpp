@@ -29,13 +29,15 @@
 
 using namespace std;
 
+using namespace boost;
+
 namespace rsb {
 namespace converter {
 
 const string Uint64Converter::WIRE_SCHEMA = "uint64";
 
 Uint64Converter::Uint64Converter() :
-	Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(boost::uint64_t)) {
+	Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(uint64_t)) {
 }
 
 Uint64Converter::~Uint64Converter() {
@@ -44,8 +46,7 @@ Uint64Converter::~Uint64Converter() {
 string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
     assert(data.first == this->getDataType());
 
-    boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
-        boost::uint64_t>(data.second);
+    shared_ptr<uint64_t> number = static_pointer_cast<uint64_t>(data.second);
     wire.resize(8);
     for (uint64_t i = 0; i < 8; ++i) {
         wire[i] = (unsigned char) ((*number & (0xffull << (i * 8ull))) >> (i * 8ull));
@@ -58,7 +59,7 @@ AnnotatedData Uint64Converter::deserialize(const string &wireSchema,
     assert(wireSchema == WIRE_SCHEMA);
     assert(wire.size() == 8);
 
-    boost::shared_ptr<boost::uint64_t> number(new boost::uint64_t(0));
+    shared_ptr<uint64_t> number(new uint64_t(0));
     for (uint64_t i = 0; i < 8; ++i) {
         *number |= ((uint64_t) ((unsigned char) wire[i]) << (i * 8ull));
     }
