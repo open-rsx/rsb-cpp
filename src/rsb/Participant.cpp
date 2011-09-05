@@ -24,14 +24,14 @@ using namespace std;
 namespace rsb {
 
 Participant::Participant(const Scope &scope, const ParticipantConfig &config) :
-    scope(scope), config(config) {
+    scope(ScopePtr(new Scope(scope))), config(config) {
 }
 
 rsc::misc::UUID Participant::getId() const {
     return this->id;
 }
 
-Scope Participant::getScope() const {
+ScopePtr Participant::getScope() const {
     return scope;
 }
 
@@ -40,7 +40,7 @@ ParticipantConfig Participant::getConfig() const {
 }
 
 void Participant::printContents(ostream &stream) const {
-    stream << "id = " << id << ", scope = " << scope;
+    stream << "id = " << id << ", scope = " << *scope;
 }
 
 }

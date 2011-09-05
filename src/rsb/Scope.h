@@ -23,6 +23,7 @@
 #include <vector>
 #include <ostream>
 
+#include <boost/shared_ptr.hpp>
 #include <boost/operators.hpp>
 
 #include "rsb/rsbexports.h"
@@ -127,6 +128,8 @@ private:
     std::vector<std::string> components;
 
 };
+
+typedef boost::shared_ptr<Scope> ScopePtr;
 
 RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const Scope &scope);
 

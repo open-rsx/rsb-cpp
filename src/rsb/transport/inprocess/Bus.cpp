@@ -84,7 +84,7 @@ void Bus::handle(EventPtr event) {
 
     RSCDEBUG(logger, "Delivering event " << *event);
 
-    vector<Scope> scopes = event->getScope().superScopes(true);
+    vector<Scope> scopes = event->getScope()->superScopes(true);
     RSCDEBUG(logger, "Relevant scopes " << scopes);
 
     for (vector<Scope>::const_iterator it = scopes.begin(); it != scopes.end(); ++it) {

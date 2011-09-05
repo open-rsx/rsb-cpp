@@ -58,7 +58,10 @@ public:
      * @param method a method that is represented by this event. Am empty string
      *               specifies an undecided method.
      */
-    Event(const Scope &scope, boost::shared_ptr<void> payload,
+    Event(ScopePtr scope, boost::shared_ptr<void> payload,
+            const std::string &type, const std::string &method = "");
+
+    Event(Scope scope, boost::shared_ptr<void> payload,
             const std::string &type, const std::string &method = "");
 
     virtual ~Event();
@@ -71,7 +74,8 @@ public:
 
     rsc::misc::UUID getId() const;
 
-    Scope getScope() const;
+    ScopePtr getScope() const;
+    void setScope(ScopePtr scope);
     void setScope(const Scope &scope);
 
     std::string getType() const;
@@ -126,7 +130,7 @@ public:
 private:
     boost::uint32_t sequenceNumber;
     mutable rsc::misc::UUIDPtr id;
-    Scope scope;
+    ScopePtr scope;
 
     VoidPtr content;
 

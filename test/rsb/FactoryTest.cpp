@@ -75,8 +75,8 @@ TEST_F(FactoryTest, testCreateService)
     EXPECT_TRUE(sA);
     EXPECT_TRUE(sB);
 
-    EXPECT_EQ(scopeA, sA->getScope());
-    EXPECT_EQ(scopeB, sB->getScope());
+    EXPECT_EQ(scopeA, *sA->getScope());
+    EXPECT_EQ(scopeB, *sB->getScope());
 
     EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sA));
     EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sB));

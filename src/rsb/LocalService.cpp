@@ -42,11 +42,11 @@ set<ParticipantPtr> LocalService::getParticipants() const {
 }
 
 void LocalService::addParticipant(ParticipantPtr participant) {
-    if (!participant->getScope().isSubScopeOf(getScope())) {
+    if (!participant->getScope()->isSubScopeOf(*getScope())) {
         stringstream s;
         s << "Cannot add Participant " << *participant << " with scope "
                 << participant->getScope() << " to this service with scope "
-                << getScope()
+                << *getScope()
                 << " because the participant is not in a sub-scope.";
         throw invalid_argument(s.str());
     }

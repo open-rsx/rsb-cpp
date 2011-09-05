@@ -86,7 +86,7 @@ void OutConnector::fillNotification(protocol::Notification &notification,
         const string &data) {
 
     notification.set_sequence_number(event->getSequenceNumber());
-    notification.set_scope(event->getScope().toString());
+    notification.set_scope(event->getScope()->toString());
     if (!event->getMethod().empty()) {
         notification.set_method(event->getMethod());
     }
@@ -164,7 +164,7 @@ void OutConnector::handle(EventPtr event) {
         SpreadMessage spreadMessage(serializedMessageData);
 
         // send message to appropriate groups
-        vector<Scope> sendScopes = event->getScope().superScopes(true);
+        vector<Scope> sendScopes = event->getScope()->superScopes(true);
         for (vector<Scope>::const_iterator scopeIt = sendScopes.begin(); scopeIt
                 != sendScopes.end(); ++scopeIt) {
             spreadMessage.addGroup(connector->makeGroupName(*scopeIt));

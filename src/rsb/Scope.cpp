@@ -83,7 +83,7 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
 
 Scope::Scope(const string &s) :
     scopestring() {
-    // reserve a number of vetor components that should be enough for most
+    // reserve a number of vector components that should be enough for most
     // realistic scopes. This speeds up parsing.
     components.reserve(10);
     verifyAndSplit(s, this->components);

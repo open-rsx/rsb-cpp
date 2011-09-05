@@ -50,7 +50,7 @@ TEST(LocalServiceTest, testConstruction)
 
     Scope scope("/this/is/a/test");
     LocalService service(scope);
-    EXPECT_EQ(scope, service.getScope());
+    EXPECT_EQ(scope, *service.getScope());
     EXPECT_TRUE(service.getParticipants().empty());
 
 }

@@ -33,9 +33,14 @@ namespace rsb {
 Event::Event() {
 }
 
-Event::Event(const Scope &scope, boost::shared_ptr<void> payload,
+Event::Event(ScopePtr scope, boost::shared_ptr<void> payload,
         const string &type, const string &method) :
     scope(scope), content(payload), type(type), method(method) {
+}
+
+Event::Event(Scope scope, boost::shared_ptr<void> payload,
+        const string &type, const string &method) :
+    scope(ScopePtr(new Scope(scope))), content(payload), type(type), method(method) {
 }
 
 Event::~Event() {
@@ -67,11 +72,15 @@ rsc::misc::UUID Event::getId() const {
     return *this->id;
 }
 
-void Event::setScope(const Scope &s) {
+void Event::setScope(ScopePtr s) {
     this->scope = s;
 }
 
-Scope Event::getScope() const {
+void Event::setScope(const Scope &s) {
+    this->scope = ScopePtr(new Scope(s));
+}
+
+ScopePtr Event::getScope() const {
     return this->scope;
 }
 

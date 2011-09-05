@@ -89,8 +89,8 @@ void InformerBase::checkedPublish(EventPtr event) {
                 % event->getType() % getType()));
     }
     // Check event scope against informer's declared scope.
-    if (event->getScope() != getScope() && !event->getScope().isSubScopeOf(
-            getScope())) {
+    if (event->getScope() != getScope() && !event->getScope()->isSubScopeOf(
+            *getScope())) {
         throw invalid_argument(
             boost::str(
                 boost::format(

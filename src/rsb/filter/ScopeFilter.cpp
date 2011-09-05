@@ -41,7 +41,7 @@ void ScopeFilter::printContents(ostream &stream) const {
 }
 
 bool ScopeFilter::match(EventPtr e) {
-    if ((e->getScope() == this->scope) || e->getScope().isSubScopeOf(
+    if ((*e->getScope() == this->scope) || e->getScope()->isSubScopeOf(
             this->scope)) {
         return true;
     } else {

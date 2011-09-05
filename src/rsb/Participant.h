@@ -62,7 +62,7 @@ public:
      *
      * @return scope
      */
-    Scope getScope() const;
+    ScopePtr getScope() const;
 
     /**
      * Returns a copy of the participant's configuration.
@@ -78,7 +78,7 @@ protected:
 private:
 
     rsc::misc::UUID id;
-    Scope scope;
+    ScopePtr scope;
     ParticipantConfig config;
 
 };
