@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ *               2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -41,31 +42,27 @@ Uint64Converter::~Uint64Converter() {
 }
 
 string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
-	assert(data.first == this->getDataType());
+    assert(data.first == this->getDataType());
 
-	boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
-			boost::uint64_t>(data.second);
-	stringstream s;
-	s << *number;
-	wire = s.str();
-	return WIRE_SCHEMA;
+    boost::shared_ptr<boost::uint64_t> number = boost::static_pointer_cast<
+        boost::uint64_t>(data.second);
+    wire.resize(8);
+    for (uint64_t i = 0; i < 8; ++i) {
+        wire[i] = (unsigned char) ((*number & (0xffull << (i * 8ull))) >> (i * 8ull));
+    }
+    return WIRE_SCHEMA;
 }
 
 AnnotatedData Uint64Converter::deserialize(const string &wireSchema,
-		const string &wire) {
-	assert(wireSchema == WIRE_SCHEMA);
+                                           const string &wire) {
+    assert(wireSchema == WIRE_SCHEMA);
+    assert(wire.size() == 8);
 
-	try {
-		return make_pair(
-				getDataType(),
-				boost::shared_ptr<boost::uint64_t>(
-						new boost::uint64_t(
-								boost::lexical_cast<boost::uint64_t>(wire))));
-	} catch (boost::bad_lexical_cast &e) {
-		throw SerializationException(
-				string("Unable to cast wire contents to number: ") + e.what());
-	}
-
+    boost::shared_ptr<boost::uint64_t> number(new boost::uint64_t(0));
+    for (uint64_t i = 0; i < 8; ++i) {
+        *number |= ((uint64_t) ((unsigned char) wire[i]) << (i * 8ull));
+    }
+    return make_pair(getDataType(), number);
 }
 
 }
