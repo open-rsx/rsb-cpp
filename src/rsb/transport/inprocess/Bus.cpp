@@ -34,7 +34,10 @@ Bus::Bus() :
 
 Bus::~Bus() {
     if (!this->sinks.empty()) {
-        RSCWARN(logger, "" << this->sinks.size() << " non-empty scopes when destructing");
+        RSCWARN(
+                logger,
+                "" << this->sinks.size()
+                        << " non-empty scopes when destructing");
     }
 }
 
@@ -49,57 +52,126 @@ void Bus::printContents(ostream &stream) const {
 void Bus::addSink(InConnectorPtr sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
-    Scope scope = sink->getScope();
-    RSCDEBUG(logger, "Adding sink " << sink << " to scope " << scope);
-    SinkList& connectors = this->sinks[scope];
-    connectors.push_back(sink);
+    RSCDEBUG(logger, "Adding sink " << sink);
+
+    SinkMap::iterator it = this->sinks.find(sink->getScope());
+    if (it == this->sinks.end()) {
+        RSCDEBUG(logger,
+                "No entry in sink map for event scope " << sink->getScope());
+
+        set < boost::weak_ptr<InConnector> > connectors;
+        for (SinkMap::iterator it_ = this->sinks.begin(); it_
+                != this->sinks.end(); ++it_) {
+            RSCDEBUG(
+                    logger,
+                    "Adding " << it_->second.size() << " connectors from "
+                            << it_->first);
+
+            if (it_->first == sink->getScope() || it_->first.isSuperScopeOf(
+                    sink->getScope())) {
+                copy(it_->second.begin(), it_->second.end(),
+                        inserter(connectors, connectors.begin()));
+            }
+        }
+        copy(connectors.begin(), connectors.end(),
+                back_inserter(this->sinks[sink->getScope()]));
+
+        RSCDEBUG(
+                logger,
+                "Created entry in sink map for scope " << sink->getScope()
+                        << " with " << connectors.size() << " connectors");
+
+        it = this->sinks.find(sink->getScope());
+    }
+    it->second.push_back(sink);
+
+    for (SinkMap::iterator it = this->sinks.begin(); it != this->sinks.end(); ++it) {
+        if (it->first.isSubScopeOf(sink->getScope())) {
+            SinkList &connectors = it->second;
+            connectors.push_back(sink);
+        }
+    }
 }
 
 void Bus::removeSink(InConnector* sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
-    Scope scope = sink->getScope();
-    RSCDEBUG(logger, "Removing sink " << sink << " from scope " << scope);
-    SinkList& connectors = this->sinks[scope];
-    RSCDEBUG(logger, "Scope " << scope << " has " << connectors.size() << " connectors");
-    for (SinkList::iterator it = connectors.begin(); it != connectors.end(); ++it) {
-        // If the weak pointer is dangling, we found our
-        // sink. Otherwise, we can just check the pointer.
-        InConnectorPtr ptr = it->lock();
-        if (!ptr || (ptr.get() == sink)) {
-            RSCDEBUG(logger, "Found connector " << sink << " in scope " << scope);
-            connectors.erase(it);
-            break;
+    vector < Scope > scopes = sink->getScope().superScopes(true);
+    RSCDEBUG(logger, "Removing sink " << sink);
+
+    for (SinkMap::iterator it = this->sinks.begin(); it != this->sinks.end(); ++it) {
+        SinkList& connectors = it->second;
+        RSCDEBUG(
+                logger,
+                "Scope " << it->first << " has " << connectors.size()
+                        << " connectors");
+
+        for (SinkList::iterator it_ = connectors.begin(); it_
+                != connectors.end(); ++it_) {
+            // If the weak pointer is dangling, we found our
+            // sink. Otherwise, we can just check the pointer.
+            InConnectorPtr ptr = it_->lock();
+            if (!ptr || (ptr.get() == sink)) {
+                RSCDEBUG(logger,
+                        "Found connector " << sink << " in scope " << it->first);
+                it_ = connectors.erase(it_);
+                break;
+            }
         }
-    }
-    RSCDEBUG(logger, "Scope " << scope << " has " << connectors.size() << " connectors");
-    if (connectors.empty()) {
-        RSCDEBUG(logger, "Remove empty scope " << scope);
-        this->sinks.erase(scope);
+
+        RSCDEBUG(
+                logger,
+                "Scope " << it->first << " has " << connectors.size()
+                        << " connectors");
+        if (connectors.empty()) {
+            RSCDEBUG(logger, "Removing empty scope " << it->first);
+            //this->sinks.erase(it);
+        }
     }
 }
 
 void Bus::handle(EventPtr event) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
-    RSCDEBUG(logger, "Delivering event " << *event);
+    //    RSCDEBUG(logger, "Delivering event " << *event);
 
-    vector<Scope> scopes = event->getScope()->superScopes(true);
-    RSCDEBUG(logger, "Relevant scopes " << scopes);
+    SinkMap::const_iterator it = this->sinks.find(*event->getScope());
+    if (it == this->sinks.end()) {
+        RSCDEBUG(logger,
+                "No entry in sink map for event scope " << *event->getScope());
 
-    for (vector<Scope>::const_iterator it = scopes.begin(); it != scopes.end(); ++it) {
-        SinkMap::const_iterator it_ = this->sinks.find(*it);
-        if (it_ != this->sinks.end()) {
-            const SinkList& connectors = it_->second;
+        set < boost::weak_ptr<InConnector> > connectors;
+        for (SinkMap::iterator it_ = this->sinks.begin(); it_
+                != this->sinks.end(); ++it_) {
+            RSCDEBUG(
+                    logger,
+                    "Adding " << it_->second.size() << " connectors from "
+                            << it_->first);
 
-            for (SinkList::const_iterator it__ = connectors.begin(); it__
-                    != connectors.end(); ++it__) {
-                InConnectorPtr connector = it__->lock();
-                if (connector) {
-                    RSCDEBUG(logger, "Delivering to " << connector << " in " << *it);
-                    connector->handle(event);
-                }
+            if (it_->first == *event->getScope() || it_->first.isSuperScopeOf(
+                    *event->getScope())) {
+                copy(it_->second.begin(), it_->second.end(),
+                        inserter(connectors, connectors.begin()));
             }
+        }
+        copy(connectors.begin(), connectors.end(),
+                back_inserter(this->sinks[*event->getScope()]));
+
+        RSCDEBUG(
+                logger,
+                "Created entry in sink map for scope " << *event->getScope()
+                        << " with " << connectors.size() << " connectors");
+
+        it = this->sinks.find(*event->getScope());
+    }
+
+    const SinkList &connectors = it->second;
+    for (SinkList::const_iterator it__ = connectors.begin(); it__
+            != connectors.end(); ++it__) {
+        InConnectorPtr connector = it__->lock();
+        if (connector) {
+            //            RSCDEBUG(logger, "Delivering to " << connector << " in " << *it);
+            connector->handle(event);
         }
     }
 }
