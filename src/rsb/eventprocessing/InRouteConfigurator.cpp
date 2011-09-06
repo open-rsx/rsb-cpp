@@ -33,8 +33,8 @@ namespace eventprocessing {
 InRouteConfigurator::InRouteConfigurator(const Scope             &scope,
                                          const ParticipantConfig &config) :
     logger(Logger::getLogger("rsb.eventprocessing.InRouteConfigurator")),
-    scope(scope),
     receivingStrategyConfig(config.getEventReceivingStrategy()),
+    scope(scope),
     shutdown(false) {
 }
 
