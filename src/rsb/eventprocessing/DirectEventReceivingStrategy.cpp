@@ -25,62 +25,50 @@
 
 using namespace std;
 
+using namespace boost;
+
 using namespace rsc::runtime;
 using namespace rsc::logging;
 
 namespace rsb {
 namespace eventprocessing {
 
-EventReceivingStrategy* DirectEventReceivingStrategy::create(const Properties &/*props*/) {
-    return new DirectEventReceivingStrategy();
+EventReceivingStrategy* DirectEventReceivingStrategy::create(const Properties &props) {
+    return new DirectEventReceivingStrategy(props.getAs<bool>("singlethreaded"));
 }
 
-DirectEventReceivingStrategy::DirectEventReceivingStrategy() :
-            logger(
-                    Logger::getLogger(
-                            "rsb.eventprocessing.DirectEventReceivingStrategy")),
-            errorStrategy(ParticipantConfig::LOG), singleThreaded(false) {
+DirectEventReceivingStrategy::DirectEventReceivingStrategy(bool singleThreaded) :
+    logger(Logger::getLogger("rsb.eventprocessing.DirectEventReceivingStrategy")),
+    errorStrategy(ParticipantConfig::LOG),
+    singleThreaded(singleThreaded) {
 }
 
 DirectEventReceivingStrategy::~DirectEventReceivingStrategy() {
 }
 
 void DirectEventReceivingStrategy::printContents(ostream &stream) const {
-    boost::shared_lock<boost::shared_mutex> filtersLock(filtersMutex);
-    boost::recursive_mutex::scoped_lock errorLock(errorStrategyMutex);
+    shared_lock<shared_mutex> filtersLock(filtersMutex);
+    shared_lock<shared_mutex> errorLock(errorStrategyMutex);
     stream << "filters = " << filters << ", errorStrategy = " << errorStrategy;
 }
 
 void DirectEventReceivingStrategy::setHandlerErrorStrategy(
         const ParticipantConfig::ErrorStrategy &strategy) {
-    boost::recursive_mutex::scoped_lock lock(errorStrategyMutex);
+    shared_lock<shared_mutex> lock(errorStrategyMutex);
     this->errorStrategy = strategy;
 }
 
 bool DirectEventReceivingStrategy::filter(EventPtr e) {
     // match event
     try {
-
-        if (singleThreaded) {
-            for (set<filter::FilterPtr>::const_iterator filterIt =
-                    filters.begin(); filterIt != filters.end(); ++filterIt) {
-                if (!(*filterIt)->match(e)) {
-                    return false;
-                }
-            }
+        if (this->singleThreaded) {
+            return filterNoLock(e);
         } else {
-            boost::shared_lock<boost::shared_mutex> lock(filtersMutex);
-            for (set<filter::FilterPtr>::const_iterator filterIt =
-                    filters.begin(); filterIt != filters.end(); ++filterIt) {
-                if (!(*filterIt)->match(e)) {
-                    return false;
-                }
-            }
+            shared_lock<boost::shared_mutex> lock(filtersMutex);
+
+            return filterNoLock(e);
         }
-
-        return true;
-
-    } catch (const exception& ex) {
+    } catch (const std::exception& ex) {
 
         stringstream s;
         s << "Exception matching event " << e << ":" << endl;
@@ -105,9 +93,19 @@ bool DirectEventReceivingStrategy::filter(EventPtr e) {
 
 }
 
-void DirectEventReceivingStrategy::handleDispatchError(const string &message) {
+bool DirectEventReceivingStrategy::filterNoLock(EventPtr e) {
+    for (set<filter::FilterPtr>::const_iterator filterIt =
+             filters.begin(); filterIt != filters.end(); ++filterIt) {
+        if (!(*filterIt)->match(e)) {
+            return false;
+        }
+    }
+    return true;
+}
 
-    boost::recursive_mutex::scoped_lock strategyLock(errorStrategyMutex);
+void DirectEventReceivingStrategy::handleDispatchError(const string &message) {
+    shared_lock<shared_mutex> strategyLock(errorStrategyMutex);
+
     switch (errorStrategy) {
     case ParticipantConfig::LOG:
         RSCERROR(logger, message);
@@ -134,7 +132,7 @@ void DirectEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e) 
 
         handler->handle(e);
 
-    } catch (const exception& ex) {
+    } catch (const std::exception& ex) {
 
         stringstream s;
         s << "Exception dispatching event " << e << " to handler " << handler
@@ -160,46 +158,49 @@ void DirectEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e) 
 }
 
 void DirectEventReceivingStrategy::handle(EventPtr event) {
+    if (this->singleThreaded) {
+        handleNoLock(event);
+    } else {
+        shared_lock<shared_mutex> lock(this->handlerMutex);
+
+        handleNoLock(event);
+    }
+}
+
+void DirectEventReceivingStrategy::handleNoLock(EventPtr event) {
     event->mutableMetaData().setDeliverTime(rsc::misc::currentTimeMicros());
 
-    if (singleThreaded) {
-        if (filter(event)) {
-            for (HandlerList::const_iterator it = this->handlers.begin(); it
-                    != this->handlers.end(); ++it)
-                deliver(*it, event);
-        }
-    } else {
-        boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
-        if (filter(event)) {
-            for (HandlerList::const_iterator it = this->handlers.begin(); it
-                    != this->handlers.end(); ++it)
-                deliver(*it, event);
-        }
+    if (filter(event)) {
+        for (HandlerList::const_iterator it = this->handlers.begin(); it
+                 != this->handlers.end(); ++it)
+            deliver(*it, event);
     }
 }
 
 void DirectEventReceivingStrategy::addHandler(rsb::HandlerPtr handler,
         const bool &/*wait*/) {
-    boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
+    shared_lock<shared_mutex> lock(this->handlerMutex);
 
     this->handlers.push_back(handler);
 }
 
 void DirectEventReceivingStrategy::removeHandler(rsb::HandlerPtr handler,
         const bool &/*wait*/) {
-    boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
+    shared_lock<shared_mutex> lock(this->handlerMutex);
 
     this->handlers.remove(handler);
 }
 
 void DirectEventReceivingStrategy::addFilter(filter::FilterPtr filter) {
-    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
-    filters.insert(filter);
+    unique_lock<shared_mutex> lock(filtersMutex);
+
+    this->filters.insert(filter);
 }
 
 void DirectEventReceivingStrategy::removeFilter(filter::FilterPtr filter) {
-    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
-    filters.erase(filter);
+    unique_lock<shared_mutex> lock(filtersMutex);
+
+    this->filters.erase(filter);
 }
 
 }
