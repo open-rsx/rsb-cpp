@@ -35,7 +35,7 @@ Reader::Reader(const vector<InPullConnectorPtr> &connectors,
                const Scope                  &scope,
                const ParticipantConfig      &config) :
     Participant(scope, config) {
-    this->configurator.reset(new PullInRouteConfigurator(scope));
+    this->configurator.reset(new PullInRouteConfigurator(scope, config));
     for (vector<InPullConnectorPtr>::const_iterator it = connectors.begin(); it
              != connectors.end(); ++it) {
         this->configurator->addConnector(*it);

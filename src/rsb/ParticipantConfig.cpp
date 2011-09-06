@@ -122,8 +122,45 @@ void ParticipantConfig::Transport::printContents(ostream &stream) const {
             << ", options = " << this->options;
 }
 
+ParticipantConfig::EventProcessingStrategy::EventProcessingStrategy(const string &name) :
+    name(name) {
+}
+
+string ParticipantConfig::EventProcessingStrategy::getName() const {
+    return this->name;
+}
+
+void ParticipantConfig::EventProcessingStrategy::setName(const string &name) {
+    this->name = name;
+}
+
+Properties ParticipantConfig::EventProcessingStrategy::getOptions() const {
+    return this->options;
+}
+
+void ParticipantConfig::EventProcessingStrategy::setOptions(const Properties &options) {
+    this->options = options;
+}
+
+void ParticipantConfig::EventProcessingStrategy::handleOption(const vector<string> &key,
+                                                              const string &value) {
+    if (key.size() != 1) {
+        throw invalid_argument(str(format("Key `%1%' has invalid number of components; transport option keys have to have one component.")
+                                   % key));
+    }
+
+    this->options.set<string>(key.front(), value);
+}
+
+void ParticipantConfig::EventProcessingStrategy::printContents(ostream &stream) const {
+    stream << "name = " << this->name << ", options = " << this->options;
+}
+
 ParticipantConfig::ParticipantConfig() :
-    logger(Logger::getLogger("rsb.ParticipantConfig")), errorStrategy(LOG) {
+    logger(Logger::getLogger("rsb.ParticipantConfig")),
+    errorStrategy(LOG),
+    eventReceivingStrategy("parallel"),
+    eventSendingStrategy("direct") {
 }
 
 ParticipantConfig::~ParticipantConfig() {
@@ -182,6 +219,14 @@ void ParticipantConfig::setTransports(const set<Transport> &transports) {
             != transports.end(); ++it) {
         this->transports.insert(make_pair(it->getName(), *it));
     }
+}
+
+const ParticipantConfig::EventProcessingStrategy &ParticipantConfig::getEventReceivingStrategy() const {
+    return this->eventReceivingStrategy;
+}
+
+const ParticipantConfig::EventProcessingStrategy &ParticipantConfig::getEventSendingStrategy() const {
+    return this->eventSendingStrategy;
 }
 
 rsc::runtime::Properties ParticipantConfig::getOptions() const {
@@ -283,6 +328,25 @@ void ParticipantConfig::handleOption(const vector<string> &key,
                     str(format("`%2%' is not a valid sub-key of `%1%'.")
                             % key[0] % key[1]));
         }
+        // Event processing
+    } else if (key[0] == "eventprocessing") {
+        EventProcessingStrategy *strategy;
+        if (key[1] == "receivingstrategy") {
+            strategy = &this->eventReceivingStrategy;
+        } else if (key[1] == "sendingstrategy") {
+            strategy = &this->eventSendingStrategy;
+        } else {
+            throw invalid_argument(
+                str(format("`%2%' is not a valid sub-key of `%1%'.")
+                    % key[0] % key[1]));
+        }
+        if (key.size() == 2) {
+            strategy->setName(value);
+        } else {
+            vector<string> subKey;
+            copy(key.begin() + 2, key.end(), back_inserter(subKey));
+            strategy->handleOption(subKey, value);
+        }
         // Transports
     } else if (key[0] == "transport") {
         if (key.size() < 3) {
@@ -316,9 +380,11 @@ void ParticipantConfig::handleOption(const vector<string> &key,
 
 ostream &operator<<(ostream &stream, const ParticipantConfig &config) {
     stream << "ParticipantConfig[qosSpec = " << config.qosSpec
-            << ", errorStrategy = " << config.errorStrategy
-            << ", transports = " << config.getTransports() << ", options = "
-            << config.getOptions() << "]";
+           << ", errorStrategy = " << config.errorStrategy
+           << ", transports = " << config.getTransports()
+           << ", eventReceivingStrategy = " << config.getEventReceivingStrategy()
+           << ", eventSendingStrategy = " << config.getEventSendingStrategy()
+           << ", options = " << config.getOptions() << "]";
     return stream;
 }
 

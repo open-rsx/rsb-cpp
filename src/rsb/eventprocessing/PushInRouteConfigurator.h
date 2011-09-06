@@ -41,7 +41,8 @@ namespace eventprocessing {
  */
 class RSB_EXPORT PushInRouteConfigurator: public InRouteConfigurator {
 public:
-    PushInRouteConfigurator(const Scope &scope);
+    PushInRouteConfigurator(const Scope             &scope,
+                            const ParticipantConfig &config);
     virtual ~PushInRouteConfigurator();
 
     std::string getClassName() const;

@@ -19,12 +19,15 @@
 
 #include "PushInRouteConfigurator.h"
 
-#include "ParallelEventReceivingStrategy.h"
+#include <boost/bind.hpp>
+
+#include "EventReceivingStrategyFactory.h"
 
 using namespace std;
 
 using namespace boost;
 
+using namespace rsc::runtime;
 using namespace rsc::logging;
 
 using namespace rsb::transport;
@@ -32,8 +35,9 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-PushInRouteConfigurator::PushInRouteConfigurator(const Scope &scope) :
-    InRouteConfigurator(scope),
+PushInRouteConfigurator::PushInRouteConfigurator(const Scope             &scope,
+                                                 const ParticipantConfig &config) :
+    InRouteConfigurator(scope, config),
     logger(Logger::getLogger("rsb.eventprocessing.PushInRouteConfigurator")),
     errorStrategy(ParticipantConfig::LOG) {
 }
@@ -90,7 +94,11 @@ void PushInRouteConfigurator::setErrorStrategy(const ParticipantConfig::ErrorStr
 }
 
 EventReceivingStrategyPtr PushInRouteConfigurator::createEventReceivingStrategy() {
-    return EventReceivingStrategyPtr(new ParallelEventReceivingStrategy());
+    string     impl    = getReceivingStrategyConfig().getName();
+    Properties options = getReceivingStrategyConfig().getOptions();
+    RSCDEBUG(logger, "Instantiating event receiving strategy with config "
+             << getReceivingStrategyConfig());
+    return EventReceivingStrategyPtr(EventReceivingStrategyFactory::getInstance().createInst(impl, options));
 }
 
 }

@@ -30,9 +30,12 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-InRouteConfigurator::InRouteConfigurator(const Scope &scope) :
+InRouteConfigurator::InRouteConfigurator(const Scope             &scope,
+                                         const ParticipantConfig &config) :
     logger(Logger::getLogger("rsb.eventprocessing.InRouteConfigurator")),
-            scope(scope), shutdown(false) {
+    scope(scope),
+    receivingStrategyConfig(config.getEventReceivingStrategy()),
+    shutdown(false) {
 }
 
 InRouteConfigurator::~InRouteConfigurator() {
@@ -46,9 +49,10 @@ string InRouteConfigurator::getClassName() const {
 }
 
 void InRouteConfigurator::printContents(ostream &stream) const {
-    stream << "scope = " << scope << ", connectors = " << connectors
-            << ", eventReceivingStrategy = " << eventReceivingStrategy
-            << ", shutdown = " << shutdown;
+    stream << "scope = " << scope
+           << ", connectors = " << connectors
+           << ", eventReceivingStrategy = " << eventReceivingStrategy
+           << ", shutdown = " << shutdown;
 }
 
 void InRouteConfigurator::activate() {
@@ -78,6 +82,10 @@ void InRouteConfigurator::deactivate() {
     // Release event processing strategy.
     this->eventReceivingStrategy.reset();
     this->shutdown = true;
+}
+
+const ParticipantConfig::EventProcessingStrategy &InRouteConfigurator::getReceivingStrategyConfig() const {
+    return this->receivingStrategyConfig;
 }
 
 EventReceivingStrategyPtr InRouteConfigurator::getEventReceivingStrategy() const {

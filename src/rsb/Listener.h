@@ -118,7 +118,8 @@ private:
     eventprocessing::PushInRouteConfiguratorPtr configurator;
 
     void initialize(const std::vector<transport::InPushConnectorPtr> &connectors,
-            const Scope &scope);
+                    const Scope                                      &scope,
+                    const ParticipantConfig                          &config);
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;

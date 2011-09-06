@@ -35,7 +35,8 @@ namespace eventprocessing {
  */
 class RSB_EXPORT PullInRouteConfigurator: public InRouteConfigurator {
 public:
-    PullInRouteConfigurator(const Scope &scope);
+    PullInRouteConfigurator(const Scope             &scope,
+                            const ParticipantConfig &config);
 
     /**
      * Create and return a @ref PullEventReceivingStrategy .

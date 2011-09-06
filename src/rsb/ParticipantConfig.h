@@ -44,8 +44,12 @@ namespace rsb {
  *   - Configuration options for selected transports
  *   - Converters associated to selected transports
  *     (see @ref rsb::converter::Converter)
+ * - Selection of event processing strategies
+ *   - Event receiving strategy (see @ref rsb::eventprocessing::EventReceivingStrategy)
+ *   - Event sending strategy (see @ref rsb::eventprocessing::EventSendingStrategy)
  *
  * @author jwienke
+ * @author jmoringe
  */
 class RSB_EXPORT ParticipantConfig: public rsc::config::OptionHandler {
 public:
@@ -110,6 +114,60 @@ public:
     private:
         std::string name;
         ConverterNames converters;
+        rsc::runtime::Properties options;
+    };
+
+    /**
+     * Instances of this class describe the selection and
+     * configuration of an event processing strategy.
+     *
+     * This mechanism is applied to select and configure
+     * implementations of @ref eventprocessing::EventSendingStrategy
+     * and @ref eventprocessing::EventReceivingStrategy.
+     *
+     * @author jmoringe
+     */
+    class EventProcessingStrategy : public rsc::config::OptionHandler,
+                                    public rsc::runtime::Printable {
+    public:
+        EventProcessingStrategy(const std::string &name);
+
+        /**
+         * Returns the name of the implementation to be selected.
+         *
+         * @return The name of the processing strategy implementation
+         * that should be used.
+         */
+        std::string getName() const;
+
+        /**
+         * Sets the name of the implementation to be selected.
+         *
+         * @param name - Name of the processing strategy
+         * implementation that should be used.
+         */
+        void setName(const std::string &name);
+
+        /**
+         * Returns the options for the strategy.
+         *
+         * @return copy of options for the strategy
+         */
+        rsc::runtime::Properties getOptions() const;
+
+        /**
+         * Sets the options for the strategy.
+         *
+         * @param options new options replacing all old ones
+         */
+        void setOptions(const rsc::runtime::Properties &options);
+
+        void handleOption(const std::vector<std::string> &key,
+                          const std::string &value);
+
+        void printContents(std::ostream &stream) const;
+    private:
+        std::string name;
         rsc::runtime::Properties options;
     };
 
@@ -202,6 +260,10 @@ public:
      */
     void setTransports(const std::set<Transport> &transports);
 
+    const EventProcessingStrategy &getEventReceivingStrategy() const;
+
+    const EventProcessingStrategy &getEventSendingStrategy() const;
+
     /**
      * Returns additional options besides the transport-specific ones.
      *
@@ -289,10 +351,13 @@ public:
 
 private:
     rsc::logging::LoggerPtr logger;
-    QualityOfServiceSpec qosSpec;
-    ErrorStrategy errorStrategy;
+
+    QualityOfServiceSpec             qosSpec;
+    ErrorStrategy                    errorStrategy;
     std::map<std::string, Transport> transports;
-    rsc::runtime::Properties options;
+    EventProcessingStrategy          eventReceivingStrategy;
+    EventProcessingStrategy          eventSendingStrategy;
+    rsc::runtime::Properties         options;
 
     void handleOption(const std::vector<std::string> &key,
             const std::string &value);

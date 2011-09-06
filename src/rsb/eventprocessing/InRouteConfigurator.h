@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ *               2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -28,6 +29,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/Printable.h>
 
+#include "../ParticipantConfig.h"
 #include "../QualityOfServiceSpec.h"
 #include "../transport/InConnector.h"
 #include "EventReceivingStrategy.h"
@@ -49,7 +51,8 @@ class RSB_EXPORT InRouteConfigurator: public virtual rsc::runtime::Printable,
 public:
     typedef std::set<transport::InConnectorPtr> ConnectorSet;
 
-    InRouteConfigurator(const Scope &scope);
+    InRouteConfigurator(const Scope             &scope,
+                        const ParticipantConfig &config);
     virtual ~InRouteConfigurator();
 
     std::string getClassName() const;
@@ -57,6 +60,8 @@ public:
 
     virtual void activate();
     virtual void deactivate();
+
+    const ParticipantConfig::EventProcessingStrategy &getReceivingStrategyConfig() const;
 
     EventReceivingStrategyPtr getEventReceivingStrategy() const;
 
@@ -77,12 +82,16 @@ public:
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 private:
-    rsc::logging::LoggerPtr logger;
-    Scope scope;
-    ConnectorSet connectors;
+    rsc::logging::LoggerPtr                    logger;
+
+    ParticipantConfig::EventProcessingStrategy receivingStrategyConfig;
+
+    Scope                                      scope;
+    ConnectorSet                               connectors;
     // ep for observation model
-    EventReceivingStrategyPtr eventReceivingStrategy;
-    volatile bool shutdown;
+    EventReceivingStrategyPtr                  eventReceivingStrategy;
+    volatile bool                              shutdown;
+
     virtual EventReceivingStrategyPtr createEventReceivingStrategy() = 0;
 };
 
