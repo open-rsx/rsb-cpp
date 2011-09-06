@@ -19,6 +19,8 @@
 
 #include "Factory.h"
 
+#include "eventprocessing/strategies.h"
+
 #include "introspection/introspection.h"
 
 #include "converter/converters.h"
@@ -63,6 +65,7 @@ namespace rsb {
 
 Factory::Factory() :
     logger(Logger::getLogger("rsb.Factory")) {
+    eventprocessing::registerDefaultEventProcessingStrategies();
     introspection::registerIntrospectionConverters();
     converter::registerDefaultConverters();
     transport::registerDefaultTransports();

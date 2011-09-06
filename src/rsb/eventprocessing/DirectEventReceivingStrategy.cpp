@@ -25,10 +25,15 @@
 
 using namespace std;
 
+using namespace rsc::runtime;
 using namespace rsc::logging;
 
 namespace rsb {
 namespace eventprocessing {
+
+EventReceivingStrategy* DirectEventReceivingStrategy::create(const Properties &/*props*/) {
+    return new DirectEventReceivingStrategy();
+}
 
 DirectEventReceivingStrategy::DirectEventReceivingStrategy() :
             logger(

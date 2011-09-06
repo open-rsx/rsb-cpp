@@ -59,6 +59,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/eventprocessing/PullInRouteConfigurator.cpp
             rsb/eventprocessing/PushInRouteConfigurator.cpp
             rsb/eventprocessing/OutRouteConfigurator.cpp
+            rsb/eventprocessing/strategies.cpp
 
             rsb/filter/Filter.cpp
             rsb/filter/FilterObserver.cpp
@@ -138,6 +139,7 @@ SET(HEADERS rsb/CommException.h
             rsb/eventprocessing/EventSendingStrategy.h
             rsb/eventprocessing/DirectEventSendingStrategy.h
             rsb/eventprocessing/EventReceivingStrategy.h
+            rsb/eventprocessing/EventReceivingStrategyFactory.h
             rsb/eventprocessing/PullEventReceivingStrategy.h
             rsb/eventprocessing/PushEventReceivingStrategy.h
             rsb/eventprocessing/DirectEventReceivingStrategy.h
@@ -146,6 +148,7 @@ SET(HEADERS rsb/CommException.h
             rsb/eventprocessing/PullInRouteConfigurator.h
             rsb/eventprocessing/PushInRouteConfigurator.h
             rsb/eventprocessing/OutRouteConfigurator.h
+            rsb/eventprocessing/strategies.h
 
             rsb/filter/Filter.h
             rsb/filter/FilterActionTypes.h

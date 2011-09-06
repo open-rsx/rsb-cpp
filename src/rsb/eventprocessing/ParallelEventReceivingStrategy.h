@@ -25,6 +25,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
+#include <rsc/runtime/Properties.h>
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/OrderedQueueDispatcherPool.h>
 
@@ -52,9 +53,9 @@ namespace eventprocessing {
  */
 class RSB_EXPORT ParallelEventReceivingStrategy: public PushEventReceivingStrategy {
 public:
-    ParallelEventReceivingStrategy();
-    // TODO make threadpool size configurable
-    ParallelEventReceivingStrategy(unsigned int numThreads);
+    static EventReceivingStrategy* create(const rsc::runtime::Properties &props);
+
+    ParallelEventReceivingStrategy(unsigned int numThreads = 5);
     virtual ~ParallelEventReceivingStrategy();
 
     std::string getClassName() const;

@@ -26,6 +26,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
+#include <rsc/runtime/Properties.h>
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/OrderedQueueDispatcherPool.h>
 
@@ -45,6 +46,8 @@ namespace eventprocessing {
  */
 class RSB_EXPORT DirectEventReceivingStrategy: public PushEventReceivingStrategy {
 public:
+    static EventReceivingStrategy* create(const rsc::runtime::Properties &props);
+
     DirectEventReceivingStrategy();
 
     virtual ~DirectEventReceivingStrategy();
