@@ -61,8 +61,18 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-/** @TODO(jmoringe): document
+/**
+ * Instances of this class provide access to a socket-based bus.
  *
+ * It is transparent for clients (connectors) of this class whether is
+ * accessed by running the bus server or by connecting to the bus
+ * server as a client.
+ *
+ * In-direction connectors add themselves as event sinks using the
+ * @ref addSink method.
+ *
+ * Out-direction connectors submit events to the bus using the @ref
+ * handle method.
  *
  * @author jmoringe
  */
