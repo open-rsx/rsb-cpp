@@ -51,8 +51,16 @@ private:
     boost::asio::io_service        &service;
 };
 
-/** @TODO(jmoringe): document
+/**
+ * Instances of this class provide access to a socket-based bus for
+ * local and remote bus clients.
  *
+ * Remote clients can connect to a server socket in order to send and
+ * receive events through the resulting socket connection.
+ *
+ * Local clients (connectors) use the usual @ref Bus interface to
+ * receive events submitted by remote clients and submit events which
+ * will be distributed to remote clients by the @ref BusServer.
  *
  * @author jmoringe
  */
