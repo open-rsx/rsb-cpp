@@ -42,6 +42,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/Repository.cpp
             rsb/converter/RegexConverterPredicate.cpp
             rsb/converter/SerializationException.cpp
+	    rsb/converter/DynamicProtocolBufferConverter.cpp
             rsb/converter/StringConverter.cpp
             rsb/converter/Uint64Converter.cpp
             rsb/converter/VoidConverter.cpp
@@ -96,6 +97,14 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/spread/SpreadMessage.cpp
             rsb/transport/spread/Assembly.cpp
 
+            rsb/transport/socket/BusConnection.cpp
+            rsb/transport/socket/Bus.cpp
+            rsb/transport/socket/BusServer.cpp
+            rsb/transport/socket/Factory.cpp
+            rsb/transport/socket/ConnectorBase.cpp
+            rsb/transport/socket/InPushConnector.cpp
+            rsb/transport/socket/OutConnector.cpp
+
             rsb/util/MD5.cpp
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp)
@@ -123,6 +132,7 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/BoolConverter.h
             rsb/converter/Converter.h
             rsb/converter/ProtocolBufferConverter.h
+	    rsb/converter/DynamicProtocolBufferConverter.h
             rsb/converter/ConverterSelectionStrategy.h
             rsb/converter/UnambiguousConverterMap.h
             rsb/converter/PredicateConverterList.h
@@ -189,6 +199,14 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/spread/SpreadGroup.h
             rsb/transport/spread/SpreadMessage.h
             rsb/transport/spread/Assembly.h
+
+            rsb/transport/socket/BusConnection.h
+            rsb/transport/socket/Bus.h
+            rsb/transport/socket/BusServer.h
+            rsb/transport/socket/Factory.h
+            rsb/transport/socket/ConnectorBase.h
+            rsb/transport/socket/InPushConnector.h
+            rsb/transport/socket/OutConnector.h
 
             rsb/util/MD5.h)
 

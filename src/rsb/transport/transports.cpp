@@ -26,6 +26,9 @@
 #include "spread/InPullConnector.h"
 #include "spread/OutConnector.h"
 
+#include "socket/InPushConnector.h"
+#include "socket/OutConnector.h"
+
 #include "transports.h"
 
 using namespace std;
@@ -37,54 +40,89 @@ static bool registered = false;
 static boost::mutex registrationMutex;
 
 void registerDefaultTransports() {
-
     boost::mutex::scoped_lock lock(registrationMutex);
-    if (!registered) {
+
+    if (registered) {
+        return;
+    }
+    registered = true;
+
+    // In-direction, push-style connectors
+    {
+        InPushFactory &factory = InPushFactory::getInstance();
+        factory.registerConnector("inprocess",
+                                  &inprocess::InConnector::create,
+                                  "inprocess");
 
         {
-            InPushFactory &factory = InPushFactory::getInstance();
-            factory.registerConnector("inprocess",
-				      &inprocess::InConnector::create,
-				      "inprocess");
-
-	    set<string> options;
-	    options.insert("host");
-	    options.insert("port");
-	    factory.registerConnector("spread",
-				      &spread::InConnector::create,
-				      "spread",
-				      options);
-        }
-
-        {
-            InPullFactory &factory = InPullFactory::getInstance();
-
             set<string> options;
             options.insert("host");
             options.insert("port");
+
             factory.registerConnector("spread",
-				      &spread::InPullConnector::create,
-				      "spread",
-				      options);
+                                      &spread::InConnector::create,
+                                      "spread",
+                                      options);
         }
 
         {
-            OutFactory &factory = OutFactory::getInstance();
-            factory.registerConnector("inprocess",
-				      &inprocess::OutConnector::create,
-				      "inprocess");
+            set<string> options;
+            options.insert("host");
+            options.insert("port");
+            options.insert("server");
 
+            factory.registerConnector("socket",
+                                      &socket::InPushConnector::create,
+                                      "socket",
+                                      options);
+        }
+    }
+
+    // In-direction, pull-style connectors
+    {
+        InPullFactory &factory = InPullFactory::getInstance();
+
+        {
+            set<string> options;
+            options.insert("host");
+            options.insert("port");
+
+            factory.registerConnector("spread",
+                                      &spread::InPullConnector::create,
+                                      "spread",
+                                      options);
+        }
+    }
+
+    // Out-direction connectors
+    {
+        OutFactory &factory = OutFactory::getInstance();
+        factory.registerConnector("inprocess",
+                                  &inprocess::OutConnector::create,
+                                  "inprocess");
+
+        {
             set<string> options;
             options.insert("host");
             options.insert("port");
             options.insert("maxfragmentsize");
+
             factory.registerConnector("spread",
                                       &spread::OutConnector::create,
                                       "spread",
                                       options);
         }
 
-        registered = true;
+        {
+            set<string> options;
+            options.insert("host");
+            options.insert("port");
+            options.insert("server");
+
+            factory.registerConnector("socket",
+                                      &socket::OutConnector::create,
+                                      "socket");
+        }
     }
 
 }
