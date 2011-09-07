@@ -47,14 +47,14 @@ DirectEventReceivingStrategy::~DirectEventReceivingStrategy() {
 }
 
 void DirectEventReceivingStrategy::printContents(ostream &stream) const {
-    shared_lock<shared_mutex> filtersLock(filtersMutex);
-    shared_lock<shared_mutex> errorLock(errorStrategyMutex);
+    boost::shared_lock<boost::shared_mutex> filtersLock(filtersMutex);
+    boost::shared_lock<boost::shared_mutex> errorLock(errorStrategyMutex);
     stream << "filters = " << filters << ", errorStrategy = " << errorStrategy;
 }
 
 void DirectEventReceivingStrategy::setHandlerErrorStrategy(
         const ParticipantConfig::ErrorStrategy &strategy) {
-    shared_lock<shared_mutex> lock(errorStrategyMutex);
+    boost::shared_lock<boost::shared_mutex> lock(errorStrategyMutex);
     this->errorStrategy = strategy;
 }
 
@@ -64,7 +64,7 @@ bool DirectEventReceivingStrategy::filter(EventPtr e) {
         if (this->singleThreaded) {
             return filterNoLock(e);
         } else {
-            shared_lock<boost::shared_mutex> lock(filtersMutex);
+            boost::shared_lock<boost::shared_mutex> lock(filtersMutex);
 
             return filterNoLock(e);
         }
@@ -104,7 +104,7 @@ bool DirectEventReceivingStrategy::filterNoLock(EventPtr e) {
 }
 
 void DirectEventReceivingStrategy::handleDispatchError(const string &message) {
-    shared_lock<shared_mutex> strategyLock(errorStrategyMutex);
+    boost::shared_lock<boost::shared_mutex> strategyLock(errorStrategyMutex);
 
     switch (errorStrategy) {
     case ParticipantConfig::LOG:
@@ -161,7 +161,7 @@ void DirectEventReceivingStrategy::handle(EventPtr event) {
     if (this->singleThreaded) {
         handleNoLock(event);
     } else {
-        shared_lock<shared_mutex> lock(this->handlerMutex);
+        boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
 
         handleNoLock(event);
     }
@@ -179,26 +179,26 @@ void DirectEventReceivingStrategy::handleNoLock(EventPtr event) {
 
 void DirectEventReceivingStrategy::addHandler(rsb::HandlerPtr handler,
         const bool &/*wait*/) {
-    shared_lock<shared_mutex> lock(this->handlerMutex);
+    boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
 
     this->handlers.push_back(handler);
 }
 
 void DirectEventReceivingStrategy::removeHandler(rsb::HandlerPtr handler,
         const bool &/*wait*/) {
-    shared_lock<shared_mutex> lock(this->handlerMutex);
+    boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
 
     this->handlers.remove(handler);
 }
 
 void DirectEventReceivingStrategy::addFilter(filter::FilterPtr filter) {
-    unique_lock<shared_mutex> lock(filtersMutex);
+    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
 
     this->filters.insert(filter);
 }
 
 void DirectEventReceivingStrategy::removeFilter(filter::FilterPtr filter) {
-    unique_lock<shared_mutex> lock(filtersMutex);
+    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
 
     this->filters.erase(filter);
 }
