@@ -42,7 +42,6 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/Repository.cpp
             rsb/converter/RegexConverterPredicate.cpp
             rsb/converter/SerializationException.cpp
-	    rsb/converter/DynamicProtocolBufferConverter.cpp
             rsb/converter/StringConverter.cpp
             rsb/converter/Uint64Converter.cpp
             rsb/converter/VoidConverter.cpp
@@ -132,7 +131,6 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/BoolConverter.h
             rsb/converter/Converter.h
             rsb/converter/ProtocolBufferConverter.h
-	    rsb/converter/DynamicProtocolBufferConverter.h
             rsb/converter/ConverterSelectionStrategy.h
             rsb/converter/UnambiguousConverterMap.h
             rsb/converter/PredicateConverterList.h
