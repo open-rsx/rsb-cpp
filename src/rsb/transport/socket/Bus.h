@@ -36,26 +36,10 @@
 
 #include "../../protocol/Notification.h"
 
-#include "rsb/rsbexports.h"
-
-// Bus forward declaration
-// TODO(jmoringe): can we avoid this?
-
-namespace rsb {
-namespace transport {
-namespace socket {
-
-class Bus;
-
-typedef boost::shared_ptr<Bus> BusPtr;
-
-}
-}
-}
-
 #include "BusConnection.h"
-
 #include "InPushConnector.h"
+
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
