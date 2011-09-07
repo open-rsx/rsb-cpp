@@ -42,6 +42,24 @@ namespace socket {
 class Bus;
 typedef boost::shared_ptr<Bus> BusPtr;
 
+/**
+ * Instances of this class implement connections to a socket-based
+ * bus.
+ *
+ * The basic operations provided by this class are receiving an event
+ * by calling @ref receiveEvent and submitting an event to the bus by
+ * calling @ref sendEvent.
+ *
+ * In a process which act as a client for a particular bus, a single
+ * instance this class is connected to the bus server and provides
+ * access to the bus for the process.
+ *
+ * A process which acts as the server for a particular bus, manages
+ * (via the @ref BusServer class) one @ref BusConnection object for
+ * each client (remote process) connected to the bus.
+ *
+ * @author jmoringe
+ */
 class RSB_EXPORT BusConnection : public boost::enable_shared_from_this<BusConnection>,
                                  public rsc::runtime::Printable {
 public:
