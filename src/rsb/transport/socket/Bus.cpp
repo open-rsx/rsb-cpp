@@ -85,12 +85,16 @@ void Bus::removeSink(InPushConnector* sink) {
 }
 
 void Bus::addConnection(BusConnectionPtr connection) {
+    RSCDEBUG(logger, "Adding connection " << connection);
+
     recursive_mutex::scoped_lock lock(this->mutex);
 
     this->connections.push_back(connection);
 }
 
 void Bus::removeConnection(BusConnectionPtr connection) {
+    RSCDEBUG(logger, "Removing connection " << connection);
+
     recursive_mutex::scoped_lock lock(this->mutex);
 
     this->connections.remove(connection);
