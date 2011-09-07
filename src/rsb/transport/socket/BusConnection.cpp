@@ -77,12 +77,15 @@ void BusConnection::sendEvent(EventPtr      event,
                      placeholders::bytes_transferred));
 }
 
-void BusConnection::handleReadLength(const system::error_code &/*error*/,
+void BusConnection::handleReadLength(const system::error_code &error,
                                      size_t                    bytesTransferred) {
-    /** TODO(jmoringe): handle errors */
-    if (bytesTransferred != 4) {
-        RSCWARN(logger, "Received incomplete message header");
-        /** TODO(jmoringe): close connection */
+    if (error || (bytesTransferred != 4)) {
+        RSCWARN(logger, "Receive failure (error " << error << ")"
+                << " or incomplete message header (received " << bytesTransferred << ")"
+                << "; closing connection");
+        this->socket->close();
+        this->bus->removeConnection(shared_from_this());
+        return;
     }
 
     uint32_t size
@@ -200,8 +203,12 @@ void BusConnection::fillNotification(protocol::Notification &notification,
 }
 
 void BusConnection::printContents(ostream &stream) const {
-    stream << "local = " << this->socket->local_endpoint()
-           << ", remote = " << this->socket->remote_endpoint();
+    try {
+        stream << "local = " << this->socket->local_endpoint()
+               << ", remote = " << this->socket->remote_endpoint();
+    } catch (...) {
+        stream << "<error printing socket info>";
+    }
 }
 
 }
