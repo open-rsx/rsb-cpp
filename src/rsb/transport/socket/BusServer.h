@@ -19,6 +19,13 @@
 
 #pragma once
 
+#include <boost/cstdint.hpp>
+
+#include <boost/shared_ptr.hpp>
+
+#include <boost/asio.hpp>
+#include <boost/asio/ip/tcp.hpp>
+
 #include <rsc/logging/Logger.h>
 
 #include "Bus.h"
@@ -28,28 +35,6 @@
 namespace rsb {
 namespace transport {
 namespace socket {
-
-class RSB_EXPORT Listener {
-public:
-    typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
-
-    Listener(Bus&                     bus,
-             boost::uint16_t          port,
-             boost::asio::io_service &service);
-
-private:
-    void acceptOne();
-
-    void handleAccept(SocketPtr                       socket,
-                      const boost::system::error_code &error);
-
-    rsc::logging::LoggerPtr         logger;
-
-    Bus&                            bus;
-
-    boost::asio::ip::tcp::acceptor  acceptor;
-    boost::asio::io_service        &service;
-};
 
 /**
  * Instances of this class provide access to a socket-based bus for
@@ -70,7 +55,17 @@ public:
               boost::asio::io_service &service);
 
 private:
-    Listener listener;
+    typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
+
+    rsc::logging::LoggerPtr         logger;
+
+    boost::asio::ip::tcp::acceptor  acceptor;
+    boost::asio::io_service        &service;
+
+    void acceptOne();
+
+    void handleAccept(SocketPtr                       socket,
+                      const boost::system::error_code &error);
 };
 
 typedef boost::shared_ptr<BusServer> BusServerPtr;

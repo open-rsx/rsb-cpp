@@ -32,45 +32,39 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-Listener::Listener(Bus        &bus,
-                   uint16_t    port,
-                   io_service &service)
-    : logger(Logger::getLogger("rsb.transport.socket.Listener")),
-      bus(bus),
+BusServer::BusServer(uint16_t    port,
+                     io_service &service)
+    : Bus(service),
+      logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
       service(service) {
     acceptOne();
 }
 
-void Listener::acceptOne() {
+void BusServer::acceptOne() {
     SocketPtr socket(new tcp::socket(this->service));
 
+    RSCINFO(logger, "Listening on " << this->acceptor.local_endpoint());
     acceptor.async_accept(*socket,
-                          boost::bind(&Listener::handleAccept, this, socket,
-                                      boost::asio::placeholders::error));
+                          bind(&BusServer::handleAccept, this, socket,
+                               placeholders::error));
 }
 
-void Listener::handleAccept(SocketPtr                 socket,
-                            const system::error_code &error) {
+void BusServer::handleAccept(SocketPtr                 socket,
+                             const system::error_code &error) {
     if (!error) {
         //
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
 
-        BusConnectionPtr connection(new BusConnection(this->bus.shared_from_this(), socket));
+        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket));
         connection->receiveEvent();
-        this->bus.addConnection(connection);
+        addConnection(connection);
     } else {
-        RSCWARN(logger, "Accept failure, trying to continue")
+        RSCWARN(logger, "Accept failure, trying to continue");
     }
 
     // Continue accepting connections.
     acceptOne();
-}
-
-BusServer::BusServer(uint16_t    port,
-                     io_service &service)
-    : Bus(service),
-      listener(*this, port, service) {
 }
 
 }
