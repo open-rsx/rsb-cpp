@@ -33,7 +33,7 @@ using namespace rsb;
 using namespace testing;
 
 void printEvent(EventPtr e) {
-    cout << "Event received: " << e->getId().getIdAsString() << endl;
+    cout << "Event received: " << e << endl;
 }
 
 void printData(boost::shared_ptr<string> e) {

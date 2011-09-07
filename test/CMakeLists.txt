@@ -44,6 +44,7 @@ ADD_TEST(${RSB_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${RSB_TEST_NAME} "--gtest_ou
 # --- core test ---
 
 SET(CORE_TEST_SOURCES rsbtest_core.cpp
+                      rsb/EventIdTest.cpp
                       rsb/FactoryTest.cpp
                       rsb/HandlerTest.cpp
                       rsb/LocalServiceTest.cpp

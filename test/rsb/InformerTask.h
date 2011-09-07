@@ -55,6 +55,7 @@ private:
     rsb::transport::OutConnectorPtr port;
     std::vector<EventPtr> events;
     boost::shared_ptr<std::string> data;
+    rsc::misc::UUID id;
 
 };
 

@@ -172,7 +172,8 @@ RemoteServer::FuturePtr RemoteServer::callAsync(const string &methodName, EventP
         data->setMethod("REQUEST");
         methodSet.requestInformer->publish(data);
         result.reset(new Future<EventPtr>());
-        methodSet.handler->addCall(data->getId().getIdAsString(), result);
+        methodSet.handler->addCall(
+                data->getEventId().getAsUUID().getIdAsString(), result);
     }
 
     return result;

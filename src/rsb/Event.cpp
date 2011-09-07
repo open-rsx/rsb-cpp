@@ -24,6 +24,7 @@
 #include <boost/format.hpp>
 
 #include <rsc/runtime/ContainerIO.h>
+#include <rsc/misc/IllegalStateException.h>
 
 using namespace std;
 using namespace boost;
@@ -35,12 +36,13 @@ Event::Event() {
 
 Event::Event(ScopePtr scope, boost::shared_ptr<void> payload,
         const string &type, const string &method) :
-    scope(scope), content(payload), type(type), method(method) {
+        scope(scope), content(payload), type(type), method(method) {
 }
 
-Event::Event(Scope scope, boost::shared_ptr<void> payload,
-        const string &type, const string &method) :
-    scope(ScopePtr(new Scope(scope))), content(payload), type(type), method(method) {
+Event::Event(Scope scope, boost::shared_ptr<void> payload, const string &type,
+        const string &method) :
+        scope(ScopePtr(new Scope(scope))), content(payload), type(type), method(
+                method) {
 }
 
 Event::~Event() {
@@ -51,25 +53,36 @@ string Event::getClassName() const {
 }
 
 void Event::printContents(ostream &stream) const {
-    stream << "id = " << getId().getIdAsString() << " type = " << type
-            << " scope = " << scope << ", metaData = " << metaData;
+    stream << "id = ";
+    if (id) {
+        stream << id;
+    } else {
+        stream << "UNSPECIFIED";
+    }
+    stream << ", type = " << type << ", scope = " << scope << ", metaData = "
+            << metaData;
 }
 
 boost::uint64_t Event::getSequenceNumber() const {
-    return this->sequenceNumber;
-}
-
-void Event::setSequenceNumber(boost::uint64_t number) {
-    this->sequenceNumber = number;
-    this->id.reset();
+    return getEventId().getSequenceNumber();
 }
 
 rsc::misc::UUID Event::getId() const {
-    if (!this->id) {
-        this->id.reset(new rsc::misc::UUID(this->metaData.getSenderId(),
-                                           str(format("%1$08x") % this->sequenceNumber)));
+    return getEventId().getAsUUID();
+}
+
+EventId Event::getEventId() const {
+    if (!id) {
+        throw rsc::misc::IllegalStateException(
+                "The event does not contain id information.");
     }
-    return *this->id;
+    return *id;
+}
+
+void Event::setEventId(const rsc::misc::UUID &senderId,
+        const boost::uint32_t &sequenceNumber) {
+    id.reset(new EventId(senderId, sequenceNumber));
+    metaData.setSenderId(senderId);
 }
 
 void Event::setScope(ScopePtr s) {

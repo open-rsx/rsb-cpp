@@ -148,7 +148,7 @@ TEST_P(RoundtripTest, testRoundtrip)
         EventPtr sent = source->events[i];
         EventPtr received = receivedEvents[i];
 
-        EXPECT_EQ(sent->getId(), received->getId());
+        EXPECT_EQ(sent->getEventId(), received->getEventId());
         EXPECT_EQ(sent->getType(), received->getType());
         EXPECT_EQ(*(boost::static_pointer_cast<string>(sent->getData())), *(boost::static_pointer_cast<string>(received->getData())));
 

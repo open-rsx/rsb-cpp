@@ -119,9 +119,11 @@ void BusConnection::handleReadBody(const system::error_code &/*error*/,
     metaData.setCreateTime(this->notification.meta_data().create_time());
     metaData.setSendTime(this->notification.meta_data().send_time());
     metaData.setReceiveTime(rsc::misc::currentTimeMicros());
-    metaData.setSenderId(rsc::misc::UUID((boost::uint8_t*) this->notification.sender_id().c_str()));
 
-    event->setSequenceNumber(this->notification.sequence_number());
+    event->setEventId(
+            rsc::misc::UUID(
+                    (boost::uint8_t*) this->notification.sender_id().c_str()),
+            notification.sequence_number());
     event->setScope(ScopePtr(new Scope(this->notification.scope())));
     if (this->notification.has_method()) {
         event->setMethod(this->notification.method());

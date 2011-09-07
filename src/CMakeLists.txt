@@ -19,6 +19,7 @@ CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @O
 
 SET(SOURCES rsb/CommException.cpp
             rsb/Event.cpp
+            rsb/EventId.cpp
             rsb/Exception.cpp
             rsb/Factory.cpp
             rsb/CreateFunctions.cpp
@@ -110,6 +111,7 @@ SET(SOURCES rsb/CommException.cpp
 
 SET(HEADERS rsb/CommException.h
             rsb/Event.h
+            rsb/EventId.h
             rsb/Exception.h
             rsb/Factory.h
             rsb/CreateFunctions.h

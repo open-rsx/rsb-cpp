@@ -110,8 +110,7 @@ void InformerBase::checkedPublish(EventPtr event) {
 }
 
 void InformerBase::uncheckedPublish(EventPtr event) {
-    event->setSequenceNumber(nextSequenceNumber());
-    event->mutableMetaData().setSenderId(getId());
+    event->setEventId(getId(), nextSequenceNumber());
     configurator->publish(event);
 }
 

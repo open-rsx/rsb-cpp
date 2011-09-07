@@ -76,7 +76,7 @@ public:
         returnEvent->setScope(informer->getScope());
         returnEvent->setMethod("REPLY");
         returnEvent->mutableMetaData()
-            .setUserInfo("rsb:reply", event->getId().getIdAsString());
+            .setUserInfo("rsb:reply", event->getEventId().getAsUUID().getIdAsString());
         try {
             VoidPtr returnData
                 = callback->intlCall(methodName, event->getData());

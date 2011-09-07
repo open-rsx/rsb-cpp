@@ -75,6 +75,7 @@ TEST_P(ConnectorTest, testSendLongGroupNames)
     e->setScope(longScope);
     e->setType(rsc::runtime::typeName<string>());
     e->setData(boost::shared_ptr<string>(new string("fooo")));
+    e->setEventId(rsc::misc::UUID(), 2323);
     out->handle(e);
 
 }
@@ -89,6 +90,7 @@ TEST_P(ConnectorTest, testSetSendTime)
     e->setScope(Scope("/random/useless/scope"));
     e->setType(rsc::runtime::typeName<string>());
     e->setData(boost::shared_ptr<string>(new string("fooo")));
+    e->setEventId(rsc::misc::UUID(), 2323);
 
     boost::uint64_t beforeSend = rsc::misc::currentTimeMicros();
     out->handle(e);
@@ -181,7 +183,7 @@ TEST_P(ConnectorTest, testHierarchySending)
         for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
             EventPtr sent = source->getEvents()[i];
             EventPtr received = observer->getEvents()[i];
-            EXPECT_EQ(sent->getId(), received->getId());
+            EXPECT_EQ(sent->getEventId(), received->getEventId());
             EXPECT_EQ(sent->getType(), received->getType());
             EXPECT_EQ(*sent->getScope(), *received->getScope());
         }
@@ -238,7 +240,7 @@ TEST_P(ConnectorTest, testRoundtrip)
             for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
                 EventPtr sent = source->getEvents()[i];
                 EventPtr received = observer.getEvents()[i];
-                EXPECT_EQ(sent->getId(), received->getId()) << "Error matching event id for index " << i << " and message size " << *sizeIt;
+                EXPECT_EQ(sent->getEventId(), received->getEventId()) << "Error matching event id for index " << i << " and message size " << *sizeIt;
                 EXPECT_EQ(sent->getType(), received->getType()) << "Error matching event type for index " << i << " and message size " << *sizeIt;
                 EXPECT_EQ(*sent->getScope(), *received->getScope()) << "Error matching event scope for index " << i << " and message size " << *sizeIt;
 
