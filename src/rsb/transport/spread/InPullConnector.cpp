@@ -90,7 +90,7 @@ void InPullConnector::setScope(const Scope &scope) {
     }
 }
 
-EventPtr InPullConnector::emit(bool block) {
+EventPtr InPullConnector::raiseEvent(bool block) {
     SpreadMessagePtr message(new SpreadMessage());
     if (block) {
         this->connector->receive(message);

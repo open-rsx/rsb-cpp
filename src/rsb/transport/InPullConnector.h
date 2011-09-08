@@ -45,7 +45,7 @@ public:
 
     virtual ~InPullConnector();
 
-    virtual EventPtr emit(bool block) = 0;
+    virtual EventPtr raiseEvent(bool block) = 0;
 };
 
 typedef InPullConnector::Ptr InPullConnectorPtr;
