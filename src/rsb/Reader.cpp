@@ -47,7 +47,7 @@ EventPtr Reader::read(bool block) {
     PullEventReceivingStrategyPtr strategy
         = dynamic_pointer_cast<PullEventReceivingStrategy>(this->configurator->getEventReceivingStrategy());
     assert(strategy);
-    return strategy->emit(block);
+    return strategy->raiseEvent(block);
 }
 
 string Reader::getClassName() const {

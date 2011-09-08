@@ -55,7 +55,7 @@ public:
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 
-    EventPtr emit(bool block);
+    EventPtr raiseEvent(bool block);
 
     static transport::InPullConnector *create(const rsc::runtime::Properties &args);
 private:

@@ -202,7 +202,7 @@ ParticipantConfig ParticipantConfig::fromFile(const path &path,
     boost::filesystem::ifstream stream(path);
     if (stream) {
         RSCDEBUG(logger, "Stream is open; proceeding");
-        ConfigFileSource(stream).emit(result);
+        ConfigFileSource(stream).provideOptions(result);
     } else {
         RSCDEBUG(logger, "Could not open file");
     }
@@ -213,7 +213,7 @@ ParticipantConfig ParticipantConfig::fromFile(const path &path,
 ParticipantConfig ParticipantConfig::fromEnvironment(
         const ParticipantConfig &defaults) {
     ParticipantConfig result = defaults;
-    EnvironmentVariableSource("RSB_").emit(result);
+    EnvironmentVariableSource("RSB_").provideOptions(result);
     return result;
 }
 

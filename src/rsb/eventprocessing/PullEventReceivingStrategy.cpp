@@ -41,13 +41,13 @@ void PullEventReceivingStrategy::removeFilter(FilterPtr filter) {
     this->filters.erase(filter);
 }
 
-EventPtr PullEventReceivingStrategy::emit(bool block) {
+EventPtr PullEventReceivingStrategy::raiseEvent(bool block) {
     // Go through our connectors and ask them to emit an event. If one
     // connector does emit an event, our handle method gets called and
     // may store the event if it matches our filters.
     for (ConnectorSet::iterator it = this->connectors.begin();
          it != this->connectors.end(); ++it) {
-        if ((*it)->emit(block)) {
+        if ((*it)->raiseEvent(block)) {
             if (this->currentEvent) {
                 EventPtr result = this->currentEvent;
                 this->currentEvent.reset();

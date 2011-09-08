@@ -62,7 +62,7 @@ public:
      *
      * @return A pointer to the received event.
      */
-    EventPtr emit(bool block);
+    EventPtr raiseEvent(bool block);
 
     /**
      * This method is called by @ref rsb::transport::InPullConnector s
