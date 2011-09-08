@@ -81,19 +81,23 @@ void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
     this->connector->setQualityOfServiceSpecs(specs);
 }
 
+void OutConnector::fillEventId(protocol::EventId &id, const EventId &realId) {
+    boost::uuids::uuid uuid = realId.getParticipantId().getId();
+    id.set_sender_id(uuid.data, uuid.size());
+    id.set_sequence_number(realId.getSequenceNumber());
+}
+
 void OutConnector::fillNotification(protocol::Notification &notification,
         const EventPtr &event, const string &wireSchema,
         const unsigned int &numDataParts, const unsigned int &dataPart,
         const string &data) {
 
-    notification.set_sequence_number(event->getSequenceNumber());
+    fillEventId(*(notification.mutable_event_id()), event->getEventId());
     notification.set_scope(event->getScope()->toString());
     if (!event->getMethod().empty()) {
         notification.set_method(event->getMethod());
     }
     notification.set_wire_schema(wireSchema);
-    notification.set_sender_id(event->getMetaData().getSenderId().getId().data,
-            event->getMetaData().getSenderId().getId().size());
     notification.mutable_meta_data()->set_create_time(
             event->getMetaData().getCreateTime());
     notification.mutable_meta_data()->set_send_time(
@@ -113,6 +117,10 @@ void OutConnector::fillNotification(protocol::Notification &notification,
                 notification.mutable_meta_data()->mutable_user_times()->Add();
         info->set_key(it->first);
         info->set_timestamp(it->second);
+    }
+    set<EventId> causes = event->getCauses();
+    for (set<EventId>::const_iterator causeIt = causes.begin(); causeIt != causes.end(); ++causeIt) {
+        fillEventId(*(notification.add_causes()), *causeIt);
     }
     notification.set_num_data_parts(numDataParts);
     notification.set_data_part(dataPart);

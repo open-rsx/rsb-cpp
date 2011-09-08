@@ -122,8 +122,8 @@ void BusConnection::handleReadBody(const system::error_code &/*error*/,
 
     event->setEventId(
             rsc::misc::UUID(
-                    (boost::uint8_t*) this->notification.sender_id().c_str()),
-            notification.sequence_number());
+                    (boost::uint8_t*) this->notification.event_id().sender_id().c_str()),
+            notification.event_id().sequence_number());
     event->setScope(ScopePtr(new Scope(this->notification.scope())));
     if (this->notification.has_method()) {
         event->setMethod(this->notification.method());
@@ -169,15 +169,16 @@ void BusConnection::fillNotification(protocol::Notification &notification,
                                      const string           &data) {
     // The payload has already been serialized by the connector which
     // submitted the event.
-    notification.set_sequence_number(event->getSequenceNumber());
+    notification.mutable_event_id()->set_sender_id(
+        event->getMetaData().getSenderId().getId().data,
+        event->getMetaData().getSenderId().getId().size());
+    notification.mutable_event_id()->set_sequence_number(
+            event->getEventId().getSequenceNumber());
     notification.set_scope(event->getScope()->toString());
     if (!event->getMethod().empty()) {
         notification.set_method(event->getMethod());
     }
     notification.set_wire_schema(wireSchema);
-    notification.set_sender_id(
-        event->getMetaData().getSenderId().getId().data,
-        event->getMetaData().getSenderId().getId().size());
     notification.mutable_meta_data()->set_create_time(
         event->getMetaData().getCreateTime());
     notification.mutable_meta_data()->set_send_time(

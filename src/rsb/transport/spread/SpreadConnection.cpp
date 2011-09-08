@@ -73,46 +73,40 @@ void SpreadConnection::activate() {
     if (ret != ACCEPT_SESSION) {
         switch (ret) {
         case ILLEGAL_SPREAD:
-            RSCFATAL(logger,
-                    "spread connect error: connection to spread daemon at "
-                    << spreadhost
-                    << " failed, check port and hostname")
-            ;
+            RSCFATAL(
+                    logger,
+                    "spread connect error: connection to spread daemon at " << spreadhost << " failed, check port and hostname");
             break;
         case COULD_NOT_CONNECT:
-            RSCFATAL(logger,
-                    "spread connect error: connection to spread daemon failed due to socket errors")
-            ;
+            RSCFATAL(
+                    logger,
+                    "spread connect error: connection to spread daemon failed due to socket errors");
             break;
         case CONNECTION_CLOSED:
             RSCFATAL(
                     logger,
-                    "spread connect error: communication errors occurred during setup of connection")
-            ;
+                    "spread connect error: communication errors occurred during setup of connection");
+            break;
         case REJECT_VERSION:
             RSCFATAL(logger,
-                    "spread connect error: daemon or library version mismatch")
-            ;
+                    "spread connect error: daemon or library version mismatch");
             break;
         case REJECT_NO_NAME:
             RSCFATAL(logger,
-                    "spread connect error: protocol error during setup")
-            ;
+                    "spread connect error: protocol error during setup");
             break;
         case REJECT_ILLEGAL_NAME:
             RSCFATAL(
                     logger,
-                    "spread connect error: name provided violated requirement, length or illegal character")
-            ;
+                    "spread connect error: name provided violated requirement, length or illegal character");
             break;
         case REJECT_NOT_UNIQUE:
-            RSCFATAL(logger,
-                    "spread connect error: name provided is not unique on this daemon")
-            ;
+            RSCFATAL(
+                    logger,
+                    "spread connect error: name provided is not unique on this daemon");
             break;
         default:
-            RSCFATAL(logger, "unknown spread connect error, value: " << ret)
-            ;
+            RSCFATAL(logger, "unknown spread connect error, value: " << ret);
         }
         SP_error(ret);
         throw CommException("Error during connection to spread daemon");

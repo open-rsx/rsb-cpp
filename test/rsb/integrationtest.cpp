@@ -99,6 +99,9 @@ private:
 };
 
 class RoundtripTest: public ::testing::TestWithParam<string> {
+public:
+    virtual ~RoundtripTest() {
+    }
 };
 
 

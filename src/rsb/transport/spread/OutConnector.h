@@ -72,6 +72,8 @@ private:
             const unsigned int &numDataParts, const unsigned int &dataPart,
             const std::string &data);
 
+    void fillEventId(protocol::EventId &id, const EventId &realId);
+
     rsc::logging::LoggerPtr logger;
     bool active;
     SpreadConnectorPtr connector;

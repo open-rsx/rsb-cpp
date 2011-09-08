@@ -113,6 +113,22 @@ void Event::setType(const string &t) {
     type = t;
 }
 
+bool Event::addCause(const EventId &id) {
+    return causes.insert(id).second;
+}
+
+bool Event::removeCause(const EventId &id) {
+    return causes.erase(id) > 0;
+}
+
+bool Event::isCause(const EventId &id) const {
+    return causes.count(id) > 0;
+}
+
+set<EventId> Event::getCauses() const {
+    return causes;
+}
+
 string Event::getMethod() const {
     return method;
 }

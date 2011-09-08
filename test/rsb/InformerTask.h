@@ -24,6 +24,7 @@
 
 #include <rsc/threading/RepetitiveTask.h>
 
+#include "rsb/Event.h"
 #include "rsb/transport/OutConnector.h"
 
 namespace rsb {
@@ -52,7 +53,7 @@ private:
     unsigned int numEvents;
     unsigned int dataSizeInBytes;
     unsigned int sentEvents;
-    rsb::transport::OutConnectorPtr port;
+    rsb::transport::OutConnectorPtr connector;
     std::vector<EventPtr> events;
     boost::shared_ptr<std::string> data;
     rsc::misc::UUID id;

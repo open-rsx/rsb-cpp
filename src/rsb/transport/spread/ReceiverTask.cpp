@@ -75,7 +75,7 @@ void ReceiverTask::execute() {
         if (!notification->ParseFromString(message->getDataAsString())) {
             throw CommException("Failed to parse notification in pbuf format");
         }
-        RSCTRACE(logger, "Parsed event seqnum: " << notification->sequence_number());
+        RSCTRACE(logger, "Parsed event seqnum: " << notification->event_id().sequence_number());
         RSCTRACE(logger, "Binary length: " << notification->data().length());
         RSCTRACE(logger, "Number of split message parts: " << notification->num_data_parts());
         RSCTRACE(logger, "... received message part    : " << notification->data_part());
@@ -122,7 +122,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     e->mutableMetaData().setSendTime(notification->meta_data().send_time());
     e->mutableMetaData().setReceiveTime(rsc::misc::currentTimeMicros());
     e->setEventId(rsc::misc::UUID(
-            (boost::uint8_t*) notification->sender_id().c_str()), notification->sequence_number());
+            (boost::uint8_t*) notification->event_id().sender_id().c_str()), notification->event_id().sequence_number());
 
     e->setScope(ScopePtr(new Scope(notification->scope())));
     if (notification->has_method()) {
@@ -138,6 +138,14 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
         e->mutableMetaData().setUserTime(
                 notification->meta_data().user_times(i).key(),
                 notification->meta_data().user_times(i).timestamp());
+    }
+    for (int i = 0; i < notification->causes_size(); ++i) {
+        protocol::EventId cause = notification->causes(i);
+        e->addCause(
+                EventId(
+                        rsc::misc::UUID(
+                                (boost::uint8_t*) cause.sender_id().c_str()),
+                        cause.sequence_number()));
     }
 
     // TODO error handling

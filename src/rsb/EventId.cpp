@@ -33,6 +33,10 @@ EventId::EventId(const rsc::misc::UUID &participantId,
 EventId::~EventId() {
 }
 
+rsc::misc::UUID EventId::getParticipantId() const {
+    return participantId;
+}
+
 boost::uint32_t EventId::getSequenceNumber() const {
     return sequenceNumber;
 }

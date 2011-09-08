@@ -49,27 +49,23 @@ using namespace rsb::spread;
 using namespace testing;
 using namespace rsc::threading;
 
-TEST_P(ConnectorTest, testConstruction)
-{
-    ASSERT_NO_THROW(GetParam().createInConnector())
-;        ASSERT_NO_THROW(GetParam().createOutConnector());
-    }
+TEST_P(ConnectorTest, testConstruction) {
+    ASSERT_NO_THROW(GetParam().createInConnector());
+    ASSERT_NO_THROW(GetParam().createOutConnector());
+}
 
-TEST_P(ConnectorTest, testConnection)
-{
-    ASSERT_NO_THROW(GetParam().createInConnector()->activate())
-;        //ASSERT_NO_THROW(GetParam().createOutConnector()->activate());
-    }
+TEST_P(ConnectorTest, testConnection) {
+    ASSERT_NO_THROW(GetParam().createInConnector()->activate());
+    //ASSERT_NO_THROW(GetParam().createOutConnector()->activate());
+}
 
-TEST_P(ConnectorTest, testSendLongGroupNames)
-{
+TEST_P(ConnectorTest, testSendLongGroupNames) {
 
     OutConnectorPtr out = GetParam().createOutConnector();
     out->activate();
 
-    Scope
-            longScope(
-                    "/this/is/a/very/long/scope/which/will/not/fit/into/thirty/two/chars");
+    Scope longScope(
+            "/this/is/a/very/long/scope/which/will/not/fit/into/thirty/two/chars");
 
     EventPtr e(new Event());
     e->setScope(longScope);
@@ -80,8 +76,7 @@ TEST_P(ConnectorTest, testSendLongGroupNames)
 
 }
 
-TEST_P(ConnectorTest, testSetSendTime)
-{
+TEST_P(ConnectorTest, testSetSendTime) {
 
     OutConnectorPtr out = GetParam().createOutConnector();
     out->activate();
@@ -96,17 +91,13 @@ TEST_P(ConnectorTest, testSetSendTime)
     out->handle(e);
     boost::uint64_t afterSend = rsc::misc::currentTimeMicros();
 
-    EXPECT_NE(boost::uint64_t(0), e->getMetaData().getSendTime())
-        ;
-    EXPECT_GE(e->getMetaData().getSendTime(), beforeSend)
-        ;
-    EXPECT_LE(e->getMetaData().getSendTime(), afterSend)
-        ;
+    EXPECT_NE(boost::uint64_t(0), e->getMetaData().getSendTime());
+    EXPECT_GE(e->getMetaData().getSendTime(), beforeSend);
+    EXPECT_LE(e->getMetaData().getSendTime(), afterSend);
 
 }
 
-TEST_P(ConnectorTest, testHierarchySending)
-{
+TEST_P(ConnectorTest, testHierarchySending) {
 
     const unsigned int numEvents = 10;
     const Scope sendScope("/this/is/a/long/test");
@@ -121,8 +112,8 @@ TEST_P(ConnectorTest, testHierarchySending)
     vector<InConnectorPtr> inConnectors;
 
     vector<Scope> receiveScopes = sendScope.superScopes(true);
-    for (vector<Scope>::const_iterator receiveScopeIt = receiveScopes.begin(); receiveScopeIt
-            != receiveScopes.end(); ++receiveScopeIt) {
+    for (vector<Scope>::const_iterator receiveScopeIt = receiveScopes.begin();
+            receiveScopeIt != receiveScopes.end(); ++receiveScopeIt) {
 
         Scope receiveScope = *receiveScopeIt;
 
@@ -142,8 +133,8 @@ TEST_P(ConnectorTest, testHierarchySending)
         in->addHandler(
                 HandlerPtr(
                         new EventFunctionHandler(
-                                boost::bind(&WaitingObserver::handler,
-                                        observer, _1))));
+                                boost::bind(&WaitingObserver::handler, observer,
+                                        _1))));
         observers.push_back(observer);
 
         inConnectors.push_back(in);
@@ -166,14 +157,14 @@ TEST_P(ConnectorTest, testHierarchySending)
 
         boost::shared_ptr<WaitingObserver> observer = *observerIt;
         bool ok = observer->waitReceived(40000);
-        ASSERT_TRUE(ok)
-            << "Observer on scope " << observer -> getScope ( )
-            << " did not receive events.";
+        ASSERT_TRUE(ok) << "Observer on scope " << observer->getScope()
+                        << " did not receive events.";
 
-            // the root observer will get all events, also the garbage created by
-                    // the informer task...
-                    if (observer->getScope() == Scope("/")) {
-                        ASSERT_EQ(source->getEvents().size() * 2, observer->getEvents().size());
+        // the root observer will get all events, also the garbage created by
+        // the informer task...
+        if (observer->getScope() == Scope("/")) {
+            ASSERT_EQ(source->getEvents().size() * 2,
+                    observer->getEvents().size());
             continue;
         }
 
@@ -190,10 +181,9 @@ TEST_P(ConnectorTest, testHierarchySending)
 
     }
 
-        }
+}
 
-TEST_P(ConnectorTest, testRoundtrip)
-{
+TEST_P(ConnectorTest, testRoundtrip) {
 
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
@@ -208,59 +198,71 @@ TEST_P(ConnectorTest, testRoundtrip)
     sizes.push_back(1000);
     sizes.push_back(100000);
     sizes.push_back(350000);
-    for (vector<unsigned int>::const_iterator sizeIt = sizes.begin(); sizeIt
-            != sizes.end(); ++sizeIt) {
+    for (vector<unsigned int>::const_iterator sizeIt = sizes.begin();
+            sizeIt != sizes.end(); ++sizeIt) {
 
         // in connector
         InPushConnectorPtr in = GetParam().createInConnector();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(scope);
-        ASSERT_NO_THROW(in->activate())
-;            OutConnectorPtr out = GetParam().createOutConnector();
-            out->setQualityOfServiceSpecs(qosSpecs);
-            ASSERT_NO_THROW(out->activate());
+        ASSERT_NO_THROW(in->activate());
+        OutConnectorPtr out = GetParam().createOutConnector();
+        out->setQualityOfServiceSpecs(qosSpecs);
+        ASSERT_NO_THROW(out->activate());
 
-            boost::uint64_t sendTime = rsc::misc::currentTimeMicros();
+        boost::uint64_t sendTime = rsc::misc::currentTimeMicros();
 
-            // domain objects
-            const unsigned int numEvents = 100;
-            boost::shared_ptr<InformerTask> source(new InformerTask(out, scope, numEvents, *sizeIt));
-            WaitingObserver observer(numEvents, scope);
-            in->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(&WaitingObserver::handler, &observer, _1))));
+        // domain objects
+        const unsigned int numEvents = 100;
+        boost::shared_ptr<InformerTask> source(
+                new InformerTask(out, scope, numEvents, *sizeIt));
+        WaitingObserver observer(numEvents, scope);
+        in->addHandler(
+                HandlerPtr(
+                        new EventFunctionHandler(
+                                boost::bind(&WaitingObserver::handler,
+                                        &observer, _1))));
 
-            // activate port and schedule informer
-            exec->schedule(source);
+        // activate port and schedule informer
+        exec->schedule(source);
 
-            observer.waitReceived();
-            source->waitDone();
+        observer.waitReceived();
+        source->waitDone();
 
-            // compare sent and received events
-            // ordering must be always correct, because we use appropriate QoS settings
-            ASSERT_EQ(source->getEvents().size(), observer.getEvents().size()) << "Roundtrip produced a different number of received messages than sent for message size " << *sizeIt;
-            for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
-                EventPtr sent = source->getEvents()[i];
-                EventPtr received = observer.getEvents()[i];
-                EXPECT_EQ(sent->getEventId(), received->getEventId()) << "Error matching event id for index " << i << " and message size " << *sizeIt;
-                EXPECT_EQ(sent->getType(), received->getType()) << "Error matching event type for index " << i << " and message size " << *sizeIt;
-                EXPECT_EQ(*sent->getScope(), *received->getScope()) << "Error matching event scope for index " << i << " and message size " << *sizeIt;
+        // compare sent and received events
+        // ordering must be always correct, because we use appropriate QoS settings
+        ASSERT_EQ(source->getEvents().size(), observer.getEvents().size()) << "Roundtrip produced a different number of received messages than sent for message size " << *sizeIt;
+        for (unsigned int i = 0; i < source->getEvents().size(); ++i) {
+            EventPtr sent = source->getEvents()[i];
+            EventPtr received = observer.getEvents()[i];
+            EXPECT_EQ(sent->getEventId(), received->getEventId()) << "Error matching event id for index " << i << " and message size " << *sizeIt;
+            EXPECT_EQ(sent->getType(), received->getType()) << "Error matching event type for index " << i << " and message size " << *sizeIt;
+            EXPECT_EQ(*sent->getScope(), *received->getScope()) << "Error matching event scope for index " << i << " and message size " << *sizeIt;
 
-                // meta data
-                EXPECT_EQ(sent->getMetaData().getSenderId(), received->getMetaData().getSenderId());
+            // causes
+            EXPECT_EQ(sent->getCauses(), received->getCauses());
 
-                EXPECT_GE(received->getMetaData().getCreateTime(), sendTime);
-                EXPECT_LE(received->getMetaData().getCreateTime(), rsc::misc::currentTimeMicros());
+            // meta data
+            EXPECT_EQ(sent->getMetaData().getSenderId(),
+                    received->getMetaData().getSenderId());
 
-                EXPECT_GE(received->getMetaData().getSendTime(), sendTime);
-                EXPECT_LE(received->getMetaData().getSendTime(), rsc::misc::currentTimeMicros());
-                EXPECT_GE(received->getMetaData().getSendTime(),
-                        received->getMetaData().getCreateTime());
+            EXPECT_GE(received->getMetaData().getCreateTime(), sendTime);
+            EXPECT_LE(received->getMetaData().getCreateTime(),
+                    rsc::misc::currentTimeMicros());
 
-                EXPECT_GE(received->getMetaData().getReceiveTime(), sendTime);
-                EXPECT_LE(received->getMetaData().getReceiveTime(), rsc::misc::currentTimeMicros());
-                EXPECT_GE(received->getMetaData().getReceiveTime(),
-                        received->getMetaData().getSendTime());
-            }
+            EXPECT_GE(received->getMetaData().getSendTime(), sendTime);
+            EXPECT_LE(received->getMetaData().getSendTime(),
+                    rsc::misc::currentTimeMicros());
+            EXPECT_GE(received->getMetaData().getSendTime(),
+                    received->getMetaData().getCreateTime());
 
+            EXPECT_GE(received->getMetaData().getReceiveTime(), sendTime);
+            EXPECT_LE(received->getMetaData().getReceiveTime(),
+                    rsc::misc::currentTimeMicros());
+            EXPECT_GE(received->getMetaData().getReceiveTime(),
+                    received->getMetaData().getSendTime());
         }
 
     }
+
+}

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -71,7 +72,10 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;
 
-    boost::uint64_t getSequenceNumber() const;
+    /**
+     * @deprecated use #getEventId instead to access the sequence number.
+     */
+    DEPRECATED(boost::uint64_t getSequenceNumber() const);
 
     /**
      * Returns a UUID for the event. This is now generated using the sending
@@ -113,6 +117,61 @@ public:
 
     VoidPtr getData();
     void setData(VoidPtr d);
+
+    /**
+     * Events are often caused by other events, which e.g. means that their
+     * contained payload was calculated on the payload of one or more other
+     * events.
+     *
+     * To express these relations each event contains a set of EventIds that
+     * express the direct causes of the event. This means, transitive event
+     * causes are not modeled.
+     *
+     * Cause handling is inspired by the ideas proposed in:
+     * David Luckham, The Power of Events, Addison-Wessley, 2007
+     *
+     * @name cause handling
+     */
+    //@{
+
+    /**
+     * Adds the id of one event to the causes of this event. If the set of
+     * causing events already contained the given id, this call has no effect.
+     *
+     * @param id the id of a causing event
+     * @return @c true if the causes was added, @c false if it already existed
+     */
+    bool addCause(const EventId &id);
+
+    /**
+     * Removes a causing event from the set of causes for this event. If the
+     * id was not contained in this set, the call has no effect.
+     *
+     * @param id of the causing event
+     * @return @c true if an event with this id was removed from the causes,
+     *         else @c false
+     */
+    bool removeCause(const EventId &id);
+
+    /**
+     * Tells whether the id of one event is already marked as a cause of this
+     * event.
+     *
+     * @param id id of the event to test causality for
+     * @return @c true if @p id is marked as a cause for this event, else
+     *         @c false
+     */
+    bool isCause(const EventId &id) const;
+
+    /**
+     * Returns all causing events marked so far.
+     *
+     * @return set of causing event ids. Modifications to this set do not affect
+     *         this event as it is a copy.
+     */
+    std::set<EventId> getCauses() const;
+
+    //@}
 
     /**
      * Returns the method associated with this event. An empty string indicates
@@ -158,6 +217,7 @@ public:
     //@}
 
 private:
+
     EventIdPtr id;
     ScopePtr scope;
 
@@ -167,6 +227,8 @@ private:
     std::string type;
 
     std::string method;
+
+    std::set<EventId> causes;
 
     MetaData metaData;
 

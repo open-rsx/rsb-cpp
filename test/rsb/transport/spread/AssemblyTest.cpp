@@ -50,7 +50,7 @@ TEST(AssemblyTest, testAssembly)
     protocol::NotificationPtr initialNotification(new protocol::Notification);
 
     boost::uint32_t seqnum = 0;
-    initialNotification->set_sequence_number(seqnum);
+    initialNotification->mutable_event_id()->set_sequence_number(seqnum);
 
     const string initialString = rsc::misc::randAlnumStr(10);
     initialNotification->set_data(initialString);
@@ -70,20 +70,17 @@ TEST(AssemblyTest, testAssembly)
         newNotification->set_data(newString);
         containedData << newString;
 
-        newNotification->set_sequence_number(seqnum);
+        newNotification->mutable_event_id()->set_sequence_number(seqnum);
         newNotification->set_num_data_parts(dataParts);
         newNotification->set_data_part(i);
 
         assembly.add(newNotification);
 
         if (i == (dataParts - 1)) {
-            EXPECT_TRUE(assembly.isComplete())
-                ;
-            EXPECT_EQ(containedData.str(), *(assembly.getCompleteData()))
-                ;
+            EXPECT_TRUE(assembly.isComplete());
+            EXPECT_EQ(containedData.str(), *(assembly.getCompleteData()));
         } else {
-            EXPECT_FALSE(assembly.isComplete())
-                ;
+            EXPECT_FALSE(assembly.isComplete());
         }
 
     }
@@ -96,7 +93,7 @@ TEST(AssemblyTest, testAge)
     protocol::NotificationPtr initialNotification(new protocol::Notification);
 
     boost::uint32_t seqnum = 0;
-    initialNotification->set_sequence_number(seqnum);
+    initialNotification->mutable_event_id()->set_sequence_number(seqnum);
 
     const string initialString = rsc::misc::randAlnumStr(10);
     initialNotification->set_data(initialString);
@@ -105,13 +102,10 @@ TEST(AssemblyTest, testAge)
     initialNotification->set_num_data_parts(dataParts);
     initialNotification->set_data_part(0);
     Assembly assembly(initialNotification);
-    EXPECT_LT(assembly.age(), (unsigned int) 1)
-        ;
+    EXPECT_LT(assembly.age(), (unsigned int) 1);
     boost::this_thread::sleep(boost::posix_time::seconds(3));
-    EXPECT_GE(assembly.age(), (unsigned int) 3)
-        ;
-    EXPECT_LE(assembly.age(), (unsigned int) 5)
-        ;
+    EXPECT_GE(assembly.age(), (unsigned int) 3);
+    EXPECT_LE(assembly.age(), (unsigned int) 5);
 
 }
 
@@ -126,7 +120,7 @@ TEST(AssemblyPoolTest, testAssembly)
                 new protocol::Notification);
 
         boost::uint32_t seqnum = 0;
-        initialNotification->set_sequence_number(seqnum);
+        initialNotification->mutable_event_id()->set_sequence_number(seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
         initialNotification->set_data(initialString);
@@ -135,10 +129,8 @@ TEST(AssemblyPoolTest, testAssembly)
         initialNotification->set_data_part(0);
 
         boost::shared_ptr<string> result = pool.add(initialNotification);
-        ASSERT_TRUE(result)
-            ;
-        EXPECT_EQ(initialString, *result)
-            ;
+        ASSERT_TRUE(result);
+        EXPECT_EQ(initialString, *result);
 
     }
 
@@ -151,7 +143,7 @@ TEST(AssemblyPoolTest, testAssembly)
                 new protocol::Notification);
 
         boost::uint32_t seqnum = 0;
-        initialNotification->set_sequence_number(seqnum);
+        initialNotification->mutable_event_id()->set_sequence_number(seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
         initialNotification->set_data(initialString);
@@ -160,8 +152,7 @@ TEST(AssemblyPoolTest, testAssembly)
         const unsigned int dataParts = 5;
         initialNotification->set_num_data_parts(dataParts);
         initialNotification->set_data_part(0);
-        EXPECT_FALSE(pool.add(initialNotification))
-            ;
+        EXPECT_FALSE(pool.add(initialNotification));
 
         for (unsigned int i = 1; i < dataParts; ++i) {
 
@@ -172,20 +163,17 @@ TEST(AssemblyPoolTest, testAssembly)
             newNotification->set_data(newString);
             containedData << newString;
 
-            newNotification->set_sequence_number(seqnum);
+            newNotification->mutable_event_id()->set_sequence_number(seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(i);
 
             boost::shared_ptr<string> result = pool.add(newNotification);
 
             if (i == (dataParts - 1)) {
-                EXPECT_TRUE(result)
-                    ;
-                EXPECT_EQ(containedData.str(), *result)
-                    ;
+                EXPECT_TRUE(result);
+                EXPECT_EQ(containedData.str(), *result);
             } else {
-                EXPECT_FALSE(result)
-                    ;
+                EXPECT_FALSE(result);
             }
 
         }
@@ -207,7 +195,7 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
         protocol::NotificationPtr initialNotification(
                 new protocol::Notification);
 
-        initialNotification->set_sequence_number(seqnum);
+        initialNotification->mutable_event_id()->set_sequence_number(seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
         initialNotification->set_data(initialString);
@@ -215,8 +203,7 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
         initialNotification->set_num_data_parts(dataParts);
         initialNotification->set_data_part(0);
 
-        EXPECT_FALSE(pool.add(initialNotification))
-            ;
+        EXPECT_FALSE(pool.add(initialNotification));
     }
 
     // wait longer than the pruning time
@@ -229,14 +216,13 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
         const string newString = rsc::misc::randAlnumStr(30);
         newNotification->set_data(newString);
 
-        newNotification->set_sequence_number(seqnum);
+        newNotification->mutable_event_id()->set_sequence_number(seqnum);
         newNotification->set_num_data_parts(dataParts);
         newNotification->set_data_part(1);
 
         boost::shared_ptr<string> result = pool.add(newNotification);
 
-        EXPECT_TRUE(result)
-            ;
+        EXPECT_TRUE(result);
 
     }
 
@@ -257,7 +243,7 @@ TEST(AssemblyPoolTest, testPruning)
             protocol::NotificationPtr initialNotification(
                     new protocol::Notification);
 
-            initialNotification->set_sequence_number(seqnum);
+            initialNotification->mutable_event_id()->set_sequence_number(seqnum);
 
             const string initialString = rsc::misc::randAlnumStr(10);
             initialNotification->set_data(initialString);
@@ -279,7 +265,7 @@ TEST(AssemblyPoolTest, testPruning)
             const string newString = rsc::misc::randAlnumStr(30);
             newNotification->set_data(newString);
 
-            newNotification->set_sequence_number(seqnum);
+            newNotification->mutable_event_id()->set_sequence_number(seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(1);
 
@@ -301,7 +287,7 @@ TEST(AssemblyPoolTest, testPruning)
             protocol::NotificationPtr initialNotification(
                     new protocol::Notification);
 
-            initialNotification->set_sequence_number(seqnum);
+            initialNotification->mutable_event_id()->set_sequence_number(seqnum);
 
             const string initialString = rsc::misc::randAlnumStr(10);
             initialNotification->set_data(initialString);
@@ -323,14 +309,13 @@ TEST(AssemblyPoolTest, testPruning)
             const string newString = rsc::misc::randAlnumStr(30);
             newNotification->set_data(newString);
 
-            newNotification->set_sequence_number(seqnum);
+            newNotification->mutable_event_id()->set_sequence_number(seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(1);
 
             boost::shared_ptr<string> result = pool.add(newNotification);
 
-            EXPECT_TRUE(result)
-                ;
+            EXPECT_TRUE(result);
 
         }
     }

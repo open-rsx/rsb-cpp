@@ -34,9 +34,14 @@ public:
         return new TestConnector();
     }
 
-    void activate() {}
+    virtual ~TestConnector() {
+    }
 
-    void deactivate() {}
+    void activate() {
+    }
+
+    void deactivate() {
+    }
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec&) {}
 

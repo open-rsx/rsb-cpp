@@ -52,4 +52,7 @@ public:
  * @author jwienke
  */
 class ConnectorTest: public ::testing::TestWithParam<ConnectorTestSetup> {
+public:
+    virtual ~ConnectorTest() {
+    }
 };

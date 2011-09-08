@@ -19,6 +19,9 @@
 
 #include "InformerTask.h"
 
+#include <stdlib.h>
+#include <time.h>
+
 #include <rsc/misc/langutils.h>
 #include <rsc/runtime/TypeStringTools.h>
 
@@ -28,14 +31,14 @@ using namespace rsb::transport;
 using namespace rsc::threading;
 
 namespace rsb {
-
 namespace test {
 
 InformerTask::InformerTask(OutConnectorPtr p, const Scope &scope,
         const unsigned int &numEvents, const unsigned int &dataSizeInBytes) :
-    scope(scope), numEvents(numEvents), dataSizeInBytes(dataSizeInBytes),
-            sentEvents(0), port(p), data(new string(rsc::misc::randAlnumStr(
-                    dataSizeInBytes))) {
+        scope(scope), numEvents(numEvents), dataSizeInBytes(dataSizeInBytes), sentEvents(
+                0), connector(p), data(
+                new string(rsc::misc::randAlnumStr(dataSizeInBytes))) {
+    srand(time(NULL));
 }
 
 InformerTask::~InformerTask() {
@@ -51,8 +54,15 @@ void InformerTask::execute() {
         thisScope = Scope("/other").concat(scope);
     }
     EventPtr p(new Event(thisScope, data, rsc::runtime::typeName<string>()));
-    p->setEventId(id, 2323);
-    port->handle(p);
+    p->setEventId(id, sentEvents);
+
+    // add causing events
+    unsigned int numCauses = rand() % 10;
+    for (unsigned int i = 0; i < numCauses; ++i) {
+        p->addCause(EventId(rsc::misc::UUID(), rand()));
+    }
+
+    connector->handle(p);
     if (sentEvents % 2 == 1) {
         events.push_back(p);
     }
@@ -71,7 +81,7 @@ std::vector<EventPtr> InformerTask::getEvents() {
 
 WaitingObserver::WaitingObserver(const unsigned int &desiredEvents,
         const Scope &scope) :
-    desiredEvents(desiredEvents), scope(scope), receivedEvents(0) {
+        desiredEvents(desiredEvents), scope(scope), receivedEvents(0) {
 
 }
 

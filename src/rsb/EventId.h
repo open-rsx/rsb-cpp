@@ -46,6 +46,7 @@ public:
             const boost::uint32_t &sequenceNumber);
     virtual ~EventId();
 
+    rsc::misc::UUID getParticipantId() const;
     boost::uint32_t getSequenceNumber() const;
 
     rsc::misc::UUID getAsUUID() const;

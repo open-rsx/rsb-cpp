@@ -37,7 +37,7 @@ namespace spread {
 
 Assembly::Assembly(rsb::protocol::NotificationPtr n) :
     logger(Logger::getLogger(str(format("rsb.spread.Assembly[%1%]")
-                                 % n->sequence_number()))),
+                                 % n->event_id().sequence_number()))),
     receivedParts(0), birthTime(microsec_clock::local_time()) {
     store.resize(n->num_data_parts());
     add(n);
@@ -62,7 +62,7 @@ string *Assembly::getCompleteData() const {
 }
 
 unsigned int Assembly::add(NotificationPtr n) {
-    RSCTRACE(logger, "Adding notification " << n->sequence_number()
+    RSCTRACE(logger, "Adding notification " << n->event_id().sequence_number()
             << " (part " << n->data_part() << "/" << this->store.size()
             << ") to assembly");
     store[n->data_part()] = n;
@@ -143,23 +143,26 @@ void AssemblyPool::setPruning(const bool &prune) {
 boost::shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
     boost::recursive_mutex::scoped_lock lock(this->poolMutex);
 
-    string key = notification->sender_id();
-    key.push_back(notification->sequence_number() & 0x000000ff);
-    key.push_back(notification->sequence_number() & 0x0000ff00);
-    key.push_back(notification->sequence_number() & 0x00ff0000);
-    key.push_back(notification->sequence_number() & 0xff000000);
+    string key = notification->event_id().sender_id();
+    key.push_back(notification->event_id().sequence_number() & 0x000000ff);
+    key.push_back(notification->event_id().sequence_number() & 0x0000ff00);
+    key.push_back(notification->event_id().sequence_number() & 0x00ff0000);
+    key.push_back(notification->event_id().sequence_number() & 0xff000000);
     Pool::iterator it = this->pool.find(key);
     string *result = 0;
     AssemblyPtr assembly;
     if (it != this->pool.end()) {
         // Push message to existing Assembly
         assembly = it->second;
-        RSCTRACE(logger, "Adding notification " << notification->sequence_number() << " to existing assembly "
-                << assembly);
+        RSCTRACE(
+                logger,
+                "Adding notification " << notification->event_id().sequence_number() << " to existing assembly " << assembly);
         assembly->add(notification);
     } else {
         // Create new Assembly
-        RSCTRACE(logger, "Creating new assembly for notification " << notification->sequence_number());
+        RSCTRACE(
+                logger,
+                "Creating new assembly for notification " << notification->event_id().sequence_number());
         assembly.reset(new Assembly(notification));
         it = this->pool.insert(make_pair(key, assembly)).first;
     }
