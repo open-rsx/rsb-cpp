@@ -34,6 +34,9 @@ using namespace rsc::runtime;
 namespace rsb {
 namespace patterns {
 
+Server::IntlCallback::~IntlCallback() {
+}
+
 class RequestHandler: public Handler {
 private:
 

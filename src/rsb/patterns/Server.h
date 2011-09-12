@@ -52,6 +52,8 @@ public:
     class IntlCallback {
     public:
 
+        virtual ~IntlCallback();
+
         virtual std::string getRequestType() const = 0;
         virtual std::string getReplyType() const = 0;
 
