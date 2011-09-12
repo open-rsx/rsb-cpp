@@ -30,8 +30,7 @@ using namespace std;
 using namespace testing;
 using namespace rsb;
 
-TEST(MetaDataTest, testConstruction)
-{
+TEST(MetaDataTest, testConstruction) {
 
     MetaData meta;
     EXPECT_GT(meta.getCreateTime(), rsc::misc::currentTimeMicros() - 100000);
@@ -43,17 +42,14 @@ TEST(MetaDataTest, testConstruction)
 
 }
 
-TEST(MetaDataTest, testSenderId)
-{
+TEST(MetaDataTest, testSenderId) {
     const rsc::misc::UUID id;
     MetaData meta;
     meta.setSenderId(id);
     EXPECT_EQ(id, meta.getSenderId());
 }
 
-
-TEST(MetaDataTest, testTimesDouble)
-{
+TEST(MetaDataTest, testTimesDouble) {
 
     // from the internal structure I assume that all double-based setters use
     // one common method. So one test is currently enough
@@ -66,8 +62,23 @@ TEST(MetaDataTest, testTimesDouble)
 
 }
 
-TEST(MetaDataTest, testDefaultTimesAuto)
-{
+TEST(MetaDataTest, testTimesPtime) {
+
+    // from the internal structure I assume that all ptime-based setters use
+    // one common method. So one test is currently enough
+
+    MetaData meta;
+
+    const boost::uint64_t before = rsc::misc::currentTimeMicros();
+    const boost::posix_time::ptime time = boost::posix_time::microsec_clock::universal_time();
+    const boost::uint64_t after = rsc::misc::currentTimeMicros();
+    meta.setCreateTime(time);
+    EXPECT_GE(meta.getCreateTime(), before);
+    EXPECT_LE(meta.getCreateTime(), after);
+
+}
+
+TEST(MetaDataTest, testDefaultTimesAuto) {
 
     MetaData meta;
     meta.setCreateTime();
@@ -86,8 +97,7 @@ TEST(MetaDataTest, testDefaultTimesAuto)
 
 }
 
-TEST(MetaDataTest, testDefaultTimesManual)
-{
+TEST(MetaDataTest, testDefaultTimesManual) {
 
     MetaData meta;
     const boost::uint64_t time = 13123;
@@ -103,8 +113,7 @@ TEST(MetaDataTest, testDefaultTimesManual)
 
 }
 
-TEST(MetaDataTest, testUserTimes)
-{
+TEST(MetaDataTest, testUserTimes) {
 
     MetaData meta;
     const string key = "afdadfasfd";
@@ -126,13 +135,13 @@ TEST(MetaDataTest, testUserTimes)
     const string autoKey = "auto";
     meta.setUserTime(autoKey);
 
-    EXPECT_GT(meta.getUserTime(autoKey), rsc::misc::currentTimeMicros() - 100000);
+    EXPECT_GT(meta.getUserTime(autoKey),
+            rsc::misc::currentTimeMicros() - 100000);
     EXPECT_LE(meta.getUserTime(autoKey), rsc::misc::currentTimeMicros());
 
 }
 
-TEST(MetaDataTest, testUserInfos)
-{
+TEST(MetaDataTest, testUserInfos) {
 
     MetaData meta;
     const string key = "afdadfasfd";
@@ -153,22 +162,25 @@ TEST(MetaDataTest, testUserInfos)
 
 }
 
-TEST(MetaDataTest, testComparison)
-{
+TEST(MetaDataTest, testComparison) {
 
     MetaData meta1;
     meta1.setSenderId(rsc::misc::UUID());
     MetaData meta2;
     meta2.setSenderId(rsc::misc::UUID());
-    EXPECT_NE(meta1, meta2); // distinct times + UUIDs
+    EXPECT_NE(meta1, meta2);
+    // distinct times + UUIDs
     meta2.setCreateTime(meta1.getCreateTime());
-    EXPECT_NE(meta1, meta2); // still distinct UUIDs
+    EXPECT_NE(meta1, meta2);
+    // still distinct UUIDs
 
     meta2.setSenderId(meta1.getSenderId());
-    EXPECT_EQ(meta1, meta2); // identical
+    EXPECT_EQ(meta1, meta2);
+    // identical
 
     meta1.setSenderId(rsc::misc::UUID());
-    EXPECT_NE(meta1, meta2); // distinct UUIDs, again
+    EXPECT_NE(meta1, meta2);
+    // distinct UUIDs, again
 
     meta2 = meta1;
     EXPECT_EQ(meta1, meta2);

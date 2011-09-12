@@ -25,6 +25,7 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/operators.hpp>
+#include <boost/date_time.hpp>
 
 #include <rsc/runtime/Printable.h>
 #include <rsc/misc/UUID.h>
@@ -36,6 +37,10 @@ namespace rsb {
 /**
  * Framework-supplied meta data attached to each event that give
  * information e.g. about timing issues.
+ *
+ * For all timestamps UTC unix timestamps are assumed. For the conversion from
+ * boost::posix_time::ptime the client has to ensure that the ptim is given in
+ * UTC (e.g. using universal_time).
  *
  * @author jwienke
  */
@@ -93,6 +98,7 @@ public:
      */
     void setCreateTime(const boost::uint64_t &time = 0);
     void setCreateTime(const double &time);
+    void setCreateTime(const boost::posix_time::ptime &time);
 
     /**
      * Returns the time at which the generated notification for an event was
@@ -109,6 +115,7 @@ public:
      */
     void setSendTime(const boost::uint64_t &time = 0);
     void setSendTime(const double &time);
+    void setSendTime(const boost::posix_time::ptime &time);
 
     /**
      * Returns the time at which an event is received by listener in its encoded
@@ -125,6 +132,7 @@ public:
      */
     void setReceiveTime(const boost::uint64_t &time = 0);
     void setReceiveTime(const double &time);
+    void setReceiveTime(const boost::posix_time::ptime &time);
 
     /**
      * Returns the time at which an event was decoded and will be dispatched to
@@ -143,6 +151,7 @@ public:
      */
     void setDeliverTime(const boost::uint64_t &time = 0);
     void setDeliverTime(const double &time);
+    void setDeliverTime(const boost::posix_time::ptime &time);
     //@}
 
     /**
@@ -181,6 +190,7 @@ public:
      */
     void setUserTime(const std::string &key, const boost::uint64_t &time = 0);
     void setUserTime(const std::string &key, const double &time);
+    void setUserTime(const std::string &key, const boost::posix_time::ptime &time);
 
     std::map<std::string, boost::uint64_t>::const_iterator userTimesBegin() const;
     std::map<std::string, boost::uint64_t>::const_iterator userTimesEnd() const;
@@ -231,8 +241,11 @@ public:
 private:
     rsc::misc::UUID senderId;
 
-    void checkedTimeStampSet(boost::uint64_t &timeStamp, const boost::uint64_t &proposedValue);
-    void checkedTimeStampSet(boost::uint64_t &timeStamp, const double &proposedValue);
+    void checkedTimeStampSet(boost::uint64_t &timestamp, const boost::uint64_t &proposedValue);
+    void checkedTimeStampSet(boost::uint64_t &timestamp, const double &proposedValue);
+    void checkedTimeStampSet(boost::uint64_t &timestamp, const boost::posix_time::ptime &proposedValue);
+
+    static const boost::posix_time::ptime UNIX_EPOCH;
 
     boost::uint64_t createTime;
     boost::uint64_t sendTime;

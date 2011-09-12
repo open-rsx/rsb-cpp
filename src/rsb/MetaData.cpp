@@ -28,10 +28,12 @@ using namespace std;
 
 namespace rsb {
 
+const boost::posix_time::ptime MetaData::UNIX_EPOCH = boost::posix_time::ptime(
+        boost::gregorian::date(1970, boost::date_time::Jan, 1));
+
 MetaData::MetaData() :
-    senderId(false),
-    createTime(rsc::misc::currentTimeMicros()), sendTime(0), receiveTime(0),
-    deliverTime(0) {
+        senderId(false), createTime(rsc::misc::currentTimeMicros()), sendTime(
+                0), receiveTime(0), deliverTime(0) {
 }
 
 MetaData::~MetaData() {
@@ -60,25 +62,36 @@ boost::uint64_t MetaData::getCreateTime() const {
     return createTime;
 }
 
-void MetaData::checkedTimeStampSet(boost::uint64_t &timeStamp,
+void MetaData::checkedTimeStampSet(boost::uint64_t &timestamp,
         const double &proposedValue) {
     if (proposedValue < 0) {
         throw invalid_argument("Timestamps must be >= 0");
     }
     if (proposedValue < 0.000001) {
-        timeStamp = rsc::misc::currentTimeMicros();
+        timestamp = rsc::misc::currentTimeMicros();
     } else {
-        timeStamp = boost::uint64_t(proposedValue * 1000000);
+        timestamp = boost::uint64_t(proposedValue * 1000000);
     }
 }
 
-void MetaData::checkedTimeStampSet(boost::uint64_t &timeStamp,
+void MetaData::checkedTimeStampSet(boost::uint64_t &timestamp,
         const boost::uint64_t &proposedValue) {
     if (proposedValue == 0) {
-        timeStamp = rsc::misc::currentTimeMicros();
+        timestamp = rsc::misc::currentTimeMicros();
     } else {
-        timeStamp = proposedValue;
+        timestamp = proposedValue;
     }
+}
+
+void MetaData::checkedTimeStampSet(boost::uint64_t &timestamp,
+        const boost::posix_time::ptime &proposedValue) {
+    boost::posix_time::time_duration delta = proposedValue - UNIX_EPOCH;
+    // TODO convert time if not UTC time zone
+    if (delta.is_negative()) {
+        throw invalid_argument("Specified time is not a unix timestamp");
+    }
+    boost::uint64_t converted = delta.total_microseconds();
+    timestamp = converted;
 }
 
 void MetaData::setCreateTime(const boost::uint64_t &time) {
@@ -86,6 +99,10 @@ void MetaData::setCreateTime(const boost::uint64_t &time) {
 }
 
 void MetaData::setCreateTime(const double &time) {
+    checkedTimeStampSet(createTime, time);
+}
+
+void MetaData::setCreateTime(const boost::posix_time::ptime &time) {
     checkedTimeStampSet(createTime, time);
 }
 
@@ -101,6 +118,10 @@ void MetaData::setSendTime(const double &time) {
     checkedTimeStampSet(sendTime, time);
 }
 
+void MetaData::setSendTime(const boost::posix_time::ptime &time) {
+    checkedTimeStampSet(sendTime, time);
+}
+
 boost::uint64_t MetaData::getReceiveTime() const {
     return receiveTime;
 }
@@ -110,6 +131,10 @@ void MetaData::setReceiveTime(const boost::uint64_t &time) {
 }
 
 void MetaData::setReceiveTime(const double &time) {
+    checkedTimeStampSet(receiveTime, time);
+}
+
+void MetaData::setReceiveTime(const boost::posix_time::ptime &time) {
     checkedTimeStampSet(receiveTime, time);
 }
 
@@ -125,10 +150,14 @@ void MetaData::setDeliverTime(const double &time) {
     checkedTimeStampSet(deliverTime, time);
 }
 
+void MetaData::setDeliverTime(const boost::posix_time::ptime &time) {
+    checkedTimeStampSet(deliverTime, time);
+}
+
 set<string> MetaData::userTimeKeys() const {
     set<string> keys;
-    for (map<string, boost::uint64_t>::const_iterator it = userTimes.begin(); it
-            != userTimes.end(); ++it) {
+    for (map<string, boost::uint64_t>::const_iterator it = userTimes.begin();
+            it != userTimes.end(); ++it) {
         keys.insert(it->first);
     }
     return keys;
@@ -157,6 +186,12 @@ void MetaData::setUserTime(const string &key, const double &time) {
     checkedTimeStampSet(userTimes[key], time);
 }
 
+void MetaData::setUserTime(const string &key,
+        const boost::posix_time::ptime &time) {
+    userTimes.erase(key);
+    checkedTimeStampSet(userTimes[key], time);
+}
+
 map<string, boost::uint64_t>::const_iterator MetaData::userTimesBegin() const {
     return userTimes.begin();
 }
@@ -167,8 +202,8 @@ map<string, boost::uint64_t>::const_iterator MetaData::userTimesEnd() const {
 
 set<string> MetaData::userInfoKeys() const {
     set<string> keys;
-    for (map<string, string>::const_iterator it = userInfos.begin(); it
-            != userInfos.end(); ++it) {
+    for (map<string, string>::const_iterator it = userInfos.begin();
+            it != userInfos.end(); ++it) {
         keys.insert(it->first);
     }
     return keys;
@@ -182,8 +217,8 @@ string MetaData::getUserInfo(const string &key) const {
     if (userInfos.count(key)) {
         return userInfos.find(key)->second;
     } else {
-        throw invalid_argument("No meta info registered under key '" + key
-                + "'");
+        throw invalid_argument(
+                "No meta info registered under key '" + key + "'");
     }
 }
 
@@ -202,8 +237,9 @@ map<string, string>::const_iterator MetaData::userInfosEnd() const {
 
 bool MetaData::operator==(const MetaData &other) const {
     return (senderId == other.senderId) && (createTime == other.createTime)
-            && (sendTime == other.sendTime) && (receiveTime
-            == other.receiveTime) && (deliverTime == other.deliverTime)
+            && (sendTime == other.sendTime)
+            && (receiveTime == other.receiveTime)
+            && (deliverTime == other.deliverTime)
             && (userTimes == other.userTimes) && (userInfos == other.userInfos);
 }
 
