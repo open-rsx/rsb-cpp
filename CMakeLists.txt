@@ -5,7 +5,6 @@ PROJECT(RSB)
 
 # --- cmake settings ---
 
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 
 # this must be done in the beginning to adjust the cmake path
