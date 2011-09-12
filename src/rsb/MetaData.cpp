@@ -60,12 +60,17 @@ boost::uint64_t MetaData::getCreateTime() const {
     return createTime;
 }
 
-void MetaData::setCreateTime(const boost::uint64_t &time) {
-    if (time == 0) {
-        createTime = rsc::misc::currentTimeMicros();
+void MetaData::checkedTimeStampSet(boost::uint64_t &timeStamp,
+        const boost::uint64_t &proposedValue) {
+    if (proposedValue == 0) {
+        timeStamp = rsc::misc::currentTimeMicros();
     } else {
-        createTime = time;
+        timeStamp = proposedValue;
     }
+}
+
+void MetaData::setCreateTime(const boost::uint64_t &time) {
+    checkedTimeStampSet(createTime, time);
 }
 
 boost::uint64_t MetaData::getSendTime() const {
@@ -73,11 +78,7 @@ boost::uint64_t MetaData::getSendTime() const {
 }
 
 void MetaData::setSendTime(const boost::uint64_t &time) {
-    if (time == 0) {
-        sendTime = rsc::misc::currentTimeMicros();
-    } else {
-        sendTime = time;
-    }
+    checkedTimeStampSet(sendTime, time);
 }
 
 boost::uint64_t MetaData::getReceiveTime() const {
@@ -85,11 +86,7 @@ boost::uint64_t MetaData::getReceiveTime() const {
 }
 
 void MetaData::setReceiveTime(const boost::uint64_t &time) {
-    if (time == 0) {
-        receiveTime = rsc::misc::currentTimeMicros();
-    } else {
-        receiveTime = time;
-    }
+    checkedTimeStampSet(receiveTime, time);
 }
 
 boost::uint64_t MetaData::getDeliverTime() const {
@@ -97,11 +94,7 @@ boost::uint64_t MetaData::getDeliverTime() const {
 }
 
 void MetaData::setDeliverTime(const boost::uint64_t &time) {
-    if (time == 0) {
-        deliverTime = rsc::misc::currentTimeMicros();
-    } else {
-        deliverTime = time;
-    }
+    checkedTimeStampSet(deliverTime, time);
 }
 
 set<string> MetaData::userTimeKeys() const {

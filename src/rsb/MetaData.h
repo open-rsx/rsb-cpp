@@ -226,6 +226,8 @@ public:
 private:
     rsc::misc::UUID senderId;
 
+    void checkedTimeStampSet(boost::uint64_t &timeStamp, const boost::uint64_t &proposedValue);
+
     boost::uint64_t createTime;
     boost::uint64_t sendTime;
     boost::uint64_t receiveTime;
