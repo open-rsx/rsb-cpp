@@ -92,6 +92,7 @@ public:
      * @param time timestamp in microseconds or 0 to use current system time
      */
     void setCreateTime(const boost::uint64_t &time = 0);
+    void setCreateTime(const double &time);
 
     /**
      * Returns the time at which the generated notification for an event was
@@ -107,6 +108,7 @@ public:
      * @param time timestamp in microseconds or 0 to use current system time
      */
     void setSendTime(const boost::uint64_t &time = 0);
+    void setSendTime(const double &time);
 
     /**
      * Returns the time at which an event is received by listener in its encoded
@@ -122,6 +124,7 @@ public:
      * @param time timestamp in microseconds or 0 to use current system time
      */
     void setReceiveTime(const boost::uint64_t &time = 0);
+    void setReceiveTime(const double &time);
 
     /**
      * Returns the time at which an event was decoded and will be dispatched to
@@ -139,6 +142,7 @@ public:
      * @param time timestamp in microseconds or 0 to use current system time
      */
     void setDeliverTime(const boost::uint64_t &time = 0);
+    void setDeliverTime(const double &time);
     //@}
 
     /**
@@ -176,6 +180,7 @@ public:
      * @param time time in microseconds or 0 to use current system time
      */
     void setUserTime(const std::string &key, const boost::uint64_t &time = 0);
+    void setUserTime(const std::string &key, const double &time);
 
     std::map<std::string, boost::uint64_t>::const_iterator userTimesBegin() const;
     std::map<std::string, boost::uint64_t>::const_iterator userTimesEnd() const;
@@ -227,6 +232,7 @@ private:
     rsc::misc::UUID senderId;
 
     void checkedTimeStampSet(boost::uint64_t &timeStamp, const boost::uint64_t &proposedValue);
+    void checkedTimeStampSet(boost::uint64_t &timeStamp, const double &proposedValue);
 
     boost::uint64_t createTime;
     boost::uint64_t sendTime;

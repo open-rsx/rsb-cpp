@@ -51,6 +51,21 @@ TEST(MetaDataTest, testSenderId)
     EXPECT_EQ(id, meta.getSenderId());
 }
 
+
+TEST(MetaDataTest, testTimesDouble)
+{
+
+    // from the internal structure I assume that all double-based setters use
+    // one common method. So one test is currently enough
+
+    MetaData meta;
+
+    double time = 123.24;
+    meta.setCreateTime(time);
+    EXPECT_EQ(boost::uint64_t(123240000), meta.getCreateTime());
+
+}
+
 TEST(MetaDataTest, testDefaultTimesAuto)
 {
 

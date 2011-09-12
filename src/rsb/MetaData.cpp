@@ -61,6 +61,18 @@ boost::uint64_t MetaData::getCreateTime() const {
 }
 
 void MetaData::checkedTimeStampSet(boost::uint64_t &timeStamp,
+        const double &proposedValue) {
+    if (proposedValue < 0) {
+        throw invalid_argument("Timestamps must be >= 0");
+    }
+    if (proposedValue < 0.000001) {
+        timeStamp = rsc::misc::currentTimeMicros();
+    } else {
+        timeStamp = boost::uint64_t(proposedValue * 1000000);
+    }
+}
+
+void MetaData::checkedTimeStampSet(boost::uint64_t &timeStamp,
         const boost::uint64_t &proposedValue) {
     if (proposedValue == 0) {
         timeStamp = rsc::misc::currentTimeMicros();
@@ -73,11 +85,19 @@ void MetaData::setCreateTime(const boost::uint64_t &time) {
     checkedTimeStampSet(createTime, time);
 }
 
+void MetaData::setCreateTime(const double &time) {
+    checkedTimeStampSet(createTime, time);
+}
+
 boost::uint64_t MetaData::getSendTime() const {
     return sendTime;
 }
 
 void MetaData::setSendTime(const boost::uint64_t &time) {
+    checkedTimeStampSet(sendTime, time);
+}
+
+void MetaData::setSendTime(const double &time) {
     checkedTimeStampSet(sendTime, time);
 }
 
@@ -89,11 +109,19 @@ void MetaData::setReceiveTime(const boost::uint64_t &time) {
     checkedTimeStampSet(receiveTime, time);
 }
 
+void MetaData::setReceiveTime(const double &time) {
+    checkedTimeStampSet(receiveTime, time);
+}
+
 boost::uint64_t MetaData::getDeliverTime() const {
     return deliverTime;
 }
 
 void MetaData::setDeliverTime(const boost::uint64_t &time) {
+    checkedTimeStampSet(deliverTime, time);
+}
+
+void MetaData::setDeliverTime(const double &time) {
     checkedTimeStampSet(deliverTime, time);
 }
 
@@ -121,11 +149,12 @@ boost::uint64_t MetaData::getUserTime(const string &key) const {
 
 void MetaData::setUserTime(const string &key, const boost::uint64_t &time) {
     userTimes.erase(key);
-    if (time == 0) {
-        userTimes[key] = rsc::misc::currentTimeMicros();
-    } else {
-        userTimes[key] = time;
-    }
+    checkedTimeStampSet(userTimes[key], time);
+}
+
+void MetaData::setUserTime(const string &key, const double &time) {
+    userTimes.erase(key);
+    checkedTimeStampSet(userTimes[key], time);
 }
 
 map<string, boost::uint64_t>::const_iterator MetaData::userTimesBegin() const {

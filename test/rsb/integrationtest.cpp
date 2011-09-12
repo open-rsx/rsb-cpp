@@ -82,7 +82,7 @@ public:
                              rsc::runtime::typeName<string>()));
         e->mutableMetaData().setUserInfo("foo", "blubb");
         e->mutableMetaData().setUserTime("tttt");
-        e->mutableMetaData().setUserTime("xxxx", 42);
+        e->mutableMetaData().setUserTime("xxxx", boost::uint64_t(42));
         informer->publish(e);
         events.push_back(e);
         ++sentEvents;

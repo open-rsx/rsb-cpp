@@ -116,9 +116,9 @@ void BusConnection::handleReadBody(const system::error_code &/*error*/,
     // payload. This has to be done in connectors since different
     // converters can be used.
     MetaData &metaData = event->mutableMetaData();
-    metaData.setCreateTime(this->notification.meta_data().create_time());
-    metaData.setSendTime(this->notification.meta_data().send_time());
-    metaData.setReceiveTime(rsc::misc::currentTimeMicros());
+    metaData.setCreateTime((boost::uint64_t) this->notification.meta_data().create_time());
+    metaData.setSendTime((boost::uint64_t) this->notification.meta_data().send_time());
+    metaData.setReceiveTime();
 
     event->setEventId(
             rsc::misc::UUID(
