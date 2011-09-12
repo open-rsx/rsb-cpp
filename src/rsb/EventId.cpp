@@ -57,13 +57,16 @@ rsc::misc::UUID EventId::getAsUUID() const {
 }
 
 bool EventId::operator==(const EventId &other) const {
-    return (participantId == other.participantId)
-            && (sequenceNumber == other.sequenceNumber);
+    // first compare the sequence number which is most likely already different
+    return (sequenceNumber == other.sequenceNumber)
+            && (participantId == other.participantId);
 }
 
 bool EventId::operator<(const EventId &other) const {
-    if (participantId == other.participantId) {
-        return sequenceNumber < other.sequenceNumber;
+    if (sequenceNumber < other.sequenceNumber) {
+        return true;
+    } else if (sequenceNumber > other.sequenceNumber) {
+        return false;
     } else {
         return participantId < other.participantId;
     }
