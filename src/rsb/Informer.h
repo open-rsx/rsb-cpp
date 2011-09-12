@@ -149,6 +149,13 @@ public:
     }
 
     /**
+     * Creates a new Event instance filled with the scope from this informer.
+     *
+     * @return new Event instance with scope set
+     */
+    virtual EventPtr createEvent() const;
+
+    /**
      * Publishes @a data to the Informer's scope.
      *
      * @param data Pointer to the data to send.
@@ -249,6 +256,20 @@ public:
 
     std::string getClassName() const {
         return rsc::runtime::typeName<Informer<T> >();
+    }
+
+    /**
+     * @copydoc InformerBase::createEvent()
+     *
+     * Moreover, this version also sets the type according to the template
+     * parameter of Informer.
+     *
+     * @return new Event with scope and type set.
+     */
+    EventPtr createEvent() const {
+        EventPtr event = InformerBase::createEvent();
+        event->setType(getType());
+        return event;
     }
 
     /**

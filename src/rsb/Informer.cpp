@@ -58,19 +58,23 @@ void InformerBase::setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
     configurator->setQualityOfServiceSpecs(specs);
 }
 
-EventPtr InformerBase::publish(VoidPtr data, const std::string &type) {
+EventPtr InformerBase::createEvent() const {
     EventPtr event(new Event());
-    event->setData(data);
     event->setScope(getScope());
+    return event;
+}
+
+EventPtr InformerBase::publish(VoidPtr data, const std::string &type) {
+    EventPtr event = createEvent();
+    event->setData(data);
     event->setType(type);
     checkedPublish(event);
     return event;
 }
 
 EventPtr InformerBase::uncheckedPublish(VoidPtr data, const std::string &type) {
-    EventPtr event(new Event());
+    EventPtr event = createEvent();
     event->setData(data);
-    event->setScope(getScope());
     event->setType(type);
     uncheckedPublish(event);
     return event;

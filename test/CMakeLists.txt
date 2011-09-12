@@ -48,6 +48,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/EventIdTest.cpp
                       rsb/FactoryTest.cpp
                       rsb/HandlerTest.cpp
+                      rsb/InformerTest.cpp
                       rsb/LocalServiceTest.cpp
                       rsb/MetaDataTest.cpp
                       rsb/ParticipantConfigTest.cpp
