@@ -68,7 +68,7 @@ public:
         if (!event
             || !event->getMetaData().hasUserInfo("rsb:reply")
             || (event->getMethod() != "REPLY")) {
-            RSCTRACE(logger, "Received uninteresting event " << *event);
+            RSCTRACE(logger, "Received uninteresting event " << event);
             return;
         }
         string requestId = event->getMetaData().getUserInfo("rsb:reply");
@@ -76,11 +76,11 @@ public:
             MutexType::scoped_lock lock(mutex);
 
             if (!this->inprogress.count(requestId)) {
-                RSCTRACE(logger, "Received uninteresting event " << *event);
+                RSCTRACE(logger, "Received uninteresting event " << event);
                 return;
             }
 
-            RSCDEBUG(logger, "Received reply event " << *event);
+            RSCDEBUG(logger, "Received reply event " << event);
 
             RemoteServer::FuturePtr result = this->inprogress[requestId];
             if (event->mutableMetaData().hasUserInfo("rsb:error?")) {
