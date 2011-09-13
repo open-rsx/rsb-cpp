@@ -59,8 +59,13 @@ void Event::printContents(ostream &stream) const {
     } else {
         stream << "UNSPECIFIED";
     }
-    stream << ", type = " << type << ", scope = " << scope << ", metaData = "
-            << metaData;
+    stream << ", type = " << type << ", scope = ";
+    if (scope) {
+        stream << *scope;
+    } else {
+        stream << "UNSPECIFIED";
+    }
+    stream << ", metaData = " << metaData << ", method = " << method;
 }
 
 boost::uint64_t Event::getSequenceNumber() const {
