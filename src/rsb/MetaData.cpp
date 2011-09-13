@@ -70,7 +70,7 @@ void MetaData::checkedTimeStampSet(boost::uint64_t &timestamp,
     if (proposedValue < 0.000001) {
         timestamp = rsc::misc::currentTimeMicros();
     } else {
-        timestamp = boost::uint64_t(proposedValue * 1000000);
+        timestamp = boost::uint64_t((proposedValue * 1000000) + 0.5);
     }
 }
 
