@@ -44,6 +44,10 @@ int main(int argc, char **argv) {
 
         cout << endl;
 
+        cout << endl << "Default Configuration" << endl;
+
+        cout << rsb::Factory::getInstance().getDefaultParticipantConfig() << endl;
+
         cout << endl << "Connectors" << endl;
 
         cout << rsb::transport::InPullFactory::getInstance() << endl;
