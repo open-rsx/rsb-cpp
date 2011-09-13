@@ -42,8 +42,8 @@ EventReceivingStrategy* ParallelEventReceivingStrategy::create(const Properties 
 ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(unsigned int numThreads) :
     logger(Logger::getLogger("rsb.eventprocessing.ParallelEventReceivingStrategy")),
     pool(numThreads,
-         bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
-         bind(&ParallelEventReceivingStrategy::filter, this, _1, _2)),
+         boost::bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
+         boost::bind(&ParallelEventReceivingStrategy::filter, this, _1, _2)),
     errorStrategy(ParticipantConfig::LOG) {
     pool.start();
 }

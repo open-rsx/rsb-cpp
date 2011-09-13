@@ -49,9 +49,9 @@ BusConnection::BusConnection(BusPtr    bus,
 void BusConnection::receiveEvent() {
     async_read(*this->socket,
                buffer(&this->lengthReceiveBuffer[0], 4),
-               bind(&BusConnection::handleReadLength, shared_from_this(),
-                    placeholders::error,
-                    placeholders::bytes_transferred));
+               boost::bind(&BusConnection::handleReadLength, shared_from_this(),
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
 }
 
 void BusConnection::sendEvent(EventPtr      event,
@@ -72,9 +72,9 @@ void BusConnection::sendEvent(EventPtr      event,
 
     // Send the size header, followed by the actual notification data.
     async_write(*this->socket, buffer(this->lengthSendBuffer),
-                bind(&BusConnection::handleWriteLength, shared_from_this(),
-                     placeholders::error,
-                     placeholders::bytes_transferred));
+                boost::bind(&BusConnection::handleWriteLength, shared_from_this(),
+                     boost::asio::placeholders::error,
+                     boost::asio::placeholders::bytes_transferred));
 }
 
 void BusConnection::handleReadLength(const system::error_code &error,
@@ -97,9 +97,9 @@ void BusConnection::handleReadLength(const system::error_code &error,
 
     async_read(*this->socket,
                buffer(&this->messageReceiveBuffer[0], size),
-               bind(&BusConnection::handleReadBody, shared_from_this(),
-		    placeholders::error,
-		    placeholders::bytes_transferred));
+               boost::bind(&BusConnection::handleReadBody, shared_from_this(),
+		    boost::asio::placeholders::error,
+		    boost::asio::placeholders::bytes_transferred));
 }
 
 void BusConnection::handleReadBody(const system::error_code &/*error*/,
@@ -138,7 +138,7 @@ void BusConnection::handleReadBody(const system::error_code &/*error*/,
                              this->notification.meta_data().user_times(i).timestamp());
     }
 
-    event->setData(shared_ptr<string>(new string(this->notification.data())));
+    event->setData(boost::shared_ptr<string>(new string(this->notification.data())));
     metaData.setUserInfo("rsb.wire-schema", this->notification.wire_schema());
 
     // Dispatch the received event to connectors.
@@ -153,9 +153,9 @@ void BusConnection::handleWriteLength(const system::error_code &/*error*/,
     /** TODO(jmoringe): handle errors */
 
     async_write(*this->socket, buffer(this->messageSendBuffer),
-                bind(&BusConnection::handleWriteBody, shared_from_this(),
-                     placeholders::error,
-                     placeholders::bytes_transferred));
+                boost::bind(&BusConnection::handleWriteBody, shared_from_this(),
+                     boost::asio::placeholders::error,
+                     boost::asio::placeholders::bytes_transferred));
 }
 
 void BusConnection::handleWriteBody(const system::error_code &/*error*/,

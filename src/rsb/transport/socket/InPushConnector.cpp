@@ -94,7 +94,7 @@ void InPushConnector::handle(EventPtr busEvent) {
 
     // Extract the serialized data and wire-schema from the
     // intermediate event.
-    shared_ptr<string> wireData = static_pointer_cast<string>(event->getData());
+    boost::shared_ptr<string> wireData = static_pointer_cast<string>(event->getData());
     string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
 
     // Apply the configured converter.

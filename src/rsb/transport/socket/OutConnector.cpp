@@ -66,7 +66,7 @@ void OutConnector::handle(EventPtr event) {
     event->mutableMetaData().setSendTime();
 
     EventPtr busEvent(new Event(*event));
-    shared_ptr<string> wireData(new string());
+    boost::shared_ptr<string> wireData(new string());
     converter::AnnotatedData d(busEvent->getType(), busEvent->getData());
     string wireSchema = getConverter(busEvent->getType())->serialize(d, *wireData);
     busEvent->setData(wireData);

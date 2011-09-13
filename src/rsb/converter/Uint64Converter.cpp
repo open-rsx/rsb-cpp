@@ -46,7 +46,7 @@ Uint64Converter::~Uint64Converter() {
 string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
     assert(data.first == this->getDataType());
 
-    shared_ptr<uint64_t> number = static_pointer_cast<uint64_t>(data.second);
+    boost::shared_ptr<uint64_t> number = boost::static_pointer_cast<uint64_t>(data.second);
     wire.resize(8);
     for (uint64_t i = 0; i < 8; ++i) {
         wire[i] = (unsigned char) ((*number & (0xffull << (i * 8ull))) >> (i * 8ull));
@@ -59,7 +59,7 @@ AnnotatedData Uint64Converter::deserialize(const string &wireSchema,
     assert(wireSchema == WIRE_SCHEMA);
     assert(wire.size() == 8);
 
-    shared_ptr<uint64_t> number(new uint64_t(0));
+    boost::shared_ptr<uint64_t> number(new uint64_t(0));
     for (uint64_t i = 0; i < 8; ++i) {
         *number |= ((uint64_t) ((unsigned char) wire[i]) << (i * 8ull));
     }
