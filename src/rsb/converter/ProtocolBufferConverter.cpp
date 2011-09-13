@@ -25,10 +25,17 @@ namespace converter {
 namespace detail {
 
 std::string typeNameToProtoName(const std::string& type_name) {
+	bool skip = false;
+#ifdef WIN32
+	if (type_name.size() >= 6 && type_name.substr(0, 6) == "class ") {
+		skip = true;
+	}
+#endif
     std::string result = ".";
     bool colon = false;
-    for (std::string::const_iterator it = type_name.begin(); it
-             != type_name.end(); ++it) {
+    for (std::string::const_iterator it 
+		     = type_name.begin() + (skip ? 6 : 0); 
+			 it != type_name.end(); ++it) {
         // Consume two (hopefully adjacent) ':', emit one '.'
         if (*it == ':') {
             if (colon) {
