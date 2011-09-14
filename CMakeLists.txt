@@ -156,6 +156,9 @@ INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake DESTINATION share/rsb)
 CONFIGURE_FILE(RSBConfigVersion.cmake.in ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake @ONLY)
 INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake DESTINATION share/rsb)
 
+INSTALL(EXPORT RSBDepends
+        DESTINATION "share/rsb")
+
 # --- documentation gneration ---
 
 GENERATE_DOXYGEN(VERSION "${RSB_VERSION}")

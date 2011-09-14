@@ -222,12 +222,16 @@ TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_PROTOCOL_NAME}
 SET_TARGET_PROPERTIES(${RSB_NAME}
                       PROPERTIES
                       VERSION ${RSB_VERSION})
+# avoid exporting the static lib dependency on the protocol lib
+# see: http://www.cmake.org/pipermail/cmake/2011-March/043680.html
+SET_TARGET_PROPERTIES(${RSB_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
 # TODO why do we have to open sockets???
 IF(WIN32)
 	TARGET_LINK_LIBRARIES(${RSB_NAME} wsock32)
 ENDIF()
 
 INSTALL(TARGETS ${RSB_NAME}
+        EXPORT RSBDepends
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
