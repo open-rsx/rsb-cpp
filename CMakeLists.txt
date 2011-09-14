@@ -3,12 +3,20 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT(RSB)
 
+# version information
+SET(RSB_VERSION_MAJOR "0")
+SET(RSB_VERSION_MINOR "5")
+SET(RSB_VERSION_PATCH "0")
+SET(RSB_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH}")
+SET(RSB_ABI_VERSION "2")
+
 # --- cmake settings ---
 
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 
 # this must be done in the beginning to adjust the cmake path
-FIND_PACKAGE(RSC REQUIRED)
+FIND_PACKAGE(RSC "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}" REQUIRED)
+MESSAGE(STATUS "RSC version: ${RSC_VERSION}")
 MESSAGE(STATUS "RSC libraries: ${RSC_LIBRARIES}")
 MESSAGE(STATUS "RSC runtime library dirs: ${RSC_RUNTIME_LIBRARY_DIRS}")
 MESSAGE(STATUS "RSC CMake module path: ${RSC_CMAKE_MODULE_PATH}")
@@ -30,13 +38,6 @@ INCLUDE(EnableCoverageReport)
 INCLUDE(EnableSlocCount)
 INCLUDE(GenerateDoxygen)
 INCLUDE(GenerateCppcheck)
-
-# version information
-SET(RSB_VERSION_MAJOR "0")
-SET(RSB_VERSION_MINOR "5")
-SET(RSB_VERSION_PATCH "0")
-SET(RSB_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH}")
-SET(RSB_ABI_VERSION "2")
 
 FIND_PACKAGE(Subversion)
 INCLUDE(SubversionIsWc)
@@ -144,7 +145,7 @@ ENDIF()
 CONFIGURE_FILE(rsb.pc.in rsb.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc DESTINATION lib/pkgconfig)
 
-# --- cmake config file ---
+# --- cmake config files ---
 
 SET(LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
 IF(CMAKE_LINK_LIBRARY_SUFFIX)
@@ -152,6 +153,8 @@ IF(CMAKE_LINK_LIBRARY_SUFFIX)
 ENDIF()
 CONFIGURE_FILE(RSBConfig.cmake.in ${CMAKE_BINARY_DIR}/RSBConfig.cmake @ONLY)
 INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake DESTINATION share/rsb)
+CONFIGURE_FILE(RSBConfigVersion.cmake.in ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake @ONLY)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake DESTINATION share/rsb)
 
 # --- documentation gneration ---
 
