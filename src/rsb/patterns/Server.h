@@ -49,7 +49,7 @@ public:
      *
      * @author jwienke
      */
-    class IntlCallback {
+    class RSB_EXPORT IntlCallback {
     public:
 
         virtual ~IntlCallback();
