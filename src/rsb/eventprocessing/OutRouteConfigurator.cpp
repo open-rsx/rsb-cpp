@@ -80,7 +80,9 @@ void OutRouteConfigurator::deactivate() {
             != this->connectors.end(); ++it) {
         RSCDEBUG(logger, "Removing connector " << *it
                 << " from strategy " << this->eventSendingStrategy);
-        this->eventSendingStrategy->removeConnector(*it);
+        if (this->eventSendingStrategy) {
+            this->eventSendingStrategy->removeConnector(*it);
+        }
     }
     this->eventSendingStrategy.reset();
 
