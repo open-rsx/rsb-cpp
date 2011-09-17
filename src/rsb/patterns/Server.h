@@ -64,28 +64,39 @@ public:
     };
 
     /**
+     * Base class for callback classes.
+     *
+     * @author jmoringe
+     */
+    class RSB_EXPORT CallbackBase : public IntlCallback {
+    public:
+        virtual std::string getRequestType() const;
+        virtual std::string getReplyType() const;
+    protected:
+        CallbackBase(const std::string &requestType,
+                     const std::string &replyType);
+
+        std::string requestType;
+        std::string replyType;
+    };
+
+    /**
      * Callback object used to register one method for a server.
      *
      * @tparam RequestType the data type of the request payload
      * @tparam ReplyType the data type of the reply payload
+     *
      * @author jwienke
      */
     template<class RequestType, class ReplyType>
-    class Callback: public IntlCallback {
+    class Callback: public CallbackBase {
     public:
         // typeid is due to msvc strangeness
-        Callback(const std::string &requestType = rsc::runtime::typeName(
-                typeid(RequestType)), const std::string &replyType =
-                rsc::runtime::typeName(typeid(ReplyType))) :
-            requestType(requestType), replyType(replyType) {
-        }
-
-        virtual std::string getRequestType() const {
-            return requestType;
-        }
-
-        virtual std::string getReplyType() const {
-            return replyType;
+        Callback(const std::string &requestType
+                 = rsc::runtime::typeName(typeid(RequestType)),
+                 const std::string &replyType
+                 = rsc::runtime::typeName(typeid(ReplyType))) :
+            CallbackBase(requestType, replyType) {
         }
 
         /**
@@ -98,22 +109,47 @@ public:
          *                       automatically caught and delivered to the
          *                       remote server
          */
-        virtual boost::shared_ptr<ReplyType> call(
-                const std::string &methodName,
-                boost::shared_ptr<RequestType> input) = 0;
-
+        virtual boost::shared_ptr<ReplyType> call(const std::string &methodName,
+                                                  boost::shared_ptr<RequestType> input) = 0;
     private:
+        boost::shared_ptr<void> intlCall(const std::string &methodName,
+                                         boost::shared_ptr<void> input) {
+            return call(methodName,
+                        boost::static_pointer_cast<RequestType>(input));
+        }
+    };
 
-        std::string requestType;
-        std::string replyType;
+    template<class RequestType>
+    class Callback<RequestType, void>: public CallbackBase {
+    public:
+        // typeid is due to msvc strangeness
+        Callback(const std::string &requestType
+                 = rsc::runtime::typeName(typeid(RequestType)),
+                 const std::string &replyType
+                 = rsc::runtime::typeName(typeid(void))) :
+            CallbackBase(requestType, replyType) {
+        }
 
+        /**
+         * Implement this method to perform actions.
+         *
+         * @param methodName called method
+         * @param input input data for the method
+         * @throw std::exception all exceptions based on this type are
+         *                       automatically caught and delivered to the
+         *                       remote server
+         */
+        virtual void call(const std::string &methodName,
+                          boost::shared_ptr<RequestType> input) = 0;
+    private:
         boost::shared_ptr<void> intlCall(const std::string &methodName,
                 boost::shared_ptr<void> input) {
-            return call(methodName, boost::static_pointer_cast<RequestType>(
-                    input));
+            call(methodName, boost::static_pointer_cast<RequestType>(input));
+            return boost::shared_ptr<void>();
         }
 
     };
+
     typedef boost::shared_ptr<IntlCallback> CallbackPtr;
 
     Server(const Scope &scope);
@@ -134,7 +170,7 @@ private:
 
     std::set<ListenerPtr> requestListeners;
 
-    std::map<std::string, Informer<void>::Ptr> methods;
+    std::map<std::string, Informer<AnyType>::Ptr> methods;
 
 };
 

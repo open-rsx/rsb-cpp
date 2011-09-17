@@ -37,6 +37,19 @@ namespace patterns {
 Server::IntlCallback::~IntlCallback() {
 }
 
+Server::CallbackBase::CallbackBase(const string &requestType,
+                                   const string &replyType)
+    : requestType(requestType), replyType(replyType) {
+}
+
+string Server::CallbackBase::getRequestType() const {
+    return requestType;
+}
+
+string Server::CallbackBase::getReplyType() const {
+    return replyType;
+}
+
 class RequestHandler: public Handler {
 private:
 
@@ -44,12 +57,12 @@ private:
 
     string methodName;
     Server::CallbackPtr callback;
-    Informer<void>::Ptr informer;
+    Informer<AnyType>::Ptr informer;
 
 public:
 
     RequestHandler(const string &methodName, Server::CallbackPtr callback,
-            Informer<void>::Ptr informer) :
+            Informer<AnyType>::Ptr informer) :
         logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
                 + methodName)), methodName(methodName), callback(callback),
                 informer(informer) {
@@ -111,8 +124,8 @@ void Server::registerMethod(const std::string &methodName, CallbackPtr callback)
     }
 
     // TODO check that the reply type is convertible
-    Informer<void>::Ptr informer =
-            Factory::getInstance().createInformer<void> (scope.concat(Scope(
+    Informer<AnyType>::Ptr informer =
+            Factory::getInstance().createInformer<AnyType> (scope.concat(Scope(
                     "/reply")).concat(Scope("/" + methodName)),
                     Factory::getInstance().getDefaultParticipantConfig(),
                     callback->getReplyType());
