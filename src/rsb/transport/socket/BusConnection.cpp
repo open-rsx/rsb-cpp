@@ -77,7 +77,7 @@ void BusConnection::sendEvent(EventPtr      event,
                      boost::asio::placeholders::bytes_transferred));
 }
 
-void BusConnection::handleReadLength(const system::error_code &error,
+void BusConnection::handleReadLength(const boost::system::error_code &error,
                                      size_t                    bytesTransferred) {
     if (error || (bytesTransferred != 4)) {
         RSCWARN(logger, "Receive failure (error " << error << ")"
@@ -102,7 +102,7 @@ void BusConnection::handleReadLength(const system::error_code &error,
 		    boost::asio::placeholders::bytes_transferred));
 }
 
-void BusConnection::handleReadBody(const system::error_code &/*error*/,
+void BusConnection::handleReadBody(const boost::system::error_code &/*error*/,
                                    size_t                    /*bytesTransferred*/) {
     /** TODO(jmoringe): handle errors */
 
@@ -148,7 +148,7 @@ void BusConnection::handleReadBody(const system::error_code &/*error*/,
     receiveEvent();
 }
 
-void BusConnection::handleWriteLength(const system::error_code &/*error*/,
+void BusConnection::handleWriteLength(const boost::system::error_code &/*error*/,
                                       size_t                    /*bytesTransferred*/) {
     /** TODO(jmoringe): handle errors */
 
@@ -158,7 +158,7 @@ void BusConnection::handleWriteLength(const system::error_code &/*error*/,
                      boost::asio::placeholders::bytes_transferred));
 }
 
-void BusConnection::handleWriteBody(const system::error_code &/*error*/,
+void BusConnection::handleWriteBody(const boost::system::error_code &/*error*/,
                                     size_t                    /*bytesTransferred*/) {
     /** TODO(jmoringe): handle errors */
 }

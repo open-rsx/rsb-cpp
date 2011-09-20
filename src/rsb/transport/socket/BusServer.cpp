@@ -51,7 +51,7 @@ void BusServer::acceptOne() {
 }
 
 void BusServer::handleAccept(SocketPtr                 socket,
-                             const system::error_code &error) {
+                             const boost::system::error_code &error) {
     if (!error) {
         //
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
