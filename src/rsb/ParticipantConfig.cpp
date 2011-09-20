@@ -367,14 +367,9 @@ void ParticipantConfig::handleOption(const vector<string> &key,
         transport.handleOption(subKey, value);
         // Global (participant-wide) options
     } else {
-        if (key.size() != 1) {
-            throw invalid_argument(
-                    str(
-                            format(
-                                    "Option key `%1%' seems to designate a global option but has %2% components; global keys must not have more than one component.")
-                                    % key % key.size()));
+        if (key.size() == 1) {
+            this->options[key[0]] = parseTypedValue(value);
         }
-        this->options[key[0]] = parseTypedValue(value);
     }
 }
 

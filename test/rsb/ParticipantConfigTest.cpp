@@ -140,7 +140,7 @@ TEST(ParticipantConfigTest, testFromFile)
     EXPECT_EQ(spread.getConverters().begin()->first, "image");
     EXPECT_EQ(spread.getConverters().begin()->second, "IplImage");
 
-    for (unsigned int i = 1; i <= 6; ++i) {
+    for (unsigned int i = 3; i <= 6; ++i) {
         EXPECT_THROW(ParticipantConfig::fromFile(str(format("%1%/rsb.conf-semantic-errors-%2%")
                                 % TEST_ROOT % i)),
                 invalid_argument);
