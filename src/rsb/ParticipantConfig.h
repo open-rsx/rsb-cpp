@@ -127,7 +127,7 @@ public:
      *
      * @author jmoringe
      */
-    class EventProcessingStrategy : public rsc::config::OptionHandler,
+    class RSB_EXPORT EventProcessingStrategy : public rsc::config::OptionHandler,
                                     public rsc::runtime::Printable {
     public:
         EventProcessingStrategy(const std::string &name);
