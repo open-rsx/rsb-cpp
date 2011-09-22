@@ -138,6 +138,10 @@ Properties ParticipantConfig::EventProcessingStrategy::getOptions() const {
     return this->options;
 }
 
+rsc::runtime::Properties &ParticipantConfig::EventProcessingStrategy::mutableOptions() {
+    return this->options;
+}
+
 void ParticipantConfig::EventProcessingStrategy::setOptions(const Properties &options) {
     this->options = options;
 }
@@ -191,6 +195,14 @@ ParticipantConfig::Transport ParticipantConfig::getTransport(const string &name)
     return it->second;
 }
 
+ParticipantConfig::Transport &ParticipantConfig::mutableTransport(const string &name) {
+    map<string, Transport>::iterator it = this->transports.find(name);
+    if (it == this->transports.end()) {
+        throw rsc::runtime::NoSuchObject(name);
+    }
+    return it->second;
+}
+
 set<ParticipantConfig::Transport> ParticipantConfig::getTransports(
         bool includeDisabled) const {
     set<Transport> result;
@@ -230,6 +242,10 @@ const ParticipantConfig::EventProcessingStrategy &ParticipantConfig::getEventSen
 }
 
 rsc::runtime::Properties ParticipantConfig::getOptions() const {
+    return options;
+}
+
+rsc::runtime::Properties &ParticipantConfig::mutableOptions() {
     return options;
 }
 

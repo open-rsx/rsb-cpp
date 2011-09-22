@@ -99,9 +99,9 @@ public:
          */
         void setOptions(const rsc::runtime::Properties &options);
 
-	bool isEnabled() const;
+        bool isEnabled() const;
 
-	void setEnabled(bool value);
+        void setEnabled(bool value);
 
         bool operator==(const Transport &other) const;
         bool operator<(const Transport &other) const;
@@ -154,6 +154,13 @@ public:
          * @return copy of options for the strategy
          */
         rsc::runtime::Properties getOptions() const;
+
+        /**
+         * Returns the options for the strategy.
+         *
+         * @return mutable reference to options for the strategy
+         */
+        rsc::runtime::Properties &mutableOptions();
 
         /**
          * Sets the options for the strategy.
@@ -236,7 +243,25 @@ public:
      */
     std::set<Transport> getTransports(bool includeDisabled = false) const;
 
+    /**
+     * Returns an immutable copy of a single configured transport.
+     *
+     * @param name name of the transport to get
+     * @return copy of the transport
+     * @throw rsc::runtime::NoSuchObject no such transport available with the
+     *                                   given name
+     */
     Transport getTransport(const std::string &name) const;
+
+    /**
+     * Returns a single configured transport which can be modified in place.
+     *
+     * @param name name of the transport to get
+     * @return reference to the transport
+     * @throw rsc::runtime::NoSuchObject no such transport available with the
+     *                                   given name
+     */
+    Transport &mutableTransport(const std::string &name);
 
     /**
      * Adds a transport to the list of desired transport mechanisms.
@@ -270,6 +295,14 @@ public:
      * @return copy of additional options
      */
     rsc::runtime::Properties getOptions() const;
+
+    /**
+     * Returns a mutable reference to the freestyle options in this
+     * configuration.
+     *
+     * @return mutable reference to additional options
+     */
+    rsc::runtime::Properties &mutableOptions();
 
     /**
      * Sets the additional options besides the transport-specific ones.

@@ -54,6 +54,15 @@ TEST(TransportTest, testOptions)
 
 }
 
+TEST(EventProcessingStrategyOptionTest, testMutableOptions)
+{
+    ParticipantConfig::EventProcessingStrategy ep("foo");
+    const string key = "foo";
+    const string value = "bar";
+    ep.mutableOptions().insert(make_pair(key, value));
+    EXPECT_EQ(value, ep.getOptions().get<string> (key));
+}
+
 TEST(ParticipantConfigTest, testCreation)
 {
 
@@ -107,6 +116,20 @@ TEST(ParticipantConfigTest, testTransports)
 
 }
 
+TEST(ParticipantConfigTest, testMutableTransport)
+{
+
+    ParticipantConfig config;
+
+    const string name = "t1";
+    ParticipantConfig::Transport t1(name);
+    t1.setEnabled(false);
+    config.addTransport(t1);
+    config.mutableTransport(name).setEnabled(true);
+    EXPECT_TRUE(config.getTransport(name).isEnabled());
+
+}
+
 TEST(ParticipantConfigTest, testOptions)
 {
 
@@ -116,6 +139,17 @@ TEST(ParticipantConfigTest, testOptions)
     EXPECT_FALSE(config.getOptions().has("key"));
     config.setOptions(options);
     EXPECT_TRUE(config.getOptions().has("key"));
+
+}
+
+TEST(ParticipantConfigTest, testMutableOptions)
+{
+
+    ParticipantConfig config;
+    const string key = "foo";
+    const string value = "bar";
+    config.mutableOptions().insert(make_pair(key, value));
+    EXPECT_EQ(value, config.getOptions().get<string> (key));
 
 }
 
