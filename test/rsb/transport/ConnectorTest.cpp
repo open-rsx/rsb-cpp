@@ -213,7 +213,6 @@ TEST_P(ConnectorTest, testRoundtripDynamicScopes) {
     for (unsigned int repetition = 0; repetition < repetitions; ++repetition) {
 
         const Scope scope("/" + rsc::misc::randAlnumStr(15));
-        cout << "REP " << repetition << ": " << scope << endl;
 
         boost::shared_ptr<InformerTask> source(
                 new InformerTask(out, scope, 1, 50));
