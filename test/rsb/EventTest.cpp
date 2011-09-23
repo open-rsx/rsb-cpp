@@ -32,8 +32,6 @@ using namespace rsb;
 
 TEST(EventTest, testCausality) {
 
-    srand(time(NULL));
-
     EventId cause1(rsc::misc::UUID(), rand());
     EventId cause2(rsc::misc::UUID(), rand());
     EventId cause3(rsc::misc::UUID(), rand());

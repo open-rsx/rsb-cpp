@@ -183,6 +183,52 @@ TEST_P(ConnectorTest, testHierarchySending) {
 
 }
 
+TEST_P(ConnectorTest, testRoundtripDynamicScopes) {
+    // this test will create random scopes in order to ensure that flushing any caches works correctly
+
+    // task execution service
+    TaskExecutorPtr exec(new ThreadedTaskExecutor);
+
+    QualityOfServiceSpec qosSpecs(QualityOfServiceSpec::ORDERED,
+            QualityOfServiceSpec::RELIABLE);
+
+    OutConnectorPtr out = GetParam().createOutConnector();
+    out->setQualityOfServiceSpecs(qosSpecs);
+    ASSERT_NO_THROW(out->activate());
+
+    // in connector
+    InPushConnectorPtr in = GetParam().createInConnector();
+    in->setQualityOfServiceSpecs(qosSpecs);
+    in->setScope(Scope("/"));
+    ASSERT_NO_THROW(in->activate());
+
+    const unsigned int repetitions = 1800;
+    WaitingObserver observer(repetitions * 2, Scope("/"));
+    in->addHandler(
+            HandlerPtr(
+                    new EventFunctionHandler(
+                            boost::bind(&WaitingObserver::handler,
+                                    &observer, _1))));
+
+    for (unsigned int repetition = 0; repetition < repetitions; ++repetition) {
+
+        const Scope scope("/" + rsc::misc::randAlnumStr(15));
+        cout << "REP " << repetition << ": " << scope << endl;
+
+        boost::shared_ptr<InformerTask> source(
+                new InformerTask(out, scope, 1, 50));
+        exec->schedule(source);
+
+        source->waitDone();
+
+    }
+
+    // compare sent and received events
+    observer.waitReceived();
+    EXPECT_EQ(repetitions * 2, observer.getEvents().size()) << "Roundtrip produced a different number of received messages";
+
+}
+
 TEST_P(ConnectorTest, testRoundtrip) {
 
     // task execution service

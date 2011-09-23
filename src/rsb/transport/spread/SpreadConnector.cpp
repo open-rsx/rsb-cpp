@@ -153,9 +153,18 @@ void SpreadConnector::setQualityOfServiceSpecs(
 const std::vector<std::string>& SpreadConnector::makeGroupNames(
         const Scope &scope) const {
 
-    GroupNameCache::const_iterator it;
-    if ((it = this->groupNameCache.find(scope)) != this->groupNameCache.end()) {
+    GroupNameCache::const_iterator it = this->groupNameCache.find(scope);
+    if (it != this->groupNameCache.end()) {
         return it->second;
+    }
+
+    // avoid flooding the cache
+    // rationale: normally there is only a limited amount of group names used in
+    // a system. In other cases we assume that the group names are created
+    // dynamically and in this case the cache won't help at all
+    if (groupNameCache.size() > 1400) {
+        RSCDEBUG(logger, "Flushing group name cache");
+        groupNameCache.clear();
     }
 
     // Warm-up cache
@@ -167,6 +176,7 @@ const std::vector<std::string>& SpreadConnector::makeGroupNames(
     }
 
     return cacheItem;
+
 }
 
 std::string SpreadConnector::makeGroupName(const Scope &scope) const {

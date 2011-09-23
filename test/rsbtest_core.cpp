@@ -26,6 +26,7 @@ using namespace testing;
 
 int main(int argc, char* argv[]) {
 
+    srand(time(NULL));
 	setupLogging();
 
     InitGoogleMock(&argc, argv);

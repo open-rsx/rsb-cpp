@@ -38,7 +38,6 @@ InformerTask::InformerTask(OutConnectorPtr p, const Scope &scope,
         scope(scope), numEvents(numEvents), dataSizeInBytes(dataSizeInBytes), sentEvents(
                 0), connector(p), data(
                 new string(rsc::misc::randAlnumStr(dataSizeInBytes))) {
-    srand(time(NULL));
 }
 
 InformerTask::~InformerTask() {
