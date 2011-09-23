@@ -202,7 +202,7 @@ TEST_P(ConnectorTest, testRoundtripDynamicScopes) {
     in->setScope(Scope("/"));
     ASSERT_NO_THROW(in->activate());
 
-    const unsigned int repetitions = 1800;
+    const unsigned int repetitions = 400;
     WaitingObserver observer(repetitions * 2, Scope("/"));
     in->addHandler(
             HandlerPtr(

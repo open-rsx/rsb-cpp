@@ -166,7 +166,7 @@ const std::vector<std::string>& SpreadConnector::makeGroupNames(
     // rationale: normally there is only a limited amount of group names used in
     // a system. In other cases we assume that the group names are created
     // dynamically and in this case the cache won't help at all
-    if (groupNameCache.size() > 1400) {
+    if (groupNameCache.size() > 300) {
         RSCDEBUG(logger, "Flushing group name cache");
         groupNameCache.clear();
     }
