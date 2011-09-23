@@ -96,6 +96,7 @@ private:
 
     static QoSMap buildQoSMapping();
 
+    mutable boost::shared_mutex groupNameCacheMutex;
     typedef std::map<Scope, std::vector<std::string> > GroupNameCache;
     mutable GroupNameCache groupNameCache;
 

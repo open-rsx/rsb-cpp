@@ -153,10 +153,14 @@ void SpreadConnector::setQualityOfServiceSpecs(
 const std::vector<std::string>& SpreadConnector::makeGroupNames(
         const Scope &scope) const {
 
+    boost::upgrade_lock<boost::shared_mutex> lock(groupNameCacheMutex);
+
     GroupNameCache::const_iterator it = this->groupNameCache.find(scope);
     if (it != this->groupNameCache.end()) {
         return it->second;
     }
+
+    boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
 
     // avoid flooding the cache
     // rationale: normally there is only a limited amount of group names used in
