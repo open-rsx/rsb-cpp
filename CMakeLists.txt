@@ -113,13 +113,13 @@ IF(NOT SPREAD_EXECUTABLE)
     MESSAGE(STATUS "Spread executable not found. Unit tests will not be built!")
 ENDIF()
 
-INCLUDE_DIRECTORIES(SYSTEM ${LIBS_INCLUDE_DIRS}
-                           ${RSC_INCLUDE_DIRS}
-                           ${Boost_INCLUDE_DIRS}
-                           ${BOOSTTHREADPOOL_INCLUDE_DIRS}
-                           ${BOOSTUUID_INCLUDE_DIRS}
-                           ${PROTOBUF_INCLUDE_DIRS}
-                           ${SPREAD_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(BEFORE SYSTEM ${LIBS_INCLUDE_DIRS}
+                                  ${RSC_INCLUDE_DIRS}
+                                  ${Boost_INCLUDE_DIRS}
+                                  ${BOOSTTHREADPOOL_INCLUDE_DIRS}
+                                  ${BOOSTUUID_INCLUDE_DIRS}
+                                  ${PROTOBUF_INCLUDE_DIRS}
+                                  ${SPREAD_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(BEFORE src ${CMAKE_BINARY_DIR}/src)
 LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
