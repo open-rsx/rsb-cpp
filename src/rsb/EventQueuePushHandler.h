@@ -24,6 +24,7 @@
 #include <rsc/threading/SynchronizedQueue.h>
 
 #include "Handler.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
@@ -33,7 +34,7 @@ namespace rsb {
  *
  * @author jwienke
  */
-class EventQueuePushHandler: public Handler {
+class RSB_EXPORT EventQueuePushHandler: public Handler {
 public:
 
     /**
