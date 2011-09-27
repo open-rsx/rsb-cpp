@@ -217,7 +217,7 @@ TEST_P(ConnectorTest, testRoundtripDynamicScopes) {
         boost::shared_ptr<InformerTask> source(
                 new InformerTask(out, scope, 1, 50));
         exec->schedule(source);
-        // this is by intention a parallel sending to at least partially test thread-safety
+        source->waitDone();
 
     }
 
