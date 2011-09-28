@@ -32,50 +32,35 @@ using namespace rsb::patterns;
 
 class TestCallback: public Server::Callback<string, string> {
 public:
-
-    virtual ~TestCallback() {
-    }
-
-    string methodName;
-
-    TestCallback(const string &methodName) :
-        methodName(methodName) {
-    }
-
     boost::shared_ptr<string> call(const string &methodName,
                                    boost::shared_ptr<string> input) {
-        assert(methodName == this->methodName);
-
-        if (methodName == "methodError") {
-            throw runtime_error("Intentionally failing.");
-        }
-
         return boost::shared_ptr<string>(
                 new string("reply to '" + *input + "' (method is '" + methodName + "')"));
     }
+};
 
+class ErrorProducingCallback: public Server::Callback<string, string> {
+public:
+    boost::shared_ptr<string> call(const string &methodName,
+                                   boost::shared_ptr<string> input) {
+        throw runtime_error("Intentionally failing.");
+    }
 };
 
 int main(int /*argc*/, char **/*argv*/) {
     // Use the RSB factory to create a Server instance that provides
     // callable methods under the scope /example/server.
     Factory &factory = Factory::getInstance();
-    const Scope scope("/example/server");
-    ServerPtr server = factory.createServer(scope);
+    ServerPtr server = factory.createServer(Scope("/example/server"));
 
     // Register callable methods which dispatch method calls to
-    // instances of TestCallback.
-    const string methodName1 = "methodOne";
-    Server::CallbackPtr m1(new TestCallback(methodName1));
-    server->registerMethod(methodName1, m1);
-
-    const string methodName2 = "methodTwo";
-    Server::CallbackPtr m2(new TestCallback(methodName2));
-    server->registerMethod(methodName2, m2);
-
-    const string methodName3 = "methodError";
-    Server::CallbackPtr m3(new TestCallback(methodName3));
-    server->registerMethod(methodName3, m3);
+    // instances of TestCallback and ErrorProducingCallback.
+    server->registerMethod("methodOne",
+                           Server::CallbackPtr(new TestCallback()));
+    server->registerMethod("methodTwo",
+                           Server::CallbackPtr(new TestCallback()));
+    server->registerMethod("methodError",
+                           Server::CallbackPtr(new ErrorProducingCallback()));
 
     // Wait here so incoming method calls can be processed.
     boost::this_thread::sleep(boost::posix_time::seconds(1000));
