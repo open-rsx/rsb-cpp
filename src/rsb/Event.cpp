@@ -66,6 +66,7 @@ void Event::printContents(ostream &stream) const {
         stream << "UNSPECIFIED";
     }
     stream << ", metaData = " << metaData << ", method = " << method;
+    stream << ", causes = " << causes;
 }
 
 boost::uint64_t Event::getSequenceNumber() const {
