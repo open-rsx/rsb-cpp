@@ -108,10 +108,22 @@ public:
      */
     void setEventId(const rsc::misc::UUID &senderId, const boost::uint32_t &sequenceNumber);
 
+    /**
+     * @name scope access
+     *
+     * There are two ways of getting and setting scopes for events. One uses
+     * copies of Scopes, which may be expensive and one uses ScopePtr s to
+     * avoid the copy operation. Setting the scope with one method makes it also
+     * available using the copy getter and vice versa.
+     */
+    //@{
+
     ScopePtr getScopePtr() const;
     Scope getScope() const;
     void setScopePtr(ScopePtr scope);
     void setScope(const Scope &scope);
+
+    //@}
 
     std::string getType() const;
     void setType(const std::string &type);
