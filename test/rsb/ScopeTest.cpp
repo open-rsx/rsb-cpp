@@ -54,6 +54,14 @@ TEST(ScopeTest, testParsing)
 
 }
 
+void implicitScopeTester(const Scope /*scope*/) {
+}
+
+TEST(ScopeTest, testImplicitConstruction)
+{
+    implicitScopeTester("/another/test");
+}
+
 TEST(ScopeTest, testParsingErrors)
 {
 

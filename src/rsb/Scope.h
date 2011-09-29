@@ -45,7 +45,15 @@ public:
      * @param scope string representation of the desired scope
      * @throw std::invalid_argument invalid syntax
      */
-    explicit Scope(const std::string &scope);
+    Scope(const std::string &scope);
+
+    /**
+     * Constructs scope from a string syntax.
+     *
+     * @param scope string representation of the desired scope
+     * @throw std::invalid_argument invalid syntax
+     */
+    Scope(const char *scope);
 
     /**
      * Creates a scope representing "/". Use this wisely!
@@ -123,7 +131,7 @@ public:
 
     static const char COMPONENT_SEPARATOR;
 private:
-    
+
     mutable std::string scopestring;
     std::vector<std::string> components;
 

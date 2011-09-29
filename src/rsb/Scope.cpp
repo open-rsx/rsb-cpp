@@ -74,8 +74,9 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
         // The current character is not a '/' and we want to append it
         // to the current scope component. Verify that it is a legal
         // scope component character.
-        else if (!(('a' <= *next && *next <= 'z') || ('A' <= *next && *next
-                <= 'Z') || ('0' <= *next && *next <= '9'))) {
+        else if (!(('a' <= *next && *next <= 'z')
+                || ('A' <= *next && *next <= 'Z')
+                || ('0' <= *next && *next <= '9'))) {
             throw invalid_argument(
                     str(
                             format(
@@ -91,15 +92,23 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
 }
 
 Scope::Scope(const string &s) :
-    scopestring() {
+        scopestring() {
     // reserve a number of vector components that should be enough for most
     // realistic scopes. This speeds up parsing.
     components.reserve(10);
     verifyAndSplit(s, this->components);
 }
 
+Scope::Scope(const char *scope) :
+        scopestring() {
+    // reserve a number of vector components that should be enough for most
+    // realistic scopes. This speeds up parsing.
+    components.reserve(10);
+    verifyAndSplit(string(scope), this->components);
+}
+
 Scope::Scope() :
-    scopestring() {
+        scopestring() {
 }
 
 Scope::~Scope() {
@@ -113,16 +122,16 @@ const std::string& Scope::toString() const {
     if (this->scopestring.empty()) {
 
         unsigned int scopesize = 1;
-        for (vector<string>::const_iterator it = components.begin(); it
-                != components.end(); ++it) {
+        for (vector<string>::const_iterator it = components.begin();
+                it != components.end(); ++it) {
             scopesize += it->size() + 1;
         }
 
         this->scopestring.resize(scopesize);
         this->scopestring[0] = COMPONENT_SEPARATOR;
         string::iterator cursor = scopestring.begin() + 1;
-        for (vector<string>::const_iterator it = components.begin(); it
-                != components.end(); ++it) {
+        for (vector<string>::const_iterator it = components.begin();
+                it != components.end(); ++it) {
             std::copy(it->begin(), it->end(), cursor);
             cursor += it->size();
             *cursor++ = COMPONENT_SEPARATOR;
@@ -135,8 +144,8 @@ Scope Scope::concat(const Scope &childScope) const {
     Scope result; // start with empty string cache
     result.components = this->components;
 
-    for (vector<string>::const_iterator it = childScope.components.begin(); it
-            != childScope.components.end(); ++it) {
+    for (vector<string>::const_iterator it = childScope.components.begin();
+            it != childScope.components.end(); ++it) {
         result.components.push_back(*it);
     }
 
@@ -180,8 +189,9 @@ vector<Scope> Scope::superScopes(const bool &includeSelf) const {
     if (!components.empty()) {
 
         // this math only works for scopes that are not the root scope
-        for (size_t requiredComponents = 0; requiredComponents
-                <= components.size() - 1; ++requiredComponents) {
+        for (size_t requiredComponents = 0;
+                requiredComponents <= components.size() - 1;
+                ++requiredComponents) {
 
             Scope super;
             for (size_t i = 0; i < requiredComponents; ++i) {
