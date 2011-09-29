@@ -103,7 +103,7 @@ void Bus::removeConnection(BusConnectionPtr connection) {
 void Bus::handleIncoming(EventPtr event) {
     RSCDEBUG(logger, "Delivering received event to connectors " << *event);
 
-    vector<Scope> scopes = event->getScope()->superScopes(true);
+    vector<Scope> scopes = event->getScopePtr()->superScopes(true);
     RSCDEBUG(logger, "Relevant scopes " << scopes);
 
     {

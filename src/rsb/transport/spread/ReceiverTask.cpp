@@ -124,7 +124,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     e->setEventId(rsc::misc::UUID(
             (boost::uint8_t*) notification->event_id().sender_id().c_str()), notification->event_id().sequence_number());
 
-    e->setScope(ScopePtr(new Scope(notification->scope())));
+    e->setScopePtr(ScopePtr(new Scope(notification->scope())));
     if (notification->has_method()) {
         e->setMethod(notification->method());
     }

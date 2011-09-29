@@ -108,8 +108,9 @@ public:
      */
     void setEventId(const rsc::misc::UUID &senderId, const boost::uint32_t &sequenceNumber);
 
-    ScopePtr getScope() const;
-    void setScope(ScopePtr scope);
+    ScopePtr getScopePtr() const;
+    Scope getScope() const;
+    void setScopePtr(ScopePtr scope);
     void setScope(const Scope &scope);
 
     std::string getType() const;

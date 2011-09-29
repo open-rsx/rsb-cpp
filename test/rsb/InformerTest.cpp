@@ -37,7 +37,7 @@ TEST(InformerTest, testCreateEvent) {
             ParticipantConfig());
 
     EventPtr event = informer.createEvent();
-    EXPECT_EQ(scope, *(event->getScope()));
+    EXPECT_EQ(scope, *(event->getScopePtr()));
     EXPECT_EQ(rsc::runtime::typeName<string>(), event->getType());
 
 }

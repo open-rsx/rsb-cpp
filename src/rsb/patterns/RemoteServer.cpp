@@ -168,7 +168,7 @@ RemoteServer::FuturePtr RemoteServer::callAsync(const string &methodName, EventP
         WaitingEventHandler::MutexType::scoped_lock
             lock(methodSet.handler->getMutex());
 
-        data->setScope(methodSet.requestInformer->getScope());
+        data->setScopePtr(methodSet.requestInformer->getScope());
         data->setMethod("REQUEST");
         methodSet.requestInformer->publish(data);
         result.reset(new Future<EventPtr>());

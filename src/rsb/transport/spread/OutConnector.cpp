@@ -93,7 +93,7 @@ void OutConnector::fillNotification(protocol::Notification &notification,
         const string &data) {
 
     fillEventId(*(notification.mutable_event_id()), event->getEventId());
-    notification.set_scope(event->getScope()->toString());
+    notification.set_scope(event->getScopePtr()->toString());
     if (!event->getMethod().empty()) {
         notification.set_method(event->getMethod());
     }
@@ -174,7 +174,7 @@ void OutConnector::handle(EventPtr event) {
 
         // send message to appropriate groups
         const vector<string> &groupNames = connector->makeGroupNames(
-                *event->getScope());
+                *event->getScopePtr());
         for (vector<string>::const_iterator groupIt = groupNames.begin(); groupIt
                 != groupNames.end(); ++groupIt) {
             spreadMessage.addGroup(*groupIt);

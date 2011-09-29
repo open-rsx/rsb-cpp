@@ -176,7 +176,7 @@ TEST_P(ConnectorTest, testHierarchySending) {
             EventPtr received = observer->getEvents()[i];
             EXPECT_EQ(sent->getEventId(), received->getEventId());
             EXPECT_EQ(sent->getType(), received->getType());
-            EXPECT_EQ(*sent->getScope(), *received->getScope());
+            EXPECT_EQ(*sent->getScopePtr(), *received->getScopePtr());
         }
 
     }
@@ -281,7 +281,7 @@ TEST_P(ConnectorTest, testRoundtrip) {
             EventPtr received = observer.getEvents()[i];
             EXPECT_EQ(sent->getEventId(), received->getEventId()) << "Error matching event id for index " << i << " and message size " << *sizeIt;
             EXPECT_EQ(sent->getType(), received->getType()) << "Error matching event type for index " << i << " and message size " << *sizeIt;
-            EXPECT_EQ(*sent->getScope(), *received->getScope()) << "Error matching event scope for index " << i << " and message size " << *sizeIt;
+            EXPECT_EQ(*sent->getScopePtr(), *received->getScopePtr()) << "Error matching event scope for index " << i << " and message size " << *sizeIt;
 
             // causes
             EXPECT_EQ(sent->getCauses(), received->getCauses());

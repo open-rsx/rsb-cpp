@@ -124,7 +124,7 @@ void BusConnection::handleReadBody(const boost::system::error_code &/*error*/,
             rsc::misc::UUID(
                     (boost::uint8_t*) this->notification.event_id().sender_id().c_str()),
             notification.event_id().sequence_number());
-    event->setScope(ScopePtr(new Scope(this->notification.scope())));
+    event->setScopePtr(ScopePtr(new Scope(this->notification.scope())));
     if (this->notification.has_method()) {
         event->setMethod(this->notification.method());
     }
@@ -174,7 +174,7 @@ void BusConnection::fillNotification(protocol::Notification &notification,
         event->getMetaData().getSenderId().getId().size());
     notification.mutable_event_id()->set_sequence_number(
             event->getEventId().getSequenceNumber());
-    notification.set_scope(event->getScope()->toString());
+    notification.set_scope(event->getScopePtr()->toString());
     if (!event->getMethod().empty()) {
         notification.set_method(event->getMethod());
     }

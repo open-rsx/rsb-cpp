@@ -89,7 +89,7 @@ public:
         }
 
         EventPtr returnEvent(new Event());
-        returnEvent->setScope(informer->getScope());
+        returnEvent->setScopePtr(informer->getScope());
         returnEvent->setMethod("REPLY");
         returnEvent->mutableMetaData()
             .setUserInfo("rsb:reply", event->getEventId().getAsUUID().getIdAsString());

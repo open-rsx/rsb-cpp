@@ -31,7 +31,7 @@ using namespace boost;
 
 namespace rsb {
 
-Event::Event() {
+Event::Event() : scope(new Scope()) {
 }
 
 Event::Event(ScopePtr scope, boost::shared_ptr<void> payload,
@@ -41,7 +41,7 @@ Event::Event(ScopePtr scope, boost::shared_ptr<void> payload,
 
 Event::Event(Scope scope, boost::shared_ptr<void> payload, const string &type,
         const string &method) :
-        scope(ScopePtr(new Scope(scope))), content(payload), type(type), method(
+        scope(new Scope(scope)), content(payload), type(type), method(
                 method) {
 }
 
@@ -90,7 +90,7 @@ void Event::setEventId(const rsc::misc::UUID &senderId,
     metaData.setSenderId(senderId);
 }
 
-void Event::setScope(ScopePtr s) {
+void Event::setScopePtr(ScopePtr s) {
     this->scope = s;
 }
 
@@ -98,8 +98,12 @@ void Event::setScope(const Scope &s) {
     this->scope = ScopePtr(new Scope(s));
 }
 
-ScopePtr Event::getScope() const {
+ScopePtr Event::getScopePtr() const {
     return this->scope;
+}
+
+Scope Event::getScope() const {
+    return *scope;
 }
 
 void Event::setData(VoidPtr d) {

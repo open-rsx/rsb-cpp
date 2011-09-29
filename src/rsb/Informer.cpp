@@ -60,7 +60,7 @@ void InformerBase::setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
 
 EventPtr InformerBase::createEvent() const {
     EventPtr event(new Event());
-    event->setScope(getScope());
+    event->setScopePtr(getScope());
     return event;
 }
 
@@ -101,13 +101,13 @@ void InformerBase::checkedPublish(EventPtr event) {
                                 % event->getType() % getType()));
     }
     // Check event scope against informer's declared scope.
-    if (*event->getScope() != *getScope() && !event->getScope()->isSubScopeOf(
+    if (*event->getScopePtr() != *getScope() && !event->getScopePtr()->isSubScopeOf(
             *getScope())) {
         throw invalid_argument(
                 boost::str(
                         boost::format(
                                 "Specified event scope %1% does not match listener scope %2%.")
-                                % event->getScope() % getScope()));
+                                % event->getScopePtr() % getScope()));
     }
 
     this->uncheckedPublish(event);

@@ -144,10 +144,10 @@ void Bus::handle(EventPtr event) {
 
 void Bus::handleNoLock(EventPtr event) {
 
-    SinkMap::const_iterator it = this->sinks.find(*event->getScope());
+    SinkMap::const_iterator it = this->sinks.find(*event->getScopePtr());
     if (it == this->sinks.end()) {
         RSCDEBUG(logger,
-                "No entry in sink map for event scope " << *event->getScope());
+                "No entry in sink map for event scope " << *event->getScopePtr());
 
         set<boost::weak_ptr<InConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
@@ -157,21 +157,21 @@ void Bus::handleNoLock(EventPtr event) {
                     "Adding " << it_->second.size() << " connectors from "
                             << it_->first);
 
-            if (it_->first == *event->getScope() || it_->first.isSuperScopeOf(
-                    *event->getScope())) {
+            if (it_->first == *event->getScopePtr() || it_->first.isSuperScopeOf(
+                    *event->getScopePtr())) {
                 copy(it_->second.begin(), it_->second.end(),
                         inserter(connectors, connectors.begin()));
             }
         }
         copy(connectors.begin(), connectors.end(),
-                back_inserter(this->sinks[*event->getScope()]));
+                back_inserter(this->sinks[*event->getScopePtr()]));
 
         RSCDEBUG(
                 logger,
-                "Created entry in sink map for scope " << *event->getScope()
+                "Created entry in sink map for scope " << *event->getScopePtr()
                         << " with " << connectors.size() << " connectors");
 
-        it = this->sinks.find(*event->getScope());
+        it = this->sinks.find(*event->getScopePtr());
     }
 
     const SinkList &connectors = it->second;
