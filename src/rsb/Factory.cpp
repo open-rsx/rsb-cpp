@@ -70,12 +70,54 @@ Factory::Factory() :
     converter::registerDefaultConverters();
     transport::registerDefaultTransports();
 
-    // setup default participant config
-    this->defaultConfig = ParticipantConfig::fromConfiguration();
-    if (this->defaultConfig.getTransports().empty()) {
-        // TODO later this should be inprocess
-        this->defaultConfig.addTransport(ParticipantConfig::Transport("spread"));
+    // Setup default participant config
+
+    // 1. Collect all available connector implementations from the
+    //    connector factories
+    //    + In-push
+    //    + In-pull
+    //    + Out
+    //    Disable discovered connectors with the exception of the
+    //    inprocess transport.
+    // 2. Merge with user configuration (configuration files, environ
+    //    variables)
+    // 3. Issue a warning if the combination of available transport
+    //    implementations and user configuration leads to no enabled
+    //    transports.
+    set<string> availableTransports;
+    {
+        set<InPullFactory::ConnectorInfo> infos = InPullFactory::getInstance().getConnectorInfos();
+        for (set<InPullFactory::ConnectorInfo>::const_iterator it
+                 = infos.begin(); it != infos.end(); ++it) {
+            availableTransports.insert(it->getName());
+        }
+    }{
+        set<InPushFactory::ConnectorInfo> infos = InPushFactory::getInstance().getConnectorInfos();
+        for (set<InPushFactory::ConnectorInfo>::const_iterator it
+                 = infos.begin(); it != infos.end(); ++it) {
+            availableTransports.insert(it->getName());
+        }
+    }{
+        set<OutFactory::ConnectorInfo> infos = OutFactory::getInstance().getConnectorInfos();
+        for (set<OutFactory::ConnectorInfo>::const_iterator it
+                 = infos.begin(); it != infos.end(); ++it) {
+            availableTransports.insert(it->getName());
+        }
     }
+
+    this->defaultConfig = ParticipantConfig();
+    for (set<string>::const_iterator it = availableTransports.begin();
+         it != availableTransports.end(); ++it) {
+        // TODO later this should be inprocess
+        this->defaultConfig.addTransport(ParticipantConfig::Transport(*it, *it == "spread"));
+    }
+    this->defaultConfig
+        = ParticipantConfig::fromConfiguration(this->defaultConfig);
+
+    if (this->defaultConfig.getTransports().empty()) {
+        RSCWARN(logger, "No transports are enabled. This is probably a configuration error or an internal RSB error.");
+    }
+
     RSCDEBUG(logger, "Default config " << defaultConfig);
 }
 
@@ -127,6 +169,7 @@ ServicePtr Factory::createService(const Scope &scope) {
 
 vector<InPullConnectorPtr>
 Factory::createInPullConnectors(const ParticipantConfig &config) {
+    // Note: getTransports() only returns *enabled* transports.
     vector<InPullConnectorPtr> connectors;
     set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
     for (set<ParticipantConfig::Transport>::const_iterator transportIt =
@@ -155,6 +198,7 @@ Factory::createInPullConnectors(const ParticipantConfig &config) {
 
 vector<InPushConnectorPtr>
 Factory::createInPushConnectors(const ParticipantConfig &config) {
+    // Note: getTransports() only returns *enabled* transports.
     vector<InPushConnectorPtr> connectors;
     set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
     for (set<ParticipantConfig::Transport>::const_iterator transportIt =
@@ -183,6 +227,7 @@ Factory::createInPushConnectors(const ParticipantConfig &config) {
 
 vector<OutConnectorPtr>
 Factory::createOutConnectors(const ParticipantConfig &config) {
+    // Note: getTransports() only returns *enabled* transports.
     vector<OutConnectorPtr> connectors;
     set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
     for (set<ParticipantConfig::Transport>::const_iterator transportIt =
