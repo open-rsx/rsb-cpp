@@ -47,9 +47,11 @@ DirectEventReceivingStrategy::~DirectEventReceivingStrategy() {
 }
 
 void DirectEventReceivingStrategy::printContents(ostream &stream) const {
-    boost::shared_lock<boost::shared_mutex> filtersLock(filtersMutex);
-    boost::shared_lock<boost::shared_mutex> errorLock(errorStrategyMutex);
-    stream << "filters = " << filters << ", errorStrategy = " << errorStrategy;
+    boost::shared_lock<boost::shared_mutex> filtersLock(this->filtersMutex);
+    boost::shared_lock<boost::shared_mutex> errorLock(this->errorStrategyMutex);
+    stream << "filters = " << this->filters
+           << ", errorStrategy = " << this->errorStrategy
+           << ", singleThreaded = " << this->singleThreaded;
 }
 
 void DirectEventReceivingStrategy::setHandlerErrorStrategy(
