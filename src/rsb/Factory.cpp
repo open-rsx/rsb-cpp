@@ -71,19 +71,14 @@ Factory::Factory() :
     transport::registerDefaultTransports();
 
     // Setup default participant config
-
-    // 1. Collect all available connector implementations from the
-    //    connector factories
-    //    + In-push
-    //    + In-pull
-    //    + Out
-    //    Disable discovered connectors with the exception of the
-    //    inprocess transport.
-    // 2. Merge with user configuration (configuration files, environ
-    //    variables)
-    // 3. Issue a warning if the combination of available transport
-    //    implementations and user configuration leads to no enabled
-    //    transports.
+    //
+    // Collect all available connector implementations from the
+    // connector factories:
+    // + In-push
+    // + In-pull
+    // + Out
+    // Disable discovered connectors with the exception of the
+    // inprocess transport.
     set<string> availableTransports;
     {
         set<InPullFactory::ConnectorInfo> infos = InPullFactory::getInstance().getConnectorInfos();
@@ -108,12 +103,17 @@ Factory::Factory() :
     this->defaultConfig = ParticipantConfig();
     for (set<string>::const_iterator it = availableTransports.begin();
          it != availableTransports.end(); ++it) {
-        // TODO later this should be inprocess
-        this->defaultConfig.addTransport(ParticipantConfig::Transport(*it, *it == "spread"));
+        this->defaultConfig.addTransport(ParticipantConfig::Transport(*it, *it == "inprocess"));
     }
+
+    // Merge with user configuration (configuration files, environment
+    // variables)
     this->defaultConfig
         = ParticipantConfig::fromConfiguration(this->defaultConfig);
 
+    // Issue a warning if the combination of available transport
+    // implementations and user configuration leads to no enabled
+    // transports.
     if (this->defaultConfig.getTransports().empty()) {
         RSCWARN(logger, "No transports are enabled. This is probably a configuration error or an internal RSB error.");
     }
