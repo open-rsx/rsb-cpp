@@ -41,11 +41,15 @@ using namespace rsc::runtime;
 
 namespace rsb {
 
-ParticipantConfig::Transport::Transport(const string &name) :
+ParticipantConfig::Transport::Transport(const string &name,
+                                        bool enabled) :
     name(name) {
     if (name.empty()) {
         throw invalid_argument(
                 "The name of a transport configuration cannot be empty.");
+    }
+    if (!enabled) {
+        setEnabled(false);
     }
 }
 
@@ -118,8 +122,9 @@ string ParticipantConfig::Transport::getClassName() const {
 }
 
 void ParticipantConfig::Transport::printContents(ostream &stream) const {
-    stream << "name = " << this->name << ", converters = " << this->converters
-            << ", options = " << this->options;
+    stream << "name = " << this->name
+           << ", converters = " << this->converters
+           << ", options = " << this->options;
 }
 
 ParticipantConfig::EventProcessingStrategy::EventProcessingStrategy(const string &name) :
@@ -157,7 +162,8 @@ void ParticipantConfig::EventProcessingStrategy::handleOption(const vector<strin
 }
 
 void ParticipantConfig::EventProcessingStrategy::printContents(ostream &stream) const {
-    stream << "name = " << this->name << ", options = " << this->options;
+    stream << "name = " << this->name
+           << ", options = " << this->options;
 }
 
 ParticipantConfig::ParticipantConfig() :
@@ -234,6 +240,10 @@ void ParticipantConfig::setTransports(const set<Transport> &transports) {
 }
 
 const ParticipantConfig::EventProcessingStrategy &ParticipantConfig::getEventReceivingStrategy() const {
+    return this->eventReceivingStrategy;
+}
+
+ParticipantConfig::EventProcessingStrategy &ParticipantConfig::mutableEventReceivingStrategy() {
     return this->eventReceivingStrategy;
 }
 
@@ -389,14 +399,13 @@ void ParticipantConfig::handleOption(const vector<string> &key,
     }
 }
 
-ostream &operator<<(ostream &stream, const ParticipantConfig &config) {
-    stream << "ParticipantConfig[qosSpec = " << config.qosSpec
-           << ", errorStrategy = " << config.errorStrategy
-           << ", transports = " << config.getTransports()
-           << ", eventReceivingStrategy = " << config.getEventReceivingStrategy()
-           << ", eventSendingStrategy = " << config.getEventSendingStrategy()
-           << ", options = " << config.getOptions() << "]";
-    return stream;
+void ParticipantConfig::printContents(std::ostream &stream) const {
+    stream << "qosSpec = " << this->qosSpec
+           << ", errorStrategy = " << this->errorStrategy
+           << ", transports = " << this->getTransports(true)
+           << ", eventReceivingStrategy = " << this->eventReceivingStrategy
+           << ", eventSendingStrategy = " << this->eventSendingStrategy
+           << ", options = " << this->options << "]";
 }
 
 }

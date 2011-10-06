@@ -51,7 +51,8 @@ namespace rsb {
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT ParticipantConfig: public rsc::config::OptionHandler {
+class RSB_EXPORT ParticipantConfig: public rsc::config::OptionHandler,
+                                    public rsc::runtime::Printable {
 public:
 
     /**
@@ -72,10 +73,13 @@ public:
          * name.
          *
          * @param name name of the transport to describe
+         * @param enabled controls whether the transport is used by
+         *                default.
          * @throw std::invalid_argument empty name given, a transport cannot
          *                              have an empty name
          */
-        explicit Transport(const std::string &name);
+        explicit Transport(const std::string &name,
+                           bool enabled = true);
         virtual ~Transport();
 
         /**
@@ -287,6 +291,9 @@ public:
 
     const EventProcessingStrategy &getEventReceivingStrategy() const;
 
+    EventProcessingStrategy &mutableEventReceivingStrategy();
+
+
     const EventProcessingStrategy &getEventSendingStrategy() const;
 
     /**
@@ -378,10 +385,6 @@ public:
      */
     static ParticipantConfig fromConfiguration(
             const ParticipantConfig &defaults = ParticipantConfig());
-
-    friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-            const ParticipantConfig &config);
-
 private:
     rsc::logging::LoggerPtr logger;
 
@@ -394,9 +397,8 @@ private:
 
     void handleOption(const std::vector<std::string> &key,
             const std::string &value);
-};
 
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-        const ParticipantConfig &config);
+    void printContents(std::ostream &stream) const;
+};
 
 }
