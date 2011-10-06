@@ -217,6 +217,7 @@ protected:
 TEST_F(InformerTest, testTypeCheck)
 {
     Factory &factory = Factory::getInstance();
+
     shared_ptr<string> payload(new string("foo"));
     {
         Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
@@ -239,8 +240,13 @@ TEST_F(InformerTest, testTypeCheck)
     // We have to catch the NoSuchObject exception which is thrown in
     // the converter selection step after we get through the checks
     // employed by the Informer.
+
+    ParticipantConfig config = Factory::getInstance().getDefaultParticipantConfig();
+    config.mutableTransport("inprocess").setEnabled(false);
+    config.mutableTransport("spread").setEnabled(true);
+
     {
-        Informer<AnyType>::Ptr informer = factory.createInformer<AnyType> (Scope("/"));
+        Informer<AnyType>::Ptr informer = factory.createInformer<AnyType> (Scope("/"), config);
         EXPECT_THROW(informer->publish(payload, "arbitrary-type"), rsc::runtime::NoSuchObject);
         EventPtr event(new Event(Scope("/"), payload, "arbitrary-type"));
         EXPECT_THROW(informer->publish(event), rsc::runtime::NoSuchObject);
@@ -299,10 +305,15 @@ TEST_F(InformerTest, testConversionException)
 
     Factory &factory = Factory::getInstance();
 
+    ParticipantConfig config = Factory::getInstance().getDefaultParticipantConfig();
+    config.mutableTransport("inprocess").setEnabled(false);
+    config.mutableTransport("spread").setEnabled(true);
+
     const Scope scope("/damn/strange/scope");
-    Informer<string>::Ptr informer = factory.createInformer<string> (scope,
-            Factory::getInstance().getDefaultParticipantConfig(),
-            "IAmNotConvertible");
+    Informer<string>::Ptr informer
+        = factory.createInformer<string> (scope,
+                                          config,
+                                          "IAmNotConvertible");
     EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo"))), runtime_error);
     EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo")), "IAmNotConvertible"), runtime_error);
 
