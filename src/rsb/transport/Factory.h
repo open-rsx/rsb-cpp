@@ -93,6 +93,19 @@ public:
 	OptionList getOptions() const {
 	    return this->options;
 	}
+
+        bool operator<(const ConnectorInfo &other) const {
+            if (this->name < other.name) {
+                return true;
+            } else if (this->name == other.name) {
+                if (this->schemas < other.schemas) {
+                    return true;
+                } else if (this->schemas == other.schemas) {
+                    return this->options < other.options;
+                }
+            }
+            return false;
+        }
     private:
 	std::string name;
 	SchemaList schemas;
@@ -131,6 +144,16 @@ public:
 	    throw rsc::runtime::NoSuchObject(name);
 	}
 	return it->second;
+    }
+
+    std::set<ConnectorInfo> getConnectorInfos() const {
+        std::set<ConnectorInfo> result;
+
+        for (typename InfoMap::const_iterator it = this->infos.begin();
+             it != this->infos.end(); ++it) {
+            result.insert(it->second);
+        }
+        return result;
     }
 
     /**
