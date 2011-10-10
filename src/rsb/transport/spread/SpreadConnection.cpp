@@ -46,10 +46,13 @@ namespace spread {
 SpreadConnection::SpreadConnection(const string &id, const string &host,
         unsigned int port) :
     logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
-            host(host), port(port), spreadhost((port == 0) ? host : str(format(
-                    "%1%@%2%") % port % host)), conId(id), msgCount(0) {
+    host(host), port(port),
+    spreadname((host == defaultHost())
+               ? lexical_cast<string>(port)
+               : str(format("%1%@%2%") % port % host)),
+    conId(id), msgCount(0) {
     RSCDEBUG(logger, "instantiated spread connection with id " << conId
-            << " to spread daemon at " << spreadhost);
+             << " to spread daemon at " << spreadname);
 }
 
 SpreadConnection::~SpreadConnection() {
@@ -66,16 +69,16 @@ void SpreadConnection::activate() {
                 + " is already active.");
     }
 
-    RSCDEBUG(logger, "connecting to spread daemon at " << spreadhost);
+    RSCDEBUG(logger, "connecting to spread daemon at " << spreadname);
     char spreadPrivateGroup[MAX_GROUP_NAME];
-    int ret = SP_connect(spreadhost.c_str(), 0, 0, 0, &con, spreadPrivateGroup);
+    int ret = SP_connect(spreadname.c_str(), 0, 0, 0, &con, spreadPrivateGroup);
     spreadpg = string(spreadPrivateGroup);
     if (ret != ACCEPT_SESSION) {
         switch (ret) {
         case ILLEGAL_SPREAD:
             RSCFATAL(
                     logger,
-                    "spread connect error: connection to spread daemon at " << spreadhost << " failed, check port and hostname");
+                    "spread connect error: connection to spread daemon at " << spreadname << " failed, check port and hostname");
             break;
         case COULD_NOT_CONNECT:
             RSCFATAL(

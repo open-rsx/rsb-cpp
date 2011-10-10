@@ -50,8 +50,9 @@ RSB_EXPORT unsigned int defaultPort();
  */
 class RSB_EXPORT SpreadConnection {
 public:
-    SpreadConnection(const std::string &prefix, const std::string &host =
-            defaultHost(), unsigned int port = defaultPort());
+    SpreadConnection(const std::string &prefix,
+                     const std::string &host   = defaultHost(),
+                     unsigned int port         = defaultPort());
     virtual ~SpreadConnection();
 
     /**
@@ -165,10 +166,11 @@ private:
      */
     unsigned int port;
     /**
-     * The composd name of the daemon made up from port and host, e.g.
-     * 4803\@localhost,
+     * The name of the daemon. Can consists of port and host, e.g.
+     * 4803\@localhost or only a port. See SP_connect(3) man-page for
+     * details.
      */
-    std::string spreadhost;
+    std::string spreadname;
     /**
      * Private name of this connection.
      */
