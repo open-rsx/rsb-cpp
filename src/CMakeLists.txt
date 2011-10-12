@@ -225,11 +225,10 @@ SET(HEADERS rsb/CommException.h
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_PROTOCOL_NAME}
-                                  ${LIBS_LIBRARIES}
-                                  ${Boost_LIBRARIES}
                                   ${SPREAD_LIBRARIES}
                                   ${PROTOBUF_LIBRARIES}
                                   ${RSC_LIBRARIES}
+                                  ${Boost_LIBRARIES}
                                   ${CMAKE_THREAD_LIBS_INIT})
 SET_TARGET_PROPERTIES(${RSB_NAME}
                       PROPERTIES
