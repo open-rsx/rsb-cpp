@@ -26,15 +26,19 @@ using namespace std;
 namespace rsb {
 
 unsigned int Version::major() {
-	return @RSB_VERSION_MAJOR@;
+	return RSB_VERSION_MAJOR;
 }
 
 unsigned int Version::minor() {
-	return @RSB_VERSION_MINOR@;
+	return RSB_VERSION_MINOR;
 }
 
 unsigned int Version::patch() {
-	return @RSB_VERSION_PATCH@;
+	return RSB_VERSION_PATCH;
+}
+
+unsigned int Version::numeric() {
+	return RSB_VERSION_NUMERIC;
 }
 
 string Version::string() {

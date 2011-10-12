@@ -15,7 +15,15 @@ ENDIF()
 
 CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/rsb)
+
+# version
+INCLUDE(PadString)
+PAD_STRING(MAJOR_PADDED 2 "0" ${RSB_VERSION_MAJOR})
+PAD_STRING(MINOR_PADDED 2 "0" ${RSB_VERSION_MINOR})
+PAD_STRING(PATCH_PADDED 2 "0" ${RSB_VERSION_PATCH})
+SET(RSB_VERSION_NUMERIC "${MAJOR_PADDED}${MINOR_PADDED}${PATCH_PADDED}")
 CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @ONLY)
+CONFIGURE_FILE(rsb/Version.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h @ONLY)
 
 SET(SOURCES rsb/CommException.cpp
             rsb/Event.cpp
@@ -130,7 +138,6 @@ SET(HEADERS rsb/CommException.h
             rsb/Scope.h
             rsb/Service.h
             rsb/UnsupportedQualityOfServiceException.h
-            rsb/Version.h
 
             rsb/converter/BoolConverter.h
             rsb/converter/Converter.h
@@ -210,9 +217,12 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/socket/InPushConnector.h
             rsb/transport/socket/OutConnector.h
 
-            rsb/util/MD5.h)
+            rsb/util/MD5.h
+            
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 
-ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
+ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_PROTOCOL_NAME}
                                   ${LIBS_LIBRARIES}

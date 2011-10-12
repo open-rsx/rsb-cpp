@@ -23,6 +23,14 @@
 
 #include "rsb/rsbexports.h"
 
+#define RSB_VERSION_MAJOR @RSB_VERSION_MAJOR@
+#define RSB_VERSION_MINOR @RSB_VERSION_MINOR@
+#define RSB_VERSION_PATCH @RSB_VERSION_PATCH@
+
+#define RSB_VERSION_NUMERIC @RSB_VERSION_NUMERIC@
+
+#define RSB_ABI_VERSION @RSB_ABI_VERSION@
+
 namespace rsb {
 
 class RSB_EXPORT Version {
@@ -31,6 +39,8 @@ public:
 	static unsigned int major();
 	static unsigned int minor();
 	static unsigned int patch();
+	
+	static unsigned int numeric();
 
 	static std::string string();
 
