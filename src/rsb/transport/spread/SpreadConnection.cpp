@@ -47,9 +47,13 @@ SpreadConnection::SpreadConnection(const string &id, const string &host,
         unsigned int port) :
     logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
     host(host), port(port),
+#ifdef WIN32
+    spreadname(str(format("%1%@%2%") % port % host)),
+#else
     spreadname((host == defaultHost())
                ? lexical_cast<string>(port)
                : str(format("%1%@%2%") % port % host)),
+#endif
     conId(id), msgCount(0) {
     RSCDEBUG(logger, "instantiated spread connection with id " << conId
              << " to spread daemon at " << spreadname);
