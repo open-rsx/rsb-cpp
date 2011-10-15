@@ -74,6 +74,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/filter/Filter.cpp
             rsb/filter/FilterObserver.cpp
             rsb/filter/ScopeFilter.cpp
+            rsb/filter/OriginFilter.cpp
 
             rsb/introspection/IntrospectionConverter.cpp
             rsb/introspection/introspection.cpp
@@ -173,6 +174,7 @@ SET(HEADERS rsb/CommException.h
             rsb/filter/FilterActionTypes.h
             rsb/filter/FilterObserver.h
             rsb/filter/ScopeFilter.h
+            rsb/filter/OriginFilter.h
 
             rsb/introspection/IntrospectionConverter.h
             rsb/introspection/PortStateChange.h
@@ -218,7 +220,7 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/socket/OutConnector.h
 
             rsb/util/MD5.h
-            
+
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
 
