@@ -150,6 +150,35 @@ public:
 
     };
 
+    template<class ReplyType>
+    class Callback<void, ReplyType>: public CallbackBase {
+    public:
+      // typeid is due to msvc strangeness
+      Callback(const std::string &requestType
+	       = rsc::runtime::typeName(typeid(void)),
+	       const std::string &replyType
+	       = rsc::runtime::typeName(typeid(ReplyType))) :
+	  CallbackBase(requestType, replyType) {
+      }
+
+      /**
+       * Implement this method to perform actions.
+       *
+       * @param methodName called method
+       * @return result data for the method
+       * @throw std::exception all exceptions based on this type are
+       *                       automatically caught and delivered to the
+       *                       remote server
+       */
+      virtual boost::shared_ptr<ReplyType> call(const std::string &methodName) = 0;
+    private:
+	boost::shared_ptr<void> intlCall(const std::string &methodName,
+				       boost::shared_ptr<void> input) {
+	    return call(methodName);
+	}
+
+    };
+
     typedef boost::shared_ptr<IntlCallback> CallbackPtr;
 
     Server(const Scope &scope);
