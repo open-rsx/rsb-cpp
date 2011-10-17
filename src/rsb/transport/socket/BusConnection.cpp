@@ -24,12 +24,14 @@
 #include <rsc/misc/langutils.h>
 
 #include "Bus.h"
+#include "Serialization.h"
 
 using namespace std;
 
 using namespace boost;
 
 using namespace boost::asio;
+//using tcp = boost::asio::ip::tcp;
 
 using namespace rsc::logging;
 
@@ -38,12 +40,34 @@ namespace transport {
 namespace socket {
 
 BusConnection::BusConnection(BusPtr    bus,
-                             SocketPtr socket) :
+                             SocketPtr socket,
+                             bool      client,
+                             bool      tcpNoDelay) :
     logger(Logger::getLogger("rsb.transport.socket.BusConnection")),
     socket(socket), bus(bus) {
+
+    // Enable TCPNODELAY socket option to trade decreased throughput
+    // for reduced latency.
+    if (tcpNoDelay){
+        boost::asio::ip::tcp::no_delay option(true);
+        socket->set_option(option);
+    }
+
     // Allocate static buffers.
     this->lengthReceiveBuffer.resize(4);
     this->lengthSendBuffer.resize(4);
+
+    // handshake
+    if (client) {
+        read(*this->socket, buffer(&this->lengthReceiveBuffer[0], 4));
+    } else {
+        write(*this->socket, buffer(this->lengthSendBuffer));
+    }
+}
+
+BusConnection::~BusConnection() {
+    /** TODO(jmoringe): ignore errors? */
+    disconnect();
 }
 
 void BusConnection::receiveEvent() {
@@ -56,25 +80,55 @@ void BusConnection::receiveEvent() {
 
 void BusConnection::sendEvent(EventPtr      event,
                               const string &wireSchema) {
+    /** TODO(jmoringe): hack, strand is needed */
+    //this->socket->io_service().post(bind(&BusConnection::handleSendEvent, shared_from_this(),
+    //                                   event, wireSchema));
+
     // Serialize the event into a notification object and serialize
     // the notification object.
+    // The payload has already been serialized by the connector which
+    // submitted the event.
     protocol::Notification notification;
-    fillNotification(notification, event, wireSchema,
-                     *static_pointer_cast<string>(event->getData()));
+    eventToNotification(notification, event, wireSchema,
+                        *static_pointer_cast<string>(event->getData()));
     notification.SerializeToString(&this->messageSendBuffer);
 
     // Encode the size of the serialized notification object.
     uint32_t length = this->messageSendBuffer.size();
-    this->lengthSendBuffer[0] = (length & 0x000000ff) >> 0;
-    this->lengthSendBuffer[1] = (length & 0x0000ff00) >> 8;
-    this->lengthSendBuffer[2] = (length & 0x00ff0000) >> 16;
-    this->lengthSendBuffer[3] = (length & 0xff000000) >> 24;
+    this->lengthSendBuffer[0] = (length & 0x000000fful) >> 0;
+    this->lengthSendBuffer[1] = (length & 0x0000ff00ul) >> 8;
+    this->lengthSendBuffer[2] = (length & 0x00ff0000ul) >> 16;
+    this->lengthSendBuffer[3] = (length & 0xff000000ul) >> 24;
+
+    RSCDEBUG(logger, "Sending size " << length);
 
     // Send the size header, followed by the actual notification data.
-    async_write(*this->socket, buffer(this->lengthSendBuffer),
-                boost::bind(&BusConnection::handleWriteLength, shared_from_this(),
-                     boost::asio::placeholders::error,
-                     boost::asio::placeholders::bytes_transferred));
+    write(*this->socket, buffer(this->lengthSendBuffer)/*,
+                                                         boost::bind(&BusConnection::handleWriteLength, shared_from_this(),
+                                                         boost::asio::placeholders::error,
+                                                         boost::asio::placeholders::bytes_transferred)*/);
+
+    /*async_*/write(*this->socket, buffer(this->messageSendBuffer)/*,
+      boost::bind(&BusConnection::handleWriteBody, shared_from_this(),
+      boost::asio::placeholders::error,
+      boost::asio::placeholders::bytes_transferred)*/);
+
+    RSCINFO(logger, "Sent event " << event);
+}
+
+void BusConnection::disconnect() {
+    RSCINFO(logger, "Disconnecting");
+
+    try {
+        if (this->socket && this->socket->is_open()) {
+            this->socket->shutdown(ip::tcp::socket::shutdown_send);
+            this->socket->shutdown(ip::tcp::socket::shutdown_receive);
+            RSCINFO(logger, "Closing");
+            this->socket->close();
+        }
+    } catch (const std::exception &e) {
+        RSCERROR(logger, "Failed to disconnect: " << e.what());
+    }
 }
 
 void BusConnection::handleReadLength(const boost::system::error_code &error,
@@ -83,126 +137,79 @@ void BusConnection::handleReadLength(const boost::system::error_code &error,
         RSCWARN(logger, "Receive failure (error " << error << ")"
                 << " or incomplete message header (received " << bytesTransferred << ")"
                 << "; closing connection");
-        this->socket->close();
-        this->bus->removeConnection(shared_from_this());
+        //disconnect();
+        BusPtr bus = this->bus.lock();
+        if (bus) {
+            bus->removeConnection(shared_from_this()); /** TODO(jmoringe): not sure about this */
+        }
         return;
     }
 
     uint32_t size
-        = ((uint32_t) this->lengthReceiveBuffer[0] << 0)
-        | ((uint32_t) this->lengthReceiveBuffer[1] << 8)
-        | ((uint32_t) this->lengthReceiveBuffer[2] << 16)
-        | ((uint32_t) this->lengthReceiveBuffer[3] << 24);
+        = (((uint32_t) *reinterpret_cast<unsigned char*>(&this->lengthReceiveBuffer[0])) << 0)
+        | (((uint32_t) *reinterpret_cast<unsigned char*>(&this->lengthReceiveBuffer[1])) << 8)
+        | (((uint32_t) *reinterpret_cast<unsigned char*>(&this->lengthReceiveBuffer[2])) << 16)
+        | (((uint32_t) *reinterpret_cast<unsigned char*>(&this->lengthReceiveBuffer[3])) << 24);
+
+    RSCDEBUG(logger, "Received message header with size " << size);
+
     this->messageReceiveBuffer.resize(size);
 
     async_read(*this->socket,
                buffer(&this->messageReceiveBuffer[0], size),
                boost::bind(&BusConnection::handleReadBody, shared_from_this(),
-		    boost::asio::placeholders::error,
-		    boost::asio::placeholders::bytes_transferred));
+                           boost::asio::placeholders::error,
+                           boost::asio::placeholders::bytes_transferred,
+                           size));
 }
 
-void BusConnection::handleReadBody(const boost::system::error_code &/*error*/,
-                                   size_t                    /*bytesTransferred*/) {
-    /** TODO(jmoringe): handle errors */
+void BusConnection::handleReadBody(const boost::system::error_code &error,
+                                   size_t                    bytesTransferred,
+                                   size_t expected) {
+    if (error || (bytesTransferred != expected)) {
+        RSCWARN(logger, "Receive failure (error " << error << ")"
+                << " or incomplete message body (received " << bytesTransferred << ")"
+                << "; closing connection");
+        //disconnect();
+        BusPtr bus = this->bus.lock();
+        if (bus) {
+            bus->removeConnection(shared_from_this()); /** TODO(jmoringe): not sure about this */
+        }
+        return;
+    }
 
     // Deserialize the notification.
     this->notification.ParseFromString(this->messageReceiveBuffer);
-    EventPtr event(new Event());
-    /** TODO(jmoringe): it may be possible to keep a single event
-     * instance here since connectors probably have to copy events  */
 
     // Construct an Event instance *without* deserializing the
     // payload. This has to be done in connectors since different
     // converters can be used.
-    MetaData &metaData = event->mutableMetaData();
-    metaData.setCreateTime((boost::uint64_t) this->notification.meta_data().create_time());
-    metaData.setSendTime((boost::uint64_t) this->notification.meta_data().send_time());
-    metaData.setReceiveTime();
-
-    event->setEventId(
-            rsc::misc::UUID(
-                    (boost::uint8_t*) this->notification.event_id().sender_id().c_str()),
-            notification.event_id().sequence_number());
-    event->setScopePtr(ScopePtr(new Scope(this->notification.scope())));
-    if (this->notification.has_method()) {
-        event->setMethod(this->notification.method());
-    }
-
-    for (int i = 0; i < this->notification.meta_data().user_infos_size(); ++i) {
-        metaData.setUserInfo(this->notification.meta_data().user_infos(i).key(),
-                             this->notification.meta_data().user_infos(i).value());
-    }
-    for (int i = 0; i < this->notification.meta_data().user_times_size(); ++i) {
-        metaData.setUserTime(this->notification.meta_data().user_times(i).key(),
-                             this->notification.meta_data().user_times(i).timestamp());
-    }
-
-    event->setData(boost::shared_ptr<string>(new string(this->notification.data())));
-    metaData.setUserInfo("rsb.wire-schema", this->notification.wire_schema());
+    EventPtr event = notificationToEvent(this->notification, true);
 
     // Dispatch the received event to connectors.
-    this->bus->handleIncoming(event);
+    BusPtr bus = this->bus.lock();
+    if (bus) {
+        bus->handleIncoming(event);
+    }
 
     // Submit task to start receiving the next event.
     receiveEvent();
+}
+
+void BusConnection::handleSendEvent(EventPtr      event,
+                                    const string &wireSchema) {
 }
 
 void BusConnection::handleWriteLength(const boost::system::error_code &/*error*/,
                                       size_t                    /*bytesTransferred*/) {
     /** TODO(jmoringe): handle errors */
 
-    async_write(*this->socket, buffer(this->messageSendBuffer),
-                boost::bind(&BusConnection::handleWriteBody, shared_from_this(),
-                     boost::asio::placeholders::error,
-                     boost::asio::placeholders::bytes_transferred));
+
 }
 
 void BusConnection::handleWriteBody(const boost::system::error_code &/*error*/,
                                     size_t                    /*bytesTransferred*/) {
     /** TODO(jmoringe): handle errors */
-}
-
-void BusConnection::fillNotification(protocol::Notification &notification,
-                                     const EventPtr         &event,
-                                     const string           &wireSchema,
-                                     const string           &data) {
-    // The payload has already been serialized by the connector which
-    // submitted the event.
-    notification.mutable_event_id()->set_sender_id(
-        event->getMetaData().getSenderId().getId().data,
-        event->getMetaData().getSenderId().getId().size());
-    notification.mutable_event_id()->set_sequence_number(
-            event->getEventId().getSequenceNumber());
-    notification.set_scope(event->getScopePtr()->toString());
-    if (!event->getMethod().empty()) {
-        notification.set_method(event->getMethod());
-    }
-    notification.set_wire_schema(wireSchema);
-    notification.mutable_meta_data()->set_create_time(
-        event->getMetaData().getCreateTime());
-    notification.mutable_meta_data()->set_send_time(
-        event->getMetaData().getSendTime());
-    for (map<string, string>::const_iterator it =
-             event->mutableMetaData().userInfosBegin(); it
-             != event->mutableMetaData().userInfosEnd(); ++it) {
-        protocol::UserInfo *info =
-            notification.mutable_meta_data()->mutable_user_infos()->Add();
-        info->set_key(it->first);
-        info->set_value(it->second);
-    }
-    for (map<string, uint64_t>::const_iterator it =
-             event->mutableMetaData().userTimesBegin(); it
-             != event->mutableMetaData().userTimesEnd(); ++it) {
-        protocol::UserTime *info =
-            notification.mutable_meta_data()->mutable_user_times()->Add();
-        info->set_key(it->first);
-        info->set_timestamp(it->second);
-    }
-    notification.set_num_data_parts(1);
-    notification.set_data_part(0);
-
-    notification.set_data(data);
 }
 
 void BusConnection::printContents(ostream &stream) const {

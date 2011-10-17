@@ -50,9 +50,9 @@ typedef boost::shared_ptr<Bus> BusPtr;
  * by calling @ref receiveEvent and submitting an event to the bus by
  * calling @ref sendEvent.
  *
- * In a process which act as a client for a particular bus, a single
- * instance this class is connected to the bus server and provides
- * access to the bus for the process.
+ * In a process which acts as a client for a particular bus, a single
+ * instance of this class is connected to the remote bus server and
+ * provides access to the bus for all participants in the process.
  *
  * A process which acts as the server for a particular bus, manages
  * (via the @ref BusServer class) one @ref BusConnection object for
@@ -66,18 +66,26 @@ public:
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
 
     BusConnection(BusPtr    bus,
-                  SocketPtr socket);
+                  SocketPtr socket,
+                  bool      client,
+                  bool      tcpNoDelay = false);
+
+    ~BusConnection();
 
     void receiveEvent();
 
     void sendEvent(EventPtr           event,
                    const std::string &wireSchema);
+
+    void disconnect();
 private:
+    typedef boost::weak_ptr<Bus> WeakBusPtr;
+
     rsc::logging::LoggerPtr logger;
 
     SocketPtr               socket;
 
-    BusPtr                  bus;
+    WeakBusPtr                  bus;
 
     // Receive buffers
     protocol::Notification  notification;
@@ -92,18 +100,17 @@ private:
                           size_t                           bytesTransferred);
 
     void handleReadBody(const boost::system::error_code &error,
-                        size_t                           bytesTransferred);
+                        size_t                           bytesTransferred,
+                        size_t                           expected);
+
+    void handleSendEvent(EventPtr           event,
+                         const std::string &wireSchema);
 
     void handleWriteLength(const boost::system::error_code &error,
                            size_t                           bytesTransferred);
 
     void handleWriteBody(const boost::system::error_code &error,
                          size_t                           bytesTransferred);
-
-    void fillNotification(protocol::Notification &notification,
-                          const EventPtr         &event,
-                          const std::string      &wireSchema,
-                          const std::string      &data);
 
     void printContents(std::ostream &stream) const;
 };

@@ -69,6 +69,8 @@ void InPushConnector::setScope(const Scope& scope) {
 }
 
 void InPushConnector::activate() {
+    ConnectorBase::activate();
+
     RSCDEBUG(logger, "Activating");
 
     getBus()->addSink(dynamic_pointer_cast<InPushConnector>(shared_from_this()));
@@ -78,7 +80,10 @@ void InPushConnector::activate() {
 void InPushConnector::deactivate() {
     RSCDEBUG(logger, "Deactivating");
 
+    RSCDEBUG(logger, "Removing ourselves from sink list of bus " << getBus());
     getBus()->removeSink(this);
+
+    ConnectorBase::deactivate();
 }
 
 void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {

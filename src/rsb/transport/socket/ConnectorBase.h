@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
+
 #include <rsc/logging/Logger.h>
 
 #include "../ConverterSelectingConnector.h"
@@ -48,7 +50,13 @@ public:
                   const std::string             &host,
                   unsigned int                   port,
                   bool                           server);
- protected:
+
+    virtual ~ConnectorBase();
+protected:
+    void activate();
+
+    void deactivate();
+
     /**
      * Return the @ref Bus object through which this connector is
      * connected to a socket-based bus.
@@ -58,8 +66,15 @@ public:
     BusPtr getBus();
 private:
     rsc::logging::LoggerPtr logger;
+
     BusPtr                  bus;
+
+    std::string             host;
+    unsigned int            port;
+    bool                    server;
 };
+
+typedef boost::shared_ptr<ConnectorBase> ConnectorBasePtr;
 
 }
 }

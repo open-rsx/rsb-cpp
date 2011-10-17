@@ -51,11 +51,11 @@ OutConnector::OutConnector(ConverterSelectionStrategyPtr  converters,
 }
 
 void OutConnector::activate() {
-    // nothing to do
+    ConnectorBase::activate();
 }
 
 void OutConnector::deactivate() {
-    // nothing to do
+    ConnectorBase::deactivate();
 }
 
 void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {

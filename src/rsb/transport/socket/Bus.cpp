@@ -27,6 +27,8 @@
 
 #include <boost/asio/ip/tcp.hpp>
 
+#include "Factory.h"
+
 using namespace std;
 
 using namespace boost;
@@ -46,13 +48,23 @@ Bus::Bus(io_service &service) :
 }
 
 Bus::~Bus() {
+    RSCDEBUG(logger, "Destroying");
+
+    // Sinks should be empty.
     if (!this->sinks.empty()) {
         RSCWARN(logger, "" << this->sinks.size() << " non-empty scopes when destructing");
+    }
+
+    // Connection list is cleared automatically and connections
+    // disconnect in their destructors.
+    for (ConnectionList::iterator it = this->connections.begin();
+         it != this->connections.end(); ++it) {
+        (*it)->disconnect();
     }
 }
 
 void Bus::addSink(InPushConnectorPtr sink) {
-    recursive_mutex::scoped_lock lock(this->mutex);
+    recursive_mutex::scoped_lock lock(this->connectorLock);
 
     Scope scope = sink->getScope();
     RSCDEBUG(logger, "Adding sink " << sink << " to scope " << scope);
@@ -61,7 +73,7 @@ void Bus::addSink(InPushConnectorPtr sink) {
 }
 
 void Bus::removeSink(InPushConnector* sink) {
-    recursive_mutex::scoped_lock lock(this->mutex);
+    recursive_mutex::scoped_lock lock(this->connectorLock);
 
     Scope scope = sink->getScope();
     RSCDEBUG(logger, "Removing sink " << sink << " from scope " << scope);
@@ -82,12 +94,34 @@ void Bus::removeSink(InPushConnector* sink) {
         RSCDEBUG(logger, "Removing empty scope " << scope);
         this->sinks.erase(scope);
     }
+
+    if (this->sinks.empty()) {
+        RSCINFO(logger, "No more connectors; suiciding");
+        Factory::getInstance().removeBusClient(shared_from_this());
+    }
+}
+
+void Bus::addConnector(ConnectorBasePtr connector) {
+    recursive_mutex::scoped_lock lock(this->connectorLock);
+
+    this->connectors.push_back(connector);
+}
+
+void Bus::removeConnector(ConnectorBasePtr connector) {
+    recursive_mutex::scoped_lock lock(this->connectorLock);
+
+    this->connectors.remove(connector);
+
+    if (this->connectors.empty()) {
+        RSCINFO(logger, "No more connectors; suiciding");
+        //suicide();
+    }
 }
 
 void Bus::addConnection(BusConnectionPtr connection) {
     RSCDEBUG(logger, "Adding connection " << connection);
 
-    recursive_mutex::scoped_lock lock(this->mutex);
+    recursive_mutex::scoped_lock lock(this->connectionLock);
 
     this->connections.push_back(connection);
 }
@@ -95,7 +129,7 @@ void Bus::addConnection(BusConnectionPtr connection) {
 void Bus::removeConnection(BusConnectionPtr connection) {
     RSCDEBUG(logger, "Removing connection " << connection);
 
-    recursive_mutex::scoped_lock lock(this->mutex);
+    recursive_mutex::scoped_lock lock(this->connectionLock);
 
     this->connections.remove(connection);
 }
@@ -107,7 +141,7 @@ void Bus::handleIncoming(EventPtr event) {
     RSCDEBUG(logger, "Relevant scopes " << scopes);
 
     {
-        recursive_mutex::scoped_lock lock(this->mutex);
+        recursive_mutex::scoped_lock lock(this->connectorLock);
 
         for (vector<Scope>::const_iterator it = scopes.begin(); it != scopes.end(); ++it) {
             SinkMap::const_iterator it_ = this->sinks.find(*it);
@@ -128,7 +162,7 @@ void Bus::handleIncoming(EventPtr event) {
 }
 
 void Bus::handle(EventPtr event) {
-    recursive_mutex::scoped_lock lock(this->mutex);
+    recursive_mutex::scoped_lock lock(this->connectionLock);
 
     RSCDEBUG(logger, "Dispatching outgoing event " << *event << " to connections");
 
@@ -138,6 +172,10 @@ void Bus::handle(EventPtr event) {
         RSCDEBUG(logger, "Dispatching to connection " << *it);
         (*it)->sendEvent(event, wireSchema);
     }
+}
+
+void Bus::suicide() {
+    Factory::getInstance().removeBusClient(shared_from_this());
 }
 
 void Bus::printContents(ostream &stream) const {

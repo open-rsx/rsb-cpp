@@ -36,10 +36,33 @@ ConnectorBase::ConnectorBase(ConverterSelectionStrategyPtr  converters,
                              bool                           server) :
     ConverterSelectingConnector<string>(converters),
     logger(Logger::getLogger("rsb.transport.socket.ConnectorBase")),
-    bus(server
-        ? Factory::getInstance().getBusServerFor(host, port)
-        : Factory::getInstance().getBusClientFor(host, port)) {
+    host(host), port(port), server(server) {
+}
+
+ConnectorBase::~ConnectorBase() {
+}
+
+void ConnectorBase::activate() {
+    RSCDEBUG(logger, "Activating");
+
+    this->bus = (this->server
+                 ? Factory::getInstance().getBusServerFor(this->host,
+                                                          this->port,
+                                                          this)
+                 : Factory::getInstance().getBusClientFor(this->host,
+                                                          this->port,
+                                                          this));
+
+    this->bus->addConnector(ConnectorBasePtr(this));
+
     RSCDEBUG(logger, "Using bus " << getBus());
+}
+
+void ConnectorBase::deactivate() {
+    RSCDEBUG(logger, "Deactivating");
+
+    //RSCDEBUG(logger, "Removing ourselves from connector list of bus " << getBus());
+    //getBus()->removeConnector(this);
 }
 
 BusPtr ConnectorBase::getBus() {

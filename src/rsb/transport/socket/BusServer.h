@@ -54,6 +54,7 @@ public:
     BusServer(boost::uint16_t          port,
               boost::asio::io_service &service);
 
+    void handleIncoming(EventPtr event);
 private:
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
 
@@ -66,6 +67,8 @@ private:
 
     void handleAccept(SocketPtr                       socket,
                       const boost::system::error_code &error);
+
+    void suicide();
 };
 
 typedef boost::shared_ptr<BusServer> BusServerPtr;

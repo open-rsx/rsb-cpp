@@ -21,6 +21,8 @@
 
 #include <boost/bind.hpp>
 
+#include "Factory.h"
+
 using namespace boost;
 
 using namespace boost::asio;
@@ -56,7 +58,7 @@ void BusServer::handleAccept(SocketPtr                 socket,
         //
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
 
-        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket));
+        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false));
         connection->receiveEvent();
         addConnection(connection);
     } else {
@@ -65,6 +67,19 @@ void BusServer::handleAccept(SocketPtr                 socket,
 
     // Continue accepting connections.
     acceptOne();
+}
+
+void BusServer::handleIncoming(EventPtr event) {
+    Bus::handleIncoming(event);
+
+    RSCDEBUG(logger, "Delivering received event to connections " << *event);
+
+    /** TODO(jmoringe):  */
+
+}
+
+void BusServer::suicide() {
+    Factory::getInstance().removeBusServer(shared_from_this());
 }
 
 }

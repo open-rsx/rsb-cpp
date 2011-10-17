@@ -37,6 +37,7 @@
 #include "../../protocol/Notification.h"
 
 #include "BusConnection.h"
+#include "ConnectorBase.h"
 #include "InPushConnector.h"
 
 #include "rsb/rsbexports.h"
@@ -70,12 +71,21 @@ public:
     void addSink(InPushConnectorPtr sink);
     void removeSink(InPushConnector* sink);
 
+    void addConnector(ConnectorBasePtr connector);
+    void removeConnector(ConnectorBasePtr connector);
+
     void addConnection(BusConnectionPtr connection);
     void removeConnection(BusConnectionPtr connection);
 
     void handle(EventPtr event);
+protected:
+    virtual void handleIncoming(EventPtr event);
+
+    virtual void suicide();
 private:
     typedef std::list<BusConnectionPtr>                  ConnectionList;
+
+    typedef std::list<ConnectorBasePtr>                  ConnectorList;
 
     typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;
     typedef std::map<Scope, SinkList>                    SinkMap;
@@ -85,11 +95,11 @@ private:
     boost::asio::io_service &service;
 
     ConnectionList           connections;
+    boost::recursive_mutex   connectionLock;
 
+    ConnectorList            connectors;
     SinkMap                  sinks;
-    boost::recursive_mutex   mutex;
-
-    void handleIncoming(EventPtr event);
+    boost::recursive_mutex   connectorLock;
 
     void printContents(std::ostream &stream) const;
 };

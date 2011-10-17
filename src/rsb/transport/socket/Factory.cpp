@@ -21,10 +21,13 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <boost/asio/ip/address.hpp>
+
 using namespace std;
 
 using namespace boost;
 
+using namespace boost::asio;
 using boost::asio::ip::tcp;
 
 using namespace rsc::logging;
@@ -37,19 +40,26 @@ namespace socket {
 // all bus providers created by this factory..
 Factory::Factory() :
     logger(Logger::getLogger("rsb.transport.socket.Factory")),
-    work(service),
+    keepAlive(new io_service::work(service)),
     thread(boost::bind(&boost::asio::io_service::run, &service)) {
     RSCINFO(logger, "Started service thread");
 }
 
 Factory::~Factory() {
+    if (!this->busClients.empty()) {
+        RSCWARN(logger, "Remaining bus clients: " << this->busClients);
+    }
+
     RSCINFO(logger, "Stopping service thread");
-    this->service.stop();
+    this->keepAlive.reset();
+    //this->service.stop();
     this->thread.join();
     RSCINFO(logger, "Stopped service thread");
 }
 
-BusPtr Factory::getBusClientFor(const string &host, uint16_t port) {
+BusPtr Factory::getBusClientFor(const string  &host,
+                                uint16_t       port,
+                                ConnectorBase *connector) {
     RSCDEBUG(logger, "Was asked for a bus client for " << host << ":" << port);
 
     // Try to find an entry for the exact specified endpoint. If this
@@ -59,10 +69,15 @@ BusPtr Factory::getBusClientFor(const string &host, uint16_t port) {
 
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
-            RSCDEBUG(logger, "Found existing bus client  "
-                     << it->second << " without resolving");
+            BusPtr result = it->second; //.lock();
+            if (result) {
+                RSCDEBUG(logger, "Found existing bus client  "
+                         << result << " without resolving";)
 
-            return it->second;
+                return result;
+            } else {
+                RSCDEBUG(logger, "Dangling bus client pointer without resolving");
+            }
         }
 
         RSCDEBUG(logger, "Did not find bus client without resolving");
@@ -84,6 +99,8 @@ BusPtr Factory::getBusClientFor(const string &host, uint16_t port) {
     /** TODO(jmoringe): try remaining endpoints if this fails */
     RSCDEBUG(logger, "Trying endpoint " << endpointIterator->endpoint());
     socket->connect(*endpointIterator);
+    //tcp::endpoint e(ip::address_v4::from_string(host), port);
+    //socket->connect(e);
     RSCDEBUG(logger, "Connected");
 
     // When we have a working endpoint, repeat the lookup. Create a
@@ -93,15 +110,20 @@ BusPtr Factory::getBusClientFor(const string &host, uint16_t port) {
 
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
-            RSCDEBUG(logger, "Found existing bus client  " << it->second << " after resolving");
+            BusPtr result = it->second; //.lock();
+            if (result) {
+                RSCDEBUG(logger, "Found existing bus client " << it->second << " after resolving");
 
-            return it->second;
+                return result;
+            } else {
+                RSCDEBUG(logger, "Dangling bus client pointer after resolving");
+            }
         }
 
         RSCDEBUG(logger, "Did not find bus client after resolving; creating a new one");
 
         BusPtr result(new Bus(this->service));
-        BusConnectionPtr connection(new BusConnection(result, socket));
+        BusConnectionPtr connection(new BusConnection(result, socket, true));
         result->addConnection(connection);
         connection->receiveEvent();
         this->busClients[endpoint] = result;
@@ -112,7 +134,22 @@ BusPtr Factory::getBusClientFor(const string &host, uint16_t port) {
     }
 }
 
-BusServerPtr Factory::getBusServerFor(const string &host, uint16_t port) {
+void Factory::removeBusClient(BusPtr bus) {
+    RSCDEBUG(logger, "Removing bus " << bus);
+
+    for (BusClientMap::iterator it = this->busClients.begin()
+             ; it != this->busClients.end(); ++it) {
+        if (it->second == bus) {
+            this->busClients.erase(it);
+            RSCDEBUG(logger, "Removed");
+            return;
+        }
+    }
+}
+
+BusServerPtr Factory::getBusServerFor(const string &host,
+                                      uint16_t      port,
+                                      ConnectorBase     *connector) {
     RSCDEBUG(logger, "Was asked for a bus server for " << host << ":" << port);
 
     // Try to find an existing entry for the specified endpoint.
@@ -134,6 +171,9 @@ BusServerPtr Factory::getBusServerFor(const string &host, uint16_t port) {
     RSCDEBUG(logger, "Created new bus client " << result);
 
     return result;
+}
+
+void Factory::removeBusServer(BusPtr bus) {
 }
 
 }
