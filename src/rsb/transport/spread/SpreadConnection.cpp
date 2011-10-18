@@ -45,7 +45,7 @@ namespace spread {
 
 SpreadConnection::SpreadConnection(const string &id, const string &host,
         unsigned int port) :
-    logger(Logger::getLogger("rsb.spread.SpreadConnection")), connected(false),
+    logger(Logger::getLogger("rsb.transport.spread.SpreadConnection")), connected(false),
     host(host), port(port),
 #ifdef WIN32
     spreadname(str(format("%1%@%2%") % port % host)),
@@ -194,7 +194,7 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
     // handle normal messages
     if (Is_regular_mess(serviceType)) {
 
-        RSCINFO(logger, "regular spread message received");
+        RSCDEBUG(logger, "regular spread message received");
 
         // cancel if requested
         if (numGroups == 1 && string(retGroups[0]) == string(spreadpg)) {
