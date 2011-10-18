@@ -19,6 +19,9 @@
 
 #include "DirectEventReceivingStrategy.h"
 
+#include <boost/thread/shared_mutex.hpp>
+#include <boost/thread/locks.hpp>
+
 #include <rsc/debug/DebugTools.h>
 #include <rsc/runtime/ContainerIO.h>
 #include <rsc/misc/langutils.h>
