@@ -87,7 +87,7 @@ void eventToNotification(protocol::Notification &notification,
         info->set_key(it->first);
         info->set_value(it->second);
     }
-    for (map<string, uint64_t>::const_iterator it =
+    for (map<string, boost::uint64_t>::const_iterator it =
              event->mutableMetaData().userTimesBegin(); it
              != event->mutableMetaData().userTimesEnd(); ++it) {
         protocol::UserTime *info =
