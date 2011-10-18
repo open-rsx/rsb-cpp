@@ -1,6 +1,7 @@
 
 SET(EX1 rsb_informer)
 SET(EX15 rsb_anyInformer)
+SET(EX16 timed_informer)
 SET(EX2 rsb_listener)
 SET(EX3 rsb_reader)
 
@@ -53,8 +54,9 @@ ADD_EXECUTABLE(${EX12} queue_processing/queueprocessing.cpp)
 ADD_EXECUTABLE(${EX13} meta_data/sender.cpp)
 ADD_EXECUTABLE(${EX14} meta_data/receiver.cpp)
 
+ADD_EXECUTABLE(${EX16} timed_informer/informer.cpp)
 
-SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11} ${EX12} ${EX13} ${EX14} ${EX15})
+SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11} ${EX12} ${EX13} ${EX14} ${EX15} ${EX16})
 
 FOREACH(EXAMPLE ${EXAMPLES})
     TARGET_LINK_LIBRARIES(${EXAMPLE} ${RSB_NAME})
