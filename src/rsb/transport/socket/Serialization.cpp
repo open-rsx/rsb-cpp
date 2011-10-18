@@ -18,6 +18,10 @@
 
 #include "Serialization.h"
 
+#include "../../MetaData.h"
+#include "../../EventId.h"
+#include "../../Scope.h"
+
 using namespace std;
 
 namespace rsb {

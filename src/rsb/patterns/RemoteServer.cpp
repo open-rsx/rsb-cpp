@@ -29,6 +29,8 @@
 
 #include "../Factory.h"
 #include "../Handler.h"
+#include "../MetaData.h"
+#include "../EventId.h"
 
 using namespace std;
 

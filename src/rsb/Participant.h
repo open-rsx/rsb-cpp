@@ -22,16 +22,19 @@
 #include <ostream>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
 #include <rsc/misc/UUID.h>
 #include <rsc/runtime/Printable.h>
 
 #include "rsb/rsbexports.h"
-#include "Scope.h"
-#include "ParticipantConfig.h"
 
 namespace rsb {
+
+class ParticipantConfig;
+class Scope;
+typedef boost::shared_ptr<Scope> ScopePtr;
 
 /**
  * Objects of this class participate in the exchange of notifications
@@ -47,6 +50,8 @@ namespace rsb {
 class RSB_EXPORT Participant: public virtual rsc::runtime::Printable,
         public boost::noncopyable {
 public:
+
+    virtual ~Participant();
 
     void printContents(std::ostream &stream) const;
 
@@ -77,9 +82,8 @@ protected:
 
 private:
 
-    rsc::misc::UUID id;
-    ScopePtr scope;
-    ParticipantConfig config;
+    class Impl;
+    boost::scoped_ptr<Impl> d;
 
 };
 

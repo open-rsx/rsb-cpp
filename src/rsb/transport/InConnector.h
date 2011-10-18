@@ -27,6 +27,9 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class Scope;
+
 namespace transport {
 
 /**

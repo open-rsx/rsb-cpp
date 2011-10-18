@@ -25,6 +25,8 @@
 #include <gmock/gmock.h>
 
 #include "rsb/Informer.h"
+#include "rsb/Scope.h"
+#include "rsb/ParticipantConfig.h"
 
 using namespace std;
 using namespace testing;

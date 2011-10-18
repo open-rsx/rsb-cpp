@@ -22,6 +22,9 @@
 #include <rsc/misc/langutils.h>
 
 #include "../../protocol/ProtocolException.h"
+#include "../../MetaData.h"
+#include "../../EventId.h"
+#include "../../Scope.h"
 
 using namespace std;
 

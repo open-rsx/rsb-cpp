@@ -22,6 +22,7 @@
 #include <boost/thread.hpp>
 
 #include <rsb/Factory.h>
+#include <rsb/Handler.h>
 
 using namespace std;
 

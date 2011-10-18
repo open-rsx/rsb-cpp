@@ -22,6 +22,7 @@
 #include <boost/thread.hpp>
 
 #include <rsb/Factory.h>
+#include <rsb/Handler.h>
 #include <rsb/converter/Repository.h>
 #include <rsb/converter/ProtocolBufferConverter.h>
 

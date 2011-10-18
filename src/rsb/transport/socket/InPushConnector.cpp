@@ -20,6 +20,7 @@
 #include "InPushConnector.h"
 
 #include "Factory.h"
+#include "../../MetaData.h"
 
 using namespace std;
 

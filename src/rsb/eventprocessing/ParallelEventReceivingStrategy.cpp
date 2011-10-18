@@ -24,6 +24,9 @@
 #include <rsc/runtime/ContainerIO.h>
 #include <rsc/misc/langutils.h>
 
+#include "../MetaData.h"
+#include "../filter/Filter.h"
+
 using namespace std;
 
 using namespace boost;

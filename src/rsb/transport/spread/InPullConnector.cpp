@@ -19,6 +19,8 @@
 
 #include "InPullConnector.h"
 
+#include "../../Scope.h"
+
 using namespace std;
 
 using namespace rsc::logging;

@@ -31,9 +31,11 @@
 
 #include "../Informer.h"
 #include "../Listener.h"
+#include "../Scope.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
 namespace patterns {
 
 /**

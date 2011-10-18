@@ -21,7 +21,9 @@
 
 #include <rsb/Event.h>
 #include <rsb/Listener.h>
+#include <rsb/MetaData.h>
 #include <rsb/Factory.h>
+#include <rsb/Handler.h>
 
 using namespace std;
 

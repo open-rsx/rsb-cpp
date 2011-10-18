@@ -41,8 +41,8 @@ public:
 
 class ErrorProducingCallback: public Server::Callback<string, string> {
 public:
-    boost::shared_ptr<string> call(const string &methodName,
-                                   boost::shared_ptr<string> input) {
+    boost::shared_ptr<string> call(const string &/*methodName*/,
+                                   boost::shared_ptr<string> /*input*/) {
         throw runtime_error("Intentionally failing.");
     }
 };

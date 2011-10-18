@@ -19,6 +19,10 @@
 
 #include "PullEventReceivingStrategy.h"
 
+#include "../filter/Filter.h"
+
+#include "../transport/InPullConnector.h"
+
 using namespace std;
 
 using namespace boost;
@@ -29,28 +33,46 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-PullEventReceivingStrategy::PullEventReceivingStrategy(const set<InPullConnectorPtr> &connectors):
-    connectors(connectors) {
+typedef std::set<transport::InPullConnectorPtr> ConnectorSet;
+typedef std::set<filter::FilterPtr> FilterSet;
+
+class PullEventReceivingStrategy::Impl {
+public:
+    FilterSet filters;
+
+    ConnectorSet connectors;
+    /**
+     * Stores event obtained via connector callbacks.
+     * */
+    EventPtr currentEvent;
+};
+
+PullEventReceivingStrategy::PullEventReceivingStrategy(
+        const set<InPullConnectorPtr> &connectors) : d(new Impl) {
+    d->connectors = connectors;
+}
+
+PullEventReceivingStrategy::~PullEventReceivingStrategy() {
 }
 
 void PullEventReceivingStrategy::addFilter(FilterPtr filter) {
-    this->filters.insert(filter);
+    d->filters.insert(filter);
 }
 
 void PullEventReceivingStrategy::removeFilter(FilterPtr filter) {
-    this->filters.erase(filter);
+    d->filters.erase(filter);
 }
 
 EventPtr PullEventReceivingStrategy::raiseEvent(bool block) {
     // Go through our connectors and ask them to emit an event. If one
     // connector does emit an event, our handle method gets called and
     // may store the event if it matches our filters.
-    for (ConnectorSet::iterator it = this->connectors.begin();
-         it != this->connectors.end(); ++it) {
+    for (ConnectorSet::iterator it = d->connectors.begin(); it
+            != d->connectors.end(); ++it) {
         if ((*it)->raiseEvent(block)) {
-            if (this->currentEvent) {
-                EventPtr result = this->currentEvent;
-                this->currentEvent.reset();
+            if (d->currentEvent) {
+                EventPtr result = d->currentEvent;
+                d->currentEvent.reset();
                 return result;
             }
         }
@@ -60,7 +82,7 @@ EventPtr PullEventReceivingStrategy::raiseEvent(bool block) {
 
 void PullEventReceivingStrategy::handle(EventPtr event) {
     // TODO filter
-    this->currentEvent = event;
+    d->currentEvent = event;
 }
 
 std::string PullEventReceivingStrategy::getClassName() const {
@@ -68,8 +90,8 @@ std::string PullEventReceivingStrategy::getClassName() const {
 }
 
 void PullEventReceivingStrategy::printContents(ostream &stream) const {
-    stream << "connectors = " << this->connectors
-           << ", filters = " << this->filters;
+    stream << "connectors = " << d->connectors << ", filters = "
+            << d->filters;
 }
 
 }

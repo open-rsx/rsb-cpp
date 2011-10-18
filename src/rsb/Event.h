@@ -26,17 +26,21 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <rsc/misc/langutils.h>
 #include <rsc/misc/UUID.h>
 #include <rsc/runtime/Printable.h>
 
 #include "rsb/rsbexports.h"
-#include "EventId.h"
-#include "MetaData.h"
-#include "Scope.h"
 
 namespace rsb {
+
+class EventId;
+typedef boost::shared_ptr<EventId> EventIdPtr;
+class MetaData;
+class Scope;
+typedef boost::shared_ptr<Scope> ScopePtr;
 
 typedef boost::shared_ptr<void> VoidPtr;
 
@@ -51,6 +55,7 @@ class RSB_EXPORT Event: public virtual rsc::runtime::Printable {
 public:
 
     Event();
+    Event(const Event &event);
 
     /**
      * Constructor.
@@ -231,19 +236,8 @@ public:
 
 private:
 
-    EventIdPtr id;
-    ScopePtr scope;
-
-    VoidPtr content;
-
-    // is this a single type, a hierarchy or a set?
-    std::string type;
-
-    std::string method;
-
-    std::set<EventId> causes;
-
-    MetaData metaData;
+    class Impl;
+    boost::scoped_ptr<Impl> d;
 
 };
 

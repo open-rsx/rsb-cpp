@@ -22,12 +22,19 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
-#include "../Event.h"
 #include "../Handler.h"
-#include "../filter/Filter.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class Event;
+typedef boost::shared_ptr<Event> EventPtr;
+
+namespace filter {
+class Filter;
+typedef boost::shared_ptr<Filter> FilterPtr;
+}
+
 namespace eventprocessing {
 
 /**

@@ -22,6 +22,8 @@
 
 #include <boost/format.hpp>
 
+#include "Scope.h"
+
 using namespace std;
 
 namespace rsb {

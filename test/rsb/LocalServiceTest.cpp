@@ -23,6 +23,7 @@
 #include <gmock/gmock.h>
 
 #include "rsb/LocalService.h"
+#include "rsb/ParticipantConfig.h"
 
 #include "mocks.h"
 

@@ -29,6 +29,7 @@
 #include <rsc/logging/Logger.h>
 
 #include "../Event.h"
+#include "../ParticipantConfig.h"
 
 #include "PushEventReceivingStrategy.h"
 

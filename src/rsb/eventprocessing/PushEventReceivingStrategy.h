@@ -21,11 +21,13 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "../ParticipantConfig.h"
 #include "EventReceivingStrategy.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class ParticipantConfig;
+
 namespace eventprocessing {
 
 /**

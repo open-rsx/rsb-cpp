@@ -21,6 +21,9 @@
 
 #include <iostream>
 
+#include "Filter.h"
+#include "ScopeFilter.h"
+
 using namespace std;
 
 namespace rsb {

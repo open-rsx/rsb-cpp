@@ -34,6 +34,7 @@
 #include "../Informer.h"
 #include "../Listener.h"
 #include "../Exception.h"
+#include "../Scope.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {

@@ -26,6 +26,9 @@
 
 #include "rsb/Event.h"
 #include "rsb/transport/OutConnector.h"
+#include "rsb/MetaData.h"
+#include "rsb/EventId.h"
+#include "rsb/Scope.h"
 
 namespace rsb {
 namespace test {

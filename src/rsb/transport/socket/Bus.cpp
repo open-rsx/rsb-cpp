@@ -28,6 +28,7 @@
 #include <boost/asio/ip/tcp.hpp>
 
 #include "Factory.h"
+#include "../../MetaData.h"
 
 using namespace std;
 

@@ -34,6 +34,9 @@
 #include "rsb/transport/spread/OutConnector.h"
 #include "rsb/filter/Filter.h"
 #include "rsb/Handler.h"
+#include "rsb/MetaData.h"
+#include "rsb/EventId.h"
+#include "rsb/Scope.h"
 
 #include "../InformerTask.h"
 

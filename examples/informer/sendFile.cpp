@@ -30,8 +30,9 @@
 
 #include <rsc/logging/Logger.h>
 
-#include <rsb/Informer.h>
 #include <rsb/Factory.h>
+#include <rsb/Informer.h>
+#include <rsb/MetaData.h>
 
 using namespace std;
 using namespace rsc::logging;

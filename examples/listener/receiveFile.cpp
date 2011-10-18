@@ -35,6 +35,7 @@
 #include <rsb/Handler.h>
 #include <rsb/filter/ScopeFilter.h>
 #include <rsb/Factory.h>
+#include <rsb/MetaData.h>
 
 using namespace std;
 using namespace rsc::logging;

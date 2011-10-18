@@ -30,6 +30,7 @@
 #include <rsc/threading/OrderedQueueDispatcherPool.h>
 
 #include "../Event.h"
+#include "../ParticipantConfig.h"
 #include "PushEventReceivingStrategy.h"
 #include "rsb/rsbexports.h"
 

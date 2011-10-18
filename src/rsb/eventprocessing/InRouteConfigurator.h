@@ -24,19 +24,36 @@
 #include <set>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <rsc/logging/Logger.h>
 #include <rsc/runtime/Printable.h>
 
-#include "../ParticipantConfig.h"
-#include "../QualityOfServiceSpec.h"
-#include "../transport/InConnector.h"
-#include "EventReceivingStrategy.h"
 #include "rsb/rsbexports.h"
+#include "../ParticipantConfig.h"
 
 namespace rsb {
+
+class QualityOfServiceSpecs;
+
+class Event;
+typedef boost::shared_ptr<Event> EventPtr;
+class Scope;
+
+namespace filter {
+class Filter;
+typedef boost::shared_ptr<Filter> FilterPtr;
+}
+
+namespace transport {
+class InConnector;
+typedef boost::shared_ptr<InConnector> InConnectorPtr;
+}
+
 namespace eventprocessing {
+
+class EventReceivingStrategy;
+typedef boost::shared_ptr<EventReceivingStrategy> EventReceivingStrategyPtr;
 
 /**
  * A class responsible of configuring the route that processes incoming events
@@ -82,15 +99,9 @@ public:
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 private:
-    rsc::logging::LoggerPtr                    logger;
 
-    ParticipantConfig::EventProcessingStrategy receivingStrategyConfig;
-
-    Scope                                      scope;
-    ConnectorSet                               connectors;
-    // ep for observation model
-    EventReceivingStrategyPtr                  eventReceivingStrategy;
-    volatile bool                              shutdown;
+    class Impl;
+    boost::scoped_ptr<Impl> d;
 
     virtual EventReceivingStrategyPtr createEventReceivingStrategy() = 0;
 };

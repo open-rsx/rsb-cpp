@@ -95,21 +95,26 @@ ELSE()
     MESSAGE(STATUS "Python interpreter not found, not enabling death tests")
 ENDIF()
 
+# --- connector test library ---
+
+SET(CONNECTOR_TEST_NAME "connectortest")
+ADD_LIBRARY(${CONNECTOR_TEST_NAME} STATIC rsb/transport/ConnectorTest.cpp
+                                          rsb/transport/ConnectorTest.h
+                                          rsb/InformerTask.cpp
+                                          rsb/InformerTask.h)
+
 # --- spread connector test ---
 
 SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
-                            rsb/transport/ConnectorTest.cpp
-                            rsb/transport/ConnectorTest.h
                             rsb/transport/spread/AssemblyTest.cpp
                             rsb/transport/spread/SpreadConnectionTest.cpp
                             rsb/transport/spread/SpreadConnectorTest.cpp
                             rsb/transport/spread/SpreadMessageTest.cpp
-                            rsb/transport/spread/MembershipManagerTest.cpp
-                            rsb/InformerTask.cpp
-                            rsb/InformerTask.h)
+                            rsb/transport/spread/MembershipManagerTest.cpp)
 
 ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
+                      ${CONNECTOR_TEST_NAME}
                       ${RSB_NAME}
                       ${SPREAD_PROTOCOL_NAME}
                       ${Boost_LIBRARIES}
@@ -120,14 +125,11 @@ ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAM
 # --- inprocess connector test ---
 
 SET(INPROCESSCONNECTOR_TEST_SOURCES rsbtest_inprocess.cpp
-                                    rsb/transport/ConnectorTest.cpp
-                                    rsb/transport/ConnectorTest.h
-                                    rsb/transport/inprocess/InProcessConnectorTest.cpp
-                                    rsb/InformerTask.cpp
-                                    rsb/InformerTask.h)
+                                    rsb/transport/inprocess/InProcessConnectorTest.cpp)
 
 ADD_EXECUTABLE(${INPROCESSCONNECTOR_TEST_NAME} ${INPROCESSCONNECTOR_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${INPROCESSCONNECTOR_TEST_NAME}
+                      ${CONNECTOR_TEST_NAME}
                       ${RSB_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARY_NAME})

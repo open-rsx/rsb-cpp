@@ -19,6 +19,8 @@
 
 #include "Connector.h"
 
+#include "../QualityOfServiceSpec.h"
+
 namespace rsb {
 namespace transport {
 

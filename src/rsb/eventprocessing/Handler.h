@@ -23,10 +23,13 @@
 
 #include <rsc/runtime/Printable.h>
 
-#include "../Event.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class Event;
+typedef boost::shared_ptr<Event> EventPtr;
+
 namespace eventprocessing {
 
 /**

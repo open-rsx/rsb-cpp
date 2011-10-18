@@ -31,6 +31,7 @@
 #include "ReceiverTask.h"
 #include "MembershipManager.h"
 #include "SpreadConnection.h"
+#include "../../QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {

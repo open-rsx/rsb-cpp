@@ -20,6 +20,8 @@
 #include "OutConnector.h"
 
 #include "Bus.h"
+#include "../../MetaData.h"
+#include "../../EventId.h"
 
 using namespace std;
 

@@ -19,6 +19,8 @@
 
 #include "OutConnector.h"
 
+#include "../../MetaData.h"
+
 using namespace std;
 
 using namespace rsc::logging;

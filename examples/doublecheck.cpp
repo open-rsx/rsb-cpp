@@ -22,6 +22,7 @@
 #include <rsb/Informer.h>
 #include <rsb/Listener.h>
 #include <rsb/Factory.h>
+#include <rsb/Handler.h>
 
 using namespace std;
 using namespace rsb;

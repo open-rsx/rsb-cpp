@@ -24,6 +24,8 @@
 
 #include "../../converter/Converter.h"
 #include "../../CommException.h"
+#include "../../MetaData.h"
+#include "../../EventId.h"
 #include "SpreadConnection.h"
 #include "InConnector.h"
 

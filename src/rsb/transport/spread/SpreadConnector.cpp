@@ -31,6 +31,7 @@
 #include "../../converter/Converter.h"
 #include "../../UnsupportedQualityOfServiceException.h"
 #include "../../util/MD5.h"
+#include "../../Scope.h"
 
 #include <sp.h>
 

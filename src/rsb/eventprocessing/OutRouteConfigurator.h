@@ -22,22 +22,27 @@
 #include <list>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <rsc/logging/Logger.h>
 #include <rsc/runtime/Printable.h>
 
-#include "../QualityOfServiceSpec.h"
-#include "../transport/Connector.h"
-#include "EventSendingStrategy.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class Event;
+typedef boost::shared_ptr<Event> EventPtr;
+class QualityOfServiceSpec;
+
+namespace transport {
+class OutConnector;
+typedef boost::shared_ptr<OutConnector> OutConnectorPtr;
+}
+
 namespace eventprocessing {
 
 /**
- *
- *
  * @author swrede
  * @todo add configuration, provide preliminary set up interface
  */
@@ -72,14 +77,10 @@ public:
      */
     void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
 private:
-    typedef std::list<transport::OutConnectorPtr> ConnectorList;
 
-    rsc::logging::LoggerPtr logger;
+    class Impl;
+    boost::scoped_ptr<Impl> d;
 
-    ConnectorList connectors;
-    // ep for observation model
-    EventSendingStrategyPtr eventSendingStrategy;
-    volatile bool shutdown;
 };
 
 typedef boost::shared_ptr<OutRouteConfigurator> OutRouteConfiguratorPtr;

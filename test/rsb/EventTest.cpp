@@ -25,6 +25,7 @@
 #include <gmock/gmock.h>
 
 #include "rsb/Event.h"
+#include "rsb/EventId.h"
 
 using namespace std;
 using namespace testing;

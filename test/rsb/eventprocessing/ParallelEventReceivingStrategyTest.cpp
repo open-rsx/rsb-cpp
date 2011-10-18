@@ -30,6 +30,9 @@
 #include "rsb/eventprocessing/ParallelEventReceivingStrategy.h"
 #include "rsb/QueuePushHandler.h"
 #include "rsb/filter/ScopeFilter.h"
+#include "rsb/MetaData.h"
+#include "rsb/EventId.h"
+#include "rsb/Scope.h"
 
 using namespace std;
 using namespace rsb;

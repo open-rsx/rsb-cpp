@@ -23,10 +23,12 @@
 
 #include <rsc/runtime/Printable.h>
 
-#include "../QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class QualityOfServiceSpec;
+
 namespace transport {
 
 /**

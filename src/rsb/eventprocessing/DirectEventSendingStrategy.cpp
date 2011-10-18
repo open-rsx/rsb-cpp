@@ -21,6 +21,8 @@
 
 #include <rsc/runtime/ContainerIO.h>
 
+#include "../transport/OutConnector.h"
+
 using namespace std;
 
 namespace rsb {

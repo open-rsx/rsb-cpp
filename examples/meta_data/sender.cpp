@@ -25,6 +25,7 @@
 
 #include <rsb/Event.h>
 #include <rsb/Factory.h>
+#include <rsb/MetaData.h>
 
 using namespace std;
 

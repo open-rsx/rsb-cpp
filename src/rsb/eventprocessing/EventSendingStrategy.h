@@ -24,11 +24,18 @@
 
 #include <rsc/runtime/Printable.h>
 
-#include "../Event.h"
-#include "../transport/OutConnector.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class Event;
+typedef boost::shared_ptr<Event> EventPtr;
+
+namespace transport {
+class OutConnector;
+typedef boost::shared_ptr<OutConnector> OutConnectorPtr;
+}
+
 namespace eventprocessing {
 
 /** Implementations of this interface organize the sending of events

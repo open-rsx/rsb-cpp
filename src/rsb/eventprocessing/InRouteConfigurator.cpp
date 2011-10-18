@@ -20,6 +20,10 @@
 #include "InRouteConfigurator.h"
 
 #include "../Factory.h"
+#include "../ParticipantConfig.h"
+#include "../QualityOfServiceSpec.h"
+#include "../filter/Filter.h"
+#include "EventReceivingStrategy.h"
 
 using namespace std;
 using namespace rsc::logging;
@@ -30,16 +34,35 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-InRouteConfigurator::InRouteConfigurator(const Scope             &scope,
-                                         const ParticipantConfig &config) :
-    logger(Logger::getLogger("rsb.eventprocessing.InRouteConfigurator")),
-    receivingStrategyConfig(config.getEventReceivingStrategy()),
-    scope(scope),
-    shutdown(false) {
+class InRouteConfigurator::Impl {
+public:
+
+    Impl(
+            const ParticipantConfig::EventProcessingStrategy &receivingStrategyConfig) :
+        receivingStrategyConfig(receivingStrategyConfig) {
+
+    }
+
+    rsc::logging::LoggerPtr logger;
+
+    ParticipantConfig::EventProcessingStrategy receivingStrategyConfig;
+
+    Scope scope;
+    ConnectorSet connectors;
+    EventReceivingStrategyPtr eventReceivingStrategy;
+    volatile bool shutdown;
+};
+
+InRouteConfigurator::InRouteConfigurator(const Scope &scope,
+        const ParticipantConfig &config) :
+    d(new Impl(config.getEventReceivingStrategy())) {
+    d->logger = Logger::getLogger("rsb.eventprocessing.InRouteConfigurator");
+    d->scope = scope;
+    d->shutdown = false;
 }
 
 InRouteConfigurator::~InRouteConfigurator() {
-    if (!this->shutdown) {
+    if (!d->shutdown) {
         deactivate();
     }
 }
@@ -49,83 +72,82 @@ string InRouteConfigurator::getClassName() const {
 }
 
 void InRouteConfigurator::printContents(ostream &stream) const {
-    stream << "scope = " << scope
-           << ", connectors = " << connectors
-           << ", eventReceivingStrategy = " << eventReceivingStrategy
-           << ", shutdown = " << shutdown;
+    stream << "scope = " << d->scope << ", connectors = " << d->connectors
+            << ", eventReceivingStrategy = " << d->eventReceivingStrategy
+            << ", shutdown = " << d->shutdown;
 }
 
 void InRouteConfigurator::activate() {
-    RSCDEBUG(logger, "Activating");
+    RSCDEBUG(d->logger, "Activating");
 
     // Activate all connectors.
-    for (ConnectorSet::iterator it = this->connectors.begin(); it
-            != this->connectors.end(); ++it) {
-        (*it)->setScope(scope);
+    for (ConnectorSet::iterator it = d->connectors.begin(); it
+            != d->connectors.end(); ++it) {
+        (*it)->setScope(d->scope);
         (*it)->activate();
     }
 
     // Create the event processing strategy and attach it to all
     // connectors.
-    this->eventReceivingStrategy = createEventReceivingStrategy();
+    d->eventReceivingStrategy = createEventReceivingStrategy();
 }
 
 void InRouteConfigurator::deactivate() {
-    RSCDEBUG(logger, "Deactivating");
+    RSCDEBUG(d->logger, "Deactivating");
 
     // Deactivate all connectors.
-    for (ConnectorSet::iterator it = this->connectors.begin(); it
-            != this->connectors.end(); ++it) {
+    for (ConnectorSet::iterator it = d->connectors.begin(); it
+            != d->connectors.end(); ++it) {
         (*it)->deactivate();
     }
 
     // Release event processing strategy.
-    this->eventReceivingStrategy.reset();
-    this->shutdown = true;
+    d->eventReceivingStrategy.reset();
+    d->shutdown = true;
 }
 
 const ParticipantConfig::EventProcessingStrategy &InRouteConfigurator::getReceivingStrategyConfig() const {
-    return this->receivingStrategyConfig;
+    return d->receivingStrategyConfig;
 }
 
 EventReceivingStrategyPtr InRouteConfigurator::getEventReceivingStrategy() const {
-    return this->eventReceivingStrategy;
+    return d->eventReceivingStrategy;
 }
 
 InRouteConfigurator::ConnectorSet InRouteConfigurator::getConnectors() {
-    return this->connectors;
+    return d->connectors;
 }
 
 void InRouteConfigurator::addConnector(InConnectorPtr connector) {
-    RSCDEBUG(logger, "Adding connector " << connector);
-    this->connectors.insert(connector);
+    RSCDEBUG(d->logger, "Adding connector " << connector);
+    d->connectors.insert(connector);
 }
 
 void InRouteConfigurator::removeConnector(InConnectorPtr connector) {
-    RSCDEBUG(logger, "Removing connector " << connector);
-    this->connectors.erase(connector);
+    RSCDEBUG(d->logger, "Removing connector " << connector);
+    d->connectors.erase(connector);
 }
 
 void InRouteConfigurator::filterAdded(filter::FilterPtr filter) {
-    for (ConnectorSet::iterator it = this->connectors.begin(); it
-            != this->connectors.end(); ++it) {
+    for (ConnectorSet::iterator it = d->connectors.begin(); it
+            != d->connectors.end(); ++it) {
         filter->notifyObserver(*it, filter::FilterAction::ADD);
     }
-    eventReceivingStrategy->addFilter(filter);
+    d->eventReceivingStrategy->addFilter(filter);
 }
 
 void InRouteConfigurator::filterRemoved(filter::FilterPtr filter) {
-    for (ConnectorSet::iterator it = this->connectors.begin(); it
-            != this->connectors.end(); ++it) {
+    for (ConnectorSet::iterator it = d->connectors.begin(); it
+            != d->connectors.end(); ++it) {
         filter->notifyObserver(*it, filter::FilterAction::REMOVE);
     }
-    eventReceivingStrategy->removeFilter(filter);
+    d->eventReceivingStrategy->removeFilter(filter);
 }
 
 void InRouteConfigurator::setQualityOfServiceSpecs(
         const QualityOfServiceSpec &specs) {
-    for (ConnectorSet::iterator it = this->connectors.begin(); it
-            != this->connectors.end(); ++it) {
+    for (ConnectorSet::iterator it = d->connectors.begin(); it
+            != d->connectors.end(); ++it) {
         (*it)->setQualityOfServiceSpecs(specs);
     }
 }

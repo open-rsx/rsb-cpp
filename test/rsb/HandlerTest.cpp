@@ -28,6 +28,10 @@
 
 #include <rsc/misc/UUID.h>
 
+#include "rsb/MetaData.h"
+#include "rsb/EventId.h"
+#include "rsb/Scope.h"
+
 using namespace std;
 using namespace rsb;
 using namespace testing;

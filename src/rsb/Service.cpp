@@ -19,6 +19,8 @@
 
 #include "Service.h"
 
+#include "ParticipantConfig.h"
+
 using namespace std;
 
 namespace rsb {

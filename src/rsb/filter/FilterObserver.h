@@ -24,12 +24,13 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/Printable.h>
 
-#include "Filter.h"
-#include "ScopeFilter.h"
 #include "FilterActionTypes.h"
 
 namespace rsb {
 namespace filter {
+
+class Filter;
+class ScopeFilter;
 
 /**
  * @author swrede

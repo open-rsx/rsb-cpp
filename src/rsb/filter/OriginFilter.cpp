@@ -19,6 +19,7 @@
 #include "OriginFilter.h"
 
 #include "FilterObserver.h"
+#include "../MetaData.h"
 
 using namespace rsc::misc;
 

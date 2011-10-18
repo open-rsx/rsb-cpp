@@ -22,20 +22,31 @@
 #include <set>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include "EventReceivingStrategy.h"
 
-#include "../filter/Filter.h"
-
-#include "../transport/InPullConnector.h"
-
 namespace rsb {
+
+class Event;
+typedef boost::shared_ptr<Event> EventPtr;
+
+namespace filter {
+class Filter;
+typedef boost::shared_ptr<Filter> FilterPtr;
+}
+
+namespace transport {
+class InPullConnector;
+typedef boost::shared_ptr<InPullConnector> InPullConnectorPtr;
+}
+
 namespace eventprocessing {
 
 /**
  * Instances of this class retrieve @ref Event s from @ref
  * transport::Connector s when explicitly asked by a client (which
- * usually is a @ref Participant ). The Retrival works (roughly) as
+ * usually is a @ref Participant ). The Retrieval works (roughly) as
  * follows:
  *
  * -# The client calls the emit method of the @c
@@ -51,6 +62,7 @@ namespace eventprocessing {
 class RSB_EXPORT PullEventReceivingStrategy: public EventReceivingStrategy {
 public:
     PullEventReceivingStrategy(const std::set<transport::InPullConnectorPtr> &connectors);
+    virtual ~PullEventReceivingStrategy();
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
@@ -73,12 +85,9 @@ public:
      */
     void handle(EventPtr event);
 private:
-    typedef std::set<transport::InPullConnectorPtr> ConnectorSet;
-    typedef std::set<filter::FilterPtr> FilterSet;
-    FilterSet filters;
 
-    ConnectorSet connectors;
-    EventPtr currentEvent; // stores event obtained via connector callbacks
+    class Impl;
+    boost::scoped_ptr<Impl> d;
 
     std::string getClassName() const;
     void printContents(std::ostream &stream) const;

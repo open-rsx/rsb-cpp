@@ -27,11 +27,9 @@
 #include <rsc/runtime/Properties.h>
 
 #include "../../eventprocessing/Handler.h"
-
 #include "../InPushConnector.h"
-
 #include "ConnectorBase.h"
-
+#include "../../Scope.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {

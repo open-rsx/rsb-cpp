@@ -21,18 +21,36 @@
 
 #include <string>
 
+#include <boost/scoped_ptr.hpp>
+
 #include <rsc/logging/Logger.h>
 
 #include <boost/shared_ptr.hpp>
 
-#include "Event.h"
-#include "Participant.h"
-#include "Handler.h"
-#include "eventprocessing/PushInRouteConfigurator.h"
-#include "transport/InPushConnector.h"
 #include "rsb/rsbexports.h"
+#include "Participant.h"
 
 namespace rsb {
+
+class Event;
+typedef boost::shared_ptr<Event> EventPtr;
+class Handler;
+typedef boost::shared_ptr<Handler> HandlerPtr;
+
+namespace filter {
+class Filter;
+typedef boost::shared_ptr<Filter> FilterPtr;
+}
+
+namespace eventprocessing {
+class PushInRouteConfigurator;
+typedef boost::shared_ptr<PushInRouteConfigurator> PushInRouteConfiguratorPtr;
+}
+
+namespace transport {
+class InPushConnector;
+typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;
+}
 
 /**
  * A Listener receives events published by @ref rsb::Informer objects
@@ -113,9 +131,9 @@ public:
     void removeHandler(HandlerPtr h, bool wait = true);
 
 private:
-    rsc::logging::LoggerPtr logger;
-    std::set<HandlerPtr> handlers;
-    eventprocessing::PushInRouteConfiguratorPtr configurator;
+
+    class Impl;
+    boost::scoped_ptr<Impl> d;
 
     void initialize(const std::vector<transport::InPushConnectorPtr> &connectors,
                     const Scope                                      &scope,

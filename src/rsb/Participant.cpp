@@ -19,28 +19,43 @@
 
 #include "Participant.h"
 
+#include "Scope.h"
+#include "ParticipantConfig.h"
+
 using namespace std;
 
 namespace rsb {
 
+class Participant::Impl {
+public:
+    rsc::misc::UUID id;
+    ScopePtr scope;
+    ParticipantConfig config;
+};
+
 Participant::Participant(const Scope &scope, const ParticipantConfig &config) :
-    scope(ScopePtr(new Scope(scope))), config(config) {
+    d(new Impl) {
+    d->scope.reset(new Scope(scope));
+    d->config = config;
+}
+
+Participant::~Participant() {
 }
 
 rsc::misc::UUID Participant::getId() const {
-    return this->id;
+    return d->id;
 }
 
 ScopePtr Participant::getScope() const {
-    return scope;
+    return d->scope;
 }
 
 ParticipantConfig Participant::getConfig() const {
-    return config;
+    return d->config;
 }
 
 void Participant::printContents(ostream &stream) const {
-    stream << "id = " << id << ", scope = " << *scope;
+    stream << "id = " << d->id << ", scope = " << *d->scope;
 }
 
 }

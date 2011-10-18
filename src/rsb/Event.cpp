@@ -26,23 +26,58 @@
 #include <rsc/runtime/ContainerIO.h>
 #include <rsc/misc/IllegalStateException.h>
 
+#include "EventId.h"
+#include "MetaData.h"
+#include "Scope.h"
+
 using namespace std;
 using namespace boost;
 
 namespace rsb {
 
-Event::Event() : scope(new Scope()) {
+class Event::Impl {
+public:
+    EventIdPtr id;
+    ScopePtr scope;
+
+    VoidPtr content;
+
+    // is this a single type, a hierarchy or a set?
+    std::string type;
+
+    std::string method;
+
+    std::set<EventId> causes;
+
+    MetaData metaData;
+};
+
+Event::Event() :
+    d(new Impl()) {
+    d->scope.reset(new Scope);
+}
+
+Event::Event(const Event &event) :
+    d(new Impl(*event.d)) {
+
 }
 
 Event::Event(ScopePtr scope, boost::shared_ptr<void> payload,
         const string &type, const string &method) :
-        scope(scope), content(payload), type(type), method(method) {
+    d(new Impl()) {
+    d->scope = scope;
+    d->content = payload;
+    d->type = type;
+    d->method = method;
 }
 
 Event::Event(Scope scope, boost::shared_ptr<void> payload, const string &type,
         const string &method) :
-        scope(new Scope(scope)), content(payload), type(type), method(
-                method) {
+    d(new Impl()) {
+    d->scope.reset(new Scope(scope));
+    d->content = payload;
+    d->type = type;
+    d->method = method;
 }
 
 Event::~Event() {
@@ -54,19 +89,19 @@ string Event::getClassName() const {
 
 void Event::printContents(ostream &stream) const {
     stream << "id = ";
-    if (id) {
-        stream << id;
+    if (d->id) {
+        stream << d->id;
     } else {
         stream << "UNSPECIFIED";
     }
-    stream << ", type = " << type << ", scope = ";
-    if (scope) {
-        stream << *scope;
+    stream << ", type = " << d->type << ", scope = ";
+    if (d->scope) {
+        stream << *d->scope;
     } else {
         stream << "UNSPECIFIED";
     }
-    stream << ", metaData = " << metaData << ", method = " << method;
-    stream << ", causes = " << causes;
+    stream << ", metaData = " << d->metaData << ", method = " << d->method;
+    stream << ", causes = " << d->causes;
 }
 
 boost::uint64_t Event::getSequenceNumber() const {
@@ -78,85 +113,85 @@ rsc::misc::UUID Event::getId() const {
 }
 
 EventId Event::getEventId() const {
-    if (!id) {
+    if (!d->id) {
         throw rsc::misc::IllegalStateException(
                 "The event does not contain id information.");
     }
-    return *id;
+    return *d->id;
 }
 
 void Event::setEventId(const rsc::misc::UUID &senderId,
         const boost::uint32_t &sequenceNumber) {
-    id.reset(new EventId(senderId, sequenceNumber));
-    metaData.setSenderId(senderId);
+    d->id.reset(new EventId(senderId, sequenceNumber));
+    d->metaData.setSenderId(senderId);
 }
 
 void Event::setScopePtr(ScopePtr s) {
-    this->scope = s;
+    d->scope = s;
 }
 
 void Event::setScope(const Scope &s) {
-    this->scope = ScopePtr(new Scope(s));
+    d->scope = ScopePtr(new Scope(s));
 }
 
 ScopePtr Event::getScopePtr() const {
-    return this->scope;
+    return d->scope;
 }
 
 Scope Event::getScope() const {
-    return *scope;
+    return *d->scope;
 }
 
-void Event::setData(VoidPtr d) {
-    content = d;
+void Event::setData(VoidPtr data) {
+    d->content = data;
 }
 
 VoidPtr Event::getData() {
-    return this->content;
+    return d->content;
 }
 
 string Event::getType() const {
-    return type;
+    return d->type;
 }
 
 void Event::setType(const string &t) {
-    type = t;
+    d->type = t;
 }
 
 bool Event::addCause(const EventId &id) {
-    return causes.insert(id).second;
+    return d->causes.insert(id).second;
 }
 
 bool Event::removeCause(const EventId &id) {
-    return causes.erase(id) > 0;
+    return d->causes.erase(id) > 0;
 }
 
 bool Event::isCause(const EventId &id) const {
-    return causes.count(id) > 0;
+    return d->causes.count(id) > 0;
 }
 
 set<EventId> Event::getCauses() const {
-    return causes;
+    return d->causes;
 }
 
 string Event::getMethod() const {
-    return method;
+    return d->method;
 }
 
 void Event::setMethod(const string &method) {
-    this->method = method;
+    d->method = method;
 }
 
 MetaData Event::getMetaData() const {
-    return metaData;
+    return d->metaData;
 }
 
 MetaData &Event::mutableMetaData() {
-    return metaData;
+    return d->metaData;
 }
 
 void Event::setMetaData(const MetaData &metaData) {
-    this->metaData = metaData;
+    d->metaData = metaData;
 }
 
 }

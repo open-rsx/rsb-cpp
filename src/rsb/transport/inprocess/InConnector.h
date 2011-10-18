@@ -26,6 +26,7 @@
 
 #include "../InPushConnector.h"
 #include "../../eventprocessing/Handler.h"
+#include "../../Scope.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {

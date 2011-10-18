@@ -44,8 +44,9 @@ public:
      * @return The create @ref PullEventReceivingStrategy .
      */
     EventReceivingStrategyPtr createEventReceivingStrategy();
-private:
+
     std::string getClassName() const;
+
 };
 
 }

@@ -196,8 +196,8 @@ void BusConnection::handleReadBody(const boost::system::error_code &error,
     receiveEvent();
 }
 
-void BusConnection::handleSendEvent(EventPtr      event,
-                                    const string &wireSchema) {
+void BusConnection::handleSendEvent(EventPtr      /*event*/,
+                                    const string &/*wireSchema*/) {
 }
 
 void BusConnection::handleWriteLength(const boost::system::error_code &/*error*/,

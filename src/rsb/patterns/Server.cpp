@@ -24,7 +24,10 @@
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
+#include "../EventId.h"
 #include "../Factory.h"
+#include "../MetaData.h"
+#include "../Handler.h"
 #include "MethodExistsException.h"
 
 using namespace std;

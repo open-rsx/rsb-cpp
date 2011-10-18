@@ -22,16 +22,27 @@
 #include <algorithm>
 #include <iterator>
 
+#include "eventprocessing/InRouteConfigurator.h"
+#include "eventprocessing/PushInRouteConfigurator.h"
+
 using namespace std;
 
 using namespace rsb::transport;
 
 namespace rsb {
 
+class Listener::Impl {
+public:
+    rsc::logging::LoggerPtr logger;
+    std::set<HandlerPtr> handlers;
+    eventprocessing::PushInRouteConfiguratorPtr configurator;
+};
+
 Listener::Listener(const vector<InPushConnectorPtr> &connectors,
         const Scope &scope, const ParticipantConfig &config) :
-    Participant(scope, config),
-            logger(rsc::logging::Logger::getLogger("rsb.Listener")) {
+    Participant(scope, config), d(new Impl) {
+
+    d->logger = rsc::logging::Logger::getLogger("rsb.Listener");
     this->initialize(connectors, scope, config);
 }
 
@@ -43,32 +54,32 @@ string Listener::getClassName() const {
 }
 
 void Listener::initialize(const vector<InPushConnectorPtr> &connectors,
-                          const Scope                      &scope,
-                          const ParticipantConfig          &config) {
-    this->configurator.reset(new eventprocessing::PushInRouteConfigurator(scope, config));
-    this->configurator->setErrorStrategy(getConfig().getErrorStrategy());
+        const Scope &scope, const ParticipantConfig &config) {
+    d->configurator.reset(
+            new eventprocessing::PushInRouteConfigurator(scope, config));
+    d->configurator->setErrorStrategy(getConfig().getErrorStrategy());
     for (vector<InPushConnectorPtr>::const_iterator it = connectors.begin(); it
             != connectors.end(); ++it) {
-        this->configurator->addConnector(*it);
+        d->configurator->addConnector(*it);
     }
 
-    this->configurator->activate();
+    d->configurator->activate();
 }
 
 void Listener::addHandler(HandlerPtr h, bool wait) {
-    this->configurator->handlerAdded(h, wait);
+    d->configurator->handlerAdded(h, wait);
 }
 
 void Listener::removeHandler(HandlerPtr h, bool wait) {
-    this->configurator->handlerRemoved(h, wait);
+    d->configurator->handlerRemoved(h, wait);
 }
 
 void Listener::addFilter(filter::FilterPtr filter) {
-    configurator->filterAdded(filter);
+    d->configurator->filterAdded(filter);
 }
 
 void Listener::removeFilter(filter::FilterPtr filter) {
-    configurator->filterRemoved(filter);
+    d->configurator->filterRemoved(filter);
 }
 
 }

@@ -20,6 +20,7 @@
 #include "InConnector.h"
 
 #include "Bus.h"
+#include "../../MetaData.h"
 
 using namespace std;
 

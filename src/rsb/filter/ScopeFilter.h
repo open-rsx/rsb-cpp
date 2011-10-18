@@ -20,6 +20,7 @@
 #pragma once
 
 #include "Filter.h"
+#include "../Scope.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
