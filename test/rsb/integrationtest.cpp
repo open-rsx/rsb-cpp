@@ -218,7 +218,7 @@ TEST_F(InformerTest, testTypeCheck)
 {
     Factory &factory = Factory::getInstance();
 
-    shared_ptr<string> payload(new string("foo"));
+    boost::shared_ptr<string> payload(new string("foo"));
     {
         Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
         EXPECT_THROW(informer->publish(payload, "not-string"), invalid_argument);
@@ -257,7 +257,7 @@ TEST_F(InformerTest, testScopeCheck)
 {
     Factory &factory = Factory::getInstance();
     Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/foo"));
-    shared_ptr<string> payload(new string("foo"));
+    boost::shared_ptr<string> payload(new string("foo"));
 
     // Wrong: unrelated scope
     {
@@ -286,14 +286,14 @@ TEST_F(InformerTest, testReturnValue)
             Factory::getInstance().getDefaultParticipantConfig());
 
     {
-        EventPtr event = informer->publish(shared_ptr<string> (
+        EventPtr event = informer->publish(boost::shared_ptr<string> (
                 new string("foo")));
         EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
 
     {
         EventPtr event = informer->publish(
-                shared_ptr<void> (new string("foo")), rsc::runtime::typeName<
+                boost::shared_ptr<void> (new string("foo")), rsc::runtime::typeName<
                         std::string>());
         EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
