@@ -59,8 +59,8 @@ void BusServer::handleAccept(SocketPtr                 socket,
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
 
         BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false));
-        connection->receiveEvent();
         addConnection(connection);
+        connection->startReceiving();
     } else {
         RSCWARN(logger, "Accept failure, trying to continue");
     }
@@ -73,8 +73,11 @@ void BusServer::handleIncoming(EventPtr event) {
     Bus::handleIncoming(event);
 
     RSCDEBUG(logger, "Delivering received event to connections " << *event);
-
-    /** TODO(jmoringe):  */
+    /** TODO(jmoringe): implement */
+    /*for (ConnectionList::iterator it = this->connections.begin();
+         it != this->connections.end(); ++it) {
+        it->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
+        }*/
 
 }
 

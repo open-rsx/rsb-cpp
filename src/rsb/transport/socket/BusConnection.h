@@ -58,6 +58,8 @@ typedef boost::shared_ptr<Bus> BusPtr;
  * (via the @ref BusServer class) one @ref BusConnection object for
  * each client (remote process) connected to the bus.
  *
+ * This class is not thread-safe.
+ *
  * @author jmoringe
  */
 class RSB_EXPORT BusConnection : public boost::enable_shared_from_this<BusConnection>,
@@ -72,12 +74,12 @@ public:
 
     ~BusConnection();
 
-    void receiveEvent();
+    void disconnect();
+
+    void startReceiving();
 
     void sendEvent(EventPtr           event,
                    const std::string &wireSchema);
-
-    void disconnect();
 private:
     typedef boost::weak_ptr<Bus> WeakBusPtr;
 
@@ -85,7 +87,7 @@ private:
 
     SocketPtr               socket;
 
-    WeakBusPtr                  bus;
+    WeakBusPtr              bus;
 
     // Receive buffers
     protocol::Notification  notification;
@@ -96,21 +98,14 @@ private:
     std::string             lengthSendBuffer;
     std::string             messageSendBuffer;
 
+    void receiveEvent();
+
     void handleReadLength(const boost::system::error_code &error,
                           size_t                           bytesTransferred);
 
     void handleReadBody(const boost::system::error_code &error,
                         size_t                           bytesTransferred,
                         size_t                           expected);
-
-    void handleSendEvent(EventPtr           event,
-                         const std::string &wireSchema);
-
-    void handleWriteLength(const boost::system::error_code &error,
-                           size_t                           bytesTransferred);
-
-    void handleWriteBody(const boost::system::error_code &error,
-                         size_t                           bytesTransferred);
 
     void printContents(std::ostream &stream) const;
 };

@@ -63,6 +63,8 @@ BusConnection::BusConnection(BusPtr    bus,
     } else {
         write(*this->socket, buffer(this->lengthSendBuffer));
     }
+
+    receiveEvent();
 }
 
 BusConnection::~BusConnection() {
@@ -70,20 +72,27 @@ BusConnection::~BusConnection() {
     disconnect();
 }
 
-void BusConnection::receiveEvent() {
-    async_read(*this->socket,
-               buffer(&this->lengthReceiveBuffer[0], 4),
-               boost::bind(&BusConnection::handleReadLength, shared_from_this(),
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
+void BusConnection::disconnect() {
+    RSCINFO(logger, "Disconnecting");
+
+    try {
+        if (this->socket && this->socket->is_open()) {
+            this->socket->shutdown(ip::tcp::socket::shutdown_send);
+            this->socket->shutdown(ip::tcp::socket::shutdown_receive);
+            RSCINFO(logger, "Closing");
+            this->socket->close();
+        }
+    } catch (const std::exception &e) {
+        RSCERROR(logger, "Failed to disconnect: " << e.what());
+    }
+}
+
+void BusConnection::startReceiving() {
+    receiveEvent();
 }
 
 void BusConnection::sendEvent(EventPtr      event,
                               const string &wireSchema) {
-    /** TODO(jmoringe): hack, strand is needed */
-    //this->socket->io_service().post(bind(&BusConnection::handleSendEvent, shared_from_this(),
-    //                                   event, wireSchema));
-
     // Serialize the event into a notification object and serialize
     // the notification object.
     // The payload has already been serialized by the connector which
@@ -100,35 +109,17 @@ void BusConnection::sendEvent(EventPtr      event,
     this->lengthSendBuffer[2] = (length & 0x00ff0000ul) >> 16;
     this->lengthSendBuffer[3] = (length & 0xff000000ul) >> 24;
 
-    RSCDEBUG(logger, "Sending size " << length);
-
     // Send the size header, followed by the actual notification data.
-    write(*this->socket, buffer(this->lengthSendBuffer)/*,
-                                                         boost::bind(&BusConnection::handleWriteLength, shared_from_this(),
-                                                         boost::asio::placeholders::error,
-                                                         boost::asio::placeholders::bytes_transferred)*/);
-
-    /*async_*/write(*this->socket, buffer(this->messageSendBuffer)/*,
-      boost::bind(&BusConnection::handleWriteBody, shared_from_this(),
-      boost::asio::placeholders::error,
-      boost::asio::placeholders::bytes_transferred)*/);
-
-    RSCINFO(logger, "Sent event " << event);
+    write(*this->socket, buffer(this->lengthSendBuffer));
+    write(*this->socket, buffer(this->messageSendBuffer));
 }
 
-void BusConnection::disconnect() {
-    RSCINFO(logger, "Disconnecting");
-
-    try {
-        if (this->socket && this->socket->is_open()) {
-            this->socket->shutdown(ip::tcp::socket::shutdown_send);
-            this->socket->shutdown(ip::tcp::socket::shutdown_receive);
-            RSCINFO(logger, "Closing");
-            this->socket->close();
-        }
-    } catch (const std::exception &e) {
-        RSCERROR(logger, "Failed to disconnect: " << e.what());
-    }
+void BusConnection::receiveEvent() {
+    async_read(*this->socket,
+               buffer(&this->lengthReceiveBuffer[0], 4),
+               boost::bind(&BusConnection::handleReadLength, shared_from_this(),
+                           boost::asio::placeholders::error,
+                           boost::asio::placeholders::bytes_transferred));
 }
 
 void BusConnection::handleReadLength(const boost::system::error_code &error,
@@ -194,22 +185,6 @@ void BusConnection::handleReadBody(const boost::system::error_code &error,
 
     // Submit task to start receiving the next event.
     receiveEvent();
-}
-
-void BusConnection::handleSendEvent(EventPtr      /*event*/,
-                                    const string &/*wireSchema*/) {
-}
-
-void BusConnection::handleWriteLength(const boost::system::error_code &/*error*/,
-                                      size_t                    /*bytesTransferred*/) {
-    /** TODO(jmoringe): handle errors */
-
-
-}
-
-void BusConnection::handleWriteBody(const boost::system::error_code &/*error*/,
-                                    size_t                    /*bytesTransferred*/) {
-    /** TODO(jmoringe): handle errors */
 }
 
 void BusConnection::printContents(ostream &stream) const {

@@ -125,7 +125,7 @@ BusPtr Factory::getBusClientFor(const string  &host,
         BusPtr result(new Bus(this->service));
         BusConnectionPtr connection(new BusConnection(result, socket, true));
         result->addConnection(connection);
-        connection->receiveEvent();
+        connection->startReceiving();
         this->busClients[endpoint] = result;
 
         RSCDEBUG(logger, "Created new bus client " << result);
