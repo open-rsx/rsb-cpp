@@ -3,6 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ *               2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -51,7 +52,7 @@ private:
 
     MutexType mutex;
 
-    map<string, RemoteServer::FuturePtr> inprogress;
+    map<EventId, RemoteServer::FuturePtr> inprogress;
 public:
 
     WaitingEventHandler(LoggerPtr logger) :
@@ -68,12 +69,12 @@ public:
 
     void handle(EventPtr event) {
         if (!event
-            || !event->getMetaData().hasUserInfo("rsb:reply")
+            || event->getCauses().empty()
             || (event->getMethod() != "REPLY")) {
             RSCTRACE(logger, "Received uninteresting event " << event);
             return;
         }
-        string requestId = event->getMetaData().getUserInfo("rsb:reply");
+        EventId requestId = *event->getCauses().begin();
         {
             MutexType::scoped_lock lock(mutex);
 
@@ -88,7 +89,8 @@ public:
             if (event->mutableMetaData().hasUserInfo("rsb:error?")) {
                 assert(event->getType() == typeName<string>());
                 result->setError(str(format("Error calling remote method '%1%': %2%")
-                                     % "bla" % *(boost::static_pointer_cast<string>(event->getData()))));
+                                     % "TODO: obtain method name"
+                                     % *(boost::static_pointer_cast<string>(event->getData()))));
             } else {
                 result->set(event);
             }
@@ -96,7 +98,7 @@ public:
         }
     }
 
-    void addCall(const string &requestId, RemoteServer::FuturePtr result) {
+    void addCall(const EventId &requestId, RemoteServer::FuturePtr result) {
         MutexType::scoped_lock lock(this->mutex);
         this->inprogress.insert(make_pair(requestId, result));
     }
@@ -174,8 +176,7 @@ RemoteServer::FuturePtr RemoteServer::callAsync(const string &methodName, EventP
         data->setMethod("REQUEST");
         methodSet.requestInformer->publish(data);
         result.reset(new Future<EventPtr>());
-        methodSet.handler->addCall(
-                data->getEventId().getAsUUID().getIdAsString(), result);
+        methodSet.handler->addCall(data->getEventId(), result);
     }
 
     return result;

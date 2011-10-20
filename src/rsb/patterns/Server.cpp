@@ -3,6 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ *               2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -91,23 +92,21 @@ public:
             return;
         }
 
-        EventPtr returnEvent(new Event());
-        returnEvent->setScopePtr(informer->getScope());
-        returnEvent->setMethod("REPLY");
-        returnEvent->mutableMetaData()
-            .setUserInfo("rsb:reply", event->getEventId().getAsUUID().getIdAsString());
+        EventPtr reply(new Event());
+        reply->setScopePtr(informer->getScope());
+        reply->setMethod("REPLY");
+        reply->addCause(event->getEventId());
         try {
             VoidPtr returnData
                 = callback->intlCall(methodName, event->getData());
-            returnEvent->setType(callback->getReplyType());
-            returnEvent->setData(returnData);
+            reply->setType(callback->getReplyType());
+            reply->setData(returnData);
         } catch (const exception &e) {
-            returnEvent->setType(typeName<string>());
-            returnEvent->setData(boost::shared_ptr<string>(new string(
-                                                               typeName(e) + ": " + e.what())));
-            returnEvent->mutableMetaData().setUserInfo("rsb:error?", "");
+            reply->setType(typeName<string>());
+            reply->setData(boost::shared_ptr<string>(new string(typeName(e) + ": " + e.what())));
+            reply->mutableMetaData().setUserInfo("rsb:error?", "");
         }
-        informer->publish(returnEvent);
+        informer->publish(reply);
     }
 
 };
