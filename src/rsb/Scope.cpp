@@ -42,6 +42,9 @@ const char Scope::COMPONENT_SEPARATOR = '/';
  * should be stored
  */
 inline void verifyAndSplit(const string &s, vector<string> &components) {
+    if (s.empty()) {
+        throw invalid_argument("Empty scope string given.");
+    }
     string::const_iterator prev = s.begin();
     // The scope string has to start with a '/'.
     if (*prev != Scope::COMPONENT_SEPARATOR) {
