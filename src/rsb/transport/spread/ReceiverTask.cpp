@@ -42,8 +42,8 @@ namespace spread {
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
         InConnector* connector) :
     logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-            cancelRequested(false), con(s), connector(connector), assemblyPool(
-                    new AssemblyPool()), handler(handler) {
+    con(s), connector(connector),
+    assemblyPool(new AssemblyPool()), handler(handler) {
 
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.

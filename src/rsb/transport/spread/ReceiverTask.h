@@ -98,7 +98,6 @@ private:
             protocol::NotificationPtr notification);
 
     rsc::logging::LoggerPtr logger;
-    volatile bool cancelRequested;
     SpreadConnectionPtr con;
     InConnector *connector;
     AssemblyPoolPtr assemblyPool;
