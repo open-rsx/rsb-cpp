@@ -27,6 +27,8 @@
 
 #include <boost/thread.hpp>
 
+#include <rsc/misc/langutils.h>
+
 #include "rsb/eventprocessing/ParallelEventReceivingStrategy.h"
 #include "rsb/QueuePushHandler.h"
 #include "rsb/filter/ScopeFilter.h"
@@ -69,10 +71,18 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
         processor.handle(event);
     }
 
-    boost::this_thread::sleep(boost::posix_time::millisec(500));
-
-    EXPECT_FALSE(okQueue->empty());
-    okQueue->pop();
+    boost::uint64_t stopWaitingHere = rsc::misc::currentTimeMillis() + 10000;
+    boost::shared_ptr<string> queueResult;
+    while (rsc::misc::currentTimeMillis() < stopWaitingHere) {
+        try {
+            queueResult = okQueue->tryPop();
+            break;
+        } catch (rsc::threading::QueueEmptyException &e){
+            boost::this_thread::sleep(boost::posix_time::millisec(20));
+            continue;
+        }
+    }
+    EXPECT_TRUE(queueResult);
     EXPECT_TRUE(okQueue->empty());
 
 }
@@ -119,10 +129,19 @@ TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
 
         processor.handle(event);
     }
-    boost::this_thread::sleep(boost::posix_time::millisec(500));
-
-    EXPECT_FALSE(okQueue->empty());
-    okQueue->pop();
+    
+    boost::uint64_t stopWaitingHere = rsc::misc::currentTimeMillis() + 10000;
+    boost::shared_ptr<string> queueResult;
+    while (rsc::misc::currentTimeMillis() < stopWaitingHere) {
+        try {
+            queueResult = okQueue->tryPop();
+            break;
+        } catch (rsc::threading::QueueEmptyException &e){
+            boost::this_thread::sleep(boost::posix_time::millisec(20));
+            continue;
+        }
+    }
+    EXPECT_TRUE(queueResult);
     EXPECT_TRUE(okQueue->empty());
 
 }

@@ -73,8 +73,10 @@ TEST(MetaDataTest, testTimesPtime) {
     const boost::posix_time::ptime time = boost::posix_time::microsec_clock::universal_time();
     const boost::uint64_t after = rsc::misc::currentTimeMicros();
     meta.setCreateTime(time);
-    EXPECT_GE(meta.getCreateTime(), before);
-    EXPECT_LE(meta.getCreateTime(), after);
+    // it seems that on windows the two time methods use a slightly different
+    // clock mechanism. Hence, we will allow a short offset for the comparison
+    EXPECT_GE(meta.getCreateTime(), before - 2000);
+    EXPECT_LE(meta.getCreateTime(), after + 2000);
 
 }
 
