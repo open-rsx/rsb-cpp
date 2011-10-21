@@ -104,6 +104,8 @@ ADD_LIBRARY(${CONNECTOR_TEST_NAME} STATIC rsb/transport/ConnectorTest.cpp
                                           rsb/transport/ConnectorTest.h
                                           rsb/InformerTask.cpp
                                           rsb/InformerTask.h)
+TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME} 
+                                             ${GMOCK_LIBRARY_NAME})
 
 # --- spread connector test ---
 
@@ -117,10 +119,7 @@ SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
 ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
                       ${CONNECTOR_TEST_NAME}
-                      ${RSB_NAME}
-                      ${SPREAD_PROTOCOL_NAME}
-                      ${Boost_LIBRARIES}
-                      ${GMOCK_LIBRARY_NAME})
+                      ${SPREAD_PROTOCOL_NAME})
 
 ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 
@@ -131,10 +130,7 @@ SET(INPROCESSCONNECTOR_TEST_SOURCES rsbtest_inprocess.cpp
 
 ADD_EXECUTABLE(${INPROCESSCONNECTOR_TEST_NAME} ${INPROCESSCONNECTOR_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${INPROCESSCONNECTOR_TEST_NAME}
-                      ${CONNECTOR_TEST_NAME}
-                      ${RSB_NAME}
-                      ${Boost_LIBRARIES}
-                      ${GMOCK_LIBRARY_NAME})
+                      ${CONNECTOR_TEST_NAME})
 
 ADD_TEST(${INPROCESSCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${INPROCESSCONNECTOR_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 

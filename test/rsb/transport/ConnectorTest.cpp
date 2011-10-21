@@ -52,6 +52,10 @@ using namespace rsb::spread;
 using namespace testing;
 using namespace rsc::threading;
 
+int pullInConnectorTest() {
+    return 0;
+}
+
 TEST_P(ConnectorTest, testConstruction) {
     ASSERT_NO_THROW(GetParam().createInConnector());
     ASSERT_NO_THROW(GetParam().createOutConnector());

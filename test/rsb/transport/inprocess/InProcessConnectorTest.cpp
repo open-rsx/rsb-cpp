@@ -31,6 +31,8 @@ using namespace rsb::inprocess;
 using namespace rsb::transport;
 using namespace testing;
 
+static int dummy = pullInConnectorTest();
+
 rsb::transport::InPushConnectorPtr createInProcessInConnector() {
     return rsb::transport::InPushConnectorPtr(new rsb::inprocess::InConnector());
 }

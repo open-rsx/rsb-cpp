@@ -33,6 +33,8 @@ using namespace rsb::transport;
 using namespace rsb::converter;
 using namespace testing;
 
+static int dummy = pullInConnectorTest();
+
 InPushConnectorPtr createSpreadInConnector() {
     return InPushConnectorPtr(new rsb::spread::InConnector(stringConverterRepository()->getConvertersForDeserialization(),
 						       defaultHost(),

@@ -56,3 +56,5 @@ public:
     virtual ~ConnectorTest() {
     }
 };
+
+int pullInConnectorTest();
