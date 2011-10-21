@@ -79,6 +79,7 @@ TARGET_LINK_LIBRARIES(parallelStrategyDeathTest
                       ${RSB_NAME}
                       ${Boost_LIBRARIES})
 
+SET(DEATH_TESTS)
 FIND_PACKAGE(PythonInterp)
 IF(PYTHONINTERP_FOUND)
     ADD_TEST(parallelStrategyDeathTestException ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/deathTest.py"
@@ -91,6 +92,7 @@ IF(PYTHONINTERP_FOUND)
                                                --xml "${TEST_RESULT_DIR}/rsbtest-parallelStrategyDeathTestCatchAll.xml"
                                                --name deathTestCatchAll
                                                catchall)
+    SET(DEATH_TESTS parallelStrategyDeathTestException parallelStrategyDeathTestCatchAll)
 ELSE()
     MESSAGE(STATUS "Python interpreter not found, not enabling death tests")
 ENDIF()
@@ -143,7 +145,7 @@ IF(WIN32)
     # requried for PATH entries with a slash before the semicolon
     STRING(REPLACE "\\;" ";" PATH_STRING "${PATH_STRING}")
     STRING(REPLACE ";" "\\;" PATH_STRING "${PATH_STRING}")
-    SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME}
+    SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME} ${DEATH_TESTS}
                  PROPERTY ENVIRONMENT "PATH=${PATH_STRING}")
 ENDIF()
 
