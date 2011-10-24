@@ -180,6 +180,10 @@ QualityOfServiceSpec ParticipantConfig::getQualityOfServiceSpec() const {
     return qosSpec;
 }
 
+QualityOfServiceSpec &ParticipantConfig::mutableQualityOfServiceSpec() {
+    return qosSpec;
+}
+
 void ParticipantConfig::setQualityOfServiceSpec(
         const QualityOfServiceSpec &spec) {
     this->qosSpec = spec;

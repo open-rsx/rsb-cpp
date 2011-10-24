@@ -213,9 +213,16 @@ public:
     /**
      * Returns the current settings for QoS.
      *
-     * @return quality of service settings
+     * @return quality of service settings as immutable copy
      */
     QualityOfServiceSpec getQualityOfServiceSpec() const;
+
+    /**
+     * Returns mutable quality of service settings.
+     *
+     * @return reference to QoS settings
+     */
+    QualityOfServiceSpec &mutableQualityOfServiceSpec();
 
     /**
      * Sets the desired QoS settings.
