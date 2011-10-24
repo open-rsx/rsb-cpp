@@ -34,7 +34,7 @@
 
 namespace rsb {
 
-class QualityOfServiceSpecs;
+class QualityOfServiceSpec;
 
 class Event;
 typedef boost::shared_ptr<Event> EventPtr;
