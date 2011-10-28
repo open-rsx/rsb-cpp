@@ -27,7 +27,7 @@
 #include <rsc/misc/UUID.h>
 
 #include "rsb/transport/spread/Assembly.h"
-#include "rsb/protocol/Protocol.pb.h"
+#include "rsb/protocol/Notification.pb.h"
 
 #include "../../InformerTask.h"
 
@@ -42,18 +42,19 @@ using namespace rsb::spread;
 using namespace testing;
 using namespace rsc::threading;
 
-TEST(AssemblyTest, testAssembly)
-{
+TEST(AssemblyTest, testAssembly) {
 
     stringstream containedData;
 
-    protocol::NotificationPtr initialNotification(new protocol::Notification);
+    protocol::FragmentedNotificationPtr initialNotification(
+            new protocol::FragmentedNotification);
 
     boost::uint32_t seqnum = 0;
-    initialNotification->mutable_event_id()->set_sequence_number(seqnum);
+    initialNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+            seqnum);
 
     const string initialString = rsc::misc::randAlnumStr(10);
-    initialNotification->set_data(initialString);
+    initialNotification->mutable_notification()->set_data(initialString);
     containedData << initialString;
 
     const unsigned int dataParts = 5;
@@ -64,21 +65,25 @@ TEST(AssemblyTest, testAssembly)
 
     for (unsigned int i = 1; i < dataParts; ++i) {
 
-        protocol::NotificationPtr newNotification(new protocol::Notification);
+        protocol::FragmentedNotificationPtr newNotification(
+                new protocol::FragmentedNotification);
 
         const string newString = rsc::misc::randAlnumStr(30);
-        newNotification->set_data(newString);
+        newNotification->mutable_notification()->set_data(newString);
         containedData << newString;
 
-        newNotification->mutable_event_id()->set_sequence_number(seqnum);
+        newNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                seqnum);
         newNotification->set_num_data_parts(dataParts);
         newNotification->set_data_part(i);
 
-        assembly.add(newNotification);
+        bool complete = assembly.add(newNotification);
 
         if (i == (dataParts - 1)) {
             EXPECT_TRUE(assembly.isComplete());
-            EXPECT_EQ(containedData.str(), *(assembly.getCompleteData()));
+            EXPECT_TRUE(complete);
+            EXPECT_EQ(containedData.str(),
+                    assembly.getCompleteNotification()->data());
         } else {
             EXPECT_FALSE(assembly.isComplete());
         }
@@ -87,16 +92,17 @@ TEST(AssemblyTest, testAssembly)
 
 }
 
-TEST(AssemblyTest, testAge)
-{
+TEST(AssemblyTest, testAge) {
 
-    protocol::NotificationPtr initialNotification(new protocol::Notification);
+    protocol::FragmentedNotificationPtr initialNotification(
+            new protocol::FragmentedNotification);
 
     boost::uint32_t seqnum = 0;
-    initialNotification->mutable_event_id()->set_sequence_number(seqnum);
+    initialNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+            seqnum);
 
     const string initialString = rsc::misc::randAlnumStr(10);
-    initialNotification->set_data(initialString);
+    initialNotification->mutable_notification()->set_data(initialString);
 
     const unsigned int dataParts = 5;
     initialNotification->set_num_data_parts(dataParts);
@@ -109,28 +115,28 @@ TEST(AssemblyTest, testAge)
 
 }
 
-TEST(AssemblyPoolTest, testAssembly)
-{
+TEST(AssemblyPoolTest, testAssembly) {
 
     AssemblyPool pool;
 
     {
         // simple case, a one-part message
-        protocol::NotificationPtr initialNotification(
-                new protocol::Notification);
+        protocol::FragmentedNotificationPtr initialNotification(
+                new protocol::FragmentedNotification);
 
         boost::uint32_t seqnum = 0;
-        initialNotification->mutable_event_id()->set_sequence_number(seqnum);
+        initialNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
-        initialNotification->set_data(initialString);
+        initialNotification->mutable_notification()->set_data(initialString);
 
         initialNotification->set_num_data_parts(1);
         initialNotification->set_data_part(0);
 
-        boost::shared_ptr<string> result = pool.add(initialNotification);
+        protocol::NotificationPtr result = pool.add(initialNotification);
         ASSERT_TRUE(result);
-        EXPECT_EQ(initialString, *result);
+        EXPECT_EQ(initialString, result->data());
 
     }
 
@@ -139,14 +145,15 @@ TEST(AssemblyPoolTest, testAssembly)
 
         stringstream containedData;
 
-        protocol::NotificationPtr initialNotification(
-                new protocol::Notification);
+        protocol::FragmentedNotificationPtr initialNotification(
+                new protocol::FragmentedNotification);
 
         boost::uint32_t seqnum = 0;
-        initialNotification->mutable_event_id()->set_sequence_number(seqnum);
+        initialNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
-        initialNotification->set_data(initialString);
+        initialNotification->mutable_notification()->set_data(initialString);
         containedData << initialString;
 
         const unsigned int dataParts = 5;
@@ -156,22 +163,23 @@ TEST(AssemblyPoolTest, testAssembly)
 
         for (unsigned int i = 1; i < dataParts; ++i) {
 
-            protocol::NotificationPtr newNotification(
-                    new protocol::Notification);
+            protocol::FragmentedNotificationPtr newNotification(
+                    new protocol::FragmentedNotification);
 
             const string newString = rsc::misc::randAlnumStr(30);
-            newNotification->set_data(newString);
+            newNotification->mutable_notification()->set_data(newString);
             containedData << newString;
 
-            newNotification->mutable_event_id()->set_sequence_number(seqnum);
+            newNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                    seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(i);
 
-            boost::shared_ptr<string> result = pool.add(newNotification);
+            protocol::NotificationPtr result = pool.add(newNotification);
 
             if (i == (dataParts - 1)) {
                 EXPECT_TRUE(result);
-                EXPECT_EQ(containedData.str(), *result);
+                EXPECT_EQ(containedData.str(), result->data());
             } else {
                 EXPECT_FALSE(result);
             }
@@ -182,8 +190,7 @@ TEST(AssemblyPoolTest, testAssembly)
 
 }
 
-TEST(AssemblyPoolTest, testPruningDefaultOff)
-{
+TEST(AssemblyPoolTest, testPruningDefaultOff) {
 
     AssemblyPool pool(1, 500);
 
@@ -192,13 +199,14 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
 
     // add an initial multi-part message
     {
-        protocol::NotificationPtr initialNotification(
-                new protocol::Notification);
+        protocol::FragmentedNotificationPtr initialNotification(
+                new protocol::FragmentedNotification);
 
-        initialNotification->mutable_event_id()->set_sequence_number(seqnum);
+        initialNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                seqnum);
 
         const string initialString = rsc::misc::randAlnumStr(10);
-        initialNotification->set_data(initialString);
+        initialNotification->mutable_notification()->set_data(initialString);
 
         initialNotification->set_num_data_parts(dataParts);
         initialNotification->set_data_part(0);
@@ -211,25 +219,25 @@ TEST(AssemblyPoolTest, testPruningDefaultOff)
 
     // add the missing message fragment and expect a result
     {
-        protocol::NotificationPtr newNotification(new protocol::Notification);
+        protocol::FragmentedNotificationPtr newNotification(
+                new protocol::FragmentedNotification);
 
         const string newString = rsc::misc::randAlnumStr(30);
-        newNotification->set_data(newString);
+        newNotification->mutable_notification()->set_data(newString);
 
-        newNotification->mutable_event_id()->set_sequence_number(seqnum);
+        newNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                seqnum);
         newNotification->set_num_data_parts(dataParts);
         newNotification->set_data_part(1);
 
-        boost::shared_ptr<string> result = pool.add(newNotification);
-
+        protocol::NotificationPtr result = pool.add(newNotification);
         EXPECT_TRUE(result);
 
     }
 
 }
 
-TEST(AssemblyPoolTest, testPruning)
-{
+TEST(AssemblyPoolTest, testPruning) {
 
     AssemblyPool pool(1, 500);
     pool.setPruning(true);
@@ -240,13 +248,15 @@ TEST(AssemblyPoolTest, testPruning)
         boost::uint32_t seqnum = 0;
         // add an initial multi-part message
         {
-            protocol::NotificationPtr initialNotification(
-                    new protocol::Notification);
+            protocol::FragmentedNotificationPtr initialNotification(
+                    new protocol::FragmentedNotification);
 
-            initialNotification->mutable_event_id()->set_sequence_number(seqnum);
+            initialNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                    seqnum);
 
             const string initialString = rsc::misc::randAlnumStr(10);
-            initialNotification->set_data(initialString);
+            initialNotification->mutable_notification()->set_data(
+                    initialString);
 
             initialNotification->set_num_data_parts(dataParts);
             initialNotification->set_data_part(0);
@@ -259,17 +269,18 @@ TEST(AssemblyPoolTest, testPruning)
 
         // add the missing message fragment and expect no result
         {
-            protocol::NotificationPtr newNotification(
-                    new protocol::Notification);
+            protocol::FragmentedNotificationPtr newNotification(
+                    new protocol::FragmentedNotification);
 
             const string newString = rsc::misc::randAlnumStr(30);
-            newNotification->set_data(newString);
+            newNotification->mutable_notification()->set_data(newString);
 
-            newNotification->mutable_event_id()->set_sequence_number(seqnum);
+            newNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                    seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(1);
 
-            boost::shared_ptr<string> result = pool.add(newNotification);
+            protocol::NotificationPtr result = pool.add(newNotification);
 
             EXPECT_FALSE(result);
 
@@ -284,13 +295,15 @@ TEST(AssemblyPoolTest, testPruning)
         boost::uint32_t seqnum = 1;
         // add an initial multi-part message
         {
-            protocol::NotificationPtr initialNotification(
-                    new protocol::Notification);
+            protocol::FragmentedNotificationPtr initialNotification(
+                    new protocol::FragmentedNotification);
 
-            initialNotification->mutable_event_id()->set_sequence_number(seqnum);
+            initialNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                    seqnum);
 
             const string initialString = rsc::misc::randAlnumStr(10);
-            initialNotification->set_data(initialString);
+            initialNotification->mutable_notification()->set_data(
+                    initialString);
 
             initialNotification->set_num_data_parts(dataParts);
             initialNotification->set_data_part(0);
@@ -303,17 +316,18 @@ TEST(AssemblyPoolTest, testPruning)
 
         // add the missing message fragment and expect a result
         {
-            protocol::NotificationPtr newNotification(
-                    new protocol::Notification);
+            protocol::FragmentedNotificationPtr newNotification(
+                    new protocol::FragmentedNotification);
 
             const string newString = rsc::misc::randAlnumStr(30);
-            newNotification->set_data(newString);
+            newNotification->mutable_notification()->set_data(newString);
 
-            newNotification->mutable_event_id()->set_sequence_number(seqnum);
+            newNotification->mutable_notification()->mutable_event_id()->set_sequence_number(
+                    seqnum);
             newNotification->set_num_data_parts(dataParts);
             newNotification->set_data_part(1);
 
-            boost::shared_ptr<string> result = pool.add(newNotification);
+            protocol::NotificationPtr result = pool.add(newNotification);
 
             EXPECT_TRUE(result);
 

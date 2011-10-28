@@ -24,7 +24,6 @@
 
 #include <rsc/misc/Registry.h>
 
-#include "../../protocol/Notification.h"
 #include "SpreadConnector.h"
 #include "SpreadConnection.h"
 #include "../../CommException.h"

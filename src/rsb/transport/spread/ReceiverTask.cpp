@@ -41,9 +41,9 @@ namespace spread {
 
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
         InConnector* connector) :
-    logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")),
-    con(s), connector(connector),
-    assemblyPool(new AssemblyPool()), handler(handler) {
+        logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")), con(
+                s), connector(connector), assemblyPool(new AssemblyPool()), handler(
+                handler) {
 
     // Verify that the version of the library that we linked against is
     // compatible with the version of the headers we compiled against.
@@ -67,64 +67,79 @@ void ReceiverTask::execute() {
                     "Receiving a SpreadMessage returned a zero pointer, why?");
         }
 
-        RSCDEBUG(logger, "ReceiverTask::execute new SpreadMessage received " << message);
+        RSCDEBUG(logger,
+                "ReceiverTask::execute new SpreadMessage received " << message);
 
         if (message->getType() != SpreadMessage::REGULAR) {
             return;
         }
 
-        NotificationPtr notification(new Notification());
+        FragmentedNotificationPtr notification(new FragmentedNotification());
         if (!notification->ParseFromString(message->getDataAsString())) {
             throw CommException("Failed to parse notification in pbuf format");
         }
-        RSCTRACE(logger, "Parsed event seqnum: " << notification->event_id().sequence_number());
-        RSCTRACE(logger, "Binary length: " << notification->data().length());
-        RSCTRACE(logger, "Number of split message parts: " << notification->num_data_parts());
-        RSCTRACE(logger, "... received message part    : " << notification->data_part());
+
+        RSCTRACE(
+                logger,
+                "Parsed event seqnum: " << notification->notification().event_id().sequence_number());
+        RSCTRACE(
+                logger,
+                "Binary length: " << notification->notification().data().length());
+        RSCTRACE(
+                logger,
+                "Number of split message parts: " << notification->num_data_parts());
+        RSCTRACE(logger,
+                "... received message part    : " << notification->data_part());
 
         // Build data from parts
-        boost::shared_ptr<string> completeData = handleAndJoinNotification(
-                notification);
-        if (completeData) {
-            notifyHandler(notification, completeData);
+        NotificationPtr completeNotification =
+                handleAndJoinFragmentedNotification(notification);
+        if (completeNotification) {
+            notifyHandler(completeNotification);
         }
 
     } catch (rsb::CommException &e) {
         // TODO QoS would not like swallowing the exception
         // TODO maybe at least use the ErrorHandlingStrategy here?
         rsc::debug::DebugToolsPtr tools = rsc::debug::DebugTools::newInstance();
-        RSCERROR(logger, "Error receiving spread message: " << e.what() << endl << tools->exceptionInfo(e));
+        RSCERROR(
+                logger,
+                "Error receiving spread message: " << e.what() << endl << tools->exceptionInfo(e));
     } catch (boost::thread_interrupted &e) {
         return;
     }
 
 }
 
-boost::shared_ptr<string> ReceiverTask::handleAndJoinNotification(
-        NotificationPtr notification) {
+NotificationPtr ReceiverTask::handleAndJoinFragmentedNotification(
+        FragmentedNotificationPtr notification) {
 
-    boost::shared_ptr<string> completeData;
+    NotificationPtr completeNotification;
 
     bool multiPartNotification = notification->num_data_parts() > 1;
     if (multiPartNotification) {
-        completeData = this->assemblyPool->add(notification);
+        completeNotification = this->assemblyPool->add(notification);
     } else {
-        completeData.reset(new string(notification->data()));
+        completeNotification.reset(notification->mutable_notification(),
+                NotificationDeleter(notification));
     }
-    return completeData;
+    return completeNotification;
 
 }
 
-void ReceiverTask::notifyHandler(NotificationPtr notification,
-        boost::shared_ptr<string> data) {
+void ReceiverTask::notifyHandler(NotificationPtr notification) {
 
     EventPtr e(new Event());
 
-    e->mutableMetaData().setCreateTime((boost::uint64_t) notification->meta_data().create_time());
-    e->mutableMetaData().setSendTime((boost::uint64_t) notification->meta_data().send_time());
+    e->mutableMetaData().setCreateTime(
+            (boost::uint64_t) notification->meta_data().create_time());
+    e->mutableMetaData().setSendTime(
+            (boost::uint64_t) notification->meta_data().send_time());
     e->mutableMetaData().setReceiveTime();
-    e->setEventId(rsc::misc::UUID(
-            (boost::uint8_t*) notification->event_id().sender_id().c_str()), notification->event_id().sequence_number());
+    e->setEventId(
+            rsc::misc::UUID(
+                    (boost::uint8_t*) notification->event_id().sender_id().c_str()),
+            notification->event_id().sequence_number());
 
     e->setScopePtr(ScopePtr(new Scope(notification->scope())));
     if (notification->has_method()) {
@@ -154,7 +169,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification,
     InConnector::ConverterPtr c = this->connector->getConverter(
             notification->wire_schema());
     converter::AnnotatedData deserialized = c->deserialize(
-            notification->wire_schema(), *data);
+            notification->wire_schema(), notification->data());
     e->setType(deserialized.first);
     e->setData(deserialized.second);
 

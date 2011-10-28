@@ -32,6 +32,7 @@
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
 #include "../../protocol/Notification.h"
+#include "../../protocol/FragmentedNotification.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -46,14 +47,26 @@ namespace spread {
 class RSB_EXPORT Assembly {
 public:
 
-    Assembly(rsb::protocol::NotificationPtr n);
+    Assembly(rsb::protocol::FragmentedNotificationPtr n);
     ~Assembly();
 
-    std::string getData(const unsigned int &i) const;
+    /**
+     * Returns the completed notification built from all fragments.
+     *
+     * @return complete notification with all data
+     */
+    rsb::protocol::NotificationPtr getCompleteNotification() const;
 
-    std::string *getCompleteData() const;
-
-    unsigned int add(rsb::protocol::NotificationPtr n);
+    /**
+     * Adds a newly received fragment to this Assembly and tells whether this
+     * completed the assembly.
+     *
+     * @param n fragment to add
+     * @return @c true if the assembly is now completed, else @c false
+     * @throw protocol::ProtocolException if there is already a fragment in this
+     *                                    Assembly with the same fragment number
+     */
+    bool add(rsb::protocol::FragmentedNotificationPtr n);
 
     bool isComplete() const;
 
@@ -68,8 +81,9 @@ public:
 private:
     rsc::logging::LoggerPtr logger;
     unsigned int receivedParts;
-    std::vector<rsb::protocol::NotificationPtr> store;
+    std::vector<rsb::protocol::FragmentedNotificationPtr> store;
     boost::posix_time::ptime birthTime;
+
 };
 
 typedef boost::shared_ptr<Assembly> AssemblyPtr;
@@ -119,15 +133,17 @@ public:
     /**
      * Adds a new notification to the pool and tries to join it with already
      * pooled parts. If a complete event notification is available after this
-     * message, the joined body is returned and the all parts are removed
-     * from the pool.
+     * message, the joined Notification is returned and the all parts are
+     * removed from the pool.
      *
      * @param notification notification to add to the pool
-     * @return if a joined message is ready, the contents are returned, else a
-     *         0 pointer
+     * @return if a joined message is ready, the notification is returned, else
+     *         a 0 pointer
+     * @throw protocol::ProtocolException if a fragment was received multiple
+     *                                    times
      */
-    boost::shared_ptr<std::string> add(
-            rsb::protocol::NotificationPtr notification);
+    rsb::protocol::NotificationPtr add(
+            rsb::protocol::FragmentedNotificationPtr notification);
 
 private:
     typedef std::map<std::string, boost::shared_ptr<Assembly> > Pool;
@@ -135,11 +151,12 @@ private:
     class PruningTask: public rsc::threading::PeriodicTask {
     public:
 
-                PruningTask(Pool &pool, boost::recursive_mutex &poolMutex,
-                        const unsigned int &ageS,
-                        const unsigned int &pruningIntervalMs);
+        PruningTask(Pool &pool, boost::recursive_mutex &poolMutex,
+                const unsigned int &ageS,
+                const unsigned int &pruningIntervalMs);
 
         void execute();
+
     private:
         rsc::logging::LoggerPtr logger;
         Pool &pool;

@@ -22,6 +22,8 @@
 #include <boost/format.hpp>
 #include <boost/date_time/microsec_time_clock.hpp>
 
+#include "../../protocol/ProtocolException.h"
+
 using namespace std;
 
 using namespace boost;
@@ -35,10 +37,13 @@ using namespace rsb::protocol;
 namespace rsb {
 namespace spread {
 
-Assembly::Assembly(rsb::protocol::NotificationPtr n) :
-    logger(Logger::getLogger(str(format("rsb.spread.Assembly[%1%]")
-                                 % n->event_id().sequence_number()))),
-    receivedParts(0), birthTime(microsec_clock::local_time()) {
+Assembly::Assembly(rsb::protocol::FragmentedNotificationPtr n) :
+        logger(
+                Logger::getLogger(
+                        str(
+                                format("rsb.spread.Assembly[%1%]")
+                                        % n->notification().event_id().sequence_number()))), receivedParts(
+                0), birthTime(microsec_clock::local_time()) {
     store.resize(n->num_data_parts());
     add(n);
 }
@@ -46,27 +51,40 @@ Assembly::Assembly(rsb::protocol::NotificationPtr n) :
 Assembly::~Assembly() {
 }
 
-string Assembly::getData(const unsigned int &i) const {
-    return this->store[i]->data();
-}
-
-string *Assembly::getCompleteData() const {
-    RSCTRACE(logger, "Joining data parts");
+NotificationPtr Assembly::getCompleteNotification() const {
+    RSCTRACE(logger, "Joining fragments");
     assert(isComplete());
+
+    NotificationPtr notification(store[0]->mutable_notification(),
+            NotificationDeleter(store[0]));
+
     // Concatenate data parts
-    string* result = new string(getData(0));
+    string *resultData = notification->mutable_data();
     for (unsigned int i = 1; i < this->store.size(); ++i) {
-        result->append(getData(i));
+        resultData->append(store[i]->notification().data());
     }
-    return result;
+    return notification;
 }
 
-unsigned int Assembly::add(NotificationPtr n) {
-    RSCTRACE(logger, "Adding notification " << n->event_id().sequence_number()
-            << " (part " << n->data_part() << "/" << this->store.size()
-            << ") to assembly");
+bool Assembly::add(FragmentedNotificationPtr n) {
+    RSCTRACE(
+            logger,
+            "Adding notification " << n->notification().event_id().sequence_number() << " (part " << n->data_part() << "/" << this->store.size() << ") to assembly");
+    assert(n->num_data_parts() == store.size());
+    //assert(!store[n->data_part()]);
+    if (store[n->data_part()]) {
+        throw ProtocolException(
+                boost::str(
+                        boost::format(
+                                "Received fragment (%d/%d) of notification for event with sender id %x and sequence number %d twice!.")
+                                % n->data_part()
+                                % n->num_data_parts()
+                                % n->notification().event_id().sender_id()
+                                % n->notification().event_id().sequence_number()));
+    }
     store[n->data_part()] = n;
-    return receivedParts++;
+    ++receivedParts;
+    return isComplete();
 }
 
 bool Assembly::isComplete() const {
@@ -80,9 +98,9 @@ unsigned int Assembly::age() const {
 AssemblyPool::PruningTask::PruningTask(Pool &pool,
         boost::recursive_mutex &poolMutex, const unsigned &ageS,
         const unsigned int &pruningIntervalMs) :
-    PeriodicTask(pruningIntervalMs), logger(Logger::getLogger(
-            "rsb.spread.AssemblyPool.PruningTask")), pool(pool), poolMutex(
-            poolMutex), maxAge(ageS) {
+        PeriodicTask(pruningIntervalMs), logger(
+                Logger::getLogger("rsb.spread.AssemblyPool.PruningTask")), pool(
+                pool), poolMutex(poolMutex), maxAge(ageS) {
 }
 
 void AssemblyPool::PruningTask::execute() {
@@ -103,8 +121,8 @@ void AssemblyPool::PruningTask::execute() {
 
 AssemblyPool::AssemblyPool(const unsigned int &ageS,
         const unsigned int &pruningIntervalMs) :
-    logger(Logger::getLogger("rsb.spread.AssemblyPool")), pruningAgeS(ageS),
-            pruningIntervalMs(pruningIntervalMs) {
+        logger(Logger::getLogger("rsb.spread.AssemblyPool")), pruningAgeS(ageS), pruningIntervalMs(
+                pruningIntervalMs) {
     if (ageS == 0) {
         throw domain_error("Age must not be 0.");
     }
@@ -127,8 +145,9 @@ void AssemblyPool::setPruning(const bool &prune) {
 
     if (!isPruning() && prune) {
         RSCDEBUG(logger, "Starting Assembly pruning");
-        pruningTask.reset(new PruningTask(this->pool, this->poolMutex,
-                pruningAgeS, pruningIntervalMs));
+        pruningTask.reset(
+                new PruningTask(this->pool, this->poolMutex, pruningAgeS,
+                        pruningIntervalMs));
         this->executor.schedule(this->pruningTask);
     } else if (isPruning() && !prune) {
         RSCDEBUG(logger, "Stopping Assembly pruning");
@@ -140,41 +159,51 @@ void AssemblyPool::setPruning(const bool &prune) {
 
 }
 
-boost::shared_ptr<string> AssemblyPool::add(NotificationPtr notification) {
+rsb::protocol::NotificationPtr AssemblyPool::add(
+        FragmentedNotificationPtr notification) {
     boost::recursive_mutex::scoped_lock lock(this->poolMutex);
 
-    string key = notification->event_id().sender_id();
-    key.push_back(notification->event_id().sequence_number() & 0x000000ff);
-    key.push_back(notification->event_id().sequence_number() & 0x0000ff00);
-    key.push_back(notification->event_id().sequence_number() & 0x00ff0000);
-    key.push_back(notification->event_id().sequence_number() & 0xff000000);
+    string key = notification->notification().event_id().sender_id();
+    key.push_back(
+            notification->notification().event_id().sequence_number()
+                    & 0x000000ff);
+    key.push_back(
+            notification->notification().event_id().sequence_number()
+                    & 0x0000ff00);
+    key.push_back(
+            notification->notification().event_id().sequence_number()
+                    & 0x00ff0000);
+    key.push_back(
+            notification->notification().event_id().sequence_number()
+                    & 0xff000000);
     Pool::iterator it = this->pool.find(key);
-    string *result = 0;
+    NotificationPtr result;
     AssemblyPtr assembly;
     if (it != this->pool.end()) {
         // Push message to existing Assembly
         assembly = it->second;
         RSCTRACE(
                 logger,
-                "Adding notification " << notification->event_id().sequence_number() << " to existing assembly " << assembly);
+                "Adding notification " << notification->notification().event_id().sequence_number() << " to existing assembly " << assembly);
         assembly->add(notification);
     } else {
         // Create new Assembly
         RSCTRACE(
                 logger,
-                "Creating new assembly for notification " << notification->event_id().sequence_number());
+                "Creating new assembly for notification " << notification->notification().event_id().sequence_number());
         assembly.reset(new Assembly(notification));
         it = this->pool.insert(make_pair(key, assembly)).first;
     }
 
     if (assembly->isComplete()) {
-        result = assembly->getCompleteData();
+        result = assembly->getCompleteNotification();
         this->pool.erase(it);
     }
 
     RSCTRACE(logger, "dataPool size: " << this->pool.size());
 
-    return boost::shared_ptr<string> (result);
+    return result;
+
 }
 
 }

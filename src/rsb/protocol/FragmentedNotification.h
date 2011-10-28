@@ -19,18 +19,31 @@
 
 #pragma once
 
-#include "rsb/protocol/introspection/PortStateChange.pb.h"
-
 #include <boost/shared_ptr.hpp>
 
+#include "Notification.h"
+#include "rsb/rsbexports.h"
+#include "rsb/protocol/FragmentedNotification.pb.h"
+
 namespace rsb {
+namespace protocol {
 
-namespace introspection {
+typedef boost::shared_ptr<rsb::protocol::FragmentedNotification> FragmentedNotificationPtr;
 
-typedef rsb::protocol::introspection::PortStateChange PortStateChange;
-typedef boost::shared_ptr<PortStateChange> PortStateChangePtr;
+/**
+ * A deleter objects for boost::shared_ptr which makes it possible to expose
+ * the Notification contained in a FragmentedNotification as a shared_ptr.
+ *
+ * @author jwienke
+ */
+class NotificationDeleter {
+public:
+    NotificationDeleter(FragmentedNotificationPtr fragment);
+    void operator()(void const *);
+private:
+    FragmentedNotificationPtr fragment;
+};
 
 }
-
 }
 

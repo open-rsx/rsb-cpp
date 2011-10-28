@@ -28,6 +28,7 @@
 #include <rsc/misc/UUID.h>
 
 #include "../../protocol/Notification.h"
+#include "../../protocol/FragmentedNotification.h"
 #include "../../converter/Repository.h"
 #include "../../Event.h"
 #include "../../eventprocessing/Handler.h"
@@ -42,12 +43,12 @@ namespace spread {
 class InConnector;
 
 /**
- * A task that receives Notifications from a SpreadConnection, deserializes them
+ * A task that receives FragmentedNotifications from a SpreadConnection, deserializes them
  * to events and notifies a Handler with deserialized Events. Messages may be
- * split into multiple Notifications to respect the spread limitations. Hence,
+ * split into multiple FragmentedNotifications to respect the spread limitations. Hence,
  * there is an assembly strategy for multiple notifications forming one Event.
  * An optional pruning for Event fragments may be enable to avoid a growing pool
- * if Notifications are lost. As a default this pruning is disabled.
+ * if FragmentedNotifications are lost. As a default this pruning is disabled.
  *
  * @author swrede
  * @author jwienke
@@ -76,26 +77,22 @@ private:
     /**
      * Notifies the handler of this task about a received event which is
      * generated from an internal notification and the joined data that may
-     * originate from several notifications.
+     * originate from several fragments of the notification.
      *
-     * @param notification notification with meta infos
-     * @param data user data for the event
+     * @param notification notification with full data to notify about
      */
-    void notifyHandler(protocol::NotificationPtr notification,
-            boost::shared_ptr<std::string> data);
+    void notifyHandler(protocol::NotificationPtr notification);
 
     /**
      * Handles newly received notifications by extracting their data, joining
-     * the data if it is part of a multi-part message and and returning the
-     * joined data if a multi-part message was received completely.
+     * the data if it is part of a multi-part message and returning the
+     * joined notification.
      *
      * @param notification notification to handler
-     * @return pointer to joined data in case of a single-part message or a
-     *         completed multi-part message. If no event data is completely
-     *         available, a null pointer is returned
+     * @return pointer to the joined notification
      */
-    boost::shared_ptr<std::string> handleAndJoinNotification(
-            protocol::NotificationPtr notification);
+    rsb::protocol::NotificationPtr handleAndJoinFragmentedNotification(
+            protocol::FragmentedNotificationPtr notification);
 
     rsc::logging::LoggerPtr logger;
     SpreadConnectionPtr con;

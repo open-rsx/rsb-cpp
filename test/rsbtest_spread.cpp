@@ -35,12 +35,11 @@ using namespace rsc::subprocess;
 int main(int argc, char* argv[]) {
 
     srand(time(NULL));
-	SubprocessPtr spread = startSpread();
+    SubprocessPtr spread = startSpread();
 
-	rsb::introspection::registerIntrospectionConverters();
-	rsb::converter::registerDefaultConverters();
+    rsb::converter::registerDefaultConverters();
 
-	InitGoogleMock(&argc, argv);
-	return RUN_ALL_TESTS();
+    InitGoogleMock(&argc, argv);
+    return RUN_ALL_TESTS();
 
 }

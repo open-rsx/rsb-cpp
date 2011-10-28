@@ -17,29 +17,17 @@
  *
  * ============================================================ */
 
-#include "introspection.h"
-
-#include <boost/thread.hpp>
-
-#include "../converter/Repository.h"
-#include "IntrospectionConverter.h"
+#include "FragmentedNotification.h"
 
 namespace rsb {
-namespace introspection {
+namespace protocol {
 
-static bool registered = false;
-static boost::mutex registrationMutex;
+NotificationDeleter::NotificationDeleter(FragmentedNotificationPtr fragment) :
+        fragment(fragment) {
+}
 
-void registerIntrospectionConverters() {
-
-	boost::mutex::scoped_lock lock(registrationMutex);
-	if (!registered) {
-		converter::stringConverterRepository()->registerConverter(
-				converter::Converter<std::string>::Ptr(
-						new IntrospectionConverter));
-		registered = true;
-	}
-
+void NotificationDeleter::operator()(void const *) {
+    fragment.reset();
 }
 
 }

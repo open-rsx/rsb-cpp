@@ -105,7 +105,7 @@ ENDIF()
 
 # We abuse the "patch" component of the version to encode the wire
 # format version
-FIND_PACKAGE(RSBProtocol 0.5.6 REQUIRED)
+FIND_PACKAGE(RSBProtocol 0.6.7 REQUIRED)
 
 SET(SPREAD_IGNORE_EXECUTABLE TRUE)
 FIND_PACKAGE(Spread REQUIRED)

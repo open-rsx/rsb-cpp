@@ -6,7 +6,7 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
 PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
                       PROTOFILES ${RSBPROTO_FILES}
                       PROTOROOT ${RSBPROTO_ROOT}
-                      OUTPATH ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol)
+                      OUTPATH ${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_LIBRARY(${SPREAD_PROTOCOL_NAME} STATIC ${PROTO_SOURCES})
 IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
@@ -76,13 +76,11 @@ SET(SOURCES rsb/CommException.cpp
             rsb/filter/ScopeFilter.cpp
             rsb/filter/OriginFilter.cpp
 
-            rsb/introspection/IntrospectionConverter.cpp
-            rsb/introspection/introspection.cpp
-
             rsb/patterns/MethodExistsException.cpp
             rsb/patterns/RemoteServer.cpp
             rsb/patterns/Server.cpp
 
+            rsb/protocol/FragmentedNotification.cpp
             rsb/protocol/ProtocolException.cpp
 
             rsb/transport/Connector.cpp
@@ -177,14 +175,11 @@ SET(HEADERS rsb/CommException.h
             rsb/filter/ScopeFilter.h
             rsb/filter/OriginFilter.h
 
-            rsb/introspection/IntrospectionConverter.h
-            rsb/introspection/PortStateChange.h
-            rsb/introspection/introspection.h
-
             rsb/patterns/MethodExistsException.h
             rsb/patterns/RemoteServer.h
             rsb/patterns/Server.h
 
+            rsb/protocol/FragmentedNotification.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
 

@@ -99,8 +99,6 @@ void eventToNotification(protocol::Notification &notification,
         info->set_key(it->first);
         info->set_timestamp(it->second);
     }
-    notification.set_num_data_parts(1);
-    notification.set_data_part(0);
 
     notification.set_data(data);
 }

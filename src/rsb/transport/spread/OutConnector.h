@@ -35,12 +35,11 @@ namespace spread {
  * @author jmoringe
  */
 class RSB_EXPORT OutConnector: public transport::OutConnector,
-                               public rsb::transport::ConverterSelectingConnector<std::string> {
+        public rsb::transport::ConverterSelectingConnector<std::string> {
 public:
     OutConnector(ConverterSelectionStrategyPtr converters,
-                 const std::string& host = defaultHost(),
-                 unsigned int port = defaultPort(),
-                 unsigned int maxFragmentSize = 100000);
+            const std::string& host = defaultHost(), unsigned int port =
+                    defaultPort(), unsigned int maxFragmentSize = 100000);
     virtual ~OutConnector();
 
     std::string getClassName() const;
@@ -57,20 +56,18 @@ public:
             const rsc::runtime::Properties &args);
 private:
 
+    void fillMandatoryNotificationFields(protocol::Notification &notification,
+            const EventPtr &event);
+
     /**
-     * Fills a protocol::Notification with contents.
+     * Fills a protocol::Notification with header contents.
      *
      * @param notification notification to fill
      * @param event the event that generated the notification
-     * @param wireSchema the wire schema of the encoded data
-     * @param numDataParts the number of parts the notification is split into
-     * @param dataPart the index of this data part
-     * @param data the encoded event data to send
+     * @param wireSchema wire schema of the serialized data
      */
-    void fillNotification(protocol::Notification &notification,
-            const EventPtr &event, const std::string &wireSchema,
-            const unsigned int &numDataParts, const unsigned int &dataPart,
-            const std::string &data);
+    void fillNotificationHeader(protocol::Notification &notification,
+            const EventPtr &event, const std::string &wireSchema);
 
     void fillEventId(protocol::EventId &id, const EventId &realId);
 
@@ -78,6 +75,11 @@ private:
     bool active;
     SpreadConnectorPtr connector;
     unsigned int maxFragmentSize;
+    /**
+     * The number of bytes minimally required to successfully serialize the
+     * notification with the limited size for each fragment.
+     */
+    unsigned int minDataSpace;
 
 };
 
