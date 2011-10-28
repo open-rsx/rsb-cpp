@@ -25,7 +25,6 @@
 
 #include "testhelpers.h"
 
-#include "rsb/introspection/introspection.h"
 #include "rsb/converter/converters.h"
 
 using namespace std;
