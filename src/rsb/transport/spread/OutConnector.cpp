@@ -156,7 +156,6 @@ void OutConnector::handle(EventPtr event) {
                 event);
 
         // when sending the first time, we need to transmit all meta data.
-        unsigned int maxDataPartSize = maxFragmentSize;
         if (curPos == 0) {
             fillNotificationHeader(*(notification->mutable_notification()),
                     event, wireSchema);
@@ -169,7 +168,7 @@ void OutConnector::handle(EventPtr event) {
             throw ProtocolException(
                     "The meta data of this event are too big for spread!");
         }
-        maxDataPartSize = maxFragmentSize - headerByteSize;
+        unsigned int maxDataPartSize = maxFragmentSize - headerByteSize;
 
         // finally set the data information
         string dataPart = wire.substr(curPos, maxDataPartSize);
