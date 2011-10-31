@@ -101,14 +101,14 @@ void OutConnector::handle(EventPtr event) {
 
     size_t curPos = 0;
     unsigned int currentDataPart = 0;
-    while (curPos <= wire.size()) {
+    while (curPos < wire.size()) {
 
         FragmentedNotificationPtr notification(new FragmentedNotification);
         fillNotificationId(*(notification->mutable_notification()),
                 event);
 
         // when sending the first time, we need to transmit all meta data.
-        if (curPos == 0) {
+        if (currentDataPart == 0) {
             fillNotificationHeader(*(notification->mutable_notification()),
                     event, wireSchema);
         }
