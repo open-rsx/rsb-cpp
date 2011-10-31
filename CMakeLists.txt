@@ -226,7 +226,7 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
     SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
     SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libprotoc-dev, protobuf-compiler, spread, rsc, rsbprotocol, libboost-regex-dev")
+    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libprotoc-dev, protobuf-compiler, spread, rsc${VERSION_SUFFIX}, rsbprotocol, libboost-regex-dev")
     SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "doxygen, lcov, cppcheck, sloccount")
 ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
