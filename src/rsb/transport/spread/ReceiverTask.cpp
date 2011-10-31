@@ -131,47 +131,15 @@ void ReceiverTask::notifyHandler(NotificationPtr notification) {
 
     EventPtr e(new Event());
 
-    e->mutableMetaData().setCreateTime(
-            (boost::uint64_t) notification->meta_data().create_time());
-    e->mutableMetaData().setSendTime(
-            (boost::uint64_t) notification->meta_data().send_time());
-    e->mutableMetaData().setReceiveTime();
-    e->setEventId(
-            rsc::misc::UUID(
-                    (boost::uint8_t*) notification->event_id().sender_id().c_str()),
-            notification->event_id().sequence_number());
-
-    e->setScopePtr(ScopePtr(new Scope(notification->scope())));
-    if (notification->has_method()) {
-        e->setMethod(notification->method());
-    }
-
-    for (int i = 0; i < notification->meta_data().user_infos_size(); ++i) {
-        e->mutableMetaData().setUserInfo(
-                notification->meta_data().user_infos(i).key(),
-                notification->meta_data().user_infos(i).value());
-    }
-    for (int i = 0; i < notification->meta_data().user_times_size(); ++i) {
-        e->mutableMetaData().setUserTime(
-                notification->meta_data().user_times(i).key(),
-                notification->meta_data().user_times(i).timestamp());
-    }
-    for (int i = 0; i < notification->causes_size(); ++i) {
-        protocol::EventId cause = notification->causes(i);
-        e->addCause(
-                EventId(
-                        rsc::misc::UUID(
-                                (boost::uint8_t*) cause.sender_id().c_str()),
-                        cause.sequence_number()));
-    }
-
     // TODO error handling
     InConnector::ConverterPtr c = this->connector->getConverter(
             notification->wire_schema());
     converter::AnnotatedData deserialized = c->deserialize(
             notification->wire_schema(), notification->data());
-    e->setType(deserialized.first);
-    e->setData(deserialized.second);
+
+    fillEvent(e, *notification, deserialized.second, deserialized.first);
+
+    e->mutableMetaData().setReceiveTime();
 
     boost::recursive_mutex::scoped_lock lock(handlerMutex);
     if (this->handler) {

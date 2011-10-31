@@ -77,5 +77,50 @@ void fillNotificationHeader(protocol::Notification &notification,
 
 }
 
+void fillEvent(EventPtr event, const protocol::Notification &notification,
+        VoidPtr data, const string &dataType) {
+
+    event->mutableMetaData().setCreateTime(
+            (boost::uint64_t) notification.meta_data().create_time());
+    event->mutableMetaData().setSendTime(
+            (boost::uint64_t) notification.meta_data().send_time());
+    event->mutableMetaData().setReceiveTime(
+            (boost::uint64_t) notification.meta_data().receive_time());
+    event->mutableMetaData().setDeliverTime(
+            (boost::uint64_t) notification.meta_data().deliver_time());
+    event->setEventId(
+            rsc::misc::UUID(
+                    (boost::uint8_t*) notification.event_id().sender_id().c_str()),
+            notification.event_id().sequence_number());
+
+    event->setScopePtr(ScopePtr(new Scope(notification.scope())));
+    if (notification.has_method()) {
+        event->setMethod(notification.method());
+    }
+
+    for (int i = 0; i < notification.meta_data().user_infos_size(); ++i) {
+        event->mutableMetaData().setUserInfo(
+                notification.meta_data().user_infos(i).key(),
+                notification.meta_data().user_infos(i).value());
+    }
+    for (int i = 0; i < notification.meta_data().user_times_size(); ++i) {
+        event->mutableMetaData().setUserTime(
+                notification.meta_data().user_times(i).key(),
+                notification.meta_data().user_times(i).timestamp());
+    }
+    for (int i = 0; i < notification.causes_size(); ++i) {
+        protocol::EventId cause = notification.causes(i);
+        event->addCause(
+                rsb::EventId(
+                        rsc::misc::UUID(
+                                (boost::uint8_t*) cause.sender_id().c_str()),
+                        cause.sequence_number()));
+    }
+
+    event->setType(dataType);
+    event->setData(data);
+
+}
+
 }
 }
