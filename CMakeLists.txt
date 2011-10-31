@@ -51,7 +51,6 @@ ENDIF()
 SET(RSB_NAME rsbcore)
 SET(RSB_TEST_NAME rsbtest)
 SET(CORE_TEST_NAME rsbtest_core)
-SET(SPREAD_PROTOCOL_NAME rsbspread_proto)
 SET(SPREADPORT_TEST_NAME rsbtest_spread)
 SET(SPREADCONNECTION_TEST_NAME rsbtest_spreadconnection)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
@@ -129,7 +128,21 @@ FIND_PACKAGE(Doxygen)
 
 ADD_SUBDIRECTORY(3rdparty)
 
+# first, we need to export the protocol files
+IF(WIN32)
+    ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
+ELSE()
+    ADD_DEFINITIONS("-DRSB_PROTOCOL_EXPORT=")
+ENDIF()
+
 ADD_SUBDIRECTORY(src)
+
+# for everything else, we now import the protocol files
+IF(WIN32)
+    REMOVE_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
+    ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllimport)")
+ENDIF()
+
 IF(BUILD_EXAMPLES)
     ADD_SUBDIRECTORY(examples)
 ENDIF()
@@ -138,6 +151,14 @@ ADD_SUBDIRECTORY(apps)
 ENABLE_TESTING()
 IF(BUILD_TESTS AND SPREAD_EXECUTABLE)
     ADD_SUBDIRECTORY(test)
+ENDIF()
+
+# --- decide on export macros for config files ---
+
+IF(WIN32)
+    SET(RSB_PROTOCOL_CFLAGS "/DRSB_PROTOCOL_EXPORT=__declspec(dllimport)")
+ELSE()
+    SET(RSB_PROTOCOL_CFLAGS "-DRSB_PROTOCOL_EXPORT=")
 ENDIF()
 
 # --- pkgconfig file ---

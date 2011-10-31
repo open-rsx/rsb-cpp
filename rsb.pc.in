@@ -7,4 +7,4 @@ Description: Fully event-driven Robotics Systems Bus
 Version: @RSB_VERSION@
 Requires: rsc
 Libs: -L${libdir} -l@RSB_NAME@
-Cflags: -I${includedir}
+Cflags: -I${includedir} @RSB_PROTOCOL_CFLAGS@

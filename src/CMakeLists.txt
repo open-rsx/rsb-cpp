@@ -6,15 +6,10 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
 PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
                       PROTOFILES ${RSBPROTO_FILES}
                       PROTOROOT ${RSBPROTO_ROOT}
+                      EXPORT_MACRO RSB_PROTOCOL_EXPORT
                       OUTPATH ${CMAKE_CURRENT_BINARY_DIR})
 
-ADD_LIBRARY(${SPREAD_PROTOCOL_NAME} STATIC ${PROTO_SOURCES})
-IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-    SET_TARGET_PROPERTIES(${SPREAD_PROTOCOL_NAME} PROPERTIES COMPILE_FLAGS -fPIC)
-ENDIF()
-
 CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h DESTINATION include/rsb)
 
 # version
 INCLUDE(PadString)
@@ -116,7 +111,9 @@ SET(SOURCES rsb/CommException.cpp
 
             rsb/util/MD5.cpp
 
-            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp)
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
+            
+            ${PROTO_SOURCES})
 
 SET(HEADERS rsb/CommException.h
             rsb/Event.h
@@ -219,12 +216,19 @@ SET(HEADERS rsb/CommException.h
             rsb/util/MD5.h
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
-            ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h)
+            ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h
+            
+            ${PROTO_HEADERS})
+
+IF(WIN32)
+    ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
+ELSE()
+    ADD_DEFINITIONS("-DRSB_PROTOCOL_EXPORT=")
+ENDIF()
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
 MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_PROTOCOL_NAME}
-                                  ${SPREAD_LIBRARIES}
+TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_LIBRARIES}
                                   ${PROTOBUF_LIBRARIES}
                                   ${RSC_LIBRARIES}
                                   ${Boost_LIBRARIES}
@@ -237,7 +241,7 @@ IF(WIN32)
 	TARGET_LINK_LIBRARIES(${RSB_NAME} wsock32)
 ENDIF()
 
-INSTALL(TARGETS ${RSB_NAME} ${SPREAD_PROTOCOL_NAME}
+INSTALL(TARGETS ${RSB_NAME}
         EXPORT RSBDepends
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
