@@ -99,7 +99,9 @@ void OutConnector::handle(EventPtr event) {
 
     size_t curPos = 0;
     unsigned int currentDataPart = 0;
-    while (curPos < wire.size()) {
+    // "currentDataPart == 0" is required for the case when wire.size() == 0
+    // This can happen, for example, with the "void" wire-schema.
+    while (curPos < wire.size() || currentDataPart == 0) {
 
         FragmentedNotificationPtr notification(new FragmentedNotification);
         fillNotificationId(*(notification->mutable_notification()),
