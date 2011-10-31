@@ -56,21 +56,6 @@ public:
             const rsc::runtime::Properties &args);
 private:
 
-    void fillMandatoryNotificationFields(protocol::Notification &notification,
-            const EventPtr &event);
-
-    /**
-     * Fills a protocol::Notification with header contents.
-     *
-     * @param notification notification to fill
-     * @param event the event that generated the notification
-     * @param wireSchema wire schema of the serialized data
-     */
-    void fillNotificationHeader(protocol::Notification &notification,
-            const EventPtr &event, const std::string &wireSchema);
-
-    void fillEventId(protocol::EventId &id, const EventId &realId);
-
     rsc::logging::LoggerPtr logger;
     bool active;
     SpreadConnectorPtr connector;

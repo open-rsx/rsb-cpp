@@ -76,6 +76,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/patterns/Server.cpp
 
             rsb/protocol/FragmentedNotification.cpp
+            rsb/protocol/Notification.cpp
             rsb/protocol/ProtocolException.cpp
 
             rsb/transport/Connector.cpp

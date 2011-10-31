@@ -84,54 +84,6 @@ void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
     this->connector->setQualityOfServiceSpecs(specs);
 }
 
-void OutConnector::fillEventId(protocol::EventId &id, const EventId &realId) {
-    boost::uuids::uuid uuid = realId.getParticipantId().getId();
-    id.set_sender_id(uuid.data, uuid.size());
-    id.set_sequence_number(realId.getSequenceNumber());
-}
-
-void OutConnector::fillMandatoryNotificationFields(
-        protocol::Notification &notification, const EventPtr &event) {
-    fillEventId(*(notification.mutable_event_id()), event->getEventId());
-}
-
-void OutConnector::fillNotificationHeader(protocol::Notification &notification,
-        const EventPtr &event, const string &wireSchema) {
-
-    notification.set_wire_schema(wireSchema);
-
-    notification.set_scope(event->getScopePtr()->toString());
-    if (!event->getMethod().empty()) {
-        notification.set_method(event->getMethod());
-    }
-    notification.mutable_meta_data()->set_create_time(
-            event->getMetaData().getCreateTime());
-    notification.mutable_meta_data()->set_send_time(
-            event->getMetaData().getSendTime());
-    for (map<string, string>::const_iterator it =
-            event->mutableMetaData().userInfosBegin();
-            it != event->mutableMetaData().userInfosEnd(); ++it) {
-        UserInfo *info =
-                notification.mutable_meta_data()->mutable_user_infos()->Add();
-        info->set_key(it->first);
-        info->set_value(it->second);
-    }
-    for (map<string, boost::uint64_t>::const_iterator it =
-            event->mutableMetaData().userTimesBegin();
-            it != event->mutableMetaData().userTimesEnd(); ++it) {
-        UserTime *info =
-                notification.mutable_meta_data()->mutable_user_times()->Add();
-        info->set_key(it->first);
-        info->set_timestamp(it->second);
-    }
-    set<EventId> causes = event->getCauses();
-    for (set<EventId>::const_iterator causeIt = causes.begin();
-            causeIt != causes.end(); ++causeIt) {
-        fillEventId(*(notification.add_causes()), *causeIt);
-    }
-
-}
-
 void OutConnector::handle(EventPtr event) {
 
     // TODO factor out several methods
@@ -152,7 +104,7 @@ void OutConnector::handle(EventPtr event) {
     while (curPos <= wire.size()) {
 
         FragmentedNotificationPtr notification(new FragmentedNotification);
-        fillMandatoryNotificationFields(*(notification->mutable_notification()),
+        fillNotificationId(*(notification->mutable_notification()),
                 event);
 
         // when sending the first time, we need to transmit all meta data.
