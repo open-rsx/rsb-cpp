@@ -86,8 +86,6 @@ void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
 
 void OutConnector::handle(EventPtr event) {
 
-    // TODO factor out several methods
-
     // TODO exception handling if converter is not available
     ConverterPtr c = getConverter(event->getType());
     string wire;
