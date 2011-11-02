@@ -53,6 +53,10 @@ void fillNotificationHeader(protocol::Notification &notification,
             event->getMetaData().getCreateTime());
     notification.mutable_meta_data()->set_send_time(
             event->getMetaData().getSendTime());
+    notification.mutable_meta_data()->set_receive_time(
+            event->getMetaData().getReceiveTime());
+    notification.mutable_meta_data()->set_deliver_time(
+            event->getMetaData().getDeliverTime());
     for (map<string, string>::const_iterator it =
             event->mutableMetaData().userInfosBegin();
             it != event->mutableMetaData().userInfosEnd(); ++it) {
