@@ -41,7 +41,7 @@ namespace converter {
  *
  * @author jmoringe
  */
-template <typename WireType>
+template<typename WireType>
 class UnambiguousConverterMap: public ConverterSelectionStrategy<WireType> {
 public:
     typedef typename ConverterSelectionStrategy<WireType>::ConverterPtr ConverterPtr;
@@ -49,17 +49,19 @@ public:
     /**
      * Tries to look up the converter designator by @a key.
      *
-     * @param key A wire-schema or data-type desinated the desired
+     * @param key A wire-schema or data-type designated the desired
      *            converter.
      * @return A boost::shared_ptr holding the converter.
      * @throw rsc::runtime::NoSuchObject If there is no converter fo @a key.
      */
     ConverterPtr getConverter(const std::string &key) const {
-        typename ConverterMap::const_iterator it
-            = this->converters.find(key);
+        typename ConverterMap::const_iterator it = this->converters.find(key);
         if (it == this->converters.end()) {
-	  throw rsc::runtime::NoSuchObject(boost::str(boost::format("No converter for wire-schema or data-type `%1%'.\nAvailable converters: %2%")
-						      % key % this->converters));
+            throw rsc::runtime::NoSuchObject(
+                    boost::str(
+                            boost::format(
+                                    "No converter for wire-schema or data-type `%1%'.\nAvailable converters: %2%")
+                                    % key % this->converters));
         }
         return it->second;
     }
@@ -77,9 +79,13 @@ public:
      */
     void addConverter(const std::string &key, ConverterPtr converter) {
         // TODO use RSB exception class, but do we have one for invalid argument?
-        if (this->converters.find(key) != this->converters.end())
-            throw std::invalid_argument(boost::str(boost::format("A converter is already stored for the key `%1%'")
-                                                                 % key));
+        if (this->converters.find(key) != this->converters.end()) {
+            throw std::invalid_argument(
+                    boost::str(
+                            boost::format(
+                                    "A converter is already stored for the key `%1%'")
+                                    % key));
+        }
         this->converters.insert(std::make_pair(key, converter));
     }
 private:
