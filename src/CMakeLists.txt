@@ -43,9 +43,11 @@ SET(SOURCES rsb/CommException.cpp
 
             rsb/converter/BoolConverter.cpp
             rsb/converter/Converter.cpp
+            rsb/converter/EventsByScopeMapConverter.cpp
             rsb/converter/ProtocolBufferConverter.cpp
             rsb/converter/Repository.cpp
             rsb/converter/RegexConverterPredicate.cpp
+            rsb/converter/SchemaAndByteArrayConverter.cpp
             rsb/converter/SerializationException.cpp
             rsb/converter/StringConverter.cpp
             rsb/converter/Uint64Converter.cpp
@@ -118,6 +120,7 @@ SET(SOURCES rsb/CommException.cpp
 
 SET(HEADERS rsb/CommException.h
             rsb/Event.h
+            rsb/EventCollections.h
             rsb/EventId.h
             rsb/EventQueuePushHandler.h
             rsb/Exception.h
@@ -139,12 +142,14 @@ SET(HEADERS rsb/CommException.h
 
             rsb/converter/BoolConverter.h
             rsb/converter/Converter.h
+            rsb/converter/EventsByScopeMapConverter.h
             rsb/converter/ProtocolBufferConverter.h
             rsb/converter/ConverterSelectionStrategy.h
             rsb/converter/UnambiguousConverterMap.h
             rsb/converter/PredicateConverterList.h
             rsb/converter/RegexConverterPredicate.h
             rsb/converter/Repository.h
+            rsb/converter/SchemaAndByteArrayConverter.h
             rsb/converter/SerializationException.h
             rsb/converter/StringConverter.h
             rsb/converter/Uint64Converter.h
