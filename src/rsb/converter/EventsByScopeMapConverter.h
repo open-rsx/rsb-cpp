@@ -36,7 +36,7 @@ namespace converter {
  *
  * @author jwienke
  */
-class EventsByScopeMapConverter: public Converter<std::string> {
+class RSB_EXPORT EventsByScopeMapConverter: public Converter<std::string> {
 public:
 
     /**

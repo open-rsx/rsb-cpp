@@ -34,7 +34,7 @@ namespace converter {
  *
  * @author jwienke
  */
-class SchemaAndByteArrayConverter: public Converter<std::string> {
+class RSB_EXPORT SchemaAndByteArrayConverter: public Converter<std::string> {
 public:
 
     SchemaAndByteArrayConverter();
