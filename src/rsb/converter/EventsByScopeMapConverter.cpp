@@ -124,15 +124,14 @@ AnnotatedData EventsByScopeMapConverter::deserialize(const string &wireSchema,
     boost::shared_ptr<EventsByScopeMap> dataMap(new EventsByScopeMap);
 
     // iterate over all scope sets
-    for (unsigned int setCount = 0; setCount < syncMap.sets_size();
-            ++setCount) {
+    for (int setCount = 0; setCount < syncMap.sets_size(); ++setCount) {
 
         const protocol::collections::EventsByScopeMap::ScopeSet &scopeSet =
                 syncMap.sets(setCount);
         ScopePtr scope(new Scope(scopeSet.scope()));
 
         // iterate over all notifications in each scope set
-        for (unsigned int notificationIndex = 0;
+        for (int notificationIndex = 0;
                 notificationIndex < scopeSet.notifications_size();
                 ++notificationIndex) {
 
