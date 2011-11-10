@@ -45,6 +45,8 @@ ConnectorBase::~ConnectorBase() {
 void ConnectorBase::activate() {
     RSCDEBUG(logger, "Activating");
 
+    // This connector is added to the connector list of the bus by
+    // getBus{Server,Client}For.
     this->bus = (this->server
                  ? Factory::getInstance().getBusServerFor(this->host,
                                                           this->port,
@@ -53,16 +55,15 @@ void ConnectorBase::activate() {
                                                           this->port,
                                                           this));
 
-    this->bus->addConnector(ConnectorBasePtr(this));
-
     RSCDEBUG(logger, "Using bus " << getBus());
 }
 
 void ConnectorBase::deactivate() {
     RSCDEBUG(logger, "Deactivating");
 
-    //RSCDEBUG(logger, "Removing ourselves from connector list of bus " << getBus());
-    //getBus()->removeConnector(this);
+    RSCDEBUG(logger, "Removing ourselves from connector list of bus " << getBus());
+    getBus()->removeConnector(this);
+    this->bus.reset();
 }
 
 BusPtr ConnectorBase::getBus() {

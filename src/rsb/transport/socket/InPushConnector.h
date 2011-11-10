@@ -74,7 +74,7 @@ private:
 
     Scope scope;
 
-    bool active;
+    volatile bool active;
 
     void printContents(std::ostream &stream) const;
 };

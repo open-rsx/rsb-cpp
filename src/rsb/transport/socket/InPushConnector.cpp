@@ -74,12 +74,15 @@ void InPushConnector::activate() {
 
     RSCDEBUG(logger, "Activating");
 
-    getBus()->addSink(dynamic_pointer_cast<InPushConnector>(shared_from_this()));
+    getBus()->addSink(dynamic_pointer_cast<InPushConnector>(enable_shared_from_this<InConnector>::shared_from_this()));
+
     this->active = true;
 }
 
 void InPushConnector::deactivate() {
     RSCDEBUG(logger, "Deactivating");
+
+    this->active = false;
 
     RSCDEBUG(logger, "Removing ourselves from sink list of bus " << getBus());
     getBus()->removeSink(this);

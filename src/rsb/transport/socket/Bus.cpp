@@ -56,11 +56,16 @@ Bus::~Bus() {
         RSCWARN(logger, "" << this->sinks.size() << " non-empty scopes when destructing");
     }
 
-    // Connection list is cleared automatically and connections
-    // disconnect in their destructors.
+    // Active connections hold a shared_ptr to themselves and would
+    // thus not be destructed.
     for (ConnectionList::iterator it = this->connections.begin();
          it != this->connections.end(); ++it) {
-        (*it)->disconnect();
+        try {
+            (*it)->disconnect();
+        } catch (const std::exception &e) {
+            RSCERROR(logger, "Failed to disconnect connection " << *it
+                     << ": " << e.what());
+        }
     }
 }
 
@@ -79,7 +84,8 @@ void Bus::removeSink(InPushConnector* sink) {
     Scope scope = sink->getScope();
     RSCDEBUG(logger, "Removing sink " << sink << " from scope " << scope);
     SinkList& connectors = this->sinks[scope];
-    RSCDEBUG(logger, "Scope " << scope << " has " << connectors.size() << " connectors (before removing)");
+    RSCDEBUG(logger, "Scope " << scope << " has "
+             << connectors.size() << " connectors (before removing)");
     for (SinkList::iterator it = connectors.begin(); it != connectors.end(); ++it) {
         // If the weak pointer is dangling, we found our
         // sink. Otherwise, we can just check the pointer.
@@ -90,32 +96,30 @@ void Bus::removeSink(InPushConnector* sink) {
             break;
         }
     }
-    RSCDEBUG(logger, "Scope " << scope << " has " << connectors.size() << " connectors (after removing)");
+    RSCDEBUG(logger, "Scope " << scope << " has "
+             << connectors.size() << " connectors (after removing)");
     if (connectors.empty()) {
         RSCDEBUG(logger, "Removing empty scope " << scope);
         this->sinks.erase(scope);
     }
-
-    if (this->sinks.empty()) {
-        RSCINFO(logger, "No more connectors; suiciding");
-        Factory::getInstance().removeBusClient(shared_from_this());
-    }
 }
 
-void Bus::addConnector(ConnectorBasePtr connector) {
+void Bus::addConnector(/*ConnectorBasePtr*/ConnectorBase *connector) {
     recursive_mutex::scoped_lock lock(this->connectorLock);
 
+    RSCDEBUG(logger, "Adding connector " << connector);
     this->connectors.push_back(connector);
 }
 
-void Bus::removeConnector(ConnectorBasePtr connector) {
+void Bus::removeConnector(/*ConnectorBasePtr*/ConnectorBase *connector) {
     recursive_mutex::scoped_lock lock(this->connectorLock);
 
+    RSCDEBUG(logger, "Removing connector " << connector);
     this->connectors.remove(connector);
 
     if (this->connectors.empty()) {
         RSCINFO(logger, "No more connectors; suiciding");
-        //suicide();
+        suicide();
     }
 }
 

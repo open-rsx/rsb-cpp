@@ -71,10 +71,24 @@ public:
     void addSink(InPushConnectorPtr sink);
     void removeSink(InPushConnector* sink);
 
-    void addConnector(ConnectorBasePtr connector);
-    void removeConnector(ConnectorBasePtr connector);
+    void addConnector(/*ConnectorBasePtr*/ ConnectorBase *connector);
+    void removeConnector(/*ConnectorBasePtr*/ConnectorBase *connector);
 
+    /**
+     * Adds @a connection to the list of connections of the bus. @a
+     * connection should start receiving events, only after being
+     * added to the bus.
+     *
+     * @param connection The connection that should be added.
+     */
     void addConnection(BusConnectionPtr connection);
+
+    /**
+     * Removes @a connection from the list of connections of this
+     * bus. @a connection is not closed or otherwise modified.
+     *
+     * @param connection The connection that should be removed.
+     */
     void removeConnection(BusConnectionPtr connection);
 
     void handle(EventPtr event);
@@ -85,7 +99,7 @@ protected:
 private:
     typedef std::list<BusConnectionPtr>                  ConnectionList;
 
-    typedef std::list<ConnectorBasePtr>                  ConnectorList;
+    typedef std::list</*ConnectorBasePtr*/ConnectorBase*> ConnectorList;
 
     typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;
     typedef std::map<Scope, SinkList>                    SinkMap;

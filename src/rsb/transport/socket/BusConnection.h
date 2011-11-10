@@ -89,6 +89,8 @@ private:
 
     WeakBusPtr              bus;
 
+    volatile bool           disconnecting;
+
     // Receive buffers
     protocol::Notification  notification;
     std::string             lengthReceiveBuffer;
@@ -97,6 +99,8 @@ private:
     // Send buffers
     std::string             lengthSendBuffer;
     std::string             messageSendBuffer;
+
+    void performSafeCleanup(const std::string &context);
 
     void receiveEvent();
 
