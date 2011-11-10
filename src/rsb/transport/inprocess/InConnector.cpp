@@ -88,7 +88,12 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/
 
 void InConnector::handle(EventPtr event) {
 
-    event->mutableMetaData().setReceiveTime();
+    /** TODO(jmoringe, 2011-11-07): This ensures not overwriting
+     * earlier receive timestamp added by different
+     * connector. However, thread-safety issue remains.  */
+    if (event->getMetaData().getReceiveTime() == 0) {
+        event->mutableMetaData().setReceiveTime();
+    }
     for (HandlerList::iterator it = this->handlers.begin(); it
             != this->handlers.end(); ++it) {
         (*it)->handle(event);
