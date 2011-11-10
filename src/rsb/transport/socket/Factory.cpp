@@ -69,16 +69,11 @@ BusPtr Factory::getBusClientFor(const string  &host,
 
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
-            BusPtr result = it->second; //.lock();
-            result->addConnector(connector/*->shared_from_this()*/); /** TODO(jmoringe, 2011-11-10): temp */
-            if (result) { /** TODO(jmoringe, 2011-11-10): these are no longer weak pointers */
-                RSCDEBUG(logger, "Found existing bus client "
-                         << result << " without resolving";)
-
-                return result;
-            } else {
-                RSCDEBUG(logger, "Dangling bus client pointer without resolving");
-            }
+            BusPtr result = it->second;
+            result->addConnector(connector);
+            RSCDEBUG(logger, "Found existing bus client "
+                     << result << " without resolving");
+            return result;
         }
 
         RSCDEBUG(logger, "Did not find bus client without resolving");
@@ -111,14 +106,10 @@ BusPtr Factory::getBusClientFor(const string  &host,
 
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
-            BusPtr result = it->second; //.lock();
-            if (result) { /** TODO(jmoringe, 2011-11-10): not a weak pointer anymore */
-                RSCDEBUG(logger, "Found existing bus client " << it->second << " after resolving");
-
-                return result;
-            } else {
-                RSCDEBUG(logger, "Dangling bus client pointer after resolving");
-            }
+            BusPtr result = it->second;
+            RSCDEBUG(logger, "Found existing bus client "
+                     << it->second << " after resolving");
+            return result;
         }
 
         RSCDEBUG(logger, "Did not find bus client after resolving; creating a new one");
@@ -130,7 +121,7 @@ BusPtr Factory::getBusClientFor(const string  &host,
         result->addConnection(connection);
         connection->startReceiving();
 
-        result->addConnector(connector/*->shared_from_this()*/);
+        result->addConnector(connector);
 
         RSCDEBUG(logger, "Created new bus client " << result);
 
