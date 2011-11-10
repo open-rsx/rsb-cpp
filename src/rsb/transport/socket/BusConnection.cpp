@@ -115,7 +115,7 @@ void BusConnection::performSafeCleanup(const string &context) {
         // The bus may already have removed its pointer.
         try {
             bus->removeConnection(shared_from_this());
-        } catch (const bad_weak_ptr& e) {
+        } catch (const boost::bad_weak_ptr& e) {
         }
     }
 
