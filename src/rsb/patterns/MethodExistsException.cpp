@@ -24,8 +24,8 @@ using namespace std;
 namespace rsb {
 namespace patterns {
 
-MethodExistsException::MethodExistsException(const string &methodName,
-		const string &server) :
+MethodExistsException::MethodExistsException(const string& methodName,
+		const string& server) :
 			Exception(
 					"Method '" + methodName + "' already exists for server '"
 							+ server + "'") {

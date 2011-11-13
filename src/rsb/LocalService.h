@@ -34,7 +34,7 @@ namespace rsb {
 class RSB_EXPORT LocalService: public Service {
 public:
 
-    LocalService(const Scope &scope);
+    LocalService(const Scope& scope);
     virtual ~LocalService();
 
     std::string getClassName() const;

@@ -64,7 +64,7 @@ TEST(SpreadConnectionTest, testErrorOnBufferSaturation)
             receiveConnection->receive(receiveMessage);
         }
         FAIL() << "Connection did not throw an error on buffer saturation." ;
-    } catch (CommException &e) {
+    } catch (CommException& e) {
         // this is desired
     }
 
@@ -105,9 +105,9 @@ void receiveTester(SpreadConnectionPtr con) {
         while (true) {
             con->receive(msg);
         }
-    } catch (boost::thread_interrupted &e) {
+    } catch (boost::thread_interrupted& e) {
         // this is ok
-    } catch (rsc::misc::IllegalStateException &e) {
+    } catch (rsc::misc::IllegalStateException& e) {
         // this also, because the connectionmay have been disable before
     }
 

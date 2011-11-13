@@ -52,21 +52,21 @@ class RSB_EXPORT InPushConnector: public ConnectorBase,
                                   public transport::InPushConnector,
                                   public eventprocessing::Handler {
 public:
-    static rsb::transport::InPushConnector *create(const rsc::runtime::Properties &args);
+    static rsb::transport::InPushConnector* create(const rsc::runtime::Properties& args);
 
     InPushConnector(ConverterSelectionStrategyPtr  converters,
-                    const std::string             &host,
+                    const std::string&             host,
                     unsigned int                   port,
                     bool                           server);
     virtual ~InPushConnector();
 
     Scope getScope() const;
-    void setScope(const Scope &scope);
+    void setScope(const Scope& scope);
 
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void handle(EventPtr event);
 private:
@@ -76,7 +76,7 @@ private:
 
     volatile bool active;
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 };
 
 typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;

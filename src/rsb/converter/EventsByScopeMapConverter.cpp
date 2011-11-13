@@ -58,8 +58,8 @@ string EventsByScopeMapConverter::getClassName() const {
     return "EventsByScopeMapConverter";
 }
 
-string EventsByScopeMapConverter::serialize(const AnnotatedData &data,
-        string &wire) {
+string EventsByScopeMapConverter::serialize(const AnnotatedData& data,
+        string& wire) {
 
     if (data.first != getDataType()) {
         throw SerializationException(
@@ -76,7 +76,7 @@ string EventsByScopeMapConverter::serialize(const AnnotatedData &data,
     for (EventsByScopeMap::const_iterator mapIt = dataMap->begin();
             mapIt != dataMap->end(); ++mapIt) {
 
-        protocol::collections::EventsByScopeMap::ScopeSet *scopeSet =
+        protocol::collections::EventsByScopeMap::ScopeSet* scopeSet =
                 syncMap->add_sets();
         scopeSet->set_scope(mapIt->first.toString());
 
@@ -93,7 +93,7 @@ string EventsByScopeMapConverter::serialize(const AnnotatedData &data,
             string wireSchema = c->serialize(
                     make_pair(event->getType(), event->getData()), wire);
 
-            protocol::Notification *notification =
+            protocol::Notification* notification =
                     scopeSet->add_notifications();
             protocol::fillNotificationId(*notification, event);
             protocol::fillNotificationHeader(*notification, event, wireSchema);
@@ -111,8 +111,8 @@ string EventsByScopeMapConverter::serialize(const AnnotatedData &data,
 
 }
 
-AnnotatedData EventsByScopeMapConverter::deserialize(const string &wireSchema,
-        const string &wire) {
+AnnotatedData EventsByScopeMapConverter::deserialize(const string& wireSchema,
+        const string& wire) {
 
     if (wireSchema != getWireSchema()) {
         throw SerializationException("Unexpected wire schema " + wireSchema);
@@ -126,7 +126,7 @@ AnnotatedData EventsByScopeMapConverter::deserialize(const string &wireSchema,
     // iterate over all scope sets
     for (int setCount = 0; setCount < syncMap.sets_size(); ++setCount) {
 
-        const protocol::collections::EventsByScopeMap::ScopeSet &scopeSet =
+        const protocol::collections::EventsByScopeMap::ScopeSet& scopeSet =
                 syncMap.sets(setCount);
         ScopePtr scope(new Scope(scopeSet.scope()));
 
@@ -136,7 +136,7 @@ AnnotatedData EventsByScopeMapConverter::deserialize(const string &wireSchema,
                 ++notificationIndex) {
 
             // convert the notification back to an event
-            const protocol::Notification &notification = scopeSet.notifications(
+            const protocol::Notification& notification = scopeSet.notifications(
                     notificationIndex);
 
             EventPtr event(new Event);

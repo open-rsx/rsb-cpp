@@ -39,8 +39,8 @@ public:
 	 * @param methodName name of the method
 	 * @param server name of the server
 	 */
-	MethodExistsException(const std::string &methodName,
-			const std::string &server);
+	MethodExistsException(const std::string& methodName,
+			const std::string& server);
 	virtual ~MethodExistsException() throw ();
 };
 

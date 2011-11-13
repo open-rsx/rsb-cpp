@@ -23,13 +23,13 @@ using namespace std;
 
 namespace rsb {
 
-Handler::Handler(const string &method) {
+Handler::Handler(const string& method) {
     if (!method.empty()) {
         methods.insert(method);
     }
 }
 
-Handler::Handler(const set<string> &methods) :
+Handler::Handler(const set<string>& methods) :
     methods(methods) {
 }
 
@@ -40,15 +40,15 @@ set<string> Handler::getMethods() const {
     return methods;
 }
 
-bool Handler::acceptsMethod(const string &method) const {
+bool Handler::acceptsMethod(const string& method) const {
     if (methods.empty()) {
         return true;
     }
     return methods.count(method);
 }
 
-EventFunctionHandler::EventFunctionHandler(const EventFunction &function,
-        const string &method) :
+EventFunctionHandler::EventFunctionHandler(const EventFunction& function,
+        const string& method) :
     Handler(method), function(function) {
 }
 
@@ -56,7 +56,7 @@ string EventFunctionHandler::getClassName() const {
     return "EventFunctionHandler";
 }
 
-void EventFunctionHandler::printContents(ostream &stream) const {
+void EventFunctionHandler::printContents(ostream& stream) const {
     stream << "function = " << function;
 }
 

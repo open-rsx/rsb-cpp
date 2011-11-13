@@ -43,17 +43,17 @@ public:
     virtual ~OutConnector();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     void handle(rsb::EventPtr e);
 
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
-    static rsb::transport::OutConnector *create(
-            const rsc::runtime::Properties &args);
+    static rsb::transport::OutConnector* create(
+            const rsc::runtime::Properties& args);
 private:
 
     rsc::logging::LoggerPtr logger;

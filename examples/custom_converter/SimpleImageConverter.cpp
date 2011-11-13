@@ -40,7 +40,7 @@ SimpleImageConverter::SimpleImageConverter() :
     Converter<string> ("converter_tutorial::SimpleImage", "simple-image", true) {
 }
 
-string SimpleImageConverter::serialize(const AnnotatedData &data, string &wire) {
+string SimpleImageConverter::serialize(const AnnotatedData& data, string& wire) {
     // Ensure that DATA actually holds a datum of the data-type we
     // expect.
     assert(data.first == getDataType()); // this->getDataType() == "converter_tutorial::SimpleImage"
@@ -67,8 +67,8 @@ string SimpleImageConverter::serialize(const AnnotatedData &data, string &wire) 
     return getWireSchema(); // this->getWireSchema() == "simple-image"
 }
 
-AnnotatedData SimpleImageConverter::deserialize(const string &wireSchema,
-        const string &wire) {
+AnnotatedData SimpleImageConverter::deserialize(const string& wireSchema,
+        const string& wire) {
     // Ensure that WIRE uses the expected wire-schema.
     assert(wireSchema == getWireSchema()); // this->getWireSchema() == "simple-image"
 
@@ -77,7 +77,7 @@ AnnotatedData SimpleImageConverter::deserialize(const string &wireSchema,
     //
     // NOTE: do not use this kind of "deserialization" for any real
     // code.
-    SimpleImage *image = new SimpleImage();
+    SimpleImage* image = new SimpleImage();
     image->width = *((int*) &*wire.begin());
     image->height = *((int*) &*(wire.begin() + 4));
     image->data = new unsigned char[image->width * image->height];

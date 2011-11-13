@@ -44,7 +44,7 @@ transport::InPushConnector* InPushConnector::create(const Properties& args) {
 }
 
 InPushConnector::InPushConnector(ConverterSelectionStrategyPtr  converters,
-                                 const string                  &host,
+                                 const string&                  host,
                                  unsigned int                   port,
                                  bool                           server) :
     ConnectorBase(converters, host, port, server),
@@ -90,7 +90,7 @@ void InPushConnector::deactivate() {
     ConnectorBase::deactivate();
 }
 
-void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
+void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
     RSCWARN(logger, "Quality of service not implemented");
 }
 
@@ -120,7 +120,7 @@ void InPushConnector::handle(EventPtr busEvent) {
     }
 }
 
-void InPushConnector::printContents(ostream &stream) const {
+void InPushConnector::printContents(ostream& stream) const {
     stream << "scope = " << scope;
 }
 

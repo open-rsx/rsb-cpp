@@ -65,14 +65,14 @@ class RSB_EXPORT Bus: public eventprocessing::Handler,
                       public boost::enable_shared_from_this<Bus> {
 friend class BusConnection;
 public:
-    Bus(boost::asio::io_service &service);
+    Bus(boost::asio::io_service& service);
     virtual ~Bus();
 
     void addSink(InPushConnectorPtr sink);
     void removeSink(InPushConnector* sink);
 
-    void addConnector(/*ConnectorBasePtr*/ ConnectorBase *connector);
-    void removeConnector(/*ConnectorBasePtr*/ConnectorBase *connector);
+    void addConnector(/*ConnectorBasePtr*/ ConnectorBase* connector);
+    void removeConnector(/*ConnectorBasePtr*/ConnectorBase* connector);
 
     /**
      * Adds @a connection to the list of connections of the bus. @a
@@ -106,7 +106,7 @@ private:
 
     rsc::logging::LoggerPtr  logger;
 
-    boost::asio::io_service &service;
+    boost::asio::io_service& service;
 
     ConnectionList           connections;
     boost::recursive_mutex   connectionLock;
@@ -115,7 +115,7 @@ private:
     SinkMap                  sinks;
     boost::recursive_mutex   connectorLock;
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 };
 
 }

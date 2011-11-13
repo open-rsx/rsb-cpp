@@ -35,7 +35,7 @@ namespace spread {
  */
 class SpreadGroup {
 public:
-    SpreadGroup(const std::string &n);
+    SpreadGroup(const std::string& n);
     virtual ~SpreadGroup();
 
     std::string getName() const;
@@ -58,7 +58,7 @@ public:
 
 private:
 
-    void handleRetCode(const int &code, const std::string &actionName);
+    void handleRetCode(const int& code, const std::string& actionName);
 
     std::string name;
     rsc::logging::LoggerPtr logger;

@@ -55,7 +55,7 @@ public:
      *
      * @param s string to create sum for
      */
-    MD5(const std::string &s);
+    MD5(const std::string& s);
 
     virtual ~MD5();
 
@@ -65,7 +65,7 @@ public:
      * @param pretty if @c true, the string will be separated in blocks by
      *               spaces
      */
-    std::string toHexString(const bool &pretty = false) const;
+    std::string toHexString(const bool& pretty = false) const;
 
 private:
 
@@ -74,7 +74,7 @@ private:
 
 };
 
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const MD5 &sum);
+RSB_EXPORT std::ostream& operator<<(std::ostream& stream, const MD5& sum);
 
 }
 }

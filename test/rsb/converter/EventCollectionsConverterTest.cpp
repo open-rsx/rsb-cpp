@@ -34,7 +34,7 @@ using namespace std;
 using namespace testing;
 using namespace rsb;
 
-EventPtr createRandomEvent(const Scope &scope) {
+EventPtr createRandomEvent(const Scope& scope) {
 
     EventPtr event(new Event);
     event->setScope(scope);

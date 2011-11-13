@@ -54,7 +54,7 @@ public:
      * @return A boost::shared_ptr holding the converter.
      * @throw rsc::runtime::NoSuchObject If there is no converter fo @a key.
      */
-    ConverterPtr getConverter(const std::string &key) const {
+    ConverterPtr getConverter(const std::string& key) const {
         typename ConverterMap::const_iterator it = this->converters.find(key);
         if (it == this->converters.end()) {
             throw rsc::runtime::NoSuchObject(
@@ -77,7 +77,7 @@ public:
      * @note @ref Converter::getDataType and @ref
      * Converter::getWireSchema are not considered in any way.
      */
-    void addConverter(const std::string &key, ConverterPtr converter) {
+    void addConverter(const std::string& key, ConverterPtr converter) {
         // TODO use RSB exception class, but do we have one for invalid argument?
         if (this->converters.find(key) != this->converters.end()) {
             throw std::invalid_argument(
@@ -97,7 +97,7 @@ private:
         return "UnambiguousConverterMap";
     }
 
-    void printContents(std::ostream &stream) const {
+    void printContents(std::ostream& stream) const {
         stream << "converters = " << this->converters;
     }
 };

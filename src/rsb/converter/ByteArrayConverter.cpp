@@ -35,12 +35,12 @@ ByteArrayConverter::ByteArrayConverter() :
 ByteArrayConverter::~ByteArrayConverter() {
 }
 
-string ByteArrayConverter::serialize(const AnnotatedData &/*data*/, string &/*wire*/) {
+string ByteArrayConverter::serialize(const AnnotatedData& /*data*/, string& /*wire*/) {
     throw runtime_error("This converter should only be used for *de*serialization.");
 }
 
-AnnotatedData ByteArrayConverter::deserialize(const std::string &/*wireType*/,
-		const string &wire) {
+AnnotatedData ByteArrayConverter::deserialize(const std::string& /*wireType*/,
+		const string& wire) {
     return make_pair(getDataType(), boost::shared_ptr<string>(new string(wire.c_str(), wire.length())));
 }
 

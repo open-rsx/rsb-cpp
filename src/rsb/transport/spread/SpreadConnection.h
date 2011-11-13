@@ -50,8 +50,8 @@ RSB_EXPORT unsigned int defaultPort();
  */
 class RSB_EXPORT SpreadConnection {
 public:
-    SpreadConnection(const std::string &prefix,
-                     const std::string &host   = defaultHost(),
+    SpreadConnection(const std::string& prefix,
+                     const std::string& host   = defaultHost(),
                      unsigned int port         = defaultPort());
     virtual ~SpreadConnection();
 
@@ -92,7 +92,7 @@ public:
      * @throw rsc::misc::IllegalStateException connection was not active
      * @throw CommException communication error sending the message
      */
-    void send(const SpreadMessage &msg);
+    void send(const SpreadMessage& msg);
 
     /**
      * Tries to receive the next message from this connection and blocks until
@@ -143,10 +143,10 @@ public:
      * @todo why pointer? mailbox is a typedef to int? If pointer is required
      *       use a shared ptr
      */
-    mailbox *getMailbox();
+    mailbox* getMailbox();
 
 private:
-    std::string generateId(const std::string &prefix);
+    std::string generateId(const std::string& prefix);
 
     rsc::logging::LoggerPtr logger;
     /**

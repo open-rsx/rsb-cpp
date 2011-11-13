@@ -25,7 +25,7 @@ namespace rsb {
 
 EventQueuePushHandler::EventQueuePushHandler(
         boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > queue,
-        const string &method) :
+        const string& method) :
     Handler(method), queue(queue) {
 }
 
@@ -33,7 +33,7 @@ string EventQueuePushHandler::getClassName() const {
     return "EventQueuePushHandler";
 }
 
-void EventQueuePushHandler::printContents(ostream &stream) const {
+void EventQueuePushHandler::printContents(ostream& stream) const {
     stream << "queue = " << queue;
 }
 

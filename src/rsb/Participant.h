@@ -53,7 +53,7 @@ public:
 
     virtual ~Participant();
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     /**
      * Returns the unique id of the participant.
@@ -78,7 +78,7 @@ public:
 
 protected:
 
-    Participant(const Scope &scope, const ParticipantConfig &config);
+    Participant(const Scope& scope, const ParticipantConfig& config);
 
 private:
 

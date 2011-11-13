@@ -42,7 +42,7 @@ public:
      * @param invert If true, events match if they do @b not originate
      *               from @a origin.
      */
-    OriginFilter(const rsc::misc::UUID &origin,
+    OriginFilter(const rsc::misc::UUID& origin,
                  bool                   invert = false);
 
     rsc::misc::UUID getOrigin() const;

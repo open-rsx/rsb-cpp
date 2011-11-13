@@ -63,7 +63,7 @@ public:
         return "WaitingEventHandler";
     }
 
-    MutexType &getMutex() {
+    MutexType& getMutex() {
         return this->mutex;
     }
 
@@ -98,14 +98,14 @@ public:
         }
     }
 
-    void addCall(const EventId &requestId, RemoteServer::FuturePtr result) {
+    void addCall(const EventId& requestId, RemoteServer::FuturePtr result) {
         MutexType::scoped_lock lock(this->mutex);
         this->inprogress.insert(make_pair(requestId, result));
     }
 
 };
 
-RemoteServer::RemoteServer(const Scope &scope) :
+RemoteServer::RemoteServer(const Scope& scope) :
     logger(Logger::getLogger(str(format("rsb.patterns.RemoteServer[%1%]")
                                  % scope.toString()))),
     scope(scope) {
@@ -117,8 +117,8 @@ RemoteServer::RemoteServer(const Scope &scope) :
 RemoteServer::~RemoteServer() {
 }
 
-RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
-        const string &sendType) {
+RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
+        const string& sendType) {
 
     boost::mutex::scoped_lock lock(methodSetMutex);
 
@@ -161,7 +161,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string &methodName,
 
 }
 
-RemoteServer::FuturePtr RemoteServer::callAsync(const string &methodName, EventPtr data) {
+RemoteServer::FuturePtr RemoteServer::callAsync(const string& methodName, EventPtr data) {
 
     RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
@@ -182,7 +182,7 @@ RemoteServer::FuturePtr RemoteServer::callAsync(const string &methodName, EventP
     return result;
 }
 
-EventPtr RemoteServer::call(const string &methodName,
+EventPtr RemoteServer::call(const string& methodName,
                             EventPtr      data,
                             unsigned int  maxReplyWaitTime) {
     return callAsync(methodName, data)->get(maxReplyWaitTime);

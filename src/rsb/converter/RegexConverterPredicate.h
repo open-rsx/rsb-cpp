@@ -42,7 +42,7 @@ public:
      * @param regex The regular expression the new predicate should
      * use.
      */
-    RegexConverterPredicate(const std::string &regex);
+    RegexConverterPredicate(const std::string& regex);
 
     /** 
      * Construct a new RegexConverterPredicate that matches queries
@@ -51,7 +51,7 @@ public:
      * @param regex The regular expression the new predicate should
      * use.
      */
-    RegexConverterPredicate(const boost::regex &regex);
+    RegexConverterPredicate(const boost::regex& regex);
 
     bool match(const std::string& key) const;
 private:
@@ -59,7 +59,7 @@ private:
 
     std::string getClassName() const;
 
-    void printContents(std::ostream &/*stream*/) const;
+    void printContents(std::ostream& /*stream*/) const;
 };
 
 }

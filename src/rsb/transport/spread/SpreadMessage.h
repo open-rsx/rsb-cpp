@@ -66,34 +66,34 @@ public:
      *
      * @param mt message type
      */
-    SpreadMessage(const Type &mt);
+    SpreadMessage(const Type& mt);
     /**
      * Creates a message with the specified data and message type #OTHER and QoS
      * #UNRELIABLE.
      *
      * @param d data to set
      */
-    SpreadMessage(const std::string &d);
+    SpreadMessage(const std::string& d);
     /**
      * Creates a message with the specified data and message type #OTHER and QoS
      * #UNRELIABLE.
      *
      * @param d data to set
      */
-    SpreadMessage(const char *d);
+    SpreadMessage(const char* d);
     virtual ~SpreadMessage();
 
-    void setData(const std::string &doc);
+    void setData(const std::string& doc);
     void setData(const char* d);
     std::string getDataAsString() const;
-    const char *getData() const;
+    const char* getData() const;
     int getSize() const;
     SpreadMessage::Type getType() const;
     void setType(Type mt);
     QOS getQOS() const;
-    void setQOS(const QOS &qos);
+    void setQOS(const QOS& qos);
 
-    void addGroup(const std::string &name);
+    void addGroup(const std::string& name);
     unsigned int getGroupCount() const;
     std::list<std::string>::const_iterator getGroupsBegin() const;
     std::list<std::string>::const_iterator getGroupsEnd() const;

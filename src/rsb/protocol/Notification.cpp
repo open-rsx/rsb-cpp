@@ -29,19 +29,19 @@ using namespace std;
 namespace rsb {
 namespace protocol {
 
-void fillEventId(protocol::EventId &id, const rsb::EventId &realId) {
+void fillEventId(protocol::EventId& id, const rsb::EventId& realId) {
     boost::uuids::uuid uuid = realId.getParticipantId().getId();
     id.set_sender_id(uuid.data, uuid.size());
     id.set_sequence_number(realId.getSequenceNumber());
 }
 
-void fillNotificationId(protocol::Notification &notification,
-        const EventPtr &event) {
+void fillNotificationId(protocol::Notification& notification,
+        const EventPtr& event) {
     fillEventId(*(notification.mutable_event_id()), event->getEventId());
 }
 
-void fillNotificationHeader(protocol::Notification &notification,
-        const EventPtr &event, const string &wireSchema) {
+void fillNotificationHeader(protocol::Notification& notification,
+        const EventPtr& event, const string& wireSchema) {
 
     notification.set_wire_schema(wireSchema);
 
@@ -60,7 +60,7 @@ void fillNotificationHeader(protocol::Notification &notification,
     for (map<string, string>::const_iterator it =
             event->mutableMetaData().userInfosBegin();
             it != event->mutableMetaData().userInfosEnd(); ++it) {
-        UserInfo *info =
+        UserInfo* info =
                 notification.mutable_meta_data()->mutable_user_infos()->Add();
         info->set_key(it->first);
         info->set_value(it->second);
@@ -68,7 +68,7 @@ void fillNotificationHeader(protocol::Notification &notification,
     for (map<string, boost::uint64_t>::const_iterator it =
             event->mutableMetaData().userTimesBegin();
             it != event->mutableMetaData().userTimesEnd(); ++it) {
-        UserTime *info =
+        UserTime* info =
                 notification.mutable_meta_data()->mutable_user_times()->Add();
         info->set_key(it->first);
         info->set_timestamp(it->second);
@@ -81,8 +81,8 @@ void fillNotificationHeader(protocol::Notification &notification,
 
 }
 
-void fillEvent(EventPtr event, const protocol::Notification &notification,
-        VoidPtr data, const string &dataType) {
+void fillEvent(EventPtr event, const protocol::Notification& notification,
+        VoidPtr data, const string& dataType) {
 
     event->mutableMetaData().setCreateTime(
             (boost::uint64_t) notification.meta_data().create_time());

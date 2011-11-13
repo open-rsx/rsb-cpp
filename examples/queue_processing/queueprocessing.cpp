@@ -34,10 +34,10 @@ using namespace rsc::misc;
 using namespace rsb;
 using namespace rsb::filter;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
     // first get a factory instance that is used to create RSB domain objects
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
 
     // set up the scope to receive the required data for processing on, either
     // from the command line argument or use the default scope of the informer

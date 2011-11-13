@@ -45,7 +45,7 @@ public:
      * @param scope string representation of the desired scope
      * @throw std::invalid_argument invalid syntax
      */
-    Scope(const std::string &scope);
+    Scope(const std::string& scope);
 
     /**
      * Constructs scope from a string syntax.
@@ -53,7 +53,7 @@ public:
      * @param scope string representation of the desired scope
      * @throw std::invalid_argument invalid syntax
      */
-    Scope(const char *scope);
+    Scope(const char* scope);
 
     /**
      * Creates a scope representing "/". Use this wisely!
@@ -93,7 +93,7 @@ public:
      *                   sub-scope
      * @return new scope instance representing the created sub-scope
      */
-    Scope concat(const Scope &childScope) const;
+    Scope concat(const Scope& childScope) const;
 
     /**
      * Tests whether this scope is a sub-scope of the given other scope, which
@@ -104,7 +104,7 @@ public:
      * @return @c true if this is a sub-scope of the other scope, equality gives
      *         @c false, too
      */
-    bool isSubScopeOf(const Scope &other) const;
+    bool isSubScopeOf(const Scope& other) const;
 
     /**
      * Inverse operation of #isSubScopeOf.
@@ -113,7 +113,7 @@ public:
      * @return @c true if this scope is a strict super scope of the other scope.
      *         equality also gives @c false.
      */
-    bool isSuperScopeOf(const Scope &other) const;
+    bool isSuperScopeOf(const Scope& other) const;
 
     /**
      * Generates all super scopes of this scope including the root scope "/".
@@ -124,10 +124,10 @@ public:
      *                    element of the returned list
      * @return list of all super scopes ordered by hierarchy, "/" being first
      */
-    std::vector<Scope> superScopes(const bool &includeSelf = false) const;
+    std::vector<Scope> superScopes(const bool& includeSelf = false) const;
 
-    bool operator==(const Scope &other) const;
-    bool operator<(const Scope &other) const;
+    bool operator==(const Scope& other) const;
+    bool operator<(const Scope& other) const;
 
     static const char COMPONENT_SEPARATOR;
 private:
@@ -139,6 +139,6 @@ private:
 
 typedef boost::shared_ptr<Scope> ScopePtr;
 
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const Scope &scope);
+RSB_EXPORT std::ostream& operator<<(std::ostream& stream, const Scope& scope);
 
 }

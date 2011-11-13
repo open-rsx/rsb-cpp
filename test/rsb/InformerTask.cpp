@@ -33,8 +33,8 @@ using namespace rsc::threading;
 namespace rsb {
 namespace test {
 
-InformerTask::InformerTask(OutConnectorPtr p, const Scope &scope,
-        const unsigned int &numEvents, const unsigned int &dataSizeInBytes) :
+InformerTask::InformerTask(OutConnectorPtr p, const Scope& scope,
+        const unsigned int& numEvents, const unsigned int& dataSizeInBytes) :
         scope(scope), numEvents(numEvents), dataSizeInBytes(dataSizeInBytes), sentEvents(
                 0), connector(p), data(
                 new string(rsc::misc::randAlnumStr(dataSizeInBytes))) {
@@ -78,8 +78,8 @@ std::vector<EventPtr> InformerTask::getEvents() {
 
 // ------
 
-WaitingObserver::WaitingObserver(const unsigned int &desiredEvents,
-        const Scope &scope) :
+WaitingObserver::WaitingObserver(const unsigned int& desiredEvents,
+        const Scope& scope) :
         desiredEvents(desiredEvents), scope(scope), receivedEvents(0) {
 
 }
@@ -100,7 +100,7 @@ vector<EventPtr> WaitingObserver::getEvents() {
     return events;
 }
 
-bool WaitingObserver::waitReceived(const unsigned int &timeoutMs) {
+bool WaitingObserver::waitReceived(const unsigned int& timeoutMs) {
     boost::recursive_mutex::scoped_lock lock(m);
     while (receivedEvents < desiredEvents) {
         if (timeoutMs == 0) {

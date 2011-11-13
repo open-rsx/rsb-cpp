@@ -27,7 +27,7 @@ Exception::Exception() :
 	runtime_error("Unspecified exception") {
 }
 
-Exception::Exception(const string &m) :
+Exception::Exception(const string& m) :
 	runtime_error(m) {
 }
 

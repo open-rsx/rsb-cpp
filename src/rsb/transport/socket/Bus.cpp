@@ -43,7 +43,7 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-Bus::Bus(io_service &service) :
+Bus::Bus(io_service& service) :
     logger(Logger::getLogger("rsb.transport.socket.Bus")),
     service(service) {
 }
@@ -62,7 +62,7 @@ Bus::~Bus() {
          it != this->connections.end(); ++it) {
         try {
             (*it)->disconnect();
-        } catch (const std::exception &e) {
+        } catch (const std::exception& e) {
             RSCERROR(logger, "Failed to disconnect connection " << *it
                      << ": " << e.what());
         }
@@ -104,14 +104,14 @@ void Bus::removeSink(InPushConnector* sink) {
     }
 }
 
-void Bus::addConnector(/*ConnectorBasePtr*/ConnectorBase *connector) {
+void Bus::addConnector(/*ConnectorBasePtr*/ConnectorBase* connector) {
     recursive_mutex::scoped_lock lock(this->connectorLock);
 
     RSCDEBUG(logger, "Adding connector " << connector);
     this->connectors.push_back(connector);
 }
 
-void Bus::removeConnector(/*ConnectorBasePtr*/ConnectorBase *connector) {
+void Bus::removeConnector(/*ConnectorBasePtr*/ConnectorBase* connector) {
     recursive_mutex::scoped_lock lock(this->connectorLock);
 
     RSCDEBUG(logger, "Removing connector " << connector);
@@ -140,7 +140,7 @@ void Bus::removeConnection(BusConnectionPtr connection) {
 }
 
 void Bus::handleIncoming(EventPtr event) {
-    RSCDEBUG(logger, "Delivering received event to connectors " << *event);
+    RSCDEBUG(logger, "Delivering received event to connectors " << event);
 
     vector<Scope> scopes = event->getScopePtr()->superScopes(true);
     RSCDEBUG(logger, "Relevant scopes " << scopes);
@@ -169,7 +169,7 @@ void Bus::handleIncoming(EventPtr event) {
 void Bus::handle(EventPtr event) {
     recursive_mutex::scoped_lock lock(this->connectionLock);
 
-    RSCDEBUG(logger, "Dispatching outgoing event " << *event << " to connections");
+    RSCDEBUG(logger, "Dispatching outgoing event " << event << " to connections");
 
     string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
     for (list<BusConnectionPtr>::iterator it = this->connections.begin();
@@ -183,7 +183,7 @@ void Bus::suicide() {
     Factory::getInstance().removeBusClient(shared_from_this());
 }
 
-void Bus::printContents(ostream &stream) const {
+void Bus::printContents(ostream& stream) const {
     stream << "connections = " << this->connections
            << ", sinks = " << this->sinks;
 }

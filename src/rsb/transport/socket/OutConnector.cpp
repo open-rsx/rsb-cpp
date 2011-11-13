@@ -34,7 +34,7 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-transport::OutConnector *OutConnector::create(const Properties &args) {
+transport::OutConnector* OutConnector::create(const Properties& args) {
     LoggerPtr logger = Logger::getLogger("rsb.transport.socket.OutConnector");
     RSCDEBUG(logger, "Creating OutConnector with properties " << args);
 
@@ -45,7 +45,7 @@ transport::OutConnector *OutConnector::create(const Properties &args) {
 }
 
 OutConnector::OutConnector(ConverterSelectionStrategyPtr  converters,
-                           const string                  &host,
+                           const string&                  host,
                            unsigned int                   port,
                            bool                           server) :
     ConnectorBase(converters, host, port, server),
@@ -60,7 +60,7 @@ void OutConnector::deactivate() {
     ConnectorBase::deactivate();
 }
 
-void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
+void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
     RSCWARN(logger, "Quality of service not implemented");
 }
 

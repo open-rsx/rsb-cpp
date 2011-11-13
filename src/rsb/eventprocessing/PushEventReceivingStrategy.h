@@ -48,7 +48,7 @@ public:
      * @param strategy the new strategy to use
      */
     virtual void setHandlerErrorStrategy(
-        const ParticipantConfig::ErrorStrategy &strategy) = 0;
+        const ParticipantConfig::ErrorStrategy& strategy) = 0;
 
     /**
      * Adds a new handler that will be notified about new events.
@@ -60,7 +60,7 @@ public:
      */
     // Qualification of HandlerPtr is required since there is another
     // HandlerPtr type in eventprocessing.
-    virtual void addHandler(rsb::HandlerPtr handler, const bool &wait) = 0;
+    virtual void addHandler(rsb::HandlerPtr handler, const bool& wait) = 0;
 
     /**
      * Removes a handler that will will then not be notified anymore.
@@ -70,7 +70,7 @@ public:
      *             handler has been removed completely and will not receive
      *             any more notifications
      */
-    virtual void removeHandler(rsb::HandlerPtr handler, const bool &wait) = 0;
+    virtual void removeHandler(rsb::HandlerPtr handler, const bool& wait) = 0;
 };
 
 typedef boost::shared_ptr<PushEventReceivingStrategy> PushEventReceivingStrategyPtr;

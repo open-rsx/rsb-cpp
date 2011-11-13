@@ -36,8 +36,8 @@ namespace rsb {
 class RSB_EXPORT UnsupportedQualityOfServiceException: Exception {
 public:
 
-	UnsupportedQualityOfServiceException(const std::string &message,
-			const QualityOfServiceSpec &spec);
+	UnsupportedQualityOfServiceException(const std::string& message,
+			const QualityOfServiceSpec& spec);
 	virtual ~UnsupportedQualityOfServiceException() throw ();
 
 	virtual const char* what() const throw ();

@@ -68,8 +68,8 @@ void SpreadGroup::leave(SpreadConnectionPtr con) {
 
 }
 
-void SpreadGroup::handleRetCode(const int &retCode,
-        const std::string &actionName) {
+void SpreadGroup::handleRetCode(const int& retCode,
+        const std::string& actionName) {
 
     if (!retCode) {
         RSCDEBUG(logger, actionName << " spread group with name " << name << " successful");

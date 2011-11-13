@@ -60,7 +60,7 @@ public:
         virtual std::string getReplyType() const = 0;
 
         virtual boost::shared_ptr<void>
-                intlCall(const std::string &methodName,
+                intlCall(const std::string& methodName,
                         boost::shared_ptr<void> input) = 0;
 
     };
@@ -75,8 +75,8 @@ public:
         virtual std::string getRequestType() const;
         virtual std::string getReplyType() const;
     protected:
-        CallbackBase(const std::string &requestType,
-                     const std::string &replyType);
+        CallbackBase(const std::string& requestType,
+                     const std::string& replyType);
 
         std::string requestType;
         std::string replyType;
@@ -94,9 +94,9 @@ public:
     class Callback: public CallbackBase {
     public:
         // typeid is due to msvc strangeness
-        Callback(const std::string &requestType
+        Callback(const std::string& requestType
                  = rsc::runtime::typeName(typeid(RequestType)),
-                 const std::string &replyType
+                 const std::string& replyType
                  = rsc::runtime::typeName(typeid(ReplyType))) :
             CallbackBase(requestType, replyType) {
         }
@@ -111,10 +111,10 @@ public:
          *                       automatically caught and delivered to the
          *                       remote server
          */
-        virtual boost::shared_ptr<ReplyType> call(const std::string &methodName,
+        virtual boost::shared_ptr<ReplyType> call(const std::string& methodName,
                                                   boost::shared_ptr<RequestType> input) = 0;
     private:
-        boost::shared_ptr<void> intlCall(const std::string &methodName,
+        boost::shared_ptr<void> intlCall(const std::string& methodName,
                                          boost::shared_ptr<void> input) {
             return call(methodName,
                         boost::static_pointer_cast<RequestType>(input));
@@ -125,9 +125,9 @@ public:
     class Callback<RequestType, void>: public CallbackBase {
     public:
         // typeid is due to msvc strangeness
-        Callback(const std::string &requestType
+        Callback(const std::string& requestType
                  = rsc::runtime::typeName(typeid(RequestType)),
-                 const std::string &replyType
+                 const std::string& replyType
                  = rsc::runtime::typeName(typeid(void))) :
             CallbackBase(requestType, replyType) {
         }
@@ -141,10 +141,10 @@ public:
          *                       automatically caught and delivered to the
          *                       remote server
          */
-        virtual void call(const std::string &methodName,
+        virtual void call(const std::string& methodName,
                           boost::shared_ptr<RequestType> input) = 0;
     private:
-        boost::shared_ptr<void> intlCall(const std::string &methodName,
+        boost::shared_ptr<void> intlCall(const std::string& methodName,
                 boost::shared_ptr<void> input) {
             call(methodName, boost::static_pointer_cast<RequestType>(input));
             return boost::shared_ptr<void>();
@@ -156,9 +156,9 @@ public:
     class Callback<void, ReplyType>: public CallbackBase {
     public:
       // typeid is due to msvc strangeness
-      Callback(const std::string &requestType
+      Callback(const std::string& requestType
 	       = rsc::runtime::typeName(typeid(void)),
-	       const std::string &replyType
+	       const std::string& replyType
 	       = rsc::runtime::typeName(typeid(ReplyType))) :
 	  CallbackBase(requestType, replyType) {
       }
@@ -172,9 +172,9 @@ public:
        *                       automatically caught and delivered to the
        *                       remote server
        */
-      virtual boost::shared_ptr<ReplyType> call(const std::string &methodName) = 0;
+      virtual boost::shared_ptr<ReplyType> call(const std::string& methodName) = 0;
     private:
-	boost::shared_ptr<void> intlCall(const std::string &methodName,
+	boost::shared_ptr<void> intlCall(const std::string& methodName,
 				       boost::shared_ptr<void> input) {
 	    return call(methodName);
 	}
@@ -183,7 +183,7 @@ public:
 
     typedef boost::shared_ptr<IntlCallback> CallbackPtr;
 
-    Server(const Scope &scope);
+    Server(const Scope& scope);
     virtual ~Server();
 
     /**
@@ -193,7 +193,7 @@ public:
      * @param callback callback to execute for the method
      * @throw MethodExistsException thrown if a method with this name already exists
      */
-    void registerMethod(const std::string &methodName, CallbackPtr callback);
+    void registerMethod(const std::string& methodName, CallbackPtr callback);
 
 private:
 

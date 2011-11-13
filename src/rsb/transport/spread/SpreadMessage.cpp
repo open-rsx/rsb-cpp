@@ -41,22 +41,22 @@ SpreadMessage::SpreadMessage() :
     type(OTHER), qos(UNRELIABLE) {
 }
 
-SpreadMessage::SpreadMessage(const Type &mt) :
+SpreadMessage::SpreadMessage(const Type& mt) :
     type(mt), qos(UNRELIABLE) {
 }
 
-SpreadMessage::SpreadMessage(const string &d) :
+SpreadMessage::SpreadMessage(const string& d) :
     data(d), type(OTHER), qos(UNRELIABLE) {
 }
 
-SpreadMessage::SpreadMessage(const char *buf) :
+SpreadMessage::SpreadMessage(const char* buf) :
     data(buf), type(OTHER), qos(UNRELIABLE) {
 }
 
 SpreadMessage::~SpreadMessage() {
 }
 
-void SpreadMessage::setData(const std::string &doc) {
+void SpreadMessage::setData(const std::string& doc) {
     data = doc;
 }
 
@@ -84,7 +84,7 @@ SpreadMessage::Type SpreadMessage::getType() const {
     return type;
 }
 
-void SpreadMessage::addGroup(const std::string &name) {
+void SpreadMessage::addGroup(const std::string& name) {
     if (strlen(name.c_str()) > MAX_GROUP_NAME - 1) {
         throw invalid_argument(
                 "Group name '" + name + "' is too long for spread.");
@@ -108,7 +108,7 @@ SpreadMessage::QOS SpreadMessage::getQOS() const {
     return qos;
 }
 
-void SpreadMessage::setQOS(const QOS &qos) {
+void SpreadMessage::setQOS(const QOS& qos) {
     this->qos = qos;
 }
 

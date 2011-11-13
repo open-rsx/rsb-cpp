@@ -22,7 +22,7 @@
 namespace rsb {
 namespace converter {
 
-SerializationException::SerializationException(const std::string &message) :
+SerializationException::SerializationException(const std::string& message) :
 	Exception(message) {
 }
 

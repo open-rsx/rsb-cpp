@@ -77,7 +77,7 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
         try {
             queueResult = okQueue->tryPop();
             break;
-        } catch (rsc::threading::QueueEmptyException &e){
+        } catch (rsc::threading::QueueEmptyException& e){
             boost::this_thread::sleep(boost::posix_time::millisec(20));
             continue;
         }
@@ -136,7 +136,7 @@ TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
         try {
             queueResult = okQueue->tryPop();
             break;
-        } catch (rsc::threading::QueueEmptyException &e){
+        } catch (rsc::threading::QueueEmptyException& e){
             boost::this_thread::sleep(boost::posix_time::millisec(20));
             continue;
         }
@@ -149,7 +149,7 @@ TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
 class ErrorGeneratingHandler: public rsb::Handler {
 public:
 
-    ErrorGeneratingHandler(const bool &catchAll) :
+    ErrorGeneratingHandler(const bool& catchAll) :
         catchAll(catchAll) {
     }
 

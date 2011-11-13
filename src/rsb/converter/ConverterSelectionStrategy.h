@@ -53,7 +53,7 @@ public:
      * @return A boost::shared_ptr holding the converter.
      * @throw rsc::runtime::NoSuchObject If there is no converter fo @a key.
      */
-    virtual ConverterPtr getConverter(const std::string &key) const = 0;
+    virtual ConverterPtr getConverter(const std::string& key) const = 0;
 };
 
 }

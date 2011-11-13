@@ -41,7 +41,7 @@ namespace {
 
 template<unsigned int which, typename C>
 std::map<typename C::value_type::first_type,
-         typename C::value_type::second_type> pairsToMap(const C &container) {
+         typename C::value_type::second_type> pairsToMap(const C& container) {
     typedef typename C::value_type::first_type first_type;
     typedef typename C::value_type::second_type second_type;
 
@@ -121,32 +121,32 @@ Factory::Factory() :
 Factory::~Factory() {
 }
 
-transport::OutFactory &Factory::getOutFactoryInstance() {
+transport::OutFactory& Factory::getOutFactoryInstance() {
     return transport::OutFactory::getInstance();
 }
 
-InformerBasePtr Factory::createInformerBase(const Scope             &scope,
-                                            const string            &dataType,
-                                            const ParticipantConfig &config) {
+InformerBasePtr Factory::createInformerBase(const Scope&             scope,
+                                            const string&            dataType,
+                                            const ParticipantConfig& config) {
     return InformerBasePtr(new InformerBase(createOutConnectors(config), scope, config, dataType));
 }
 
 
-ListenerPtr Factory::createListener(const Scope &scope,
-        const ParticipantConfig &config) {
+ListenerPtr Factory::createListener(const Scope& scope,
+        const ParticipantConfig& config) {
     return ListenerPtr(new Listener(createInPushConnectors(config), scope, config));
 }
 
-ReaderPtr Factory::createReader(const Scope &scope,
-				const ParticipantConfig &config) {
+ReaderPtr Factory::createReader(const Scope& scope,
+				const ParticipantConfig& config) {
     return ReaderPtr(new Reader(createInPullConnectors(config), scope, config));
 }
 
-patterns::ServerPtr Factory::createServer(const Scope &scope) {
+patterns::ServerPtr Factory::createServer(const Scope& scope) {
     return patterns::ServerPtr(new patterns::Server(scope));
 }
 
-patterns::RemoteServerPtr Factory::createRemoteServer(const Scope &scope) {
+patterns::RemoteServerPtr Factory::createRemoteServer(const Scope& scope) {
     return patterns::RemoteServerPtr(new patterns::RemoteServer(scope));
 }
 
@@ -155,17 +155,17 @@ ParticipantConfig Factory::getDefaultParticipantConfig() const {
     return defaultConfig;
 }
 
-void Factory::setDefaultParticipantConfig(const ParticipantConfig &config) {
+void Factory::setDefaultParticipantConfig(const ParticipantConfig& config) {
     boost::recursive_mutex::scoped_lock lock(configMutex);
     this->defaultConfig = config;
 }
 
-ServicePtr Factory::createService(const Scope &scope) {
+ServicePtr Factory::createService(const Scope& scope) {
     return ServicePtr(new LocalService(scope));
 }
 
 vector<InPullConnectorPtr>
-Factory::createInPullConnectors(const ParticipantConfig &config) {
+Factory::createInPullConnectors(const ParticipantConfig& config) {
     // Note: getTransports() only returns *enabled* transports.
     vector<InPullConnectorPtr> connectors;
     set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
@@ -194,7 +194,7 @@ Factory::createInPullConnectors(const ParticipantConfig &config) {
 }
 
 vector<InPushConnectorPtr>
-Factory::createInPushConnectors(const ParticipantConfig &config) {
+Factory::createInPushConnectors(const ParticipantConfig& config) {
     // Note: getTransports() only returns *enabled* transports.
     vector<InPushConnectorPtr> connectors;
     set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
@@ -223,7 +223,7 @@ Factory::createInPushConnectors(const ParticipantConfig &config) {
 }
 
 vector<OutConnectorPtr>
-Factory::createOutConnectors(const ParticipantConfig &config) {
+Factory::createOutConnectors(const ParticipantConfig& config) {
     // Note: getTransports() only returns *enabled* transports.
     vector<OutConnectorPtr> connectors;
     set<ParticipantConfig::Transport> configuredTransports = config.getTransports();

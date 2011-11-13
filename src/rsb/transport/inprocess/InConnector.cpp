@@ -56,7 +56,7 @@ string InConnector::getClassName() const {
     return "InConnector";
 }
 
-void InConnector::printContents(ostream &stream) const {
+void InConnector::printContents(ostream& stream) const {
     stream << "scope = " << scope;
 }
 
@@ -83,7 +83,7 @@ void InConnector::deactivate() {
     Bus::getInstance().removeSink(this);
 }
 
-void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
+void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
 }
 
 void InConnector::handle(EventPtr event) {

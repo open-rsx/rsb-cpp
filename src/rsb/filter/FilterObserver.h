@@ -41,8 +41,8 @@ public:
 	FilterObserver();
 	virtual ~FilterObserver();
 
-	virtual void notify(Filter *filter, const FilterAction::Types &at);
-	virtual void notify(ScopeFilter *filter, const FilterAction::Types &at);
+	virtual void notify(Filter* filter, const FilterAction::Types& at);
+	virtual void notify(ScopeFilter* filter, const FilterAction::Types& at);
 
 private:
 

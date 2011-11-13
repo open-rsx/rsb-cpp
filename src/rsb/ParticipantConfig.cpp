@@ -41,7 +41,7 @@ using namespace rsc::runtime;
 
 namespace rsb {
 
-ParticipantConfig::Transport::Transport(const string &name,
+ParticipantConfig::Transport::Transport(const string& name,
                                         bool enabled) :
     name(name) {
     if (name.empty()) {
@@ -68,7 +68,7 @@ rsc::runtime::Properties ParticipantConfig::Transport::getOptions() const {
     return options;
 }
 
-void ParticipantConfig::Transport::setOptions(const Properties &options) {
+void ParticipantConfig::Transport::setOptions(const Properties& options) {
     this->options = options;
 }
 
@@ -82,8 +82,8 @@ void ParticipantConfig::Transport::setEnabled(bool value) {
     setOptions(options);
 }
 
-void ParticipantConfig::Transport::handleOption(const vector<string> &key,
-        const string &value) {
+void ParticipantConfig::Transport::handleOption(const vector<string>& key,
+        const string& value) {
     if ((key.size() >= 2)
         && (key[0] == "converter")
         && (key[1] == "cpp")) {
@@ -109,11 +109,11 @@ void ParticipantConfig::Transport::handleOption(const vector<string> &key,
     }
 }
 
-bool ParticipantConfig::Transport::operator==(const Transport &other) const {
+bool ParticipantConfig::Transport::operator==(const Transport& other) const {
     return name == other.name;
 }
 
-bool ParticipantConfig::Transport::operator<(const Transport &other) const {
+bool ParticipantConfig::Transport::operator<(const Transport& other) const {
     return name < other.name;
 }
 
@@ -121,13 +121,13 @@ string ParticipantConfig::Transport::getClassName() const {
     return "Transport";
 }
 
-void ParticipantConfig::Transport::printContents(ostream &stream) const {
+void ParticipantConfig::Transport::printContents(ostream& stream) const {
     stream << "name = " << this->name
            << ", converters = " << this->converters
            << ", options = " << this->options;
 }
 
-ParticipantConfig::EventProcessingStrategy::EventProcessingStrategy(const string &name) :
+ParticipantConfig::EventProcessingStrategy::EventProcessingStrategy(const string& name) :
     name(name) {
 }
 
@@ -135,7 +135,7 @@ string ParticipantConfig::EventProcessingStrategy::getName() const {
     return this->name;
 }
 
-void ParticipantConfig::EventProcessingStrategy::setName(const string &name) {
+void ParticipantConfig::EventProcessingStrategy::setName(const string& name) {
     this->name = name;
 }
 
@@ -143,16 +143,16 @@ Properties ParticipantConfig::EventProcessingStrategy::getOptions() const {
     return this->options;
 }
 
-rsc::runtime::Properties &ParticipantConfig::EventProcessingStrategy::mutableOptions() {
+rsc::runtime::Properties& ParticipantConfig::EventProcessingStrategy::mutableOptions() {
     return this->options;
 }
 
-void ParticipantConfig::EventProcessingStrategy::setOptions(const Properties &options) {
+void ParticipantConfig::EventProcessingStrategy::setOptions(const Properties& options) {
     this->options = options;
 }
 
-void ParticipantConfig::EventProcessingStrategy::handleOption(const vector<string> &key,
-                                                              const string &value) {
+void ParticipantConfig::EventProcessingStrategy::handleOption(const vector<string>& key,
+                                                              const string& value) {
     if (key.size() != 1) {
         throw invalid_argument(str(format("Key `%1%' has invalid number of components; transport option keys have to have one component.")
                                    % key));
@@ -161,7 +161,7 @@ void ParticipantConfig::EventProcessingStrategy::handleOption(const vector<strin
     this->options.set<string>(key.front(), value);
 }
 
-void ParticipantConfig::EventProcessingStrategy::printContents(ostream &stream) const {
+void ParticipantConfig::EventProcessingStrategy::printContents(ostream& stream) const {
     stream << "name = " << this->name
            << ", options = " << this->options;
 }
@@ -180,12 +180,12 @@ QualityOfServiceSpec ParticipantConfig::getQualityOfServiceSpec() const {
     return qosSpec;
 }
 
-QualityOfServiceSpec &ParticipantConfig::mutableQualityOfServiceSpec() {
+QualityOfServiceSpec& ParticipantConfig::mutableQualityOfServiceSpec() {
     return qosSpec;
 }
 
 void ParticipantConfig::setQualityOfServiceSpec(
-        const QualityOfServiceSpec &spec) {
+        const QualityOfServiceSpec& spec) {
     this->qosSpec = spec;
 }
 
@@ -193,11 +193,11 @@ ParticipantConfig::ErrorStrategy ParticipantConfig::getErrorStrategy() const {
     return errorStrategy;
 }
 
-void ParticipantConfig::setErrorStrategy(const ErrorStrategy &strategy) {
+void ParticipantConfig::setErrorStrategy(const ErrorStrategy& strategy) {
     this->errorStrategy = strategy;
 }
 
-ParticipantConfig::Transport ParticipantConfig::getTransport(const string &name) const {
+ParticipantConfig::Transport ParticipantConfig::getTransport(const string& name) const {
     map<string, Transport>::const_iterator it = this->transports.find(name);
     if (it == this->transports.end()) {
         throw rsc::runtime::NoSuchObject(name);
@@ -205,7 +205,7 @@ ParticipantConfig::Transport ParticipantConfig::getTransport(const string &name)
     return it->second;
 }
 
-ParticipantConfig::Transport &ParticipantConfig::mutableTransport(const string &name) {
+ParticipantConfig::Transport& ParticipantConfig::mutableTransport(const string& name) {
     map<string, Transport>::iterator it = this->transports.find(name);
     if (it == this->transports.end()) {
         throw rsc::runtime::NoSuchObject(name);
@@ -227,31 +227,31 @@ set<ParticipantConfig::Transport> ParticipantConfig::getTransports(
     return result;
 }
 
-void ParticipantConfig::addTransport(const Transport &transport) {
+void ParticipantConfig::addTransport(const Transport& transport) {
     transports.erase(transport.getName());
     transports.insert(make_pair(transport.getName(), transport));
 }
 
-void ParticipantConfig::removeTransport(const Transport &transport) {
+void ParticipantConfig::removeTransport(const Transport& transport) {
     transports.erase(transport.getName());
 }
 
-void ParticipantConfig::setTransports(const set<Transport> &transports) {
+void ParticipantConfig::setTransports(const set<Transport>& transports) {
     for (set<Transport>::const_iterator it = transports.begin(); it
             != transports.end(); ++it) {
         this->transports.insert(make_pair(it->getName(), *it));
     }
 }
 
-const ParticipantConfig::EventProcessingStrategy &ParticipantConfig::getEventReceivingStrategy() const {
+const ParticipantConfig::EventProcessingStrategy& ParticipantConfig::getEventReceivingStrategy() const {
     return this->eventReceivingStrategy;
 }
 
-ParticipantConfig::EventProcessingStrategy &ParticipantConfig::mutableEventReceivingStrategy() {
+ParticipantConfig::EventProcessingStrategy& ParticipantConfig::mutableEventReceivingStrategy() {
     return this->eventReceivingStrategy;
 }
 
-const ParticipantConfig::EventProcessingStrategy &ParticipantConfig::getEventSendingStrategy() const {
+const ParticipantConfig::EventProcessingStrategy& ParticipantConfig::getEventSendingStrategy() const {
     return this->eventSendingStrategy;
 }
 
@@ -259,16 +259,16 @@ rsc::runtime::Properties ParticipantConfig::getOptions() const {
     return options;
 }
 
-rsc::runtime::Properties &ParticipantConfig::mutableOptions() {
+rsc::runtime::Properties& ParticipantConfig::mutableOptions() {
     return options;
 }
 
-void ParticipantConfig::setOptions(const Properties &options) {
+void ParticipantConfig::setOptions(const Properties& options) {
     this->options = options;
 }
 
-ParticipantConfig ParticipantConfig::fromFile(const path &path,
-        const ParticipantConfig &defaults) {
+ParticipantConfig ParticipantConfig::fromFile(const path& path,
+        const ParticipantConfig& defaults) {
     LoggerPtr logger = Logger::getLogger("rsb.ParticipantConfig");
     RSCDEBUG(logger, "Trying to load config from file " << path);
 
@@ -286,18 +286,18 @@ ParticipantConfig ParticipantConfig::fromFile(const path &path,
 }
 
 ParticipantConfig ParticipantConfig::fromEnvironment(
-        const ParticipantConfig &defaults) {
+        const ParticipantConfig& defaults) {
     ParticipantConfig result = defaults;
     EnvironmentVariableSource("RSB_").provideOptions(result);
     return result;
 }
 
 ParticipantConfig ParticipantConfig::fromConfiguration(
-        const ParticipantConfig &defaults) {
+        const ParticipantConfig& defaults) {
     ParticipantConfig result = defaults;
     try {
         result = fromFile(userConfigDirectory() / "rsb.conf", result);
-    } catch (runtime_error &e) {
+    } catch (runtime_error& e) {
         RSCWARN(Logger::getLogger("rsb.ParticipantConfig"), "Could not find a user config directory for parsing the config file.");
     }
     result = fromFile("rsb.conf", result);
@@ -305,8 +305,8 @@ ParticipantConfig ParticipantConfig::fromConfiguration(
     return result;
 }
 
-void ParticipantConfig::handleOption(const vector<string> &key,
-        const string &value) {
+void ParticipantConfig::handleOption(const vector<string>& key,
+        const string& value) {
     // Quality of Service
     if (key[0] == "qualityofservice") {
         if (key.size() != 2) {
@@ -360,7 +360,7 @@ void ParticipantConfig::handleOption(const vector<string> &key,
         }
         // Event processing
     } else if (key[0] == "eventprocessing") {
-        EventProcessingStrategy *strategy;
+        EventProcessingStrategy* strategy;
         if (key[1] == "receivingstrategy") {
             strategy = &this->eventReceivingStrategy;
         } else if (key[1] == "sendingstrategy") {
@@ -403,7 +403,7 @@ void ParticipantConfig::handleOption(const vector<string> &key,
     }
 }
 
-void ParticipantConfig::printContents(std::ostream &stream) const {
+void ParticipantConfig::printContents(std::ostream& stream) const {
     stream << "qosSpec = " << this->qosSpec
            << ", errorStrategy = " << this->errorStrategy
            << ", transports = " << this->getTransports(true)

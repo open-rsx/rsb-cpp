@@ -37,7 +37,7 @@ using namespace rsb::converter;
 namespace rsb {
 namespace spread {
 
-transport::OutConnector *OutConnector::create(const Properties& args) {
+transport::OutConnector* OutConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
@@ -49,7 +49,7 @@ transport::OutConnector *OutConnector::create(const Properties& args) {
 }
 
 OutConnector::OutConnector(ConverterSelectionStrategyPtr converters,
-        const string &host, unsigned int port, unsigned int maxFragmentSize) :
+        const string& host, unsigned int port, unsigned int maxFragmentSize) :
         transport::ConverterSelectingConnector<string>(converters), logger(
                 Logger::getLogger("rsb.spread.OutConnector")), active(false), connector(
                 new SpreadConnector(host, port)), maxFragmentSize(
@@ -66,7 +66,7 @@ string OutConnector::getClassName() const {
     return "OutConnector";
 }
 
-void OutConnector::printContents(ostream &stream) const {
+void OutConnector::printContents(ostream& stream) const {
     stream << "connector = " << connector << ", active = " << active;
 }
 
@@ -80,7 +80,7 @@ void OutConnector::deactivate() {
     this->active = false;
 }
 
-void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& specs) {
     this->connector->setQualityOfServiceSpecs(specs);
 }
 
@@ -161,7 +161,7 @@ void OutConnector::handle(EventPtr event) {
         SpreadMessage spreadMessage(serializedMessageData);
 
         // send message to appropriate groups
-        const vector<string> &groupNames = connector->makeGroupNames(
+        const vector<string>& groupNames = connector->makeGroupNames(
                 *event->getScopePtr());
         for (vector<string>::const_iterator groupIt = groupNames.begin();
                 groupIt != groupNames.end(); ++groupIt) {

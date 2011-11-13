@@ -32,7 +32,7 @@ string DirectEventSendingStrategy::getClassName() const {
     return "DirectEventSendingStrategy";
 }
 
-void DirectEventSendingStrategy::printContents(ostream &stream) const {
+void DirectEventSendingStrategy::printContents(ostream& stream) const {
     stream << "connectors = " << connectors;
 }
 

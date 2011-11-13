@@ -39,7 +39,7 @@ namespace po = boost::program_options;
 class FloodingTask: public rsc::threading::PeriodicTask {
 public:
 
-    FloodingTask(Informer<string>::Ptr informer, const unsigned int &ms = 2) :
+    FloodingTask(Informer<string>::Ptr informer, const unsigned int& ms = 2) :
             rsc::threading::PeriodicTask(ms), iteration(1), informer(informer) {
     }
 
@@ -62,7 +62,7 @@ private:
 
 };
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 
     po::options_description desc("Allowed options");
     desc.add_options()("int,i", po::value<unsigned int>(), "interval in ms")(
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
     // ---
 
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
 
     Informer<string>::Ptr informer = factory.createInformer<string>(scope);
 

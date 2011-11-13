@@ -40,14 +40,14 @@ public:
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void handle(rsb::EventPtr e);
 
     static rsb::transport::OutConnector* create(
-            const rsc::runtime::Properties &args);
+            const rsc::runtime::Properties& args);
 private:
-    Bus &bus;
+    Bus& bus;
 };
 
 }

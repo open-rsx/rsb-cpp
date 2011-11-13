@@ -47,10 +47,10 @@ public:
     ~ProtocolBufferConverter();
 
     std::string
-    serialize(const AnnotatedData &data, std::string &wire);
+    serialize(const AnnotatedData& data, std::string& wire);
 
     AnnotatedData
-    deserialize(const std::string &wireType, const std::string &wire);
+    deserialize(const std::string& wireType, const std::string& wire);
 };
 
 // Implementation
@@ -68,7 +68,7 @@ ProtocolBufferConverter<ProtocolBuffer>::~ProtocolBufferConverter() {
 
 template<typename ProtocolBuffer>
 std::string ProtocolBufferConverter<ProtocolBuffer>::serialize(
-    const AnnotatedData &data, std::string &wireData) {
+    const AnnotatedData& data, std::string& wireData) {
     assert(data.first == getDataType());
 
     boost::shared_ptr<ProtocolBuffer> s = boost::static_pointer_cast<
@@ -79,7 +79,7 @@ std::string ProtocolBufferConverter<ProtocolBuffer>::serialize(
 
 template<typename ProtocolBuffer>
 AnnotatedData ProtocolBufferConverter<ProtocolBuffer>::deserialize(
-    const std::string &wireSchema, const std::string &wireData) {
+    const std::string& wireSchema, const std::string& wireData) {
     assert(wireSchema == getWireSchema());
 
     boost::shared_ptr<ProtocolBuffer> result(new ProtocolBuffer());

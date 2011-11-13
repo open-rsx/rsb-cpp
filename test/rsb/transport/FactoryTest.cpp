@@ -54,7 +54,7 @@ public:
 
 TEST(ConnectorFactoryTest, testRegister)
 {
-    ConnectorFactory<InConnector> &factory = ConnectorFactory<InConnector>::getInstance();
+    ConnectorFactory<InConnector>& factory = ConnectorFactory<InConnector>::getInstance();
     factory.registerConnector("bla", &TestConnector::create, "bla");
     factory.getConnectorInfo("bla");
 }

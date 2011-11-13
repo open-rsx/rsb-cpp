@@ -42,8 +42,8 @@ class RSB_EXPORT EventId: boost::totally_ordered<EventId>,
         public rsc::runtime::Printable {
 public:
 
-    EventId(const rsc::misc::UUID &participantId,
-            const boost::uint32_t &sequenceNumber);
+    EventId(const rsc::misc::UUID& participantId,
+            const boost::uint32_t& sequenceNumber);
     virtual ~EventId();
 
     rsc::misc::UUID getParticipantId() const;
@@ -51,11 +51,11 @@ public:
 
     rsc::misc::UUID getAsUUID() const;
 
-    bool operator==(const EventId &other) const;
-    bool operator<(const EventId &other) const;
+    bool operator==(const EventId& other) const;
+    bool operator<(const EventId& other) const;
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
 private:
 

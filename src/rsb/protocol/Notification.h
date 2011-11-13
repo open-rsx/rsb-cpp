@@ -43,8 +43,8 @@ typedef boost::shared_ptr<rsb::protocol::Notification> NotificationPtr;
  * @param notification the notification to fill
  * @param event the event to take then information from
  */
-RSB_EXPORT void fillNotificationId(protocol::Notification &notification,
-        const EventPtr &event);
+RSB_EXPORT void fillNotificationId(protocol::Notification& notification,
+        const EventPtr& event);
 
 /**
  * Fills a protocol::Notification with header contents. This includes meta
@@ -55,8 +55,8 @@ RSB_EXPORT void fillNotificationId(protocol::Notification &notification,
  * @param event the event that generated the notification
  * @param wireSchema wire schema of the serialized data
  */
-RSB_EXPORT void fillNotificationHeader(protocol::Notification &notification,
-        const EventPtr &event, const std::string &wireSchema);
+RSB_EXPORT void fillNotificationHeader(protocol::Notification& notification,
+        const EventPtr& event, const std::string& wireSchema);
 
 /**
  * Utility function to fill a protocol::EventId.
@@ -64,7 +64,7 @@ RSB_EXPORT void fillNotificationHeader(protocol::Notification &notification,
  * @param id the id to fill
  * @param realId the source id
  */
-RSB_EXPORT void fillEventId(protocol::EventId &id, const rsb::EventId &realId);
+RSB_EXPORT void fillEventId(protocol::EventId& id, const rsb::EventId& realId);
 
 /**
  * Parses the data from a protocol::Notification and fills an event with these
@@ -76,8 +76,8 @@ RSB_EXPORT void fillEventId(protocol::EventId &id, const rsb::EventId &realId);
  * @param dataType the string identifier of the data type
  */
 RSB_EXPORT void fillEvent(EventPtr event,
-        const rsb::protocol::Notification &notification,
-        boost::shared_ptr<void> data, const std::string &dataType);
+        const rsb::protocol::Notification& notification,
+        boost::shared_ptr<void> data, const std::string& dataType);
 
 }
 }

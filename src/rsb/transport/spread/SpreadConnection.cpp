@@ -43,7 +43,7 @@ namespace spread {
 #define SPREAD_MAX_GROUPS   100
 #define SPREAD_MAX_MESSLEN  180000
 
-SpreadConnection::SpreadConnection(const string &id, const string &host,
+SpreadConnection::SpreadConnection(const string& id, const string& host,
         unsigned int port) :
     logger(Logger::getLogger("rsb.transport.spread.SpreadConnection")), connected(false),
     host(host), port(port),
@@ -238,7 +238,7 @@ void SpreadConnection::receive(SpreadMessagePtr sm) {
 
 }
 
-void SpreadConnection::send(const SpreadMessage &msg) {
+void SpreadConnection::send(const SpreadMessage& msg) {
 
     // TODO check message size, if larger than ~100KB throw exception
     if (!connected) {
@@ -260,7 +260,7 @@ void SpreadConnection::send(const SpreadMessage &msg) {
                 msg.getData());
     } else {
         // use SP_multigroup_multicast
-        char *groups = new char[groupCount * MAX_GROUP_NAME];
+        char* groups = new char[groupCount * MAX_GROUP_NAME];
         memset(groups, 0, groupCount * MAX_GROUP_NAME);
         int j = 0;
         for (list<string>::const_iterator it = msg.getGroupsBegin(); it
@@ -313,7 +313,7 @@ void SpreadConnection::interruptReceive() {
 
 }
 
-string SpreadConnection::generateId(const string &prefix) {
+string SpreadConnection::generateId(const string& prefix) {
     // TODO generate meaningful and unique Id according to MAX_PRIVATE_NAME
     //            uuid_t id;
     //            uuid_generate(id);
@@ -326,12 +326,12 @@ unsigned long SpreadConnection::getMsgCount() {
     return msgCount;
 }
 
-mailbox *SpreadConnection::getMailbox() {
+mailbox* SpreadConnection::getMailbox() {
     if (!connected) {
         throw rsc::misc::IllegalStateException("Connection with id " + conId
                 + " is not active.");
     }
-    return &con;
+    return& con;
 }
 
 string defaultHost() {

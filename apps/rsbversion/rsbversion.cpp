@@ -29,7 +29,7 @@
 using namespace std;
 using namespace rsb;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     bool verbose = false;
     if (argc == 2 && string(argv[1]) == "--verbose") {
         verbose = true;

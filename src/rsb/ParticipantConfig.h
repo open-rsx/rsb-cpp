@@ -78,7 +78,7 @@ public:
          * @throw std::invalid_argument empty name given, a transport cannot
          *                              have an empty name
          */
-        explicit Transport(const std::string &name,
+        explicit Transport(const std::string& name,
                            bool enabled = true);
         virtual ~Transport();
 
@@ -101,20 +101,20 @@ public:
          *
          * @param options new options replacing all old ones
          */
-        void setOptions(const rsc::runtime::Properties &options);
+        void setOptions(const rsc::runtime::Properties& options);
 
         bool isEnabled() const;
 
         void setEnabled(bool value);
 
-        bool operator==(const Transport &other) const;
-        bool operator<(const Transport &other) const;
+        bool operator==(const Transport& other) const;
+        bool operator<(const Transport& other) const;
 
         std::string getClassName() const;
-        void printContents(std::ostream &stream) const;
+        void printContents(std::ostream& stream) const;
 
-        void handleOption(const std::vector<std::string> &key,
-                const std::string &value);
+        void handleOption(const std::vector<std::string>& key,
+                const std::string& value);
     private:
         std::string name;
         ConverterNames converters;
@@ -134,7 +134,7 @@ public:
     class RSB_EXPORT EventProcessingStrategy : public rsc::config::OptionHandler,
                                     public rsc::runtime::Printable {
     public:
-        EventProcessingStrategy(const std::string &name);
+        EventProcessingStrategy(const std::string& name);
 
         /**
          * Returns the name of the implementation to be selected.
@@ -150,7 +150,7 @@ public:
          * @param name - Name of the processing strategy
          * implementation that should be used.
          */
-        void setName(const std::string &name);
+        void setName(const std::string& name);
 
         /**
          * Returns the options for the strategy.
@@ -164,19 +164,19 @@ public:
          *
          * @return mutable reference to options for the strategy
          */
-        rsc::runtime::Properties &mutableOptions();
+        rsc::runtime::Properties& mutableOptions();
 
         /**
          * Sets the options for the strategy.
          *
          * @param options new options replacing all old ones
          */
-        void setOptions(const rsc::runtime::Properties &options);
+        void setOptions(const rsc::runtime::Properties& options);
 
-        void handleOption(const std::vector<std::string> &key,
-                          const std::string &value);
+        void handleOption(const std::vector<std::string>& key,
+                          const std::string& value);
 
-        void printContents(std::ostream &stream) const;
+        void printContents(std::ostream& stream) const;
     private:
         std::string name;
         rsc::runtime::Properties options;
@@ -222,14 +222,14 @@ public:
      *
      * @return reference to QoS settings
      */
-    QualityOfServiceSpec &mutableQualityOfServiceSpec();
+    QualityOfServiceSpec& mutableQualityOfServiceSpec();
 
     /**
      * Sets the desired QoS settings.
      *
      * @param spec new settings
      */
-    void setQualityOfServiceSpec(const QualityOfServiceSpec &spec);
+    void setQualityOfServiceSpec(const QualityOfServiceSpec& spec);
 
     /**
      * Returns the selected error strategy for the configured participant.
@@ -241,7 +241,7 @@ public:
     /**
      * Sets the desired error strategy for the participant.
      */
-    void setErrorStrategy(const ErrorStrategy &strategy);
+    void setErrorStrategy(const ErrorStrategy& strategy);
 
     /**
      * Returns the set of desired transports for a participant.
@@ -262,7 +262,7 @@ public:
      * @throw rsc::runtime::NoSuchObject no such transport available with the
      *                                   given name
      */
-    Transport getTransport(const std::string &name) const;
+    Transport getTransport(const std::string& name) const;
 
     /**
      * Returns a single configured transport which can be modified in place.
@@ -272,14 +272,14 @@ public:
      * @throw rsc::runtime::NoSuchObject no such transport available with the
      *                                   given name
      */
-    Transport &mutableTransport(const std::string &name);
+    Transport& mutableTransport(const std::string& name);
 
     /**
      * Adds a transport to the list of desired transport mechanisms.
      *
      * @param transport config of the transport
      */
-    void addTransport(const Transport &transport);
+    void addTransport(const Transport& transport);
 
     /**
      * Removes a transport from the list of desired transports if it was
@@ -287,21 +287,21 @@ public:
      *
      * @param transport to remove
      */
-    void removeTransport(const Transport &transport);
+    void removeTransport(const Transport& transport);
 
     /**
      * Sets all desired transports in this configuration.
      *
      * @param transports set of transports
      */
-    void setTransports(const std::set<Transport> &transports);
+    void setTransports(const std::set<Transport>& transports);
 
-    const EventProcessingStrategy &getEventReceivingStrategy() const;
+    const EventProcessingStrategy& getEventReceivingStrategy() const;
 
-    EventProcessingStrategy &mutableEventReceivingStrategy();
+    EventProcessingStrategy& mutableEventReceivingStrategy();
 
 
-    const EventProcessingStrategy &getEventSendingStrategy() const;
+    const EventProcessingStrategy& getEventSendingStrategy() const;
 
     /**
      * Returns additional options besides the transport-specific ones.
@@ -316,14 +316,14 @@ public:
      *
      * @return mutable reference to additional options
      */
-    rsc::runtime::Properties &mutableOptions();
+    rsc::runtime::Properties& mutableOptions();
 
     /**
      * Sets the additional options besides the transport-specific ones.
      *
      * @param options new options replacing all old ones
      */
-    void setOptions(const rsc::runtime::Properties &options);
+    void setOptions(const rsc::runtime::Properties& options);
 
     /**
      * Obtain configuration options from the configuration file @a
@@ -349,8 +349,8 @@ public:
      *
      * @see fromEnvironment, fromConfiguration
      */
-    static ParticipantConfig fromFile(const boost::filesystem::path &path,
-            const ParticipantConfig &defaults = ParticipantConfig());
+    static ParticipantConfig fromFile(const boost::filesystem::path& path,
+            const ParticipantConfig& defaults = ParticipantConfig());
 
     /**
      * Obtain configuration options from environment variables, store
@@ -371,7 +371,7 @@ public:
      *
      * @see fromFile, fromConfiguration
      */
-    static ParticipantConfig fromEnvironment(const ParticipantConfig &defaults =
+    static ParticipantConfig fromEnvironment(const ParticipantConfig& defaults =
             ParticipantConfig());
 
     /**
@@ -391,7 +391,7 @@ public:
      * @see fromFile, fromEnvironment
      */
     static ParticipantConfig fromConfiguration(
-            const ParticipantConfig &defaults = ParticipantConfig());
+            const ParticipantConfig& defaults = ParticipantConfig());
 private:
     rsc::logging::LoggerPtr logger;
 
@@ -402,10 +402,10 @@ private:
     EventProcessingStrategy          eventSendingStrategy;
     rsc::runtime::Properties         options;
 
-    void handleOption(const std::vector<std::string> &key,
-            const std::string &value);
+    void handleOption(const std::vector<std::string>& key,
+            const std::string& value);
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 };
 
 }

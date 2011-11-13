@@ -54,21 +54,21 @@ namespace eventprocessing {
  */
 class RSB_EXPORT ParallelEventReceivingStrategy: public PushEventReceivingStrategy {
 public:
-    static EventReceivingStrategy* create(const rsc::runtime::Properties &props);
+    static EventReceivingStrategy* create(const rsc::runtime::Properties& props);
 
     ParallelEventReceivingStrategy(unsigned int numThreads = 5);
     virtual ~ParallelEventReceivingStrategy();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     void setHandlerErrorStrategy(
-            const ParticipantConfig::ErrorStrategy &strategy);
+            const ParticipantConfig::ErrorStrategy& strategy);
 
     // Qualification of HandlerPtr is required since there is another
     // HandlerPtr type in eventprocessing.
-    virtual void addHandler(rsb::HandlerPtr handler, const bool &wait);
-    virtual void removeHandler(rsb::HandlerPtr handler, const bool &wait);
+    virtual void addHandler(rsb::HandlerPtr handler, const bool& wait);
+    virtual void removeHandler(rsb::HandlerPtr handler, const bool& wait);
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
@@ -81,7 +81,7 @@ private:
     bool filter(rsb::HandlerPtr handler, EventPtr event);
     void deliver(rsb::HandlerPtr handler, EventPtr event);
 
-    void handleDispatchError(const std::string &message);
+    void handleDispatchError(const std::string& message);
 
     rsc::logging::LoggerPtr logger;
     rsc::threading::OrderedQueueDispatcherPool<EventPtr, rsb::Handler> pool;

@@ -71,10 +71,10 @@ public:
      */
     template<class DataType>
     typename Informer<DataType>::Ptr
-    createInformer(const Scope &scope,
-                   const ParticipantConfig &config
+    createInformer(const Scope& scope,
+                   const ParticipantConfig& config
                    = Factory::getInstance().getDefaultParticipantConfig(),
-                   const std::string &dataType
+                   const std::string& dataType
                    = detail::TypeName<DataType>()()) {
         return typename Informer<DataType>::Ptr(new Informer<DataType> (
             createOutConnectors(config), scope, config, dataType));
@@ -93,10 +93,10 @@ public:
      *         instance.
      * @throw RSBError If the requested informer cannot be created.
      */
-    InformerBasePtr createInformerBase(const Scope             &scope,
-                                       const std::string       &dataType
+    InformerBasePtr createInformerBase(const Scope&             scope,
+                                       const std::string&       dataType
                                        = "",
-                                       const ParticipantConfig &config
+                                       const ParticipantConfig& config
                                        = Factory::getInstance().getDefaultParticipantConfig());
 
     /**
@@ -107,8 +107,8 @@ public:
      *               general config held in this factory.f
      * @return new listener instance
      */
-    ListenerPtr createListener(const Scope &scope,
-            const ParticipantConfig &config =
+    ListenerPtr createListener(const Scope& scope,
+            const ParticipantConfig& config =
                     Factory::getInstance().getDefaultParticipantConfig());
 
     /**
@@ -122,8 +122,8 @@ public:
      * established.
      * @return A shared_ptr to the new @ref Reader object.
      **/
-    ReaderPtr createReader(const Scope &scope,
-                           const ParticipantConfig &config =
+    ReaderPtr createReader(const Scope& scope,
+                           const ParticipantConfig& config =
                            Factory::getInstance().getDefaultParticipantConfig());
 
     /**
@@ -132,7 +132,7 @@ public:
      * @param scope parent-scope of the new service
      * @return new service instance
      */
-    ServicePtr createService(const Scope &scope);
+    ServicePtr createService(const Scope& scope);
 
     /**
      * Creates a @ref Server object that exposes methods under the
@@ -142,7 +142,7 @@ public:
      * methods.
      * @return A shared_ptr to the new @ref Server object.
      */
-    patterns::ServerPtr createServer(const Scope &scope);
+    patterns::ServerPtr createServer(const Scope& scope);
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
@@ -152,7 +152,7 @@ public:
      * exposes itself.
      * @return A shared_ptr to the new @ref RemoteServer object.
      */
-    patterns::RemoteServerPtr createRemoteServer(const Scope &scope);
+    patterns::RemoteServerPtr createRemoteServer(const Scope& scope);
 
     /**
      * Returns the default configuration for new participants.
@@ -167,7 +167,7 @@ public:
      *
      * @param config new config
      */
-    void setDefaultParticipantConfig(const ParticipantConfig &config);
+    void setDefaultParticipantConfig(const ParticipantConfig& config);
 
     friend class rsc::patterns::Singleton<Factory>;
 
@@ -179,7 +179,7 @@ private:
      * compilation unit. For the template-based createInformer method this will
      * then be in the caller's compilation unit. :/
      */
-    transport::OutFactory &getOutFactoryInstance();
+    transport::OutFactory& getOutFactoryInstance();
 
     /**
      * Singleton constructor.
@@ -195,13 +195,13 @@ private:
     mutable boost::recursive_mutex configMutex;
 
     std::vector<transport::OutConnectorPtr>
-        createOutConnectors(const ParticipantConfig &config);
+        createOutConnectors(const ParticipantConfig& config);
 
     std::vector<transport::InPullConnectorPtr>
-        createInPullConnectors(const ParticipantConfig &config);
+        createInPullConnectors(const ParticipantConfig& config);
 
     std::vector<transport::InPushConnectorPtr>
-        createInPushConnectors(const ParticipantConfig &config);
+        createInPushConnectors(const ParticipantConfig& config);
 
 };
 

@@ -41,12 +41,12 @@ namespace eventprocessing {
  */
 class RSB_EXPORT PushInRouteConfigurator: public InRouteConfigurator {
 public:
-    PushInRouteConfigurator(const Scope             &scope,
-                            const ParticipantConfig &config);
+    PushInRouteConfigurator(const Scope&             scope,
+                            const ParticipantConfig& config);
     virtual ~PushInRouteConfigurator();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     /**
      * Adds a new handler that will be notified about received events.
@@ -56,7 +56,7 @@ public:
      *             handler has been completely installed and will receive the
      *             next available event
      */
-    void handlerAdded(rsb::HandlerPtr handler, const bool &wait);
+    void handlerAdded(rsb::HandlerPtr handler, const bool& wait);
 
     /**
      * Removes a previously registered handle.
@@ -66,14 +66,14 @@ public:
      *             handler has been completely removed and will not be notified
      *             anymore
      */
-    void handlerRemoved(rsb::HandlerPtr handler, const bool &wait);
+    void handlerRemoved(rsb::HandlerPtr handler, const bool& wait);
 
     /**
      * Sets the desired error strategy to use.
      *
      * @param strategy the strategy to use
      */
-    void setErrorStrategy(const ParticipantConfig::ErrorStrategy &strategy);
+    void setErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy);
 
     void activate();
 

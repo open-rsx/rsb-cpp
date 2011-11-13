@@ -68,7 +68,7 @@ public:
     vector<EventPtr> events;
 
     UserInformerTask(Informer<string>::Ptr informer,
-            const unsigned int &numEvents) :
+            const unsigned int& numEvents) :
         informer(informer), numEvents(numEvents), sentEvents(0) {
 
     }
@@ -109,7 +109,7 @@ TEST_P(RoundtripTest, testRoundtrip)
 {
 
     Factory::killInstance();
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
     ParticipantConfig config;
     ParticipantConfig::Transport transport(GetParam());
     rsc::runtime::Properties p = transport.getOptions();
@@ -190,7 +190,7 @@ protected:
     static void SetUpTestCase() {
 
         Factory::killInstance();
-        Factory &factory = Factory::getInstance();
+        Factory& factory = Factory::getInstance();
         ParticipantConfig config = factory.getDefaultParticipantConfig();
         ParticipantConfig::Transport spreadTransport = config.getTransport(
                 "spread");
@@ -216,7 +216,7 @@ protected:
 
 TEST_F(InformerTest, testTypeCheck)
 {
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
 
     boost::shared_ptr<string> payload(new string("foo"));
     {
@@ -255,7 +255,7 @@ TEST_F(InformerTest, testTypeCheck)
 
 TEST_F(InformerTest, testScopeCheck)
 {
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
     Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/foo"));
     boost::shared_ptr<string> payload(new string("foo"));
 
@@ -280,7 +280,7 @@ TEST_F(InformerTest, testScopeCheck)
 
 TEST_F(InformerTest, testReturnValue)
 {
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
     const Scope scope("/return/value/test");
     Informer<string>::Ptr informer = factory.createInformer<string> (scope,
             Factory::getInstance().getDefaultParticipantConfig());
@@ -303,7 +303,7 @@ TEST_F(InformerTest, testReturnValue)
 TEST_F(InformerTest, testConversionException)
 {
 
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
 
     ParticipantConfig config = Factory::getInstance().getDefaultParticipantConfig();
     config.mutableTransport("inprocess").setEnabled(false);

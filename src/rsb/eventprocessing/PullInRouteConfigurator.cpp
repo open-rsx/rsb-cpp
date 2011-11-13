@@ -33,8 +33,8 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-PullInRouteConfigurator::PullInRouteConfigurator(const Scope             &scope,
-                                                 const ParticipantConfig &config) :
+PullInRouteConfigurator::PullInRouteConfigurator(const Scope&             scope,
+                                                 const ParticipantConfig& config) :
     InRouteConfigurator(scope, config) {
 }
 

@@ -49,7 +49,7 @@ public:
      * @return set of desired methods or empty for all methods
      */
     std::set<std::string> getMethods() const;
-    bool acceptsMethod(const std::string &method) const;
+    bool acceptsMethod(const std::string& method) const;
 
 protected:
 
@@ -59,7 +59,7 @@ protected:
      * @param method the accepted method of this handler or empty string for
      *               all methods
      */
-    explicit Handler(const std::string &method = "");
+    explicit Handler(const std::string& method = "");
 
     /**
      * Creates a new handler that only accepts events with the specified
@@ -67,7 +67,7 @@ protected:
      *
      * @param methods set of desired methods, empty for all methods
      */
-    explicit Handler(const std::set<std::string> &methods);
+    explicit Handler(const std::set<std::string>& methods);
 
     virtual ~Handler();
 
@@ -90,10 +90,10 @@ typedef boost::function<void(EventPtr)> EventFunction;
 class RSB_EXPORT EventFunctionHandler: public Handler {
 public:
     EventFunctionHandler(const EventFunction& function,
-            const std::string &method = "");
+            const std::string& method = "");
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     void handle(EventPtr event);
 protected:
@@ -119,7 +119,7 @@ public:
         return "DataFunctionHandler";
     }
 
-    void printContents(std::ostream &stream) const {
+    void printContents(std::ostream& stream) const {
         stream << "DataType = " << rsc::runtime::typeName<T>()
                 << ", function = " << function;
     }

@@ -38,7 +38,7 @@ using namespace rsb;
  */
 class DummyParticipant: public Participant {
 public:
-    DummyParticipant(const Scope &scope) :
+    DummyParticipant(const Scope& scope) :
             Participant(scope, ParticipantConfig()) {
     }
     virtual ~DummyParticipant() {

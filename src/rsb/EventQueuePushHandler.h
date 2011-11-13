@@ -45,11 +45,11 @@ public:
      */
     EventQueuePushHandler(
             boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > queue,
-            const std::string &method = "");
+            const std::string& method = "");
 
     std::string getClassName() const;
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     void handle(EventPtr event);
 

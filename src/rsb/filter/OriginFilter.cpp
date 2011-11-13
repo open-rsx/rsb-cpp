@@ -26,7 +26,7 @@ using namespace rsc::misc;
 namespace rsb {
 namespace filter {
 
-OriginFilter::OriginFilter(const UUID &origin,
+OriginFilter::OriginFilter(const UUID& origin,
                            bool        invert):
     origin(origin), invert(invert) {
 }

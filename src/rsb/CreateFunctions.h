@@ -43,10 +43,10 @@ namespace rsb {
  */
 template<class DataType>
 typename Informer<DataType>::Ptr
-createInformer(const Scope &scope,
-               const ParticipantConfig &config
+createInformer(const Scope& scope,
+               const ParticipantConfig& config
                = Factory::getInstance().getDefaultParticipantConfig(),
-               const std::string &dataType
+               const std::string& dataType
                = detail::TypeName<DataType>()()) {
     return Factory::createInformer<DataType>(scope, config, dataType);
 }
@@ -64,9 +64,9 @@ createInformer(const Scope &scope,
  * @return A shared_ptr pointing to the new @ref Informer instance.
  * @throw RSBError If the requested informer cannot be created.
  */
-RSB_EXPORT InformerBasePtr crateInformerBase(const Scope             &scope,
-                                             const std::string       &dataType,
-                                             const ParticipantConfig &config
+RSB_EXPORT InformerBasePtr crateInformerBase(const Scope&             scope,
+                                             const std::string&       dataType,
+                                             const ParticipantConfig& config
                                              = Factory::getInstance().getDefaultParticipantConfig());
 
 /**
@@ -80,8 +80,8 @@ RSB_EXPORT InformerBasePtr crateInformerBase(const Scope             &scope,
  * @return A shared_ptr pointing to the new @ref Listener instance.
  * @throw RSBError If the requested listener cannot be created.
  */
-RSB_EXPORT ListenerPtr createListener(const Scope &scope,
-                                      const ParticipantConfig &config
+RSB_EXPORT ListenerPtr createListener(const Scope& scope,
+                                      const ParticipantConfig& config
                                       = Factory::getInstance().getDefaultParticipantConfig());
 
 /**
@@ -98,8 +98,8 @@ RSB_EXPORT ListenerPtr createListener(const Scope &scope,
  * @return A shared_ptr to the new @ref Reader object.
  * @throw RSBError If the requested reader cannot be created.
  **/
-RSB_EXPORT ReaderPtr createReader(const Scope &scope,
-                                  const ParticipantConfig &config
+RSB_EXPORT ReaderPtr createReader(const Scope& scope,
+                                  const ParticipantConfig& config
                                   = Factory::getInstance().getDefaultParticipantConfig());
 
 /**
@@ -109,7 +109,7 @@ RSB_EXPORT ReaderPtr createReader(const Scope &scope,
  * @param scope Parent-scope of the new service.
  * @return pointer to the new @ref Service instance.
  */
-RSB_EXPORT ServicePtr createService(const Scope &scope);
+RSB_EXPORT ServicePtr createService(const Scope& scope);
 
 /**
  * Creates and returns a @ref Server object that exposes methods under
@@ -119,7 +119,7 @@ RSB_EXPORT ServicePtr createService(const Scope &scope);
  *              methods.
  * @return A shared_ptr to the new @ref Server object.
  */
-RSB_EXPORT patterns::ServerPtr createServer(const Scope &scope);
+RSB_EXPORT patterns::ServerPtr createServer(const Scope& scope);
 
 /**
  * Creates and returns a @ref RemoteServer object for the server at
@@ -129,6 +129,6 @@ RSB_EXPORT patterns::ServerPtr createServer(const Scope &scope);
  *              itself.
  * @return A shared_ptr to the new @ref RemoteServer object.
  */
-RSB_EXPORT patterns::RemoteServerPtr createRemoteServer(const Scope &scope);
+RSB_EXPORT patterns::RemoteServerPtr createRemoteServer(const Scope& scope);
 
 }

@@ -108,8 +108,8 @@ public:
      * @param pruningIntervalMs the interval to use for checking the age (ms) > 0
      * @throw std::domain_error 0 given for ageMs or pruningIntervalMs
      */
-    explicit AssemblyPool(const unsigned int &ageS = 20,
-            const unsigned int &pruningIntervalMs = 4000);
+    explicit AssemblyPool(const unsigned int& ageS = 20,
+            const unsigned int& pruningIntervalMs = 4000);
 
     ~AssemblyPool();
 
@@ -128,7 +128,7 @@ public:
      * @param prune if @c true, start pruning if it is not yet running, if
      *        @c false, disable pruning if active
      */
-    void setPruning(const bool &prune);
+    void setPruning(const bool& prune);
 
     /**
      * Adds a new notification to the pool and tries to join it with already
@@ -151,16 +151,16 @@ private:
     class PruningTask: public rsc::threading::PeriodicTask {
     public:
 
-        PruningTask(Pool &pool, boost::recursive_mutex &poolMutex,
-                const unsigned int &ageS,
-                const unsigned int &pruningIntervalMs);
+        PruningTask(Pool& pool, boost::recursive_mutex& poolMutex,
+                const unsigned int& ageS,
+                const unsigned int& pruningIntervalMs);
 
         void execute();
 
     private:
         rsc::logging::LoggerPtr logger;
-        Pool &pool;
-        boost::recursive_mutex &poolMutex;
+        Pool& pool;
+        boost::recursive_mutex& poolMutex;
         unsigned int maxAge;
     };
 

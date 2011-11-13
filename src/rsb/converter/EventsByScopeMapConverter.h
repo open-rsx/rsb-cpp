@@ -60,10 +60,10 @@ public:
 
     std::string getClassName() const;
 
-    std::string serialize(const AnnotatedData &data, std::string &wire);
+    std::string serialize(const AnnotatedData& data, std::string& wire);
 
-    AnnotatedData deserialize(const std::string &wireSchema,
-            const std::string &wire);
+    AnnotatedData deserialize(const std::string& wireSchema,
+            const std::string& wire);
 
     std::string getWireSchema() const;
 

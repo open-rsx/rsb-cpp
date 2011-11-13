@@ -52,7 +52,7 @@ public:
     QueuePushHandler(
             boost::shared_ptr<rsc::threading::SynchronizedQueue<
                     boost::shared_ptr<T> > > queue,
-            const std::string &method = "") :
+            const std::string& method = "") :
         Handler(method), queue(queue) {
     }
 
@@ -60,7 +60,7 @@ public:
         return "QueuePushHandler";
     }
 
-    void printContents(std::ostream &stream) const {
+    void printContents(std::ostream& stream) const {
         stream << "queue = " << queue;
     }
 

@@ -55,7 +55,7 @@ class RSB_EXPORT Event: public virtual rsc::runtime::Printable {
 public:
 
     Event();
-    Event(const Event &event);
+    Event(const Event& event);
 
     /**
      * Constructor.
@@ -67,15 +67,15 @@ public:
      *               specifies an undecided method.
      */
     Event(ScopePtr scope, boost::shared_ptr<void> payload,
-            const std::string &type, const std::string &method = "");
+            const std::string& type, const std::string& method = "");
 
     Event(Scope scope, boost::shared_ptr<void> payload,
-            const std::string &type, const std::string &method = "");
+            const std::string& type, const std::string& method = "");
 
     virtual ~Event();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     /**
      * @deprecated use #getEventId instead to access the sequence number.
@@ -111,7 +111,7 @@ public:
      * @param sequenceNumber the unique number per sender this event was sent
      *                       with
      */
-    void setEventId(const rsc::misc::UUID &senderId, const boost::uint32_t &sequenceNumber);
+    void setEventId(const rsc::misc::UUID& senderId, const boost::uint32_t& sequenceNumber);
 
     /**
      * @name scope access
@@ -126,12 +126,12 @@ public:
     ScopePtr getScopePtr() const;
     Scope getScope() const;
     void setScopePtr(ScopePtr scope);
-    void setScope(const Scope &scope);
+    void setScope(const Scope& scope);
 
     //@}
 
     std::string getType() const;
-    void setType(const std::string &type);
+    void setType(const std::string& type);
 
     VoidPtr getData();
     void setData(VoidPtr d);
@@ -159,7 +159,7 @@ public:
      * @param id the id of a causing event
      * @return @c true if the causes was added, @c false if it already existed
      */
-    bool addCause(const EventId &id);
+    bool addCause(const EventId& id);
 
     /**
      * Removes a causing event from the set of causes for this event. If the
@@ -169,7 +169,7 @@ public:
      * @return @c true if an event with this id was removed from the causes,
      *         else @c false
      */
-    bool removeCause(const EventId &id);
+    bool removeCause(const EventId& id);
 
     /**
      * Tells whether the id of one event is already marked as a cause of this
@@ -179,7 +179,7 @@ public:
      * @return @c true if @p id is marked as a cause for this event, else
      *         @c false
      */
-    bool isCause(const EventId &id) const;
+    bool isCause(const EventId& id) const;
 
     /**
      * Returns all causing events marked so far.
@@ -204,7 +204,7 @@ public:
      *
      * @param method method name or empty string for unspecified method.
      */
-    void setMethod(const std::string &method);
+    void setMethod(const std::string& method);
 
     /**
      * @name meta-data access
@@ -223,14 +223,14 @@ public:
      *
      * @return meta-data reference to modify
      */
-    MetaData &mutableMetaData();
+    MetaData& mutableMetaData();
 
     /**
      * Replaces the event's meta-data with a new instance.
      *
      * @param metaData new meta-data to set
      */
-    void setMetaData(const MetaData &metaData);
+    void setMetaData(const MetaData& metaData);
 
     //@}
 

@@ -38,8 +38,8 @@ public:
     eventprocessing::PushInRouteConfiguratorPtr configurator;
 };
 
-Listener::Listener(const vector<InPushConnectorPtr> &connectors,
-        const Scope &scope, const ParticipantConfig &config) :
+Listener::Listener(const vector<InPushConnectorPtr>& connectors,
+        const Scope& scope, const ParticipantConfig& config) :
     Participant(scope, config), d(new Impl) {
 
     d->logger = rsc::logging::Logger::getLogger("rsb.Listener");
@@ -53,8 +53,8 @@ string Listener::getClassName() const {
     return "Listener";
 }
 
-void Listener::initialize(const vector<InPushConnectorPtr> &connectors,
-        const Scope &scope, const ParticipantConfig &config) {
+void Listener::initialize(const vector<InPushConnectorPtr>& connectors,
+        const Scope& scope, const ParticipantConfig& config) {
     d->configurator.reset(
             new eventprocessing::PushInRouteConfigurator(scope, config));
     d->configurator->setErrorStrategy(getConfig().getErrorStrategy());

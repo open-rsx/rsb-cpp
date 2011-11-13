@@ -58,9 +58,9 @@ public:
 	typedef std::set<std::string> SchemaList;
 	typedef std::set<std::string> OptionList;
 
-	ConnectorInfo(const std::string &name,
-		      const SchemaList &schemas,
-		      const OptionList &options) :
+	ConnectorInfo(const std::string& name,
+		      const SchemaList& schemas,
+		      const OptionList& options) :
 	    name(name), schemas(schemas), options(options) {
 	    this->options.insert("enabled");
 	}
@@ -94,7 +94,7 @@ public:
 	    return this->options;
 	}
 
-        bool operator<(const ConnectorInfo &other) const {
+        bool operator<(const ConnectorInfo& other) const {
             if (this->name < other.name) {
                 return true;
             } else if (this->name == other.name) {
@@ -115,7 +115,7 @@ public:
 	    return "ConnectorInfo";
 	}
 
-	void printContents(std::ostream &stream) const {
+	void printContents(std::ostream& stream) const {
 	    stream << this->name
 		   << ", schemas = " << this->schemas
 		   << ", options = " << this->options;
@@ -138,7 +138,7 @@ public:
      * @throw rsc::runtime::NoSuchObject If a record for @a name
      * cannot be found.
      */
-    ConnectorInfo getConnectorInfo(const std::string &name) const {
+    ConnectorInfo getConnectorInfo(const std::string& name) const {
 	typename InfoMap::const_iterator it = this->infos.find(name);
 	if (it == this->infos.end()) {
 	    throw rsc::runtime::NoSuchObject(name);
@@ -168,20 +168,20 @@ public:
      * @param options A list of strings describing configuration
      * options recognized by the implementation.
      */
-    void registerConnector(const std::string &name,
-			   const CreateFunction &constructor,
-			   const std::set<std::string> &schemas = std::set<std::string>(),
-			   const std::set<std::string> &options = std::set<std::string>()) {
+    void registerConnector(const std::string& name,
+			   const CreateFunction& constructor,
+			   const std::set<std::string>& schemas = std::set<std::string>(),
+			   const std::set<std::string>& options = std::set<std::string>()) {
 	Factory::impls().register_(name, constructor);
 
 	ConnectorInfo info(name, schemas, options);
 	this->infos.insert(std::make_pair(name, info));
     }
 
-    void registerConnector(const std::string &name,
-			   const CreateFunction &constructor,
-			   const std::string &schema,
-			   const std::set<std::string> &options = std::set<std::string>()) {
+    void registerConnector(const std::string& name,
+			   const CreateFunction& constructor,
+			   const std::string& schema,
+			   const std::set<std::string>& options = std::set<std::string>()) {
 	std::set<std::string> schemas;
 	schemas.insert(schema);
 	registerConnector(name, constructor, schemas, options);
@@ -193,8 +193,8 @@ private:
 	return "ConnectorFactory<" + rsc::runtime::typeName<Interface>() + ">";
     }
 
-    void printContents(std::ostream &stream) const {
-	const ImplMapProxy &implementations = Factory::impls();
+    void printContents(std::ostream& stream) const {
+	const ImplMapProxy& implementations = Factory::impls();
 	stream << std::endl;
 	for (typename ImplMapProxy::const_iterator it = implementations.begin(); it
 		 != implementations.end(); ++it) {

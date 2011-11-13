@@ -35,13 +35,13 @@ VoidConverter::VoidConverter() :
 VoidConverter::~VoidConverter() {
 }
 
-string VoidConverter::serialize(const AnnotatedData &/*data*/, string &wire) {
+string VoidConverter::serialize(const AnnotatedData& /*data*/, string& wire) {
 	wire.clear();
 	return TYPE;
 }
 
-AnnotatedData VoidConverter::deserialize(const std::string &/*wireType*/,
-		const string &/*wire*/) {
+AnnotatedData VoidConverter::deserialize(const std::string& /*wireType*/,
+		const string& /*wire*/) {
 	return make_pair(getDataType(), boost::shared_ptr<void>());
 }
 

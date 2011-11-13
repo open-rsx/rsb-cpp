@@ -65,9 +65,9 @@ public:
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createReader instead of calling this directly.
      */
-    Reader(const std::vector<transport::InPullConnectorPtr> &connectors,
-           const Scope                                  &scope,
-           const ParticipantConfig                      &config);
+    Reader(const std::vector<transport::InPullConnectorPtr>& connectors,
+           const Scope&                                  scope,
+           const ParticipantConfig&                      config);
 
     /**
      * Reads one event from the bus. If @a block is true, blocks until

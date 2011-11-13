@@ -67,7 +67,7 @@ string OutRouteConfigurator::getClassName() const {
     return "OutRouteConfigurator";
 }
 
-void OutRouteConfigurator::printContents(ostream &stream) const {
+void OutRouteConfigurator::printContents(ostream& stream) const {
     stream << "connectors = " << d->connectors << ", shutdown = "
             << d->shutdown;
 }
@@ -131,7 +131,7 @@ void OutRouteConfigurator::publish(EventPtr e) {
 }
 
 void OutRouteConfigurator::setQualityOfServiceSpecs(
-        const QualityOfServiceSpec &specs) {
+        const QualityOfServiceSpec& specs) {
     for (ConnectorList::iterator it = d->connectors.begin(); it
             != d->connectors.end(); ++it) {
         (*it)->setQualityOfServiceSpecs(specs);

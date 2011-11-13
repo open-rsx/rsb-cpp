@@ -48,7 +48,7 @@ namespace spread {
 const SpreadConnector::QoSMap SpreadConnector::qosMapping =
         SpreadConnector::buildQoSMapping();
 
-SpreadConnector::SpreadConnector(const std::string &host, unsigned int port) {
+SpreadConnector::SpreadConnector(const std::string& host, unsigned int port) {
     init(host, port);
 }
 
@@ -80,15 +80,15 @@ void SpreadConnector::deactivate() {
     this->activated = false;
 }
 
-void SpreadConnector::join(const std::string &name) {
+void SpreadConnector::join(const std::string& name) {
     this->memberships->join(name, this->con);
 }
 
-void SpreadConnector::leave(const std::string &name) {
+void SpreadConnector::leave(const std::string& name) {
     this->memberships->leave(name, this->con);
 }
 
-void SpreadConnector::send(const SpreadMessage &msg) {
+void SpreadConnector::send(const SpreadMessage& msg) {
     this->con->send(msg);
 }
 
@@ -133,7 +133,7 @@ SpreadConnector::QoSMap SpreadConnector::buildQoSMapping() {
 }
 
 void SpreadConnector::setQualityOfServiceSpecs(
-        const QualityOfServiceSpec &specs) {
+        const QualityOfServiceSpec& specs) {
 
     QoSMap::const_iterator orderMapIt = qosMapping.find(specs.getOrdering());
     if (orderMapIt == qosMapping.end()) {
@@ -151,7 +151,7 @@ void SpreadConnector::setQualityOfServiceSpecs(
 }
 
 const std::vector<std::string>& SpreadConnector::makeGroupNames(
-        const Scope &scope) const {
+        const Scope& scope) const {
 
     boost::upgrade_lock<boost::shared_mutex> lock(groupNameCacheMutex);
 
@@ -172,7 +172,7 @@ const std::vector<std::string>& SpreadConnector::makeGroupNames(
     }
 
     // Warm-up cache
-    std::vector<std::string> &cacheItem = this->groupNameCache[scope];
+    std::vector<std::string>& cacheItem = this->groupNameCache[scope];
     vector<Scope> scopes = scope.superScopes(true);
     for (vector<Scope>::const_iterator scopeIt = scopes.begin(); scopeIt
             != scopes.end(); ++scopeIt) {
@@ -183,7 +183,7 @@ const std::vector<std::string>& SpreadConnector::makeGroupNames(
 
 }
 
-std::string SpreadConnector::makeGroupName(const Scope &scope) const {
+std::string SpreadConnector::makeGroupName(const Scope& scope) const {
     return MD5(scope.toString()).toHexString().substr(0, MAX_GROUP_NAME - 1);
 }
 

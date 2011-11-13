@@ -49,7 +49,7 @@ void registerDefaultTransports() {
 
     // In-direction, push-style connectors
     {
-        InPushFactory &factory = InPushFactory::getInstance();
+        InPushFactory& factory = InPushFactory::getInstance();
         factory.registerConnector("inprocess",
                                   &inprocess::InConnector::create,
                                   "inprocess");
@@ -80,7 +80,7 @@ void registerDefaultTransports() {
 
     // In-direction, pull-style connectors
     {
-        InPullFactory &factory = InPullFactory::getInstance();
+        InPullFactory& factory = InPullFactory::getInstance();
 
         {
             set<string> options;
@@ -96,7 +96,7 @@ void registerDefaultTransports() {
 
     // Out-direction connectors
     {
-        OutFactory &factory = OutFactory::getInstance();
+        OutFactory& factory = OutFactory::getInstance();
         factory.registerConnector("inprocess",
                                   &inprocess::OutConnector::create,
                                   "inprocess");

@@ -57,9 +57,9 @@ Factory::~Factory() {
     RSCINFO(logger, "Stopped service thread");
 }
 
-BusPtr Factory::getBusClientFor(const string  &host,
+BusPtr Factory::getBusClientFor(const string&  host,
                                 uint16_t       port,
-                                ConnectorBase *connector) {
+                                ConnectorBase* connector) {
     RSCDEBUG(logger, "Was asked for a bus client for " << host << ":" << port);
 
     // Try to find an entry for the exact specified endpoint. If this
@@ -142,9 +142,9 @@ void Factory::removeBusClient(BusPtr bus) {
     }
 }
 
-BusServerPtr Factory::getBusServerFor(const string  &host,
+BusServerPtr Factory::getBusServerFor(const string&  host,
                                       uint16_t       port,
-                                      ConnectorBase *connector) {
+                                      ConnectorBase* connector) {
     RSCDEBUG(logger, "Was asked for a bus server for " << host << ":" << port);
 
     // Try to find an existing entry for the specified endpoint.

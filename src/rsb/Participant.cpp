@@ -33,7 +33,7 @@ public:
     ParticipantConfig config;
 };
 
-Participant::Participant(const Scope &scope, const ParticipantConfig &config) :
+Participant::Participant(const Scope& scope, const ParticipantConfig& config) :
     d(new Impl) {
     d->scope.reset(new Scope(scope));
     d->config = config;
@@ -54,7 +54,7 @@ ParticipantConfig Participant::getConfig() const {
     return d->config;
 }
 
-void Participant::printContents(ostream &stream) const {
+void Participant::printContents(ostream& stream) const {
     stream << "id = " << d->id << ", scope = " << *d->scope;
 }
 

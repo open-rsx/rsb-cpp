@@ -41,7 +41,7 @@ const char Scope::COMPONENT_SEPARATOR = '/';
  * @param components A vector in which the extracted scope components
  * should be stored
  */
-inline void verifyAndSplit(const string &s, vector<string> &components) {
+inline void verifyAndSplit(const string& s, vector<string>& components) {
     if (s.empty()) {
         throw invalid_argument("Empty scope string given.");
     }
@@ -94,7 +94,7 @@ inline void verifyAndSplit(const string &s, vector<string> &components) {
     }
 }
 
-Scope::Scope(const string &s) :
+Scope::Scope(const string& s) :
         scopestring() {
     // reserve a number of vector components that should be enough for most
     // realistic scopes. This speeds up parsing.
@@ -143,7 +143,7 @@ const std::string& Scope::toString() const {
     return this->scopestring;
 }
 
-Scope Scope::concat(const Scope &childScope) const {
+Scope Scope::concat(const Scope& childScope) const {
     Scope result; // start with empty string cache
     result.components = this->components;
 
@@ -155,7 +155,7 @@ Scope Scope::concat(const Scope &childScope) const {
     return result;
 }
 
-bool Scope::isSubScopeOf(const Scope &other) const {
+bool Scope::isSubScopeOf(const Scope& other) const {
 
     if (components.size() <= other.components.size()) {
         return false;
@@ -170,7 +170,7 @@ bool Scope::isSubScopeOf(const Scope &other) const {
     return true;
 }
 
-bool Scope::isSuperScopeOf(const Scope &other) const {
+bool Scope::isSuperScopeOf(const Scope& other) const {
 
     if (components.size() >= other.components.size()) {
         return false;
@@ -185,7 +185,7 @@ bool Scope::isSuperScopeOf(const Scope &other) const {
     return true;
 }
 
-vector<Scope> Scope::superScopes(const bool &includeSelf) const {
+vector<Scope> Scope::superScopes(const bool& includeSelf) const {
 
     vector<Scope> result;
 
@@ -213,15 +213,15 @@ vector<Scope> Scope::superScopes(const bool &includeSelf) const {
     return result;
 }
 
-bool Scope::operator==(const Scope &other) const {
+bool Scope::operator==(const Scope& other) const {
     return toString() == other.toString();
 }
 
-bool Scope::operator<(const Scope &other) const {
+bool Scope::operator<(const Scope& other) const {
     return toString() < other.toString();
 }
 
-ostream &operator<<(ostream &stream, const Scope &scope) {
+ostream& operator<<(ostream& stream, const Scope& scope) {
     return stream << "Scope[" << scope.toString() << "]";
 }
 

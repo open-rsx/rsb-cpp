@@ -53,13 +53,13 @@ class RSB_EXPORT Factory : public rsc::patterns::Singleton<Factory> {
 public:
     ~Factory();
 
-    BusPtr getBusClientFor(const std::string &host,
+    BusPtr getBusClientFor(const std::string& host,
                            boost::uint16_t    port,
-                           ConnectorBase     *connector);
+                           ConnectorBase*     connector);
 
-    BusServerPtr getBusServerFor(const std::string &host,
+    BusServerPtr getBusServerFor(const std::string& host,
                                  boost::uint16_t    port,
-                                 ConnectorBase     *connector);
+                                 ConnectorBase*     connector);
 private:
     typedef std::pair<std::string, boost::uint16_t>	     Endpoint;
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket>  SocketPtr;

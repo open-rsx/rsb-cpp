@@ -61,7 +61,7 @@ TEST(SpreadMessageTest, testConstruction)
     }
 
     {
-        const char *data = "foo";
+        const char* data = "foo";
         SpreadMessage m(data);
         EXPECT_EQ(SpreadMessage::OTHER, m.getType());
         EXPECT_EQ(SpreadMessage::UNRELIABLE, m.getQOS());

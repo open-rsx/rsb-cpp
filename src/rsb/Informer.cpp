@@ -29,9 +29,9 @@ using namespace std;
 namespace rsb {
 
 InformerBase::InformerBase(
-        const vector<transport::OutConnectorPtr> &connectors,
-        const Scope &scope, const ParticipantConfig &config,
-        const string &defaultType) :
+        const vector<transport::OutConnectorPtr>& connectors,
+        const Scope& scope, const ParticipantConfig& config,
+        const string& defaultType) :
     Participant(scope, config), defaultType(defaultType),
             currentSequenceNumber(0) {
     // TODO evaluate configuration
@@ -47,7 +47,7 @@ InformerBase::InformerBase(
 InformerBase::~InformerBase() {
 }
 
-void InformerBase::printContents(ostream &stream) const {
+void InformerBase::printContents(ostream& stream) const {
     Participant::printContents(stream);
     stream << ", type = " << defaultType;
 }
@@ -56,7 +56,7 @@ string InformerBase::getType() const {
     return this->defaultType;
 }
 
-void InformerBase::setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs) {
+void InformerBase::setQualityOfSerivceSpecs(const QualityOfServiceSpec& specs) {
     configurator->setQualityOfServiceSpecs(specs);
 }
 
@@ -66,7 +66,7 @@ EventPtr InformerBase::createEvent() const {
     return event;
 }
 
-EventPtr InformerBase::publish(VoidPtr data, const std::string &type) {
+EventPtr InformerBase::publish(VoidPtr data, const std::string& type) {
     EventPtr event = createEvent();
     event->setData(data);
     event->setType(type);
@@ -74,7 +74,7 @@ EventPtr InformerBase::publish(VoidPtr data, const std::string &type) {
     return event;
 }
 
-EventPtr InformerBase::uncheckedPublish(VoidPtr data, const std::string &type) {
+EventPtr InformerBase::uncheckedPublish(VoidPtr data, const std::string& type) {
     EventPtr event = createEvent();
     event->setData(data);
     event->setType(type);

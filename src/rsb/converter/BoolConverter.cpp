@@ -37,7 +37,7 @@ BoolConverter::BoolConverter() :
 BoolConverter::~BoolConverter() {
 }
 
-string BoolConverter::serialize(const AnnotatedData &data, string &wire) {
+string BoolConverter::serialize(const AnnotatedData& data, string& wire) {
 	assert(data.first == this->getDataType());
 
 	boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data.second);
@@ -49,8 +49,8 @@ string BoolConverter::serialize(const AnnotatedData &data, string &wire) {
 	return WIRE_SCHEMA;
 }
 
-AnnotatedData BoolConverter::deserialize(const std::string &wireSchema,
-		const string &wire) {
+AnnotatedData BoolConverter::deserialize(const std::string& wireSchema,
+		const string& wire) {
 	assert(wireSchema == WIRE_SCHEMA);
 
 	if (wire.empty()) {

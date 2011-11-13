@@ -35,7 +35,7 @@ StringConverter::StringConverter() :
 StringConverter::~StringConverter() {
 }
 
-string StringConverter::serialize(const AnnotatedData &data, string &wire) {
+string StringConverter::serialize(const AnnotatedData& data, string& wire) {
 	assert(data.first == this->getDataType());
 
 	boost::shared_ptr<string> s = boost::static_pointer_cast<string>(
@@ -45,8 +45,8 @@ string StringConverter::serialize(const AnnotatedData &data, string &wire) {
 	return WIRE_SCHEMA;
 }
 
-AnnotatedData StringConverter::deserialize(const std::string &wireType,
-		const string &wire) {
+AnnotatedData StringConverter::deserialize(const std::string& wireType,
+		const string& wire) {
 	assert(wireType == WIRE_SCHEMA);
 
 	return make_pair(getDataType(), boost::shared_ptr<string>(new string(wire)));

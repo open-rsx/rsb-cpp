@@ -25,8 +25,8 @@ using namespace std;
 
 namespace rsb {
 
-EventId::EventId(const rsc::misc::UUID &participantId,
-        const boost::uint32_t &sequenceNumber) :
+EventId::EventId(const rsc::misc::UUID& participantId,
+        const boost::uint32_t& sequenceNumber) :
         participantId(participantId), sequenceNumber(sequenceNumber) {
 }
 
@@ -56,13 +56,13 @@ rsc::misc::UUID EventId::getAsUUID() const {
     return *id;
 }
 
-bool EventId::operator==(const EventId &other) const {
+bool EventId::operator==(const EventId& other) const {
     // first compare the sequence number which is most likely already different
     return (sequenceNumber == other.sequenceNumber)
             && (participantId == other.participantId);
 }
 
-bool EventId::operator<(const EventId &other) const {
+bool EventId::operator<(const EventId& other) const {
     if (sequenceNumber < other.sequenceNumber) {
         return true;
     } else if (sequenceNumber > other.sequenceNumber) {
@@ -76,7 +76,7 @@ string EventId::getClassName() const {
     return "EventId";
 }
 
-void EventId::printContents(ostream &stream) const {
+void EventId::printContents(ostream& stream) const {
     stream << "participantId = " << participantId << ", sequenceNumber = "
             << sequenceNumber;
 }

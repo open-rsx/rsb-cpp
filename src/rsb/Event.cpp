@@ -57,13 +57,13 @@ Event::Event() :
     d->scope.reset(new Scope);
 }
 
-Event::Event(const Event &event) :
+Event::Event(const Event& event) :
     d(new Impl(*event.d)) {
 
 }
 
 Event::Event(ScopePtr scope, boost::shared_ptr<void> payload,
-        const string &type, const string &method) :
+        const string& type, const string& method) :
     d(new Impl()) {
     d->scope = scope;
     d->content = payload;
@@ -71,8 +71,8 @@ Event::Event(ScopePtr scope, boost::shared_ptr<void> payload,
     d->method = method;
 }
 
-Event::Event(Scope scope, boost::shared_ptr<void> payload, const string &type,
-        const string &method) :
+Event::Event(Scope scope, boost::shared_ptr<void> payload, const string& type,
+        const string& method) :
     d(new Impl()) {
     d->scope.reset(new Scope(scope));
     d->content = payload;
@@ -87,7 +87,7 @@ string Event::getClassName() const {
     return "Event";
 }
 
-void Event::printContents(ostream &stream) const {
+void Event::printContents(ostream& stream) const {
     stream << "id = ";
     if (d->id) {
         stream << d->id;
@@ -120,8 +120,8 @@ EventId Event::getEventId() const {
     return *d->id;
 }
 
-void Event::setEventId(const rsc::misc::UUID &senderId,
-        const boost::uint32_t &sequenceNumber) {
+void Event::setEventId(const rsc::misc::UUID& senderId,
+        const boost::uint32_t& sequenceNumber) {
     d->id.reset(new EventId(senderId, sequenceNumber));
     d->metaData.setSenderId(senderId);
 }
@@ -130,7 +130,7 @@ void Event::setScopePtr(ScopePtr s) {
     d->scope = s;
 }
 
-void Event::setScope(const Scope &s) {
+void Event::setScope(const Scope& s) {
     d->scope = ScopePtr(new Scope(s));
 }
 
@@ -154,19 +154,19 @@ string Event::getType() const {
     return d->type;
 }
 
-void Event::setType(const string &t) {
+void Event::setType(const string& t) {
     d->type = t;
 }
 
-bool Event::addCause(const EventId &id) {
+bool Event::addCause(const EventId& id) {
     return d->causes.insert(id).second;
 }
 
-bool Event::removeCause(const EventId &id) {
+bool Event::removeCause(const EventId& id) {
     return d->causes.erase(id) > 0;
 }
 
-bool Event::isCause(const EventId &id) const {
+bool Event::isCause(const EventId& id) const {
     return d->causes.count(id) > 0;
 }
 
@@ -178,7 +178,7 @@ string Event::getMethod() const {
     return d->method;
 }
 
-void Event::setMethod(const string &method) {
+void Event::setMethod(const string& method) {
     d->method = method;
 }
 
@@ -186,11 +186,11 @@ MetaData Event::getMetaData() const {
     return d->metaData;
 }
 
-MetaData &Event::mutableMetaData() {
+MetaData& Event::mutableMetaData() {
     return d->metaData;
 }
 
-void Event::setMetaData(const MetaData &metaData) {
+void Event::setMetaData(const MetaData& metaData) {
     d->metaData = metaData;
 }
 

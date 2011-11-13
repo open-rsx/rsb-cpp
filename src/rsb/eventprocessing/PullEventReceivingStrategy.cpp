@@ -48,7 +48,7 @@ public:
 };
 
 PullEventReceivingStrategy::PullEventReceivingStrategy(
-        const set<InPullConnectorPtr> &connectors) : d(new Impl) {
+        const set<InPullConnectorPtr>& connectors) : d(new Impl) {
     d->connectors = connectors;
 }
 
@@ -89,7 +89,7 @@ std::string PullEventReceivingStrategy::getClassName() const {
     return "PullEventReceivingStrategy";
 }
 
-void PullEventReceivingStrategy::printContents(ostream &stream) const {
+void PullEventReceivingStrategy::printContents(ostream& stream) const {
     stream << "connectors = " << d->connectors << ", filters = "
             << d->filters;
 }

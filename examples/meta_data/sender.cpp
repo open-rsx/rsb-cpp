@@ -56,7 +56,7 @@ int main() {
                                  Informer<string>::DataPtr(new string(data)),
                                  "std::string"));
 
-        MetaData &metaData = event->mutableMetaData();
+        MetaData& metaData = event->mutableMetaData();
         metaData.setUserTime("processing-start", processingStart);
         metaData.setUserTime("processing-done",  processingDone);
 

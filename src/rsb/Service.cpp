@@ -25,14 +25,14 @@ using namespace std;
 
 namespace rsb {
 
-Service::Service(const Scope &scope) :
+Service::Service(const Scope& scope) :
     Participant(scope, ParticipantConfig()), scope(scope) {
 }
 
 Service::~Service() {
 }
 
-void Service::printContents(ostream &stream) const {
+void Service::printContents(ostream& stream) const {
     Participant::printContents(stream);
     stream << ", participants = " << getParticipants();
 }

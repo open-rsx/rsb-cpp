@@ -25,7 +25,7 @@ using namespace std;
 namespace rsb {
 namespace filter {
 
-ScopeFilter::ScopeFilter(const Scope &scope) :
+ScopeFilter::ScopeFilter(const Scope& scope) :
     scope(scope) {
 }
 
@@ -36,7 +36,7 @@ string ScopeFilter::getClassName() const {
     return "ScopeFilter";
 }
 
-void ScopeFilter::printContents(ostream &stream) const {
+void ScopeFilter::printContents(ostream& stream) const {
     stream << "scope = " << scope;
 }
 

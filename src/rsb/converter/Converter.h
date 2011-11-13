@@ -37,7 +37,7 @@ namespace converter {
 
 typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
 
-#define RSB_TYPE_TAG(T) (reinterpret_cast<T *> (0))
+#define RSB_TYPE_TAG(T) (reinterpret_cast<T*> (0))
 
 /**
  * @author swrede
@@ -60,7 +60,7 @@ public:
      * @throw SerializationException if the serialization failed
      */
     virtual std::string
-    serialize(const AnnotatedData &data, WireType &wire) = 0;
+    serialize(const AnnotatedData& data, WireType& wire) = 0;
 
     /**
      * Deserializes a domain object from a wire type.
@@ -70,8 +70,8 @@ public:
      * @return the deserialized domain object annotated with its data type name
      * @throw SerializationException if deserializing the message fails
      */
-    virtual AnnotatedData deserialize(const std::string &wireSchema,
-            const WireType &wire) = 0;
+    virtual AnnotatedData deserialize(const std::string& wireSchema,
+            const WireType& wire) = 0;
 
     /**
      * Returns the name of the data type this converter is applicable for.
@@ -105,7 +105,7 @@ protected:
      * @param dummy This parameter is used to disambiguate constructor
      *              signatures when WireType is std::string .
      */
-    Converter(const std::string &dataType, const std::string &wireSchema, bool dummy = true) :
+    Converter(const std::string& dataType, const std::string& wireSchema, bool dummy = true) :
         dataType(dataType), wireSchema(wireSchema) {
         ((void) dummy);
     }
@@ -121,7 +121,7 @@ protected:
      *                   (de)serialize.
      */
     template<typename DataType>
-    Converter(const std::string &wireSchema, const DataType */*unused*/= 0) :
+    Converter(const std::string& wireSchema, const DataType* /*unused*/= 0) :
         dataType(rsc::runtime::typeName<DataType>()), wireSchema(wireSchema) {
     }
 
@@ -134,7 +134,7 @@ private:
         return rsc::runtime::typeName(*this);
     }
 
-    void printContents(std::ostream &stream) const {
+    void printContents(std::ostream& stream) const {
         stream << "wireType = " << rsc::runtime::typeName<WireType>()
                << ", wireSchema = " << this->wireSchema
                << ", dataType = " << this->dataType;

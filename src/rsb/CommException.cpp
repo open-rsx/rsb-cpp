@@ -23,7 +23,7 @@ using namespace std;
 
 namespace rsb {
 
-CommException::CommException(const string &m) :
+CommException::CommException(const string& m) :
 	Exception(m) {
 }
 

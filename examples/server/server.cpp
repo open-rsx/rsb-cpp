@@ -32,7 +32,7 @@ using namespace rsb::patterns;
 
 class TestCallback: public Server::Callback<string, string> {
 public:
-    boost::shared_ptr<string> call(const string &methodName,
+    boost::shared_ptr<string> call(const string& methodName,
                                    boost::shared_ptr<string> input) {
         return boost::shared_ptr<string>(
                 new string("reply to '" + *input + "' (method is '" + methodName + "')"));
@@ -41,16 +41,16 @@ public:
 
 class ErrorProducingCallback: public Server::Callback<string, string> {
 public:
-    boost::shared_ptr<string> call(const string &/*methodName*/,
+    boost::shared_ptr<string> call(const string& /*methodName*/,
                                    boost::shared_ptr<string> /*input*/) {
         throw runtime_error("Intentionally failing.");
     }
 };
 
-int main(int /*argc*/, char **/*argv*/) {
+int main(int /*argc*/, char** /*argv*/) {
     // Use the RSB factory to create a Server instance that provides
     // callable methods under the scope /example/server.
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
     ServerPtr server = factory.createServer(Scope("/example/server"));
 
     // Register callable methods which dispatch method calls to

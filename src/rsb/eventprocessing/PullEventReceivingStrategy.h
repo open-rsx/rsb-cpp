@@ -61,7 +61,7 @@ namespace eventprocessing {
  */
 class RSB_EXPORT PullEventReceivingStrategy: public EventReceivingStrategy {
 public:
-    PullEventReceivingStrategy(const std::set<transport::InPullConnectorPtr> &connectors);
+    PullEventReceivingStrategy(const std::set<transport::InPullConnectorPtr>& connectors);
     virtual ~PullEventReceivingStrategy();
 
     virtual void addFilter(filter::FilterPtr filter);
@@ -90,7 +90,7 @@ private:
     boost::scoped_ptr<Impl> d;
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 };
 
 typedef boost::shared_ptr<PullEventReceivingStrategy> PullEventReceivingStrategyPtr;

@@ -62,9 +62,9 @@ public:
         logger(rsc::logging::Logger::getLogger("rsb.converter.Repository")) {
     }
 
-    typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForSerialization(const ConverterSelectionMap &selection
+    typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForSerialization(const ConverterSelectionMap& selection
                                                                     = ConverterSelectionMap()) const {
-        UnambiguousConverterMap<WireType> *result = new UnambiguousConverterMap<WireType>();
+        UnambiguousConverterMap<WireType>* result = new UnambiguousConverterMap<WireType>();
         for (typename ConverterMap::const_iterator it = this->converters.begin();
              it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
@@ -75,7 +75,7 @@ public:
             if (selection.find(dataType) == selection.end()) {
                 try {
                     result->addConverter(dataType, it->second);
-                } catch (const std::invalid_argument &e) {
+                } catch (const std::invalid_argument& e) {
                     std::set<std::string> wireSchemas;
                     for (typename ConverterMap::const_iterator it_ = this->converters.begin();
                          it_ != this->converters.end(); ++it_) {
@@ -98,9 +98,9 @@ public:
         return typename ConverterSelectionStrategy<WireType>::Ptr(result);
     }
 
-    typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForDeserialization(const ConverterSelectionMap &selection
+    typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForDeserialization(const ConverterSelectionMap& selection
                                                                       = ConverterSelectionMap()) const {
-        UnambiguousConverterMap<WireType> *result = new UnambiguousConverterMap<WireType>();
+        UnambiguousConverterMap<WireType>* result = new UnambiguousConverterMap<WireType>();
         for (typename ConverterMap::const_iterator it = this->converters.begin();
              it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
@@ -111,7 +111,7 @@ public:
             if (selection.find(wireSchema) == selection.end()) {
                 try {
                     result->addConverter(wireSchema, it->second);
-                } catch (const std::invalid_argument &e) {
+                } catch (const std::invalid_argument& e) {
                     std::set<std::string> dataTypes;
                     for (typename ConverterMap::const_iterator it_ = this->converters.begin();
                          it_ != this->converters.end(); ++it_) {
@@ -154,7 +154,7 @@ public:
             = converter;
     }
 
-    ConverterPtr getConverter(const std::string &wireSchema, const std::string &dataType) const {
+    ConverterPtr getConverter(const std::string& wireSchema, const std::string& dataType) const {
         typename ConverterMap::const_iterator it
             = this->converters.find(std::make_pair(wireSchema, dataType));
         if (it == this->converters.end()) {
@@ -164,7 +164,7 @@ public:
         return it->second;
     }
 
-    ConverterPtr getConverter(const ConverterSignature &signature) const {
+    ConverterPtr getConverter(const ConverterSignature& signature) const {
         return getConverter(signature.first, signature.second);
     }
 
@@ -184,7 +184,7 @@ private:
 	return "Repository<" + rsc::runtime::typeName<WireType>() + ">";
     }
 
-    void printContents(std::ostream &stream) const {
+    void printContents(std::ostream& stream) const {
 	stream << std::endl;
 	for (typename ConverterMap::const_iterator it = this->converters.begin();
 	     it != this->converters.end(); ++it) {

@@ -52,7 +52,7 @@ public:
     virtual ~MetaData();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     /**
      * Returns the ID (a UUID) of the sending participant.
@@ -66,7 +66,7 @@ public:
      *
      * @param senderId id of the sending participant
      */
-    void setSenderId(const rsc::misc::UUID &senderId);
+    void setSenderId(const rsc::misc::UUID& senderId);
 
     /**
      * @name framework timestamps
@@ -96,9 +96,9 @@ public:
      *
      * @param time timestamp in microseconds or 0 to use current system time
      */
-    void setCreateTime(const boost::uint64_t &time = 0);
-    void setCreateTime(const double &time);
-    void setCreateTime(const boost::posix_time::ptime &time);
+    void setCreateTime(const boost::uint64_t& time = 0);
+    void setCreateTime(const double& time);
+    void setCreateTime(const boost::posix_time::ptime& time);
 
     /**
      * Returns the time at which the generated notification for an event was
@@ -113,9 +113,9 @@ public:
      *
      * @param time timestamp in microseconds or 0 to use current system time
      */
-    void setSendTime(const boost::uint64_t &time = 0);
-    void setSendTime(const double &time);
-    void setSendTime(const boost::posix_time::ptime &time);
+    void setSendTime(const boost::uint64_t& time = 0);
+    void setSendTime(const double& time);
+    void setSendTime(const boost::posix_time::ptime& time);
 
     /**
      * Returns the time at which an event is received by listener in its encoded
@@ -130,9 +130,9 @@ public:
      *
      * @param time timestamp in microseconds or 0 to use current system time
      */
-    void setReceiveTime(const boost::uint64_t &time = 0);
-    void setReceiveTime(const double &time);
-    void setReceiveTime(const boost::posix_time::ptime &time);
+    void setReceiveTime(const boost::uint64_t& time = 0);
+    void setReceiveTime(const double& time);
+    void setReceiveTime(const boost::posix_time::ptime& time);
 
     /**
      * Returns the time at which an event was decoded and will be dispatched to
@@ -149,9 +149,9 @@ public:
      *
      * @param time timestamp in microseconds or 0 to use current system time
      */
-    void setDeliverTime(const boost::uint64_t &time = 0);
-    void setDeliverTime(const double &time);
-    void setDeliverTime(const boost::posix_time::ptime &time);
+    void setDeliverTime(const boost::uint64_t& time = 0);
+    void setDeliverTime(const double& time);
+    void setDeliverTime(const boost::posix_time::ptime& time);
     //@}
 
     /**
@@ -173,7 +173,7 @@ public:
      * @param key the key to check
      * @return @c true if a timestamp for the given key exists, else @c false
      */
-    bool hasUserTime(const std::string &key) const;
+    bool hasUserTime(const std::string& key) const;
     /**
      * Returns the user timestamp stored under the provided key.
      *
@@ -181,16 +181,16 @@ public:
      * @return timestamp
      * @throw std::invalid_argument no timestamp stored und the provided key
      */
-    boost::uint64_t getUserTime(const std::string &key) const;
+    boost::uint64_t getUserTime(const std::string& key) const;
     /**
      * Sets a user timestamp and replaces existing entries.
      *
      * @param key the key for the timestamp
      * @param time time in microseconds or 0 to use current system time
      */
-    void setUserTime(const std::string &key, const boost::uint64_t &time = 0);
-    void setUserTime(const std::string &key, const double &time);
-    void setUserTime(const std::string &key, const boost::posix_time::ptime &time);
+    void setUserTime(const std::string& key, const boost::uint64_t& time = 0);
+    void setUserTime(const std::string& key, const double& time);
+    void setUserTime(const std::string& key, const boost::posix_time::ptime& time);
 
     std::map<std::string, boost::uint64_t>::const_iterator userTimesBegin() const;
     std::map<std::string, boost::uint64_t>::const_iterator userTimesEnd() const;
@@ -215,7 +215,7 @@ public:
      * @param key key to check
      * @return @c true if an info for the key is defined, else @c false
      */
-    bool hasUserInfo(const std::string &key) const;
+    bool hasUserInfo(const std::string& key) const;
     /**
      * Returns the user-defined string for the given key.
      *
@@ -223,7 +223,7 @@ public:
      * @return user info given for this key
      * @throw std::invalid_argument no info set for the specified key
      */
-    std::string getUserInfo(const std::string &key) const;
+    std::string getUserInfo(const std::string& key) const;
     /**
      * Sets a user info with the specified key and value or replaces and already
      * existing one
@@ -231,19 +231,19 @@ public:
      * @param key the key to set
      * @param value the user value
      */
-    void setUserInfo(const std::string &key, const std::string &value);
+    void setUserInfo(const std::string& key, const std::string& value);
     std::map<std::string, std::string>::const_iterator userInfosBegin() const;
     std::map<std::string, std::string>::const_iterator userInfosEnd() const;
     //@}
 
-    bool operator==(const MetaData &other) const;
+    bool operator==(const MetaData& other) const;
 
 private:
     rsc::misc::UUID senderId;
 
-    void checkedTimeStampSet(boost::uint64_t &timestamp, const boost::uint64_t &proposedValue);
-    void checkedTimeStampSet(boost::uint64_t &timestamp, const double &proposedValue);
-    void checkedTimeStampSet(boost::uint64_t &timestamp, const boost::posix_time::ptime &proposedValue);
+    void checkedTimeStampSet(boost::uint64_t& timestamp, const boost::uint64_t& proposedValue);
+    void checkedTimeStampSet(boost::uint64_t& timestamp, const double& proposedValue);
+    void checkedTimeStampSet(boost::uint64_t& timestamp, const boost::posix_time::ptime& proposedValue);
 
     static const boost::posix_time::ptime UNIX_EPOCH;
 
@@ -257,6 +257,6 @@ private:
 
 };
 
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream, const MetaData &meta);
+RSB_EXPORT std::ostream& operator<<(std::ostream& stream, const MetaData& meta);
 
 }

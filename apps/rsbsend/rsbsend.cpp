@@ -30,9 +30,9 @@
 using namespace std;
 using namespace rsb;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
 
     if (argc != 3) {
         cerr << "Usage: " << argv[0] << " [scope] [file with contents]" << endl;

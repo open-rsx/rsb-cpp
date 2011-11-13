@@ -39,7 +39,7 @@ using namespace rsc::logging;
 namespace rsb {
 namespace eventprocessing {
 
-EventReceivingStrategy* DirectEventReceivingStrategy::create(const Properties &props) {
+EventReceivingStrategy* DirectEventReceivingStrategy::create(const Properties& props) {
     return new DirectEventReceivingStrategy(props.getAs<bool>("singlethreaded"));
 }
 
@@ -52,7 +52,7 @@ DirectEventReceivingStrategy::DirectEventReceivingStrategy(bool singleThreaded) 
 DirectEventReceivingStrategy::~DirectEventReceivingStrategy() {
 }
 
-void DirectEventReceivingStrategy::printContents(ostream &stream) const {
+void DirectEventReceivingStrategy::printContents(ostream& stream) const {
     boost::shared_lock<boost::shared_mutex> filtersLock(this->filtersMutex);
     boost::shared_lock<boost::shared_mutex> errorLock(this->errorStrategyMutex);
     stream << "filters = " << this->filters
@@ -61,7 +61,7 @@ void DirectEventReceivingStrategy::printContents(ostream &stream) const {
 }
 
 void DirectEventReceivingStrategy::setHandlerErrorStrategy(
-        const ParticipantConfig::ErrorStrategy &strategy) {
+        const ParticipantConfig::ErrorStrategy& strategy) {
     boost::shared_lock<boost::shared_mutex> lock(errorStrategyMutex);
     this->errorStrategy = strategy;
 }
@@ -111,7 +111,7 @@ bool DirectEventReceivingStrategy::filterNoLock(EventPtr e) {
     return true;
 }
 
-void DirectEventReceivingStrategy::handleDispatchError(const string &message) {
+void DirectEventReceivingStrategy::handleDispatchError(const string& message) {
     boost::shared_lock<boost::shared_mutex> strategyLock(errorStrategyMutex);
 
     switch (errorStrategy) {
@@ -186,14 +186,14 @@ void DirectEventReceivingStrategy::handleNoLock(EventPtr event) {
 }
 
 void DirectEventReceivingStrategy::addHandler(rsb::HandlerPtr handler,
-        const bool &/*wait*/) {
+        const bool& /*wait*/) {
     boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
 
     this->handlers.push_back(handler);
 }
 
 void DirectEventReceivingStrategy::removeHandler(rsb::HandlerPtr handler,
-        const bool &/*wait*/) {
+        const bool& /*wait*/) {
     boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
 
     this->handlers.remove(handler);

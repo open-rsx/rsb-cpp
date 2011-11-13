@@ -52,7 +52,7 @@ public:
      * @return @c true if the associated converter should be selected;
      * @c false otherwise.
      */
-    virtual bool match(const std::string &key) const = 0;
+    virtual bool match(const std::string& key) const = 0;
 };
 
 typedef boost::shared_ptr<ConverterPredicate> ConverterPredicatePtr;
@@ -65,7 +65,7 @@ typedef boost::shared_ptr<ConverterPredicate> ConverterPredicatePtr;
  */
 class AlwaysApplicable: public ConverterPredicate {
 public:
-    bool match(const std::string &/*key*/) const {
+    bool match(const std::string& /*key*/) const {
         return true;
     }
 
@@ -73,7 +73,7 @@ public:
         return "AlwaysApplicable";
     }
 
-    void printContents(std::ostream &/*stream*/) const {
+    void printContents(std::ostream& /*stream*/) const {
     }
 };
 
@@ -109,7 +109,7 @@ public:
                                             this->converters.begin()));
     }
 
-    ConverterPtr getConverter(const std::string &key) const {
+    ConverterPtr getConverter(const std::string& key) const {
         for (typename ConverterList::const_iterator it = this->converters.begin();
              it != this->converters.end(); ++it) {
             if (it->first->match(key)) {
@@ -123,7 +123,7 @@ public:
         return "PredicateConverterList";
     }
 
-    void printContents(std::ostream &stream) const {
+    void printContents(std::ostream& stream) const {
         stream << "converters = " << this->converters;
     }
 private:

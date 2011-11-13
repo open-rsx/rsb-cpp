@@ -45,7 +45,7 @@ string Bus::getClassName() const {
     return "Bus";
 }
 
-void Bus::printContents(ostream &stream) const {
+void Bus::printContents(ostream& stream) const {
     stream << "sinks = " << sinks;
 }
 
@@ -87,7 +87,7 @@ void Bus::addSink(InConnectorPtr sink) {
 
     for (SinkMap::iterator it = this->sinks.begin(); it != this->sinks.end(); ++it) {
         if (it->first.isSubScopeOf(sink->getScope())) {
-            SinkList &connectors = it->second;
+            SinkList& connectors = it->second;
             connectors.push_back(sink);
         }
     }
@@ -131,7 +131,7 @@ void Bus::removeSink(InConnector* sink) {
 }
 
 void Bus::handle(EventPtr event) {
-    //    RSCDEBUG(logger, "Delivering event " << *event);
+    //    RSCDEBUG(logger, "Delivering event " << event);
 
     if (singleThreaded) {
         this->handleNoLock(event);
@@ -174,7 +174,7 @@ void Bus::handleNoLock(EventPtr event) {
         it = this->sinks.find(*event->getScopePtr());
     }
 
-    const SinkList &connectors = it->second;
+    const SinkList& connectors = it->second;
     for (SinkList::const_iterator it__ = connectors.begin(); it__
             != connectors.end(); ++it__) {
         InConnectorPtr connector = it__->lock();

@@ -35,7 +35,7 @@ namespace transport {
 namespace socket {
 
 BusServer::BusServer(uint16_t    port,
-                     io_service &service)
+                     io_service& service)
     : Bus(service),
       logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
@@ -53,7 +53,7 @@ void BusServer::acceptOne() {
 }
 
 void BusServer::handleAccept(SocketPtr                 socket,
-                             const boost::system::error_code &error) {
+                             const boost::system::error_code& error) {
     if (!error) {
         //
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
@@ -72,7 +72,7 @@ void BusServer::handleAccept(SocketPtr                 socket,
 void BusServer::handleIncoming(EventPtr event) {
     Bus::handleIncoming(event);
 
-    RSCDEBUG(logger, "Delivering received event to connections " << *event);
+    RSCDEBUG(logger, "Delivering received event to connections " << event);
     /** TODO(jmoringe): implement */
     /*for (ConnectionList::iterator it = this->connections.begin();
          it != this->connections.end(); ++it) {

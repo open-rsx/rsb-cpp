@@ -42,7 +42,7 @@ namespace spread {
  */
 class RSB_EXPORT SpreadConnector {
 public:
-    SpreadConnector(const std::string &host = defaultHost(),
+    SpreadConnector(const std::string& host = defaultHost(),
             unsigned int port = defaultPort());
 
     virtual ~SpreadConnector();
@@ -50,15 +50,15 @@ public:
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
-    void join(const std::string &name);
-    void leave(const std::string &name);
+    void join(const std::string& name);
+    void leave(const std::string& name);
 
     /**
      * @throw CommException error sending message
      */
-    void send(const SpreadMessage &msg);
+    void send(const SpreadMessage& msg);
     void receive(SpreadMessagePtr msg);
 
     void init(const std::string& host, unsigned int port);
@@ -67,8 +67,8 @@ public:
 
     SpreadMessage::QOS getMessageQoS() const;
 
-    const std::vector<std::string>& makeGroupNames(const Scope &scope) const;
-    std::string makeGroupName(const Scope &scope) const;
+    const std::vector<std::string>& makeGroupNames(const Scope& scope) const;
+    std::string makeGroupName(const Scope& scope) const;
 
 private:
 

@@ -32,7 +32,7 @@ using namespace rsb::converter;
 namespace rsb {
 namespace spread {
 
-transport::InPullConnector *InPullConnector::create(const Properties& args) {
+transport::InPullConnector* InPullConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InPullConnector");
     RSCDEBUG(logger, "creating InPullConnector with properties " << args);
 
@@ -42,7 +42,7 @@ transport::InPullConnector *InPullConnector::create(const Properties& args) {
 }
 
 InPullConnector::InPullConnector(ConverterSelectionStrategyPtr  converters,
-                                 const string		       &host,
+                                 const string&		       host,
                                  unsigned int                   port):
     transport::ConverterSelectingConnector<string>(converters), logger(
             Logger::getLogger("rsb.spread.InPullConnector")), active(false),
@@ -59,7 +59,7 @@ string InPullConnector::getClassName() const {
     return "InPullConnector";
 }
 
-void InPullConnector::printContents(ostream &stream) const {
+void InPullConnector::printContents(ostream& stream) const {
     stream << "active = " << this->active
            << ", connector = " << this->connector;
 }
@@ -80,11 +80,11 @@ void InPullConnector::deactivate() {
     this->connector->deactivate();
 }
 
-void InPullConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) {
+void InPullConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& specs) {
     this->connector->setQualityOfServiceSpecs(specs);
 }
 
-void InPullConnector::setScope(const Scope &scope) {
+void InPullConnector::setScope(const Scope& scope) {
     if (!active) {
         this->activationScope.reset(new Scope(scope));
     } else {

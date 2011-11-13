@@ -31,7 +31,7 @@ namespace transport {
 namespace socket {
 
 ConnectorBase::ConnectorBase(ConverterSelectionStrategyPtr  converters,
-                             const string                  &host,
+                             const string&                  host,
                              unsigned int                   port,
                              bool                           server) :
     ConverterSelectingConnector<string>(converters),

@@ -81,7 +81,7 @@ public:
      * @param scope The base scope of the server the methods of which
      * will be called.
      */
-    RemoteServer(const Scope &scope);
+    RemoteServer(const Scope& scope);
     virtual ~RemoteServer();
 
     /**
@@ -96,7 +96,7 @@ public:
      * the result (an @ref EventPtr) of the method call can be
      * obtained at the caller's discretion.
      */
-    FuturePtr callAsync(const std::string &methodName, EventPtr data);
+    FuturePtr callAsync(const std::string& methodName, EventPtr data);
 
     /**
      * Call the method named @a methodName on the remote server,
@@ -113,7 +113,7 @@ public:
      * obtained at the caller's discretion.
      */
     template <typename O, typename I>
-    DataFuture<O> callAsync(const std::string    &methodName,
+    DataFuture<O> callAsync(const std::string&    methodName,
                             boost::shared_ptr<I> args) {
         EventPtr request(new Event);
         request->setType(rsc::runtime::typeName<I>());
@@ -141,7 +141,7 @@ public:
      * @throw rsc::threading::FutureTaskExecutionException if the
      * method call fails.
      */
-    EventPtr call(const std::string &methodName,
+    EventPtr call(const std::string& methodName,
                   EventPtr          data,
                   unsigned int      maxReplyWaitTime = 25);
 
@@ -167,7 +167,7 @@ public:
      * method call fails.
      */
     template <typename O, typename I>
-    boost::shared_ptr<O> call(const std::string    &methodName,
+    boost::shared_ptr<O> call(const std::string&    methodName,
                               boost::shared_ptr<I> args,
                               unsigned int         maxReplyWaitTime = 25) {
         return callAsync<O>(methodName, args).get(maxReplyWaitTime);
@@ -189,8 +189,8 @@ private:
     boost::mutex methodSetMutex;
     std::map<std::string, MethodSet> methodSets;
 
-    MethodSet getMethodSet(const std::string &methodName,
-                           const std::string &sendType);
+    MethodSet getMethodSet(const std::string& methodName,
+                           const std::string& sendType);
 
 };
 

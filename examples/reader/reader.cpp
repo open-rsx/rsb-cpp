@@ -32,7 +32,7 @@ using namespace rsc::logging;
 using namespace rsc::misc;
 using namespace rsb;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     LoggerFactory::getInstance()->reconfigure(Logger::LEVEL_TRACE);
     LoggerPtr logger = Logger::getLogger("reader");
 
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
         scope = Scope("/example/informer");
     }
 
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
     ReaderPtr reader = factory.createReader(scope);
     RSCINFO(logger, "Reader setup finished. Waiting for messages on scope " << scope);
 

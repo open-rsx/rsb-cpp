@@ -68,17 +68,17 @@ class RSB_EXPORT InRouteConfigurator: public virtual rsc::runtime::Printable,
 public:
     typedef std::set<transport::InConnectorPtr> ConnectorSet;
 
-    InRouteConfigurator(const Scope             &scope,
-                        const ParticipantConfig &config);
+    InRouteConfigurator(const Scope&             scope,
+                        const ParticipantConfig& config);
     virtual ~InRouteConfigurator();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     virtual void activate();
     virtual void deactivate();
 
-    const ParticipantConfig::EventProcessingStrategy &getReceivingStrategyConfig() const;
+    const ParticipantConfig::EventProcessingStrategy& getReceivingStrategyConfig() const;
 
     EventReceivingStrategyPtr getEventReceivingStrategy() const;
 
@@ -97,7 +97,7 @@ public:
      * @param specs QoS specification
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 private:
 
     class Impl;

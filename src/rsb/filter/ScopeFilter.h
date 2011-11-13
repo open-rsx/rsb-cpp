@@ -31,11 +31,11 @@ namespace filter {
  */
 class RSB_EXPORT ScopeFilter: public Filter {
 public:
-    ScopeFilter(const Scope &scope);
+    ScopeFilter(const Scope& scope);
     virtual ~ScopeFilter();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     bool match(EventPtr e);
 

@@ -31,7 +31,7 @@ namespace rsb {
  */
 class RSB_EXPORT CommException: public rsb::Exception {
 public:
-	CommException(const std::string &m);
+	CommException(const std::string& m);
 	virtual ~CommException() throw ();
 };
 

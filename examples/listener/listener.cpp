@@ -43,10 +43,10 @@ void printData(boost::shared_ptr<string> e) {
     cout << *e << endl;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
     // first get a factory instance that is used to create RSB domain objects
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
 
     boost::timer t;
 

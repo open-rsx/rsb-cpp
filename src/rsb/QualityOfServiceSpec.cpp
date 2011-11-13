@@ -43,11 +43,11 @@ QualityOfServiceSpec::Reliability QualityOfServiceSpec::getReliability() const {
     return reliability;
 }
 
-bool QualityOfServiceSpec::operator==(const QualityOfServiceSpec &other) const {
+bool QualityOfServiceSpec::operator==(const QualityOfServiceSpec& other) const {
     return (ordering == other.ordering && reliability == other.reliability);
 }
 
-ostream &operator<<(ostream &stream, const QualityOfServiceSpec &spec) {
+ostream& operator<<(ostream& stream, const QualityOfServiceSpec& spec) {
     return stream << "QualityOfServiceSpec[ordering = " << spec.ordering
             << ", reliability = " << spec.reliability << "]";
 }

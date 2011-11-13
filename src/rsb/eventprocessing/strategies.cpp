@@ -44,7 +44,7 @@ void registerDefaultEventProcessingStrategies() {
     registered = true;
 
     {
-        EventReceivingStrategyFactory &factory
+        EventReceivingStrategyFactory& factory
             = EventReceivingStrategyFactory::getInstance();
 
         factory.impls().register_("direct",   &DirectEventReceivingStrategy::create);
@@ -52,7 +52,7 @@ void registerDefaultEventProcessingStrategies() {
     }
 
     // {
-    //     EventSendingStrategyFactory &factory
+    //     EventSendingStrategyFactory& factory
     //         = EventSendingStrategyFactory::getInstance();
     //
     //     factory.impls().register_("direct", &DirectEventSendingStrategy::create);

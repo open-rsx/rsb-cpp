@@ -23,31 +23,31 @@ using namespace std;
 
 namespace rsb {
 
-InformerBasePtr crateInformerBase(const Scope             &scope,
-                                  const string            &dataType,
-                                  const ParticipantConfig &config) {
+InformerBasePtr crateInformerBase(const Scope&             scope,
+                                  const string&            dataType,
+                                  const ParticipantConfig& config) {
     return Factory::getInstance().createInformerBase(scope, dataType, config);
 }
 
-ListenerPtr createListener(const Scope             &scope,
-                           const ParticipantConfig &config) {
+ListenerPtr createListener(const Scope&             scope,
+                           const ParticipantConfig& config) {
     return Factory::getInstance().createListener(scope, config);
 }
 
-ReaderPtr createReader(const Scope             &scope,
-                       const ParticipantConfig &config) {
+ReaderPtr createReader(const Scope&             scope,
+                       const ParticipantConfig& config) {
     return Factory::getInstance().createReader(scope, config);
 }
 
-ServicePtr createService(const Scope &scope) {
+ServicePtr createService(const Scope& scope) {
     return Factory::getInstance().createService(scope);
 }
 
-patterns::ServerPtr createServer(const Scope &scope) {
+patterns::ServerPtr createServer(const Scope& scope) {
     return Factory::getInstance().createServer(scope);
 }
 
-patterns::RemoteServerPtr createRemoteServer(const Scope &scope) {
+patterns::RemoteServerPtr createRemoteServer(const Scope& scope) {
     return Factory::getInstance().createRemoteServer(scope);
 }
 

@@ -25,7 +25,7 @@ using namespace std;
 
 namespace rsb {
 
-LocalService::LocalService(const Scope &scope) :
+LocalService::LocalService(const Scope& scope) :
     Service(scope) {
 }
 

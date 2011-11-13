@@ -53,20 +53,20 @@ namespace eventprocessing {
  */
 class RSB_EXPORT DirectEventReceivingStrategy: public PushEventReceivingStrategy {
 public:
-    static EventReceivingStrategy* create(const rsc::runtime::Properties &props);
+    static EventReceivingStrategy* create(const rsc::runtime::Properties& props);
 
     DirectEventReceivingStrategy(bool singleThreaded = false);
 
     virtual ~DirectEventReceivingStrategy();
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
-    void setHandlerErrorStrategy(const ParticipantConfig::ErrorStrategy &strategy);
+    void setHandlerErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy);
 
     // Qualification of HandlerPtr is required since there is another
     // HandlerPtr type in eventprocessing.
-    virtual void addHandler(rsb::HandlerPtr handler, const bool &wait);
-    virtual void removeHandler(rsb::HandlerPtr handler, const bool &wait);
+    virtual void addHandler(rsb::HandlerPtr handler, const bool& wait);
+    virtual void removeHandler(rsb::HandlerPtr handler, const bool& wait);
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
@@ -81,7 +81,7 @@ private:
     bool filter(EventPtr event);
     void deliver(rsb::HandlerPtr handler, EventPtr event);
 
-    void handleDispatchError(const std::string &message);
+    void handleDispatchError(const std::string& message);
 
     bool filterNoLock(EventPtr e);
 

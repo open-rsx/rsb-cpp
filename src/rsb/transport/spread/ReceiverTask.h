@@ -57,7 +57,7 @@ class ReceiverTask: public rsc::threading::RepetitiveTask {
 public:
 
     ReceiverTask(SpreadConnectionPtr s, eventprocessing::HandlerPtr handler,
-            InConnector *connector);
+            InConnector* connector);
     virtual ~ReceiverTask();
 
     void execute();
@@ -70,7 +70,7 @@ public:
      * @param pruning if @c true and not pruning, start pruning, else if @c false
      *        and pruning, stop pruning
      */
-    void setPruning(const bool &pruning);
+    void setPruning(const bool& pruning);
 
 private:
 
@@ -96,7 +96,7 @@ private:
 
     rsc::logging::LoggerPtr logger;
     SpreadConnectionPtr con;
-    InConnector *connector;
+    InConnector* connector;
     AssemblyPoolPtr assemblyPool;
     boost::recursive_mutex handlerMutex;
     eventprocessing::HandlerPtr handler;

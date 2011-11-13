@@ -41,8 +41,8 @@ namespace patterns {
 Server::IntlCallback::~IntlCallback() {
 }
 
-Server::CallbackBase::CallbackBase(const string &requestType,
-                                   const string &replyType)
+Server::CallbackBase::CallbackBase(const string& requestType,
+                                   const string& replyType)
     : requestType(requestType), replyType(replyType) {
 }
 
@@ -65,7 +65,7 @@ private:
 
 public:
 
-    RequestHandler(const string &methodName, Server::CallbackPtr callback,
+    RequestHandler(const string& methodName, Server::CallbackPtr callback,
             Informer<AnyType>::Ptr informer) :
         logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
                 + methodName)), methodName(methodName), callback(callback),
@@ -76,7 +76,7 @@ public:
         return "RequestHandler";
     }
 
-    void printContents(ostream &stream) const {
+    void printContents(ostream& stream) const {
         stream << "methodName = " << methodName;
     }
 
@@ -101,7 +101,7 @@ public:
                 = callback->intlCall(methodName, event->getData());
             reply->setType(callback->getReplyType());
             reply->setData(returnData);
-        } catch (const exception &e) {
+        } catch (const exception& e) {
             reply->setType(typeName<string>());
             reply->setData(boost::shared_ptr<string>(new string(typeName(e) + ": " + e.what())));
             reply->mutableMetaData().setUserInfo("rsb:error?", "");
@@ -111,14 +111,14 @@ public:
 
 };
 
-Server::Server(const Scope &scope) :
+Server::Server(const Scope& scope) :
     scope(scope) {
 }
 
 Server::~Server() {
 }
 
-void Server::registerMethod(const std::string &methodName, CallbackPtr callback) {
+void Server::registerMethod(const std::string& methodName, CallbackPtr callback) {
 
     // check that method does not exist
     if (methods.count(methodName)) {

@@ -38,8 +38,8 @@ namespace test {
  */
 class InformerTask: public rsc::threading::RepetitiveTask {
 public:
-    InformerTask(rsb::transport::OutConnectorPtr p, const Scope &scope,
-            const unsigned int &numEvents, const unsigned int &dataSizeInBytes);
+    InformerTask(rsb::transport::OutConnectorPtr p, const Scope& scope,
+            const unsigned int& numEvents, const unsigned int& dataSizeInBytes);
     virtual ~InformerTask();
 
     void execute();
@@ -69,11 +69,11 @@ private:
 class WaitingObserver {
 public:
 
-    WaitingObserver(const unsigned int &desiredEvents, const Scope &scope);
+    WaitingObserver(const unsigned int& desiredEvents, const Scope& scope);
 
     void handler(EventPtr e);
 
-    bool waitReceived(const unsigned int &timeoutMs = 0);
+    bool waitReceived(const unsigned int& timeoutMs = 0);
 
     std::vector<EventPtr> getEvents();
 

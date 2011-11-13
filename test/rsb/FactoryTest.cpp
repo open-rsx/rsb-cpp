@@ -48,7 +48,7 @@ protected:
 TEST_F(FactoryTest, testDefaultParticipantConfig)
 {
 
-    Factory &f = Factory::getInstance();
+    Factory& f = Factory::getInstance();
 
     EXPECT_EQ(size_t(1), f.getDefaultParticipantConfig().getTransports().size());
 
@@ -64,7 +64,7 @@ TEST_F(FactoryTest, testDefaultParticipantConfig)
 TEST_F(FactoryTest, testCreateService)
 {
 
-    Factory &f = Factory::getInstance();
+    Factory& f = Factory::getInstance();
 
     Scope scopeA("/a");
     Scope scopeB("/b/with/sub");

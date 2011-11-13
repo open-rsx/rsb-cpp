@@ -53,7 +53,7 @@ public:
      *
      * @param scope scope of the connector
      */
-    virtual void setScope(const Scope &scope) = 0;
+    virtual void setScope(const Scope& scope) = 0;
 };
 
 typedef InConnector::Ptr InConnectorPtr;

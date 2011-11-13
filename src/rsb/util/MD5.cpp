@@ -83,7 +83,7 @@ public:
      * FPM: At this point I diverge from GnuPG's implementation to write my
      * own wrapper function.  I'll use this to hash the passphrase.
      */
-    byte *hash(byte *buf, size_t nbytes) {
+    byte* hash(byte* buf, size_t nbytes) {
         byte* ret_val;
 
         this->init();
@@ -114,13 +114,13 @@ private:
     /**
      * transform n*64 bytes
      */
-    void transform(byte *data) {
+    void transform(byte* data) {
         u32 correct_words[16];
         u32 A = this->A;
         u32 B = this->B;
         u32 C = this->C;
         u32 D = this->D;
-        u32 *cwp = correct_words;
+        u32* cwp = correct_words;
 
 #ifdef BIG_ENDIAN_HOST
         {
@@ -245,7 +245,7 @@ private:
      * account for the presence of each of the characters inBuf[0..inLen-1]
      * in the message whose digest is being computed.
      */
-    void write(byte *inbuf, size_t inlen) {
+    void write(byte* inbuf, size_t inlen) {
         if (this->count == 64) /* flush the buffer */
         {
             this->transform(this->buf);
@@ -289,7 +289,7 @@ private:
      */
     void final() {
         u32 t, msb, lsb;
-        byte *p;
+        byte* p;
 
         this->write(NULL, 0);
 
@@ -370,7 +370,7 @@ private:
 #undef X
     }
 
-    byte *read() {
+    byte* read() {
         return this->buf;
     }
 
@@ -384,11 +384,11 @@ private:
 
 };
 
-void freeMd5Hash(void *hash) {
-    free((unsigned char *) hash);
+void freeMd5Hash(void* hash) {
+    free((unsigned char*) hash);
 }
 
-MD5::MD5(const string &s) :
+MD5::MD5(const string& s) :
             hasher(new MD5Hasher),
             hash(hasher->hash((unsigned char*) s.c_str(), strlen(s.c_str())),
                     freeMd5Hash) {
@@ -397,7 +397,7 @@ MD5::MD5(const string &s) :
 MD5::~MD5() {
 }
 
-string MD5::toHexString(const bool &pretty) const {
+string MD5::toHexString(const bool& pretty) const {
 
     stringstream s;
     s << hex;
@@ -413,7 +413,7 @@ string MD5::toHexString(const bool &pretty) const {
 
 }
 
-ostream &operator<<(ostream &stream, const MD5 &sum) {
+ostream& operator<<(ostream& stream, const MD5& sum) {
     return stream << sum.toHexString(true);
 }
 

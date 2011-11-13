@@ -53,7 +53,7 @@ public:
     virtual ~OutRouteConfigurator();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     void activate();
     void deactivate();
@@ -75,7 +75,7 @@ public:
      * @param specs QoS specification
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 private:
 
     class Impl;

@@ -43,7 +43,7 @@ Uint64Converter::Uint64Converter() :
 Uint64Converter::~Uint64Converter() {
 }
 
-string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
+string Uint64Converter::serialize(const AnnotatedData& data, string& wire) {
     assert(data.first == this->getDataType());
 
     boost::shared_ptr<uint64_t> number = boost::static_pointer_cast<uint64_t>(data.second);
@@ -54,8 +54,8 @@ string Uint64Converter::serialize(const AnnotatedData &data, string &wire) {
     return WIRE_SCHEMA;
 }
 
-AnnotatedData Uint64Converter::deserialize(const string &wireSchema,
-                                           const string &wire) {
+AnnotatedData Uint64Converter::deserialize(const string& wireSchema,
+                                           const string& wire) {
     assert(wireSchema == WIRE_SCHEMA);
     assert(wire.size() == 8);
 

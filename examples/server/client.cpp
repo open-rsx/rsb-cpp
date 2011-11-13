@@ -31,10 +31,10 @@ using namespace boost;
 using namespace rsb;
 using namespace rsb::patterns;
 
-int main(int /*argc*/, char **/*argv*/) {
+int main(int /*argc*/, char** /*argv*/) {
     // Use the RSB factory to create a RemoteServer instance for the
     // server at scope /example/server.
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
     RemoteServerPtr remoteServer
         = factory.createRemoteServer(Scope("/example/server"));
 
@@ -57,7 +57,7 @@ int main(int /*argc*/, char **/*argv*/) {
             boost:: shared_ptr<string> result
                 = remoteServer->call<string>(methodName1, request, 10);
             cout << "Got result: " << *result << endl;
-        } catch (const std::exception &e) {
+        } catch (const std::exception& e) {
             cerr << "Error calling method: " << e.what() << endl;
         }
 
@@ -75,7 +75,7 @@ int main(int /*argc*/, char **/*argv*/) {
             cout << "Got result: " << *result << ": "
                     << *(static_pointer_cast<string>(result->getData()))
                     << endl;
-        } catch (const std::exception &e) {
+        } catch (const std::exception& e) {
             cerr << "Error calling method: " << e.what() << endl;
         }
 
@@ -86,7 +86,7 @@ int main(int /*argc*/, char **/*argv*/) {
         try {
             remoteServer->call<string>(methodName3, boost::shared_ptr<string>(new string("bla")));
             cout << "Method call succeeded; This should not happen" << endl;
-        } catch (const std::exception &e) {
+        } catch (const std::exception& e) {
             cout << "Got error: " << e.what() << endl;
         }
 

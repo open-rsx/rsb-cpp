@@ -38,7 +38,7 @@ using namespace std;
 class ErrorGeneratingHandler: public rsb::Handler {
 public:
 
-    ErrorGeneratingHandler(const bool &catchAll) :
+    ErrorGeneratingHandler(const bool& catchAll) :
         catchAll(catchAll) {
     }
 
@@ -63,7 +63,7 @@ private:
 
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
     if (argc != 2) {
         cerr << "expected argument" << endl;

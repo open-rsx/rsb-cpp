@@ -60,7 +60,7 @@ protected:
      * @throw rsc::runtime::NoSuchObject If no converter could be
      * found for @a key.
      */
-    ConverterPtr getConverter(const std::string &key) const {
+    ConverterPtr getConverter(const std::string& key) const {
         return this->converters->getConverter(key);
     }
 private:

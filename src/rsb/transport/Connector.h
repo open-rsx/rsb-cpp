@@ -52,7 +52,7 @@ public:
      * @param specs QoS specification
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
-    virtual void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs) = 0;
+    virtual void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs) = 0;
 };
 
 typedef boost::shared_ptr<Connector> ConnectorPtr;

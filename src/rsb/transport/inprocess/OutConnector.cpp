@@ -55,7 +55,7 @@ void OutConnector::activate() {
 void OutConnector::deactivate() {
 }
 
-void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
+void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
 }
 
 void OutConnector::handle(EventPtr event) {

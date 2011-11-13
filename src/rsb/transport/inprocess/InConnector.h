@@ -42,20 +42,20 @@ public:
     virtual ~InConnector();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     Scope getScope() const;
-    void setScope(const Scope &scope);
+    void setScope(const Scope& scope);
 
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void handle(EventPtr event);
 
-    static rsb::transport::InPushConnector *create(
-            const rsc::runtime::Properties &args);
+    static rsb::transport::InPushConnector* create(
+            const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
 

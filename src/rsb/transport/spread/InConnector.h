@@ -41,25 +41,25 @@ class RSB_EXPORT InConnector: public transport::InPushConnector,
     friend class ReceiverTask;
 public:
     InConnector(converter::ConverterSelectionStrategy<std::string>::Ptr converters,
-                const std::string &host = defaultHost(),
+                const std::string& host = defaultHost(),
                 unsigned int port = defaultPort());
     virtual ~InConnector();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
-    void setScope(const Scope &scope);
+    void setScope(const Scope& scope);
 
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void addHandler(eventprocessing::HandlerPtr handler);
     void removeHandler(eventprocessing::HandlerPtr handler);
 
-    static transport::InPushConnector *create(
-            const rsc::runtime::Properties &args);
+    static transport::InPushConnector* create(
+            const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
 

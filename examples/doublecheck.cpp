@@ -32,9 +32,9 @@ void printData(const std::string& name, boost::shared_ptr<string> e) {
     cout << "[" << name << "] received: " << *e << endl;
 }
 
-int main(int /*argc*/, char **/*argv*/) {
+int main(int /*argc*/, char** /*argv*/) {
 
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
 
     for (int i = 0; i < 3; ++i) {
 

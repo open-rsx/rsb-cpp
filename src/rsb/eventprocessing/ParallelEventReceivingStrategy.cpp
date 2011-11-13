@@ -38,7 +38,7 @@ using namespace rsc::debug;
 namespace rsb {
 namespace eventprocessing {
 
-EventReceivingStrategy* ParallelEventReceivingStrategy::create(const Properties &props) {
+EventReceivingStrategy* ParallelEventReceivingStrategy::create(const Properties& props) {
     return new ParallelEventReceivingStrategy(props.getAs<unsigned int>("threads", 5));
 }
 
@@ -59,14 +59,14 @@ string ParallelEventReceivingStrategy::getClassName() const {
     return "ParallelEventReceivingStrategy";
 }
 
-void ParallelEventReceivingStrategy::printContents(ostream &stream) const {
+void ParallelEventReceivingStrategy::printContents(ostream& stream) const {
     shared_lock<shared_mutex> filtersLock(filtersMutex);
     recursive_mutex::scoped_lock errorLock(errorStrategyMutex);
     stream << "filters = " << filters << ", errorStrategy = " << errorStrategy;
 }
 
 void ParallelEventReceivingStrategy::setHandlerErrorStrategy(
-        const ParticipantConfig::ErrorStrategy &strategy) {
+        const ParticipantConfig::ErrorStrategy& strategy) {
     recursive_mutex::scoped_lock lock(errorStrategyMutex);
     this->errorStrategy = strategy;
 }
@@ -118,7 +118,7 @@ bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e)
 
 }
 
-void ParallelEventReceivingStrategy::handleDispatchError(const string &message) {
+void ParallelEventReceivingStrategy::handleDispatchError(const string& message) {
 
     recursive_mutex::scoped_lock strategyLock(errorStrategyMutex);
     switch (errorStrategy) {
@@ -181,13 +181,13 @@ void ParallelEventReceivingStrategy::handle(EventPtr event) {
 }
 
 void ParallelEventReceivingStrategy::addHandler(rsb::HandlerPtr handler,
-        const bool &/*wait*/) {
+        const bool& /*wait*/) {
     // wait can be ignored because the pool always ensures this
     pool.registerReceiver(handler);
 }
 
 void ParallelEventReceivingStrategy::removeHandler(rsb::HandlerPtr handler,
-        const bool &/*wait*/) {
+        const bool& /*wait*/) {
     // wait can be ignored because the pool always ensures this
     pool.unregisterReceiver(handler);
 }

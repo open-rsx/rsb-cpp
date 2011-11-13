@@ -34,8 +34,8 @@ SchemaAndByteArrayConverter::SchemaAndByteArrayConverter() :
 SchemaAndByteArrayConverter::~SchemaAndByteArrayConverter() {
 }
 
-string SchemaAndByteArrayConverter::serialize(const AnnotatedData &data,
-        string &wire) {
+string SchemaAndByteArrayConverter::serialize(const AnnotatedData& data,
+        string& wire) {
 
     boost::shared_ptr<pair<string, boost::shared_ptr<string> > > realData =
             boost::static_pointer_cast<pair<string, boost::shared_ptr<string> > >(
@@ -46,8 +46,8 @@ string SchemaAndByteArrayConverter::serialize(const AnnotatedData &data,
 
 }
 
-AnnotatedData SchemaAndByteArrayConverter::deserialize(const string &wireSchema,
-        const string &wire) {
+AnnotatedData SchemaAndByteArrayConverter::deserialize(const string& wireSchema,
+        const string& wire) {
     return make_pair(
             getDataType(),
             boost::shared_ptr<pair<string, boost::shared_ptr<void> > >(

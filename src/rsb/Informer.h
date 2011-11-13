@@ -91,13 +91,13 @@ public:
         typedef boost::shared_ptr<T> type;
     };
 
-    InformerBase(const std::vector<transport::OutConnectorPtr> &connectors,
-            const Scope &scope, const ParticipantConfig &config,
-            const std::string &defaultType);
+    InformerBase(const std::vector<transport::OutConnectorPtr>& connectors,
+            const Scope& scope, const ParticipantConfig& config,
+            const std::string& defaultType);
 
     virtual ~InformerBase();
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     /**
      * Return the event payload type of this Informer.
@@ -113,7 +113,7 @@ public:
      * @param specs QoS specs
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
-    void setQualityOfSerivceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfSerivceSpecs(const QualityOfServiceSpec& specs);
 
     /**
      * Published @a data in the channel in which the informer
@@ -143,7 +143,7 @@ public:
 
     template<class T1>
     EventPtr uncheckedPublish(boost::shared_ptr<T1> data,
-            const std::string &type = rsc::runtime::typeName<T1>()) {
+            const std::string& type = rsc::runtime::typeName<T1>()) {
         VoidPtr p = boost::static_pointer_cast<void>(data);
         return uncheckedPublish(p, type);
     }
@@ -167,8 +167,8 @@ public:
      * @throw std::invalid_argument If @a type is incompatible with
      *                              the actual type of the informer.
      */
-    EventPtr publish(VoidPtr data, const std::string &type);
-    EventPtr uncheckedPublish(VoidPtr data, const std::string &type);
+    EventPtr publish(VoidPtr data, const std::string& type);
+    EventPtr uncheckedPublish(VoidPtr data, const std::string& type);
 
     /**
      * Publishes the @a event to the Informer's scope with the ability
@@ -244,9 +244,9 @@ public:
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createInformer instead of calling this directly.
      */
-    Informer(const std::vector<transport::OutConnectorPtr> &connectors,
-            const Scope &scope, const ParticipantConfig &config,
-            const std::string &type = detail::TypeName<T>()()) :
+    Informer(const std::vector<transport::OutConnectorPtr>& connectors,
+            const Scope& scope, const ParticipantConfig& config,
+            const std::string& type = detail::TypeName<T>()()) :
         InformerBase(connectors, scope, config, type),
                 logger(rsc::logging::Logger::getLogger(getClassName())) {
     }

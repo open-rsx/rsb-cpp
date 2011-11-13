@@ -38,7 +38,7 @@ class InRouteConfigurator::Impl {
 public:
 
     Impl(
-            const ParticipantConfig::EventProcessingStrategy &receivingStrategyConfig) :
+            const ParticipantConfig::EventProcessingStrategy& receivingStrategyConfig) :
         receivingStrategyConfig(receivingStrategyConfig) {
 
     }
@@ -53,8 +53,8 @@ public:
     volatile bool shutdown;
 };
 
-InRouteConfigurator::InRouteConfigurator(const Scope &scope,
-        const ParticipantConfig &config) :
+InRouteConfigurator::InRouteConfigurator(const Scope& scope,
+        const ParticipantConfig& config) :
     d(new Impl(config.getEventReceivingStrategy())) {
     d->logger = Logger::getLogger("rsb.eventprocessing.InRouteConfigurator");
     d->scope = scope;
@@ -71,7 +71,7 @@ string InRouteConfigurator::getClassName() const {
     return "InRouteConfigurator";
 }
 
-void InRouteConfigurator::printContents(ostream &stream) const {
+void InRouteConfigurator::printContents(ostream& stream) const {
     stream << "scope = " << d->scope << ", connectors = " << d->connectors
             << ", eventReceivingStrategy = " << d->eventReceivingStrategy
             << ", shutdown = " << d->shutdown;
@@ -106,7 +106,7 @@ void InRouteConfigurator::deactivate() {
     d->shutdown = true;
 }
 
-const ParticipantConfig::EventProcessingStrategy &InRouteConfigurator::getReceivingStrategyConfig() const {
+const ParticipantConfig::EventProcessingStrategy& InRouteConfigurator::getReceivingStrategyConfig() const {
     return d->receivingStrategyConfig;
 }
 
@@ -145,7 +145,7 @@ void InRouteConfigurator::filterRemoved(filter::FilterPtr filter) {
 }
 
 void InRouteConfigurator::setQualityOfServiceSpecs(
-        const QualityOfServiceSpec &specs) {
+        const QualityOfServiceSpec& specs) {
     for (ConnectorSet::iterator it = d->connectors.begin(); it
             != d->connectors.end(); ++it) {
         (*it)->setQualityOfServiceSpecs(specs);

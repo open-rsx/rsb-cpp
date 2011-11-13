@@ -41,23 +41,23 @@ class RSB_EXPORT InPullConnector: public transport::InPullConnector,
                                   public transport::ConverterSelectingConnector<std::string> {
 public:
     InPullConnector(ConverterSelectionStrategyPtr converters,
-                    const std::string &host = defaultHost(),
+                    const std::string& host = defaultHost(),
                     unsigned int port = defaultPort());
     virtual ~InPullConnector();
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
-    void setScope(const Scope &scope);
+    void setScope(const Scope& scope);
 
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     EventPtr raiseEvent(bool block);
 
-    static transport::InPullConnector *create(const rsc::runtime::Properties &args);
+    static transport::InPullConnector* create(const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
 

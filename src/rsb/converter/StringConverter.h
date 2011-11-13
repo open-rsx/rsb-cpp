@@ -40,9 +40,9 @@ public:
     StringConverter();
     virtual ~StringConverter();
 
-    std::string serialize(const AnnotatedData &data, std::string &wire);
-    AnnotatedData deserialize(const std::string &wireSchema,
-            const std::string &wire);
+    std::string serialize(const AnnotatedData& data, std::string& wire);
+    AnnotatedData deserialize(const std::string& wireSchema,
+            const std::string& wire);
 
 private:
     static const std::string WIRE_SCHEMA;

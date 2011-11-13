@@ -37,7 +37,7 @@ class DirectEventSendingStrategy: public EventSendingStrategy {
 public:
 
     std::string getClassName() const;
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     void addConnector(transport::OutConnectorPtr connector);
     void removeConnector(transport::OutConnectorPtr connector);

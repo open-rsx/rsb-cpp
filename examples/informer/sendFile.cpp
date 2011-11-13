@@ -42,9 +42,9 @@ using namespace boost::posix_time;
 
 int main(void) {
 
-    Factory &factory = Factory::getInstance();
+    Factory& factory = Factory::getInstance();
     unsigned int numMsg;
-    string *bin_doc = new string();
+    string* binDoc = new string();
     string fileLoc;
 
     LoggerPtr l = Logger::getLogger("informer");
@@ -63,7 +63,7 @@ int main(void) {
 
         char ch;
         while (in.get(ch)) {
-            bin_doc->push_back(ch);
+            binDoc->push_back(ch);
         }
         in.close();
     } catch (std::exception& ex) {
@@ -73,7 +73,7 @@ int main(void) {
     // Create Informer and Event
     Informer<string>::Ptr informer = factory.createInformer<string> (Scope(
             "/example/informer"));
-    Informer<string>::DataPtr data(bin_doc);
+    Informer<string>::DataPtr data(binDoc);
 
     cout << "sending " << data->length() << " bytes" << endl;
 

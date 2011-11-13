@@ -33,7 +33,7 @@ namespace converter {
 class RSB_EXPORT SerializationException: public Exception {
 public:
 
-	explicit SerializationException(const std::string &message);
+	explicit SerializationException(const std::string& message);
 
 };
 

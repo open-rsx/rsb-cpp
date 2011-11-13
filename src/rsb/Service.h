@@ -49,7 +49,7 @@ public:
 
     virtual ~Service();
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 
     /**
      * Returns all participants that reside under this service
@@ -81,7 +81,7 @@ protected:
      *
      * @param scope scope of the service
      */
-    Service(const Scope &scope);
+    Service(const Scope& scope);
 
 private:
 

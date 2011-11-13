@@ -25,11 +25,11 @@ using namespace boost;
 namespace rsb {
 namespace converter {
 
-RegexConverterPredicate::RegexConverterPredicate(const string &regex):
+RegexConverterPredicate::RegexConverterPredicate(const string& regex):
     regex(regex) {
 }
 
-RegexConverterPredicate::RegexConverterPredicate(const boost::regex &regex):
+RegexConverterPredicate::RegexConverterPredicate(const boost::regex& regex):
     regex(regex) {
 }
 
@@ -41,7 +41,7 @@ string RegexConverterPredicate::getClassName() const {
     return "RegexConverterPredicate";
 }
 
-void RegexConverterPredicate::printContents(ostream &stream) const {
+void RegexConverterPredicate::printContents(ostream& stream) const {
     stream << "pattern = " << this->regex;
 }
 

@@ -59,7 +59,7 @@ NotificationPtr Assembly::getCompleteNotification() const {
             NotificationDeleter(store[0]));
 
     // Concatenate data parts
-    string *resultData = notification->mutable_data();
+    string* resultData = notification->mutable_data();
     for (unsigned int i = 1; i < this->store.size(); ++i) {
         resultData->append(store[i]->notification().data());
     }
@@ -95,9 +95,9 @@ unsigned int Assembly::age() const {
     return (microsec_clock::local_time() - this->birthTime).total_seconds();
 }
 
-AssemblyPool::PruningTask::PruningTask(Pool &pool,
-        boost::recursive_mutex &poolMutex, const unsigned &ageS,
-        const unsigned int &pruningIntervalMs) :
+AssemblyPool::PruningTask::PruningTask(Pool& pool,
+        boost::recursive_mutex& poolMutex, const unsigned& ageS,
+        const unsigned int& pruningIntervalMs) :
         PeriodicTask(pruningIntervalMs), logger(
                 Logger::getLogger("rsb.spread.AssemblyPool.PruningTask")), pool(
                 pool), poolMutex(poolMutex), maxAge(ageS) {
@@ -119,8 +119,8 @@ void AssemblyPool::PruningTask::execute() {
 
 }
 
-AssemblyPool::AssemblyPool(const unsigned int &ageS,
-        const unsigned int &pruningIntervalMs) :
+AssemblyPool::AssemblyPool(const unsigned int& ageS,
+        const unsigned int& pruningIntervalMs) :
         logger(Logger::getLogger("rsb.spread.AssemblyPool")), pruningAgeS(ageS), pruningIntervalMs(
                 pruningIntervalMs) {
     if (ageS == 0) {
@@ -140,7 +140,7 @@ bool AssemblyPool::isPruning() const {
     return pruningTask;
 }
 
-void AssemblyPool::setPruning(const bool &prune) {
+void AssemblyPool::setPruning(const bool& prune) {
     boost::recursive_mutex::scoped_lock lock(pruningMutex);
 
     if (!isPruning() && prune) {

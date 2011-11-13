@@ -47,7 +47,7 @@ typedef boost::shared_ptr<Bus> BusPtr;
 class RSB_EXPORT ConnectorBase: public ConverterSelectingConnector<std::string> {
 public:
     ConnectorBase(ConverterSelectionStrategyPtr  converters,
-                  const std::string             &host,
+                  const std::string&             host,
                   unsigned int                   port,
                   bool                           server);
 

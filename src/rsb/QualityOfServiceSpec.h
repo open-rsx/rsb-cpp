@@ -109,10 +109,10 @@ public:
      */
     Reliability getReliability() const;
 
-    friend RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-            const QualityOfServiceSpec &spec);
+    friend RSB_EXPORT std::ostream& operator<<(std::ostream& stream,
+            const QualityOfServiceSpec& spec);
 
-    bool operator==(const QualityOfServiceSpec &other) const;
+    bool operator==(const QualityOfServiceSpec& other) const;
 
 private:
 
@@ -121,7 +121,7 @@ private:
 
 };
 
-RSB_EXPORT std::ostream &operator<<(std::ostream &stream,
-        const QualityOfServiceSpec &spec);
+RSB_EXPORT std::ostream& operator<<(std::ostream& stream,
+        const QualityOfServiceSpec& spec);
 
 }

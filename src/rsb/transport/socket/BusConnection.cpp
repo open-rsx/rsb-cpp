@@ -86,7 +86,7 @@ void BusConnection::startReceiving() {
 }
 
 void BusConnection::sendEvent(EventPtr      event,
-                              const string &wireSchema) {
+                              const string& wireSchema) {
     // Serialize the event into a notification object and serialize
     // the notification object.
     // The payload has already been serialized by the connector which
@@ -108,7 +108,7 @@ void BusConnection::sendEvent(EventPtr      event,
     write(*this->socket, buffer(this->messageSendBuffer));
 }
 
-void BusConnection::performSafeCleanup(const string &context) {
+void BusConnection::performSafeCleanup(const string& context) {
     // Remove ourselves from the bus to which we are connected.
     BusPtr bus = this->bus.lock();
     if (bus) {
@@ -123,7 +123,7 @@ void BusConnection::performSafeCleanup(const string &context) {
     if (!this->disconnecting) {
         try {
             disconnect();
-        } catch (const std::exception &e) {
+        } catch (const std::exception& e) {
             RSCERROR(logger, "Failed to disconnect (in " << context << "): "
                      << e.what());
         }
@@ -138,7 +138,7 @@ void BusConnection::receiveEvent() {
                            boost::asio::placeholders::bytes_transferred));
 }
 
-void BusConnection::handleReadLength(const boost::system::error_code &error,
+void BusConnection::handleReadLength(const boost::system::error_code& error,
                                      size_t                    bytesTransferred) {
     if (error || (bytesTransferred != 4)) {
         if (!disconnecting) {
@@ -168,7 +168,7 @@ void BusConnection::handleReadLength(const boost::system::error_code &error,
                            size));
 }
 
-void BusConnection::handleReadBody(const boost::system::error_code &error,
+void BusConnection::handleReadBody(const boost::system::error_code& error,
                                    size_t                    bytesTransferred,
                                    size_t expected) {
     if (error || (bytesTransferred != expected)) {
@@ -203,7 +203,7 @@ void BusConnection::handleReadBody(const boost::system::error_code &error,
     receiveEvent();
 }
 
-void BusConnection::printContents(ostream &stream) const {
+void BusConnection::printContents(ostream& stream) const {
     try {
         stream << "local = " << this->socket->local_endpoint()
                << ", remote = " << this->socket->remote_endpoint();

@@ -35,8 +35,8 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-PushInRouteConfigurator::PushInRouteConfigurator(const Scope             &scope,
-                                                 const ParticipantConfig &config) :
+PushInRouteConfigurator::PushInRouteConfigurator(const Scope&             scope,
+                                                 const ParticipantConfig& config) :
     InRouteConfigurator(scope, config),
     logger(Logger::getLogger("rsb.eventprocessing.PushInRouteConfigurator")),
     errorStrategy(ParticipantConfig::LOG) {
@@ -49,7 +49,7 @@ string PushInRouteConfigurator::getClassName() const {
     return "PushInRouteConfigurator";
 }
 
-void PushInRouteConfigurator::printContents(ostream &stream) const {
+void PushInRouteConfigurator::printContents(ostream& stream) const {
     InRouteConfigurator::printContents(stream);
     stream << ", errorStrategy = " << this->errorStrategy;
 }
@@ -78,15 +78,15 @@ void PushInRouteConfigurator::activate() {
     }
 }
 
-void PushInRouteConfigurator::handlerAdded(rsb::HandlerPtr handler, const bool &wait) {
+void PushInRouteConfigurator::handlerAdded(rsb::HandlerPtr handler, const bool& wait) {
     this->eventReceivingStrategy->addHandler(handler, wait);
 }
 
-void PushInRouteConfigurator::handlerRemoved(rsb::HandlerPtr handler, const bool &wait) {
+void PushInRouteConfigurator::handlerRemoved(rsb::HandlerPtr handler, const bool& wait) {
     this->eventReceivingStrategy->removeHandler(handler, wait);
 }
 
-void PushInRouteConfigurator::setErrorStrategy(const ParticipantConfig::ErrorStrategy &strategy) {
+void PushInRouteConfigurator::setErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy) {
     if (this->eventReceivingStrategy) {
         this->eventReceivingStrategy->setHandlerErrorStrategy(strategy);
     }
