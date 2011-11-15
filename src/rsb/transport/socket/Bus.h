@@ -71,8 +71,8 @@ public:
     void addSink(InPushConnectorPtr sink);
     void removeSink(InPushConnector* sink);
 
-    void addConnector(/*ConnectorBasePtr*/ ConnectorBase* connector);
-    void removeConnector(/*ConnectorBasePtr*/ConnectorBase* connector);
+    void addConnector(ConnectorBase* connector);
+    void removeConnector(ConnectorBase* connector);
 
     /**
      * Adds @a connection to the list of connections of the bus. @a
@@ -101,7 +101,7 @@ protected:
 private:
     typedef std::list<BusConnectionPtr>                  ConnectionList;
 
-    typedef std::list</*ConnectorBasePtr*/ConnectorBase*> ConnectorList;
+    typedef std::list<ConnectorBase*>                    ConnectorList;
 
     typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;
     typedef std::map<Scope, SinkList>                    SinkMap;

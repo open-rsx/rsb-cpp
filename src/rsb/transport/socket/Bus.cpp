@@ -49,15 +49,13 @@ Bus::Bus(io_service& service, bool tcpnodelay) :
 }
 
 Bus::~Bus() {
-    RSCDEBUG(logger, "Destroying");
-
     // Sinks should be empty.
     if (!this->sinks.empty()) {
         RSCWARN(logger, "" << this->sinks.size() << " non-empty scopes when destructing");
     }
 
     // Active connections hold a shared_ptr to themselves and would
-    // thus not be destructed.
+    // thus not be destructed. Disconnecting resolves this problem.
     for (ConnectionList::iterator it = this->connections.begin();
          it != this->connections.end(); ++it) {
         try {
@@ -102,25 +100,29 @@ void Bus::removeSink(InPushConnector* sink) {
     }
     RSCDEBUG(logger, "Scope " << scope << " has "
              << connectors.size() << " connectors (after removing)");
+
+    // If no connectors remain for the scope, the whole entry can be
+    // removed.
     if (connectors.empty()) {
         RSCDEBUG(logger, "Removing empty scope " << scope);
         this->sinks.erase(scope);
     }
 }
 
-void Bus::addConnector(/*ConnectorBasePtr*/ConnectorBase* connector) {
+void Bus::addConnector(ConnectorBase* connector) {
     recursive_mutex::scoped_lock lock(this->connectorLock);
 
     RSCDEBUG(logger, "Adding connector " << connector);
     this->connectors.push_back(connector);
 }
 
-void Bus::removeConnector(/*ConnectorBasePtr*/ConnectorBase* connector) {
+void Bus::removeConnector(ConnectorBase* connector) {
     recursive_mutex::scoped_lock lock(this->connectorLock);
 
     RSCDEBUG(logger, "Removing connector " << connector);
     this->connectors.remove(connector);
 
+    // If no connectors remain, destroy the bus.
     if (this->connectors.empty()) {
         RSCINFO(logger, "No more connectors; suiciding");
         suicide();
