@@ -40,17 +40,17 @@ transport::OutConnector* OutConnector::create(const Properties& args) {
 
     return new OutConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
                             args.get<string>                       ("host",   "localhost"),
-                            args.getAs<unsigned int>               ("port",   9999),
-                            args.getAs<bool>                       ("server", false),
+                            args.getAs<unsigned int>               ("port",   DEFAULT_PORT),
+                            args.get<string>                       ("server", "auto"),
                             args.getAs<bool>                       ("tcpnodelay", false));
 }
 
 OutConnector::OutConnector(ConverterSelectionStrategyPtr  converters,
                            const string&                  host,
                            unsigned int                   port,
-                           bool                           server,
+                           const string&                  server,
                            bool                           tcpnodelay) :
-    ConnectorBase(converters, host, port, server, tcpnodelay),
+    ConnectorBase(converters, host, port, server),
     logger(Logger::getLogger("rsb.transport.socket.OutConnector")){
 }
 

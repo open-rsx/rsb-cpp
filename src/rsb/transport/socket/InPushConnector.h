@@ -54,11 +54,12 @@ class RSB_EXPORT InPushConnector: public ConnectorBase,
 public:
     static rsb::transport::InPushConnector* create(const rsc::runtime::Properties& args);
 
-    InPushConnector(ConverterSelectionStrategyPtr  converters,
-                    const std::string&             host,
-                    unsigned int                   port,
-                    bool                           server,
-                    bool                           tcpnodelay);
+    InPushConnector(ConverterSelectionStrategyPtr converters,
+                    const std::string&            host,
+                    unsigned int                  port,
+                    const std::string&            server,
+                    bool                          tcpnodelay);
+
     virtual ~InPushConnector();
 
     Scope getScope() const;

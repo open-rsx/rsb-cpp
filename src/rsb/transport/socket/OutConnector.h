@@ -42,11 +42,11 @@ namespace socket {
 class RSB_EXPORT OutConnector: public ConnectorBase,
                                public rsb::transport::OutConnector {
 public:
-    OutConnector(ConverterSelectionStrategyPtr  converters,
-                 const std::string&             host,
-                 unsigned int                   port,
-                 bool                           server,
-                 bool                           tcpnodelay);
+    OutConnector(ConverterSelectionStrategyPtr converters,
+                 const std::string&            host,
+                 unsigned int                  port,
+                 const std::string&            server,
+                 bool                          tcpnodelay);
 
     void activate();
     void deactivate();

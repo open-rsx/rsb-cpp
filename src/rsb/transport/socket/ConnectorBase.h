@@ -46,11 +46,19 @@ typedef boost::shared_ptr<Bus> BusPtr;
  */
 class RSB_EXPORT ConnectorBase: public ConverterSelectingConnector<std::string> {
 public:
-    ConnectorBase(ConverterSelectionStrategyPtr  converters,
-                  const std::string&             host,
-                  unsigned int                   port,
-                  bool                           server,
-                  bool                           tcpnodelay);
+    enum Server {
+        SERVER_NO   = 0,
+        SERVER_YES  = 1,
+        SERVER_AUTO = 2
+    };
+
+    static const boost::uint16_t DEFAULT_PORT;
+
+    ConnectorBase(ConverterSelectionStrategyPtr converters,
+                  const std::string&            host,
+                  unsigned int                  port,
+                  const std::string&            server,
+                  bool                          tcpnodelay);
 
     virtual ~ConnectorBase();
 protected:
@@ -72,7 +80,7 @@ private:
 
     std::string             host;
     unsigned int            port;
-    bool                    server;
+    Server                  server;
     bool                    tcpnodelay;
 };
 
