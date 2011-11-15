@@ -23,10 +23,11 @@
 
 #include "Repository.h"
 #include "BoolConverter.h"
+#include "ByteArrayConverter.h"
+#include "EventsByScopeMapConverter.h"
 #include "StringConverter.h"
 #include "Uint64Converter.h"
 #include "VoidConverter.h"
-#include "ByteArrayConverter.h"
 
 namespace rsb {
 namespace converter {
@@ -41,13 +42,15 @@ void registerDefaultConverters() {
         stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new BoolConverter));
         stringConverterRepository()->registerConverter(
+                Converter<std::string>::Ptr(new ByteArrayConverter));
+        stringConverterRepository()->registerConverter(
+                Converter<std::string>::Ptr(new EventsByScopeMapConverter));
+        stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new StringConverter));
         stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new Uint64Converter));
         stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new VoidConverter));
-        stringConverterRepository()->registerConverter(
-                Converter<std::string>::Ptr(new ByteArrayConverter));
         registered = true;
     }
 
