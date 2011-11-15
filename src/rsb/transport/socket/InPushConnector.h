@@ -54,6 +54,9 @@ class RSB_EXPORT InPushConnector: public ConnectorBase,
 public:
     static rsb::transport::InPushConnector* create(const rsc::runtime::Properties& args);
 
+    /**
+     * @copydoc ConnectorBase::ConnectorBase()
+     */
     InPushConnector(ConverterSelectionStrategyPtr converters,
                     const std::string&            host,
                     unsigned int                  port,

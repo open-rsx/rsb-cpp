@@ -42,6 +42,9 @@ namespace socket {
 class RSB_EXPORT OutConnector: public ConnectorBase,
                                public rsb::transport::OutConnector {
 public:
+    /**
+     * @copydoc ConnectorBase::ConnectorBase()
+     */
     OutConnector(ConverterSelectionStrategyPtr converters,
                  const std::string&            host,
                  unsigned int                  port,
