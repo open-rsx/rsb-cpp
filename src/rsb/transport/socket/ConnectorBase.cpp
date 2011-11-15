@@ -52,15 +52,16 @@ void ConnectorBase::activate() {
 
     // This connector is added to the connector list of the bus by
     // getBus{Server,Client}For.
+    RSCINFO(logger, "Server mode: " << this->server);
     Factory& factory = Factory::getInstance();
     switch (this->server) {
-    case SERVER_YES:
+    case SERVER_NO:
         this->bus = factory.getBusClientFor(this->host,
                                             this->port,
                                             this->tcpnodelay,
                                             this);
         break;
-    case SERVER_NO:
+    case SERVER_YES:
         this->bus = factory.getBusServerFor(this->host,
                                             this->port,
                                             this->tcpnodelay,

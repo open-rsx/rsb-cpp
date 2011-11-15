@@ -36,7 +36,8 @@ enum Server {
 };
 
 template <typename Ch, typename Tr>
-std::basic_istream<Ch, Tr>& operator>>(std::basic_istream<Ch, Tr>& stream, Server& value) {
+std::basic_istream<Ch, Tr>& operator>>(std::basic_istream<Ch, Tr>& stream,
+                                       Server&                     value) {
     // Read one whitespace-delimited token.
     std::basic_string<Ch, Tr> string;
     stream >> string;
@@ -51,6 +52,24 @@ std::basic_istream<Ch, Tr>& operator>>(std::basic_istream<Ch, Tr>& stream, Serve
     } else {
         throw std::invalid_argument(boost::str(boost::format("Invalid server/client specification: %1%")
                                                % string));
+    }
+
+    return stream;
+}
+
+template <typename Ch, typename Tr>
+std::basic_ostream<Ch, Tr>& operator<<(std::basic_ostream<Ch, Tr>& stream,
+                                       const Server&               value) {
+    switch (value) {
+    case SERVER_NO:
+        stream << "0";
+        break;
+    case SERVER_YES:
+        stream << "1";
+        break;
+    case SERVER_AUTO:
+        stream << "auto";
+        break;
     }
 
     return stream;
