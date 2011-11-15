@@ -103,6 +103,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/spread/SpreadMessage.cpp
             rsb/transport/spread/Assembly.cpp
 
+            rsb/transport/socket/Types.cpp
             rsb/transport/socket/BusConnection.cpp
             rsb/transport/socket/Bus.cpp
             rsb/transport/socket/BusServer.cpp
@@ -115,7 +116,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/util/MD5.cpp
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
-            
+
             ${PROTO_SOURCES})
 
 SET(HEADERS rsb/CommException.h
@@ -210,6 +211,7 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/spread/SpreadMessage.h
             rsb/transport/spread/Assembly.h
 
+            rsb/transport/socket/Types.h
             rsb/transport/socket/BusConnection.h
             rsb/transport/socket/Bus.h
             rsb/transport/socket/BusServer.h
@@ -223,7 +225,7 @@ SET(HEADERS rsb/CommException.h
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h
-            
+
             ${PROTO_HEADERS})
 
 IF(WIN32)

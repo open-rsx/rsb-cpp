@@ -27,6 +27,8 @@
 
 #include "rsb/rsbexports.h"
 
+#include "Types.h"
+
 namespace rsb {
 namespace transport {
 namespace socket {
@@ -46,14 +48,6 @@ typedef boost::shared_ptr<Bus> BusPtr;
  */
 class RSB_EXPORT ConnectorBase: public ConverterSelectingConnector<std::string> {
 public:
-    enum Server {
-        SERVER_NO   = 0,
-        SERVER_YES  = 1,
-        SERVER_AUTO = 2
-    };
-
-    static const boost::uint16_t DEFAULT_PORT;
-
     /**
      * Creates a connector for the given combination of @a host, @a
      * port and @a server.
@@ -66,11 +60,11 @@ public:
      *             created connector will operate.
      * @param server Controls whether the newly created connector
      *               should create a listening socket and wait for
-     *               connections (value "1"), connect to an existing
-     *               listen socket (value "0") or try to automatically
-     *               determine whether there already is a listening
-     *               socket and create one only if necessary (value
-     *               "auto").
+     *               connections (value SERVER_YES), connect to an
+     *               existing listen socket (value SERVER_NO) or try
+     *               to automatically determine whether there already
+     *               is a listening socket and create one only if
+     *               necessary (value SERVER_AUTO).
      * @param tcpnodelay Controls whether the TCP_NODELAY socket
      *                   option should be set for the socket
      *                   implementing the communication of the newly
@@ -80,7 +74,7 @@ public:
     ConnectorBase(ConverterSelectionStrategyPtr converters,
                   const std::string&            host,
                   unsigned int                  port,
-                  const std::string&            server,
+                  Server                        server,
                   bool                          tcpnodelay);
 
     virtual ~ConnectorBase();

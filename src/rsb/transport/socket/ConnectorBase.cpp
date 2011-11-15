@@ -34,26 +34,14 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-const uint16_t ConnectorBase::DEFAULT_PORT = 55555;
-
 ConnectorBase::ConnectorBase(ConverterSelectionStrategyPtr converters,
                              const string&                 host,
                              unsigned int                  port,
-                             const string&                 server,
+                             Server                        server,
                              bool                          tcpnodelay) :
     ConverterSelectingConnector<string>(converters),
     logger(Logger::getLogger("rsb.transport.socket.ConnectorBase")),
-    host(host), port(port), tcpnodelay(tcpnodelay) {
-    if (server == "0") {
-        this->server = SERVER_NO;
-    } else if (server == "1") {
-        this->server = SERVER_YES;
-    } else if (server == "auto") {
-        this->server = SERVER_AUTO;
-    } else {
-        throw invalid_argument(str(format("Invalid server/client specification: %1%")
-                                   % server));
-    }
+    host(host), port(port), server(server), tcpnodelay(tcpnodelay) {
 }
 
 ConnectorBase::~ConnectorBase() {
