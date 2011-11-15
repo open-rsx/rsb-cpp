@@ -39,7 +39,7 @@ namespace transport {
 namespace socket {
 
 // Create and start an io_service. This service will be shared between
-// all bus providers created by this factory..
+// all bus providers created by this factory.
 Factory::Factory() :
     logger(Logger::getLogger("rsb.transport.socket.Factory")),
     keepAlive(new io_service::work(service)),
@@ -54,7 +54,6 @@ Factory::~Factory() {
 
     RSCINFO(logger, "Stopping service thread");
     this->keepAlive.reset();
-    //this->service.stop();
     this->thread.join();
     RSCINFO(logger, "Stopped service thread");
 }
@@ -148,7 +147,7 @@ BusPtr Factory::getBusClientFor(const string&  host,
 }
 
 void Factory::removeBusClient(BusPtr bus) {
-    RSCDEBUG(logger, "Removing bus " << bus);
+    RSCDEBUG(logger, "Removing client bus " << bus);
 
     for (BusClientMap::iterator it = this->busClients.begin();
          it != this->busClients.end(); ++it) {
@@ -197,8 +196,17 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
     return result;
 }
 
-void Factory::removeBusServer(BusPtr /*bus*/) {
-    /** TODO(jmoringe, 2011-11-09): implement */
+void Factory::removeBusServer(BusPtr bus) {
+    RSCDEBUG(logger, "Removing server bus " << bus);
+
+    for (BusServerMap::iterator it = this->busServers.begin();
+         it != this->busServers.end(); ++it) {
+        if (it->second == bus) {
+            this->busServers.erase(it);
+            RSCDEBUG(logger, "Removed");
+            return;
+        }
+    }
 }
 
 }
