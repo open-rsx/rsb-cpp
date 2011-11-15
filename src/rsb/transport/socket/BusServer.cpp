@@ -35,8 +35,9 @@ namespace transport {
 namespace socket {
 
 BusServer::BusServer(uint16_t    port,
+                     bool        tcpnodelay,
                      io_service& service)
-    : Bus(service),
+    : Bus(service, tcpnodelay),
       logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
       service(service) {
@@ -58,7 +59,7 @@ void BusServer::handleAccept(SocketPtr                 socket,
         //
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
 
-        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false));
+        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false, isTcpnodelay()));
         addConnection(connection);
         connection->startReceiving();
     } else {

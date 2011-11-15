@@ -23,6 +23,8 @@
 
 #include <boost/asio/ip/address.hpp>
 
+#include <boost/format.hpp>
+
 using namespace std;
 
 using namespace boost;
@@ -59,6 +61,7 @@ Factory::~Factory() {
 
 BusPtr Factory::getBusClientFor(const string&  host,
                                 uint16_t       port,
+                                bool           tcpnodelay,
                                 ConnectorBase* connector) {
     RSCDEBUG(logger, "Was asked for a bus client for " << host << ":" << port);
 
@@ -70,6 +73,13 @@ BusPtr Factory::getBusClientFor(const string&  host,
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
             BusPtr result = it->second;
+            if (result->isTcpnodelay() != tcpnodelay) {
+                throw invalid_argument(
+                        boost::str(
+                                boost::format(
+                                        "Requested tcpnodelay option %1% does not match existing option %2%")
+                                        % tcpnodelay % it->second->isTcpnodelay()));
+            }
             result->addConnector(connector);
             RSCDEBUG(logger, "Found existing bus client "
                      << result << " without resolving");
@@ -107,6 +117,14 @@ BusPtr Factory::getBusClientFor(const string&  host,
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
             BusPtr result = it->second;
+            // TODO jwienke: duplicated code from above, refactor
+            if (result->isTcpnodelay() != tcpnodelay) {
+                throw invalid_argument(
+                        boost::str(
+                                boost::format(
+                                        "Requested tcpnodelay option %1% does not match existing option %2%")
+                                        % tcpnodelay % it->second->isTcpnodelay()));
+            }
             RSCDEBUG(logger, "Found existing bus client "
                      << it->second << " after resolving");
             return result;
@@ -114,10 +132,10 @@ BusPtr Factory::getBusClientFor(const string&  host,
 
         RSCDEBUG(logger, "Did not find bus client after resolving; creating a new one");
 
-        BusPtr result(new Bus(this->service));
+        BusPtr result(new Bus(this->service, tcpnodelay));
         this->busClients[endpoint] = result;
 
-        BusConnectionPtr connection(new BusConnection(result, socket, true));
+        BusConnectionPtr connection(new BusConnection(result, socket, true, tcpnodelay));
         result->addConnection(connection);
         connection->startReceiving();
 
@@ -144,6 +162,7 @@ void Factory::removeBusClient(BusPtr bus) {
 
 BusServerPtr Factory::getBusServerFor(const string&  host,
                                       uint16_t       port,
+                                      bool           tcpnodelay,
                                       ConnectorBase* connector) {
     RSCDEBUG(logger, "Was asked for a bus server for " << host << ":" << port);
 
@@ -153,6 +172,13 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
     BusServerMap::const_iterator it;
     if ((it = this->busServers.find(endpoint)) != this->busServers.end()) {
         RSCDEBUG(logger, "Found existing bus server " << it->second);
+        if (it->second->isTcpnodelay() != tcpnodelay) {
+            throw invalid_argument(
+                    boost::str(
+                            boost::format(
+                                    "Requested tcpnodelay option %1% does not match existing option %2%")
+                                    % tcpnodelay % it->second->isTcpnodelay()));
+        }
         it->second->addConnector(connector);
         return it->second;
     }
@@ -161,7 +187,7 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
     // the map.
     RSCDEBUG(logger, "Did not find bus server; creating a new one");
 
-    BusServerPtr result(new BusServer(port, this->service));
+    BusServerPtr result(new BusServer(port, tcpnodelay, this->service));
     this->busServers[endpoint] = result;
 
     result->addConnector(connector);

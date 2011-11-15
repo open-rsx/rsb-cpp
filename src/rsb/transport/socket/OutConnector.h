@@ -45,7 +45,8 @@ public:
     OutConnector(ConverterSelectionStrategyPtr  converters,
                  const std::string&             host,
                  unsigned int                   port,
-                 bool                           server);
+                 bool                           server,
+                 bool                           tcpnodelay);
 
     void activate();
     void deactivate();

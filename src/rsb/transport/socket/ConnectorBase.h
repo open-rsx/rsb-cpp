@@ -49,7 +49,8 @@ public:
     ConnectorBase(ConverterSelectionStrategyPtr  converters,
                   const std::string&             host,
                   unsigned int                   port,
-                  bool                           server);
+                  bool                           server,
+                  bool                           tcpnodelay);
 
     virtual ~ConnectorBase();
 protected:
@@ -72,6 +73,7 @@ private:
     std::string             host;
     unsigned int            port;
     bool                    server;
+    bool                    tcpnodelay;
 };
 
 typedef boost::shared_ptr<ConnectorBase> ConnectorBasePtr;

@@ -65,7 +65,7 @@ class RSB_EXPORT Bus: public eventprocessing::Handler,
                       public boost::enable_shared_from_this<Bus> {
 friend class BusConnection;
 public:
-    Bus(boost::asio::io_service& service);
+    Bus(boost::asio::io_service& service, bool tcpnodelay = false);
     virtual ~Bus();
 
     void addSink(InPushConnectorPtr sink);
@@ -91,6 +91,8 @@ public:
      */
     void removeConnection(BusConnectionPtr connection);
 
+    bool isTcpnodelay() const;
+
     void handle(EventPtr event);
 protected:
     virtual void handleIncoming(EventPtr event);
@@ -114,6 +116,8 @@ private:
     ConnectorList            connectors;
     SinkMap                  sinks;
     boost::recursive_mutex   connectorLock;
+
+    bool                     tcpnodelay;
 
     void printContents(std::ostream& stream) const;
 };

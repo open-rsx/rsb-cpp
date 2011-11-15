@@ -52,9 +52,11 @@ namespace socket {
 class RSB_EXPORT BusServer : public Bus {
 public:
     BusServer(boost::uint16_t          port,
+              bool                     tcpnodelay,
               boost::asio::io_service& service);
 
     void handleIncoming(EventPtr event);
+
 private:
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
 

@@ -33,10 +33,11 @@ namespace socket {
 ConnectorBase::ConnectorBase(ConverterSelectionStrategyPtr  converters,
                              const string&                  host,
                              unsigned int                   port,
-                             bool                           server) :
+                             bool                           server,
+                             bool                           tcpnodelay) :
     ConverterSelectingConnector<string>(converters),
     logger(Logger::getLogger("rsb.transport.socket.ConnectorBase")),
-    host(host), port(port), server(server) {
+    host(host), port(port), server(server), tcpnodelay(tcpnodelay) {
 }
 
 ConnectorBase::~ConnectorBase() {
@@ -50,9 +51,11 @@ void ConnectorBase::activate() {
     this->bus = (this->server
                  ? Factory::getInstance().getBusServerFor(this->host,
                                                           this->port,
+                                                          tcpnodelay,
                                                           this)
                  : Factory::getInstance().getBusClientFor(this->host,
                                                           this->port,
+                                                          tcpnodelay,
                                                           this));
 
     RSCDEBUG(logger, "Using bus " << getBus());

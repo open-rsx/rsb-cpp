@@ -40,14 +40,16 @@ transport::InPushConnector* InPushConnector::create(const Properties& args) {
     return new InPushConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
                                args.get<string>                       ("host",   "localhost"),
                                args.getAs<unsigned int>               ("port",   9999),
-                               args.getAs<bool>                       ("server", false));
+                               args.getAs<bool>                       ("server", false),
+                               args.getAs<bool>                       ("tcpnodelay", false));
 }
 
 InPushConnector::InPushConnector(ConverterSelectionStrategyPtr  converters,
                                  const string&                  host,
                                  unsigned int                   port,
-                                 bool                           server) :
-    ConnectorBase(converters, host, port, server),
+                                 bool                           server,
+                                 bool                           tcpnodelay) :
+    ConnectorBase(converters, host, port, server, tcpnodelay),
     logger(Logger::getLogger("rsb.transport.socket.InPushConnector")),
     active(false) {
 }

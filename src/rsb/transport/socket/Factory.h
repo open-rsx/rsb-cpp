@@ -55,10 +55,12 @@ public:
 
     BusPtr getBusClientFor(const std::string& host,
                            boost::uint16_t    port,
+                           bool               tcpnodelay,
                            ConnectorBase*     connector);
 
     BusServerPtr getBusServerFor(const std::string& host,
                                  boost::uint16_t    port,
+                                 bool               tcpnodelay,
                                  ConnectorBase*     connector);
 private:
     typedef std::pair<std::string, boost::uint16_t>	     Endpoint;

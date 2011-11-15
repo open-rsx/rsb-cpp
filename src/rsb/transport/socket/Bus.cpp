@@ -43,9 +43,9 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-Bus::Bus(io_service& service) :
+Bus::Bus(io_service& service, bool tcpnodelay) :
     logger(Logger::getLogger("rsb.transport.socket.Bus")),
-    service(service) {
+    service(service), tcpnodelay(tcpnodelay) {
 }
 
 Bus::~Bus() {
@@ -67,6 +67,10 @@ Bus::~Bus() {
                      << ": " << e.what());
         }
     }
+}
+
+bool Bus::isTcpnodelay() const {
+    return tcpnodelay;
 }
 
 void Bus::addSink(InPushConnectorPtr sink) {
