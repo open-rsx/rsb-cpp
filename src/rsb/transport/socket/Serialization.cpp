@@ -56,6 +56,11 @@ EventPtr notificationToEvent(protocol::Notification& notification,
         metaData.setUserTime(notification.meta_data().user_times(i).key(),
                              notification.meta_data().user_times(i).timestamp());
     }
+    for (int i = 0; i < notification.causes_size(); ++i) {
+        event->addCause(EventId(rsc::misc::UUID((boost::uint8_t*) notification.causes(i).sender_id().c_str()),
+                                notification.causes(i).sequence_number()));
+    }
+
     event->setData(boost::shared_ptr<string>(new string(notification.data())));
 
     if (exposeWireSchema) {
@@ -98,6 +103,15 @@ void eventToNotification(protocol::Notification& notification,
             notification.mutable_meta_data()->mutable_user_times()->Add();
         info->set_key(it->first);
         info->set_timestamp(it->second);
+    }
+
+    set<EventId> causes = event->getCauses();
+    for (set<EventId>::const_iterator it = causes.begin();
+         it != causes.end(); ++it) {
+        protocol::EventId* cause = notification.mutable_causes()->Add();
+        cause->set_sender_id(it->getParticipantId().getId().data,
+                             it->getParticipantId().getId().size());
+        cause->set_sequence_number(it->getSequenceNumber());
     }
 
     notification.set_data(data);
