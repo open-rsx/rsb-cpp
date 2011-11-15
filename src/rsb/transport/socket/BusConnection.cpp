@@ -49,6 +49,7 @@ BusConnection::BusConnection(BusPtr    bus,
     // Enable TCPNODELAY socket option to trade decreased throughput
     // for reduced latency.
     if (tcpNoDelay){
+        RSCINFO(logger, "Setting TCP_NODELAY option");
         boost::asio::ip::tcp::no_delay option(true);
         socket->set_option(option);
     }
@@ -57,7 +58,7 @@ BusConnection::BusConnection(BusPtr    bus,
     this->lengthReceiveBuffer.resize(4);
     this->lengthSendBuffer.resize(4);
 
-    // handshake
+    // Perform request role of the handshake.
     if (client) {
         read(*this->socket, buffer(&this->lengthReceiveBuffer[0], 4));
     } else {
@@ -87,10 +88,10 @@ void BusConnection::startReceiving() {
 
 void BusConnection::sendEvent(EventPtr      event,
                               const string& wireSchema) {
-    // Serialize the event into a notification object and serialize
-    // the notification object.
-    // The payload has already been serialized by the connector which
-    // submitted the event.
+    // Convert the event into a notification object and serialize the
+    // notification object.
+    // The payload already is a byte-array, since it has been
+    // serialized by the connector which submitted the event.
     protocol::Notification notification;
     eventToNotification(notification, event, wireSchema,
                         *static_pointer_cast<string>(event->getData()));
