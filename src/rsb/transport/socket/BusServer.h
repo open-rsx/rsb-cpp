@@ -55,7 +55,8 @@ public:
               bool                     tcpnodelay,
               boost::asio::io_service& service);
 
-    void handleIncoming(EventPtr event);
+    void handleIncoming(EventPtr         event,
+                        BusConnectionPtr connection);
 
 private:
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;

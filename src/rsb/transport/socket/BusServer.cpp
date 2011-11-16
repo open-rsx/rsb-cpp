@@ -21,6 +21,7 @@
 
 #include <boost/bind.hpp>
 
+#include "../../MetaData.h"
 #include "Factory.h"
 
 using namespace boost;
@@ -70,16 +71,23 @@ void BusServer::handleAccept(SocketPtr                 socket,
     acceptOne();
 }
 
-void BusServer::handleIncoming(EventPtr event) {
-    Bus::handleIncoming(event);
+void BusServer::handleIncoming(EventPtr         event,
+                               BusConnectionPtr connection) {
+    Bus::handleIncoming(event, connection);
 
     RSCDEBUG(logger, "Delivering received event to connections " << event);
-    /** TODO(jmoringe): implement */
-    /*for (ConnectionList::iterator it = this->connections.begin();
-         it != this->connections.end(); ++it) {
-        it->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
-        }*/
+    {
+        recursive_mutex::scoped_lock lock(getConnectionLock());
 
+        ConnectionList connections = getConnections();
+        for (ConnectionList::iterator it = connections.begin();
+             it != connections.end(); ++it) {
+            if (*it != connection) {
+                RSCDEBUG(logger, "Delivering to connection " << *it);
+                (*it)->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
+            }
+        }
+    }
 }
 
 void BusServer::suicide() {

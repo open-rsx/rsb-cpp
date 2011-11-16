@@ -193,7 +193,7 @@ void BusConnection::handleReadBody(const boost::system::error_code& error,
     // Dispatch the received event to connectors.
     BusPtr bus = this->bus.lock();
     if (bus) {
-        bus->handleIncoming(event);
+        bus->handleIncoming(event, shared_from_this());
     } else {
         RSCWARN(logger, "Dangling bus pointer when trying to dispatch incoming event; closing connection");
         performSafeCleanup("handleReadBody");

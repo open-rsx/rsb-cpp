@@ -95,12 +95,16 @@ public:
 
     void handle(EventPtr event);
 protected:
-    virtual void handleIncoming(EventPtr event);
+    typedef std::list<BusConnectionPtr> ConnectionList;
+
+    ConnectionList getConnections() const;
+    boost::recursive_mutex& getConnectionLock();
+
+    virtual void handleIncoming(EventPtr         event,
+                                BusConnectionPtr connection);
 
     virtual void suicide();
 private:
-    typedef std::list<BusConnectionPtr>                  ConnectionList;
-
     typedef std::list<ConnectorBase*>                    ConnectorList;
 
     typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;

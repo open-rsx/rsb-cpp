@@ -68,7 +68,15 @@ Bus::~Bus() {
 }
 
 bool Bus::isTcpnodelay() const {
-    return tcpnodelay;
+    return this->tcpnodelay;
+}
+
+Bus::ConnectionList Bus::getConnections() const {
+    return this->connections;
+}
+
+boost::recursive_mutex& Bus::getConnectionLock() {
+    return this->connectionLock;
 }
 
 void Bus::addSink(InPushConnectorPtr sink) {
@@ -145,7 +153,8 @@ void Bus::removeConnection(BusConnectionPtr connection) {
     this->connections.remove(connection);
 }
 
-void Bus::handleIncoming(EventPtr event) {
+void Bus::handleIncoming(EventPtr         event,
+                         BusConnectionPtr /*connection*/) {
     RSCDEBUG(logger, "Delivering received event to connectors " << event);
 
     vector<Scope> scopes = event->getScopePtr()->superScopes(true);
@@ -179,7 +188,7 @@ void Bus::handle(EventPtr event) {
 
     string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
     for (list<BusConnectionPtr>::iterator it = this->connections.begin();
-	 it != this->connections.end(); ++it) {
+         it != this->connections.end(); ++it) {
         RSCDEBUG(logger, "Dispatching to connection " << *it);
         (*it)->sendEvent(event, wireSchema);
     }
