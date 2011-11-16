@@ -72,13 +72,7 @@ BusPtr Factory::getBusClientFor(const string&  host,
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
             BusPtr result = it->second;
-            if (result->isTcpnodelay() != tcpnodelay) {
-                throw invalid_argument(
-                        boost::str(
-                                boost::format(
-                                        "Requested tcpnodelay option %1% does not match existing option %2%")
-                                        % tcpnodelay % it->second->isTcpnodelay()));
-            }
+            checkOptions(result, tcpnodelay);
             result->addConnector(connector);
             RSCDEBUG(logger, "Found existing bus client "
                      << result << " without resolving");
