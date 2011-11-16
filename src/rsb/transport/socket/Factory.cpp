@@ -66,9 +66,9 @@ BusPtr Factory::getBusClientFor(const string&  host,
 
     // Try to find an entry for the exact specified endpoint. If this
     // yields a hit, there is no need to resolve the specified name.
-    {
-        Endpoint endpoint(host, port);
+    Endpoint endpoint(host, port);
 
+    {
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
             BusPtr result = it->second;
@@ -91,46 +91,61 @@ BusPtr Factory::getBusClientFor(const string&  host,
     tcp::resolver resolver(this->service);
     tcp::resolver::query query(host, lexical_cast<string>(port),
                                tcp::resolver::query::numeric_service);
-    tcp::resolver::iterator endpointIterator = resolver.resolve(query);
-
-    SocketPtr socket(new tcp::socket(this->service));
-
-    /** TODO(jmoringe): try remaining endpoints if this fails */
-    RSCDEBUG(logger, "Trying endpoint " << endpointIterator->endpoint());
-    socket->connect(*endpointIterator);
-    //tcp::endpoint e(ip::address_v4::from_string(host), port);
-    //socket->connect(e);
-    RSCDEBUG(logger, "Connected");
-
-    // When we have a working endpoint, repeat the lookup. Create a
-    // new bus client, if there still is no entry.
-    {
-        Endpoint endpoint(endpointIterator->host_name(), port);
-
+    for (tcp::resolver::iterator endpointIterator = resolver.resolve(query);
+         endpointIterator != tcp::resolver::iterator();
+         ++endpointIterator) {
+        endpoint = Endpoint(endpointIterator->host_name(), port);
+        // When we have a working endpoint, repeat the lookup. Create
+        // a new bus client, if there still is no entry.
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
             BusPtr result = it->second;
             checkOptions(result, tcpnodelay);
+            result->addConnector(connector);
             RSCDEBUG(logger, "Found existing bus client "
                      << it->second << " after resolving");
             return result;
         }
-
-        RSCDEBUG(logger, "Did not find bus client after resolving; creating a new one");
-
-        BusPtr result(new Bus(this->service, tcpnodelay));
-        this->busClients[endpoint] = result;
-
-        BusConnectionPtr connection(new BusConnection(result, socket, true, tcpnodelay));
-        result->addConnection(connection);
-        connection->startReceiving();
-
-        result->addConnector(connector);
-
-        RSCDEBUG(logger, "Created new bus client " << result);
-
-        return result;
     }
+
+    // Try to open a socket for the resolved endpoint.
+    SocketPtr socket;
+    for (tcp::resolver::iterator endpointIterator = resolver.resolve(query);
+         endpointIterator != tcp::resolver::iterator();
+         ++endpointIterator) {
+        endpoint = Endpoint(endpointIterator->host_name(), port);
+        RSCDEBUG(logger, "Trying endpoint " << endpointIterator->endpoint());
+        socket.reset(new tcp::socket(this->service));
+        boost::system::error_code error;
+        socket->connect(endpointIterator->endpoint(), error);
+        if (!error) {
+            RSCDEBUG(logger, "Success");
+            break;
+        }
+        RSCDEBUG(logger, "Failed: " << error.message());
+        socket.reset();
+    }
+    if (!socket) {
+        throw runtime_error(str(format("Could not connector to any of the endpoints to which %1%:%2% resolved.")
+                                % host % port));
+    }
+
+    // Name resolution did not yield any endpoints, or none of the
+    // worked. Create a new bus client.
+    RSCDEBUG(logger, "Did not find bus client after resolving; creating a new one");
+
+    BusPtr result(new Bus(this->service, tcpnodelay));
+    this->busClients[endpoint] = result;
+
+    BusConnectionPtr connection(new BusConnection(result, socket, true, tcpnodelay));
+    result->addConnection(connection);
+    connection->startReceiving();
+
+    result->addConnector(connector);
+
+    RSCDEBUG(logger, "Created new bus client " << result);
+
+    return result;
 }
 
 void Factory::removeBusClient(BusPtr bus) {
