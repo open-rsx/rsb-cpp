@@ -116,14 +116,7 @@ BusPtr Factory::getBusClientFor(const string&  host,
         BusClientMap::const_iterator it;
         if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
             BusPtr result = it->second;
-            // TODO jwienke: duplicated code from above, refactor
-            if (result->isTcpnodelay() != tcpnodelay) {
-                throw invalid_argument(
-                        boost::str(
-                                boost::format(
-                                        "Requested tcpnodelay option %1% does not match existing option %2%")
-                                        % tcpnodelay % it->second->isTcpnodelay()));
-            }
+            checkOptions(result, tcpnodelay);
             RSCDEBUG(logger, "Found existing bus client "
                      << it->second << " after resolving");
             return result;
@@ -171,13 +164,7 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
     BusServerMap::const_iterator it;
     if ((it = this->busServers.find(endpoint)) != this->busServers.end()) {
         RSCDEBUG(logger, "Found existing bus server " << it->second);
-        if (it->second->isTcpnodelay() != tcpnodelay) {
-            throw invalid_argument(
-                    boost::str(
-                            boost::format(
-                                    "Requested tcpnodelay option %1% does not match existing option %2%")
-                                    % tcpnodelay % it->second->isTcpnodelay()));
-        }
+        checkOptions(it->second, tcpnodelay);
         it->second->addConnector(connector);
         return it->second;
     }
@@ -206,6 +193,13 @@ void Factory::removeBusServer(BusPtr bus) {
             RSCDEBUG(logger, "Removed");
             return;
         }
+    }
+}
+
+void Factory::checkOptions(BusPtr bus, bool tcpnodelay) {
+    if (bus->isTcpnodelay() != tcpnodelay) {
+        throw invalid_argument(str(format("Requested tcpnodelay option %1% does not match existing option %2%")
+                                   % tcpnodelay % bus->isTcpnodelay()));
     }
 }
 

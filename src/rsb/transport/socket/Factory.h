@@ -86,6 +86,8 @@ private:
     void removeBusClient(BusPtr bus);
 
     void removeBusServer(BusPtr bus);
+
+    static void checkOptions(BusPtr bus, bool tcpnodelay);
 };
 
 }
