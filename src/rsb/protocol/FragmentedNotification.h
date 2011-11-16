@@ -30,20 +30,6 @@ namespace protocol {
 
 typedef boost::shared_ptr<rsb::protocol::FragmentedNotification> FragmentedNotificationPtr;
 
-/**
- * A deleter objects for boost::shared_ptr which makes it possible to expose
- * the Notification contained in a FragmentedNotification as a shared_ptr.
- *
- * @author jwienke
- */
-class NotificationDeleter {
-public:
-    NotificationDeleter(FragmentedNotificationPtr fragment);
-    void operator()(void const *);
-private:
-    FragmentedNotificationPtr fragment;
-};
-
 }
 }
 

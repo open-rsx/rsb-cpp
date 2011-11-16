@@ -120,8 +120,11 @@ NotificationPtr ReceiverTask::handleAndJoinFragmentedNotification(
     if (multiPartNotification) {
         completeNotification = this->assemblyPool->add(notification);
     } else {
-        completeNotification.reset(notification->mutable_notification(),
-                NotificationDeleter(notification));
+        completeNotification.reset(
+                notification->mutable_notification(),
+                rsc::misc::ParentSharedPtrDeleter
+                        < rsb::protocol::FragmentedNotification
+                        > (notification));
     }
     return completeNotification;
 

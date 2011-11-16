@@ -22,13 +22,5 @@
 namespace rsb {
 namespace protocol {
 
-NotificationDeleter::NotificationDeleter(FragmentedNotificationPtr fragment) :
-        fragment(fragment) {
-}
-
-void NotificationDeleter::operator()(void const *) {
-    fragment.reset();
-}
-
 }
 }

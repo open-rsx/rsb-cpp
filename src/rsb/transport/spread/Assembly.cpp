@@ -55,8 +55,10 @@ NotificationPtr Assembly::getCompleteNotification() const {
     RSCTRACE(logger, "Joining fragments");
     assert(isComplete());
 
-    NotificationPtr notification(store[0]->mutable_notification(),
-            NotificationDeleter(store[0]));
+    NotificationPtr notification(
+            store[0]->mutable_notification(),
+            rsc::misc::ParentSharedPtrDeleter
+                    < rsb::protocol::FragmentedNotification > (store[0]));
 
     // Concatenate data parts
     string* resultData = notification->mutable_data();
@@ -77,8 +79,7 @@ bool Assembly::add(FragmentedNotificationPtr n) {
                 boost::str(
                         boost::format(
                                 "Received fragment (%d/%d) of notification for event with sender id %x and sequence number %d twice!.")
-                                % n->data_part()
-                                % n->num_data_parts()
+                                % n->data_part() % n->num_data_parts()
                                 % n->notification().event_id().sender_id()
                                 % n->notification().event_id().sequence_number()));
     }
