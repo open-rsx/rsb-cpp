@@ -44,8 +44,8 @@ namespace eventprocessing {
  * @author swrede
  * @author jmoringe
  */
-  class RSB_EXPORT EventSendingStrategy: public virtual rsc::runtime::Printable,
-                                         private boost::noncopyable {
+class RSB_EXPORT EventSendingStrategy: public virtual rsc::runtime::Printable,
+                                       private boost::noncopyable {
 public:
     virtual ~EventSendingStrategy();
 

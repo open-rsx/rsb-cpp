@@ -33,7 +33,7 @@ namespace eventprocessing {
  *
  * @author jmoringe
  */
-class DirectEventSendingStrategy: public EventSendingStrategy {
+class RSB_EXPORT DirectEventSendingStrategy: public EventSendingStrategy {
 public:
 
     std::string getClassName() const;
