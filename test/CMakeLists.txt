@@ -56,6 +56,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/QualityOfServiceSpecTest.cpp
                       rsb/ScopeTest.cpp
                       rsb/converter/DefaultConverterTest.cpp
+                      rsb/converter/EventCollectionsConverterTest.cpp
                       rsb/converter/RegexConverterPredicateTest.cpp
                       rsb/converter/PredicateConverterListTest.cpp
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp

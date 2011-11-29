@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of RSB project
+ * This file is a part of the RSB project.
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -17,22 +17,23 @@
  *
  * ============================================================ */
 
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+/**
+ * @file EventCollections.h
+ *
+ * A header with typdefs of common collection types containing RSB Event
+ * instances.
+ */
 
-#include "testhelpers.h"
+#pragma once
 
-#include "rsb/converter/converters.h"
+#include <map>
+#include <vector>
 
-using namespace testing;
+#include "Event.h"
+#include "Scope.h"
 
-int main(int argc, char* argv[]) {
+namespace rsb {
 
-    srand(time(NULL));
-	setupLogging();
-	rsb::converter::registerDefaultConverters();
-
-    InitGoogleMock(&argc, argv);
-    return RUN_ALL_TESTS();
+typedef std::map<rsb::Scope, std::vector<rsb::EventPtr> > EventsByScopeMap;
 
 }
