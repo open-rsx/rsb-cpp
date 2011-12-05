@@ -32,7 +32,7 @@
 
 inline void setupLogging() {
 
-	rsc::logging::LoggerFactory::getInstance()->reconfigure(
+	rsc::logging::LoggerFactory::getInstance().reconfigure(
 			rsc::logging::Logger::LEVEL_TRACE);
 
 }
