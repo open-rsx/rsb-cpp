@@ -28,27 +28,27 @@
 //#include "EventSendingStrategyFactory.h"
 //#include "DirectEventSendingStrategy.h"
 
-using namespace boost;
-
 namespace rsb {
 namespace eventprocessing {
 
 bool registered = false;
-mutex registrationMutex;
+boost::mutex registrationMutex;
 
 void registerDefaultEventProcessingStrategies() {
-    mutex::scoped_lock lock(registrationMutex);
+    boost::mutex::scoped_lock lock(registrationMutex);
     if (registered) {
         return;
     }
     registered = true;
 
     {
-        EventReceivingStrategyFactory& factory
-            = EventReceivingStrategyFactory::getInstance();
+        EventReceivingStrategyFactory& factory =
+                EventReceivingStrategyFactory::getInstance();
 
-        factory.impls().register_("direct",   &DirectEventReceivingStrategy::create);
-        factory.impls().register_("parallel", &ParallelEventReceivingStrategy::create);
+        factory.impls().register_("direct",
+                &DirectEventReceivingStrategy::create);
+        factory.impls().register_("parallel",
+                &ParallelEventReceivingStrategy::create);
     }
 
     // {
