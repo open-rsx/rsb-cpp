@@ -44,8 +44,6 @@ void registerDefaultConverters() {
         stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new ByteArrayConverter));
         stringConverterRepository()->registerConverter(
-                Converter<std::string>::Ptr(new EventsByScopeMapConverter));
-        stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new StringConverter));
         stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new Uint64Converter));
