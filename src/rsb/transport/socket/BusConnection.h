@@ -79,7 +79,7 @@ public:
     void startReceiving();
 
     void sendEvent(EventPtr           event,
-                   const std::string &wireSchema);
+                   const std::string& wireSchema);
 private:
     typedef boost::weak_ptr<Bus> WeakBusPtr;
 
@@ -88,6 +88,8 @@ private:
     SocketPtr               socket;
 
     WeakBusPtr              bus;
+
+    volatile bool           disconnecting;
 
     // Receive buffers
     protocol::Notification  notification;
@@ -98,16 +100,18 @@ private:
     std::string             lengthSendBuffer;
     std::string             messageSendBuffer;
 
+    void performSafeCleanup(const std::string& context);
+
     void receiveEvent();
 
-    void handleReadLength(const boost::system::error_code &error,
+    void handleReadLength(const boost::system::error_code& error,
                           size_t                           bytesTransferred);
 
-    void handleReadBody(const boost::system::error_code &error,
+    void handleReadBody(const boost::system::error_code& error,
                         size_t                           bytesTransferred,
                         size_t                           expected);
 
-    void printContents(std::ostream &stream) const;
+    void printContents(std::ostream& stream) const;
 };
 
 typedef boost::shared_ptr<BusConnection> BusConnectionPtr;

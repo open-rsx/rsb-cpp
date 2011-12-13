@@ -48,41 +48,46 @@ namespace socket {
  */
 class RSB_EXPORT Factory : public rsc::patterns::Singleton<Factory> {
     friend class rsc::patterns::Singleton<Factory>;
-    friend class Bus;
-    friend class BusServer;
+    friend class Bus;       // for private member function removeBusClient
+    friend class BusServer; // for private member function removeBusServer
 public:
-    typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
-
     ~Factory();
 
-    BusPtr getBusClientFor(const std::string &host,
+    BusPtr getBusClientFor(const std::string& host,
                            boost::uint16_t    port,
-                           ConnectorBase     *connector);
+                           bool               tcpnodelay,
+                           ConnectorBase*     connector);
 
-    BusServerPtr getBusServerFor(const std::string &host,
+    BusServerPtr getBusServerFor(const std::string& host,
                                  boost::uint16_t    port,
-                                 ConnectorBase     *connector);
+                                 bool               tcpnodelay,
+                                 ConnectorBase*     connector);
 private:
-    //typedef boost::weak_ptr<Bus> WeakBusPtr;
-    typedef std::pair<std::string, boost::uint16_t> Endpoint;
-    typedef std::map<Endpoint, BusPtr>              BusClientMap;
-    typedef std::map<Endpoint, BusServerPtr>        BusServerMap;
+    typedef std::pair<std::string, boost::uint16_t>	     Endpoint;
+    typedef boost::shared_ptr<boost::asio::ip::tcp::socket>  SocketPtr;
 
-    rsc::logging::LoggerPtr       logger;
+    typedef boost::shared_ptr<boost::asio::io_service::work> WorkPtr;
 
-    BusClientMap                  busClients;
-    BusServerMap                  busServers;
+    typedef std::map<Endpoint, BusPtr>			     BusClientMap;
+    typedef std::map<Endpoint, BusServerPtr>		     BusServerMap;
+
+    rsc::logging::LoggerPtr logger;
+
+    BusClientMap            busClients;
+    BusServerMap            busServers;
     /** TODO(jmoringe): locking */
 
-    boost::asio::io_service       service;
-    boost::shared_ptr<boost::asio::io_service::work> keepAlive;
-    boost::thread                 thread;
+    boost::asio::io_service service;
+    WorkPtr                 keepAlive;
+    boost::thread           thread;
 
     Factory();
 
     void removeBusClient(BusPtr bus);
 
     void removeBusServer(BusPtr bus);
+
+    static void checkOptions(BusPtr bus, bool tcpnodelay);
 };
 
 }

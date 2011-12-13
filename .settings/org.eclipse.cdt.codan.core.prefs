@@ -1,4 +1,4 @@
-#Mon Nov 22 00:09:29 CET 2010
+#Tue Nov 29 11:13:22 CET 2011
 eclipse.preferences.version=1
 org.eclipse.cdt.codan.checkers.errnoreturn=Warning
 org.eclipse.cdt.codan.checkers.errnoreturn.params={fileScope\=>inclusion\=>(),exclusion\=>(),implicit\=>false}

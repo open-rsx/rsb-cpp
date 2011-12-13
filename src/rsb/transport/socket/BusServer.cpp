@@ -21,6 +21,7 @@
 
 #include <boost/bind.hpp>
 
+#include "../../MetaData.h"
 #include "Factory.h"
 
 using namespace boost;
@@ -35,8 +36,9 @@ namespace transport {
 namespace socket {
 
 BusServer::BusServer(uint16_t    port,
-                     io_service &service)
-    : Bus(service),
+                     bool        tcpnodelay,
+                     io_service& service)
+    : Bus(service, tcpnodelay),
       logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
       service(service) {
@@ -53,12 +55,12 @@ void BusServer::acceptOne() {
 }
 
 void BusServer::handleAccept(SocketPtr                 socket,
-                             const boost::system::error_code &error) {
+                             const boost::system::error_code& error) {
     if (!error) {
         //
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
 
-        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false));
+        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false, isTcpnodelay()));
         addConnection(connection);
         connection->startReceiving();
     } else {
@@ -69,16 +71,23 @@ void BusServer::handleAccept(SocketPtr                 socket,
     acceptOne();
 }
 
-void BusServer::handleIncoming(EventPtr event) {
-    Bus::handleIncoming(event);
+void BusServer::handleIncoming(EventPtr         event,
+                               BusConnectionPtr connection) {
+    Bus::handleIncoming(event, connection);
 
-    RSCDEBUG(logger, "Delivering received event to connections " << *event);
-    /** TODO(jmoringe): implement */
-    /*for (ConnectionList::iterator it = this->connections.begin();
-         it != this->connections.end(); ++it) {
-        it->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
-        }*/
+    RSCDEBUG(logger, "Delivering received event to connections " << event);
+    {
+        recursive_mutex::scoped_lock lock(getConnectionLock());
 
+        ConnectionList connections = getConnections();
+        for (ConnectionList::iterator it = connections.begin();
+             it != connections.end(); ++it) {
+            if (*it != connection) {
+                RSCDEBUG(logger, "Delivering to connection " << *it);
+                (*it)->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
+            }
+        }
+    }
 }
 
 void BusServer::suicide() {

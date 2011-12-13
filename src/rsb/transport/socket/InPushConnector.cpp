@@ -38,16 +38,18 @@ transport::InPushConnector* InPushConnector::create(const Properties& args) {
     RSCDEBUG(logger, "Creating InPushConnector with properties " << args);
 
     return new InPushConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
-                               args.get<string>                       ("host",   "localhost"),
-                               args.getAs<unsigned int>               ("port",   9999),
-                               args.getAs<bool>                       ("server", false));
+                               args.get<string>                       ("host",       DEFAULT_HOST),
+                               args.getAs<unsigned int>               ("port",       DEFAULT_PORT),
+                               args.getAs<Server>                     ("server",     SERVER_AUTO),
+                               args.getAs<bool>                       ("tcpnodelay", false));
 }
 
-InPushConnector::InPushConnector(ConverterSelectionStrategyPtr  converters,
-                                 const string                  &host,
-                                 unsigned int                   port,
-                                 bool                           server) :
-    ConnectorBase(converters, host, port, server),
+InPushConnector::InPushConnector(ConverterSelectionStrategyPtr converters,
+                                 const string&                 host,
+                                 unsigned int                  port,
+                                 Server                        server,
+                                 bool                          tcpnodelay) :
+    ConnectorBase(converters, host, port, server, tcpnodelay),
     logger(Logger::getLogger("rsb.transport.socket.InPushConnector")),
     active(false) {
 }
@@ -74,12 +76,15 @@ void InPushConnector::activate() {
 
     RSCDEBUG(logger, "Activating");
 
-    getBus()->addSink(dynamic_pointer_cast<InPushConnector>(shared_from_this()));
+    getBus()->addSink(dynamic_pointer_cast<InPushConnector>(enable_shared_from_this<InConnector>::shared_from_this()));
+
     this->active = true;
 }
 
 void InPushConnector::deactivate() {
     RSCDEBUG(logger, "Deactivating");
+
+    this->active = false;
 
     RSCDEBUG(logger, "Removing ourselves from sink list of bus " << getBus());
     getBus()->removeSink(this);
@@ -87,7 +92,7 @@ void InPushConnector::deactivate() {
     ConnectorBase::deactivate();
 }
 
-void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
+void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
     RSCWARN(logger, "Quality of service not implemented");
 }
 
@@ -117,7 +122,7 @@ void InPushConnector::handle(EventPtr busEvent) {
     }
 }
 
-void InPushConnector::printContents(ostream &stream) const {
+void InPushConnector::printContents(ostream& stream) const {
     stream << "scope = " << scope;
 }
 

@@ -42,19 +42,23 @@ namespace socket {
 class RSB_EXPORT OutConnector: public ConnectorBase,
                                public rsb::transport::OutConnector {
 public:
-    OutConnector(ConverterSelectionStrategyPtr  converters,
-                 const std::string             &host,
-                 unsigned int                   port,
-                 bool                           server);
+    /**
+     * @copydoc ConnectorBase::ConnectorBase()
+     */
+    OutConnector(ConverterSelectionStrategyPtr converters,
+                 const std::string&            host,
+                 unsigned int                  port,
+                 Server                        server,
+                 bool                          tcpnodelay);
 
     void activate();
     void deactivate();
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec &specs);
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void handle(EventPtr e);
 
-    static transport::OutConnector *create(const rsc::runtime::Properties &args);
+    static transport::OutConnector* create(const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
 };

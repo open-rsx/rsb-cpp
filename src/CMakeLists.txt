@@ -117,6 +117,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/socket/InPushConnector.cpp
             rsb/transport/socket/OutConnector.cpp
             rsb/transport/socket/Serialization.cpp
+            rsb/transport/socket/Types.cpp
 
             rsb/util/MD5.cpp
 

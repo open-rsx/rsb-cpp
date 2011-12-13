@@ -44,11 +44,12 @@ BusConnection::BusConnection(BusPtr    bus,
                              bool      client,
                              bool      tcpNoDelay) :
     logger(Logger::getLogger("rsb.transport.socket.BusConnection")),
-    socket(socket), bus(bus) {
+    socket(socket), bus(bus), disconnecting(false) {
 
     // Enable TCPNODELAY socket option to trade decreased throughput
     // for reduced latency.
     if (tcpNoDelay){
+        RSCINFO(logger, "Setting TCP_NODELAY option");
         boost::asio::ip::tcp::no_delay option(true);
         socket->set_option(option);
     }
@@ -57,33 +58,27 @@ BusConnection::BusConnection(BusPtr    bus,
     this->lengthReceiveBuffer.resize(4);
     this->lengthSendBuffer.resize(4);
 
-    // handshake
+    // Perform request role of the handshake.
     if (client) {
         read(*this->socket, buffer(&this->lengthReceiveBuffer[0], 4));
     } else {
         write(*this->socket, buffer(this->lengthSendBuffer));
     }
-
-    receiveEvent();
 }
 
 BusConnection::~BusConnection() {
-    /** TODO(jmoringe): ignore errors? */
-    disconnect();
+    performSafeCleanup("destructor");
 }
 
 void BusConnection::disconnect() {
     RSCINFO(logger, "Disconnecting");
+    this->disconnecting = true;
 
-    try {
-        if (this->socket && this->socket->is_open()) {
-            this->socket->shutdown(ip::tcp::socket::shutdown_send);
-            this->socket->shutdown(ip::tcp::socket::shutdown_receive);
-            RSCINFO(logger, "Closing");
-            this->socket->close();
-        }
-    } catch (const std::exception &e) {
-        RSCERROR(logger, "Failed to disconnect: " << e.what());
+    if (this->socket && this->socket->is_open()) {
+        this->socket->shutdown(ip::tcp::socket::shutdown_send);
+        this->socket->shutdown(ip::tcp::socket::shutdown_receive);
+        RSCINFO(logger, "Closing");
+        this->socket->close();
     }
 }
 
@@ -92,11 +87,11 @@ void BusConnection::startReceiving() {
 }
 
 void BusConnection::sendEvent(EventPtr      event,
-                              const string &wireSchema) {
-    // Serialize the event into a notification object and serialize
-    // the notification object.
-    // The payload has already been serialized by the connector which
-    // submitted the event.
+                              const string& wireSchema) {
+    // Convert the event into a notification object and serialize the
+    // notification object.
+    // The payload already is a byte-array, since it has been
+    // serialized by the connector which submitted the event.
     protocol::Notification notification;
     eventToNotification(notification, event, wireSchema,
                         *static_pointer_cast<string>(event->getData()));
@@ -114,6 +109,28 @@ void BusConnection::sendEvent(EventPtr      event,
     write(*this->socket, buffer(this->messageSendBuffer));
 }
 
+void BusConnection::performSafeCleanup(const string& context) {
+    // Remove ourselves from the bus to which we are connected.
+    BusPtr bus = this->bus.lock();
+    if (bus) {
+        // The bus may already have removed its pointer.
+        try {
+            bus->removeConnection(shared_from_this());
+        } catch (const boost::bad_weak_ptr& e) {
+        }
+    }
+
+    // We can only ignore the error here.
+    if (!this->disconnecting) {
+        try {
+            disconnect();
+        } catch (const std::exception& e) {
+            RSCERROR(logger, "Failed to disconnect (in " << context << "): "
+                     << e.what());
+        }
+    }
+}
+
 void BusConnection::receiveEvent() {
     async_read(*this->socket,
                buffer(&this->lengthReceiveBuffer[0], 4),
@@ -122,17 +139,15 @@ void BusConnection::receiveEvent() {
                            boost::asio::placeholders::bytes_transferred));
 }
 
-void BusConnection::handleReadLength(const boost::system::error_code &error,
+void BusConnection::handleReadLength(const boost::system::error_code& error,
                                      size_t                    bytesTransferred) {
     if (error || (bytesTransferred != 4)) {
-        RSCWARN(logger, "Receive failure (error " << error << ")"
-                << " or incomplete message header (received " << bytesTransferred << ")"
-                << "; closing connection");
-        //disconnect();
-        BusPtr bus = this->bus.lock();
-        if (bus) {
-            bus->removeConnection(shared_from_this()); /** TODO(jmoringe): not sure about this */
+        if (!disconnecting) {
+            RSCWARN(logger, "Receive failure (error " << error << ")"
+                    << " or incomplete message header (received " << bytesTransferred << " bytes)"
+                    << "; closing connection");
         }
+        performSafeCleanup("handleReadLength");
         return;
     }
 
@@ -154,18 +169,16 @@ void BusConnection::handleReadLength(const boost::system::error_code &error,
                            size));
 }
 
-void BusConnection::handleReadBody(const boost::system::error_code &error,
+void BusConnection::handleReadBody(const boost::system::error_code& error,
                                    size_t                    bytesTransferred,
                                    size_t expected) {
     if (error || (bytesTransferred != expected)) {
-        RSCWARN(logger, "Receive failure (error " << error << ")"
-                << " or incomplete message body (received " << bytesTransferred << ")"
-                << "; closing connection");
-        //disconnect();
-        BusPtr bus = this->bus.lock();
-        if (bus) {
-            bus->removeConnection(shared_from_this()); /** TODO(jmoringe): not sure about this */
+        if (!this->disconnecting) {
+            RSCWARN(logger, "Receive failure (error " << error << ")"
+                    << " or incomplete message body (received " << bytesTransferred << " bytes)"
+                    << "; closing connection");
         }
+        performSafeCleanup("handleReadBody");
         return;
     }
 
@@ -180,14 +193,18 @@ void BusConnection::handleReadBody(const boost::system::error_code &error,
     // Dispatch the received event to connectors.
     BusPtr bus = this->bus.lock();
     if (bus) {
-        bus->handleIncoming(event);
+        bus->handleIncoming(event, shared_from_this());
+    } else {
+        RSCWARN(logger, "Dangling bus pointer when trying to dispatch incoming event; closing connection");
+        performSafeCleanup("handleReadBody");
+        return;
     }
 
     // Submit task to start receiving the next event.
     receiveEvent();
 }
 
-void BusConnection::printContents(ostream &stream) const {
+void BusConnection::printContents(ostream& stream) const {
     try {
         stream << "local = " << this->socket->local_endpoint()
                << ", remote = " << this->socket->remote_endpoint();

@@ -65,34 +65,54 @@ class RSB_EXPORT Bus: public eventprocessing::Handler,
                       public boost::enable_shared_from_this<Bus> {
 friend class BusConnection;
 public:
-    Bus(boost::asio::io_service &service);
+    Bus(boost::asio::io_service& service, bool tcpnodelay = false);
     virtual ~Bus();
 
     void addSink(InPushConnectorPtr sink);
     void removeSink(InPushConnector* sink);
 
-    void addConnector(ConnectorBasePtr connector);
-    void removeConnector(ConnectorBasePtr connector);
+    void addConnector(ConnectorBase* connector);
+    void removeConnector(ConnectorBase* connector);
 
+    /**
+     * Adds @a connection to the list of connections of the bus. @a
+     * connection should start receiving events, only after being
+     * added to the bus.
+     *
+     * @param connection The connection that should be added.
+     */
     void addConnection(BusConnectionPtr connection);
+
+    /**
+     * Removes @a connection from the list of connections of this
+     * bus. @a connection is not closed or otherwise modified.
+     *
+     * @param connection The connection that should be removed.
+     */
     void removeConnection(BusConnectionPtr connection);
+
+    bool isTcpnodelay() const;
 
     void handle(EventPtr event);
 protected:
-    virtual void handleIncoming(EventPtr event);
+    typedef std::list<BusConnectionPtr> ConnectionList;
+
+    ConnectionList getConnections() const;
+    boost::recursive_mutex& getConnectionLock();
+
+    virtual void handleIncoming(EventPtr         event,
+                                BusConnectionPtr connection);
 
     virtual void suicide();
 private:
-    typedef std::list<BusConnectionPtr>                  ConnectionList;
-
-    typedef std::list<ConnectorBasePtr>                  ConnectorList;
+    typedef std::list<ConnectorBase*>                    ConnectorList;
 
     typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;
     typedef std::map<Scope, SinkList>                    SinkMap;
 
     rsc::logging::LoggerPtr  logger;
 
-    boost::asio::io_service &service;
+    boost::asio::io_service& service;
 
     ConnectionList           connections;
     boost::recursive_mutex   connectionLock;
@@ -101,7 +121,9 @@ private:
     SinkMap                  sinks;
     boost::recursive_mutex   connectorLock;
 
-    void printContents(std::ostream &stream) const;
+    bool                     tcpnodelay;
+
+    void printContents(std::ostream& stream) const;
 };
 
 }

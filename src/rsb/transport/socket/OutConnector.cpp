@@ -34,21 +34,23 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-transport::OutConnector *OutConnector::create(const Properties &args) {
+transport::OutConnector* OutConnector::create(const Properties& args) {
     LoggerPtr logger = Logger::getLogger("rsb.transport.socket.OutConnector");
     RSCDEBUG(logger, "Creating OutConnector with properties " << args);
 
     return new OutConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
-                            args.get<string>                       ("host",   "localhost"),
-                            args.getAs<unsigned int>               ("port",   9999),
-                            args.getAs<bool>                       ("server", false));
+                            args.get<string>                       ("host",       DEFAULT_HOST),
+                            args.getAs<unsigned int>               ("port",       DEFAULT_PORT),
+                            args.getAs<Server>                     ("server",     SERVER_AUTO),
+                            args.getAs<bool>                       ("tcpnodelay", false));
 }
 
 OutConnector::OutConnector(ConverterSelectionStrategyPtr  converters,
-                           const string                  &host,
+                           const string&                  host,
                            unsigned int                   port,
-                           bool                           server) :
-    ConnectorBase(converters, host, port, server),
+                           Server                         server,
+                           bool                           tcpnodelay) :
+    ConnectorBase(converters, host, port, server, tcpnodelay),
     logger(Logger::getLogger("rsb.transport.socket.OutConnector")){
 }
 
@@ -60,7 +62,7 @@ void OutConnector::deactivate() {
     ConnectorBase::deactivate();
 }
 
-void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec &/*specs*/) {
+void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
     RSCWARN(logger, "Quality of service not implemented");
 }
 

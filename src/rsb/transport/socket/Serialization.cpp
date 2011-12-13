@@ -28,13 +28,13 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-EventPtr notificationToEvent(protocol::Notification &notification,
+EventPtr notificationToEvent(protocol::Notification& notification,
                              bool                    exposeWireSchema) {
     /** TODO(jmoringe): it may be possible to keep a single event
      * instance here since connectors probably have to copy events  */
     EventPtr event(new Event());
 
-    MetaData &metaData = event->mutableMetaData();
+    MetaData& metaData = event->mutableMetaData();
     metaData.setCreateTime((boost::uint64_t) notification.meta_data().create_time());
     metaData.setSendTime((boost::uint64_t) notification.meta_data().send_time());
     metaData.setReceiveTime();
@@ -56,6 +56,11 @@ EventPtr notificationToEvent(protocol::Notification &notification,
         metaData.setUserTime(notification.meta_data().user_times(i).key(),
                              notification.meta_data().user_times(i).timestamp());
     }
+    for (int i = 0; i < notification.causes_size(); ++i) {
+        event->addCause(EventId(rsc::misc::UUID((boost::uint8_t*) notification.causes(i).sender_id().c_str()),
+                                notification.causes(i).sequence_number()));
+    }
+
     event->setData(boost::shared_ptr<string>(new string(notification.data())));
 
     if (exposeWireSchema) {
@@ -65,10 +70,10 @@ EventPtr notificationToEvent(protocol::Notification &notification,
     return event;
 }
 
-void eventToNotification(protocol::Notification &notification,
-                         const EventPtr         &event,
-                         const string           &wireSchema,
-                         const string           &data) {
+void eventToNotification(protocol::Notification& notification,
+                         const EventPtr&         event,
+                         const string&           wireSchema,
+                         const string&           data) {
     notification.mutable_event_id()->set_sender_id(
         event->getMetaData().getSenderId().getId().data,
         event->getMetaData().getSenderId().getId().size());
@@ -86,7 +91,7 @@ void eventToNotification(protocol::Notification &notification,
     for (map<string, string>::const_iterator it =
              event->mutableMetaData().userInfosBegin(); it
              != event->mutableMetaData().userInfosEnd(); ++it) {
-        protocol::UserInfo *info =
+        protocol::UserInfo* info =
             notification.mutable_meta_data()->mutable_user_infos()->Add();
         info->set_key(it->first);
         info->set_value(it->second);
@@ -94,13 +99,22 @@ void eventToNotification(protocol::Notification &notification,
     for (map<string, boost::uint64_t>::const_iterator it =
              event->mutableMetaData().userTimesBegin(); it
              != event->mutableMetaData().userTimesEnd(); ++it) {
-        protocol::UserTime *info =
+        protocol::UserTime* info =
             notification.mutable_meta_data()->mutable_user_times()->Add();
         info->set_key(it->first);
         info->set_timestamp(it->second);
     }
     notification.set_num_data_parts(1);
     notification.set_data_part(0);
+
+    set<EventId> causes = event->getCauses();
+    for (set<EventId>::const_iterator it = causes.begin();
+         it != causes.end(); ++it) {
+        protocol::EventId* cause = notification.mutable_causes()->Add();
+        cause->set_sender_id(it->getParticipantId().getId().data,
+                             it->getParticipantId().getId().size());
+        cause->set_sequence_number(it->getSequenceNumber());
+    }
 
     notification.set_data(data);
 }

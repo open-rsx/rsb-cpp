@@ -36,7 +36,7 @@ namespace socket {
  *                         data item of the created event.
  * @return A shared pointer to a newly allocated @ref rsb::Event.
  */
-EventPtr notificationToEvent(protocol::Notification &notification,
+EventPtr notificationToEvent(protocol::Notification& notification,
                              bool                    exposeWireSchema = false);
 /**
  * Converts the @ref Event @a event into a @ref
@@ -49,10 +49,10 @@ EventPtr notificationToEvent(protocol::Notification &notification,
  *                   notification.
  * @param data The payload that should be stored in @a notification.
  */
-void eventToNotification(protocol::Notification &notification,
-                         const EventPtr         &event,
-                         const std::string      &wireSchema,
-                         const std::string      &data);
+void eventToNotification(protocol::Notification& notification,
+                         const EventPtr&         event,
+                         const std::string&      wireSchema,
+                         const std::string&      data);
 
 }
 }
