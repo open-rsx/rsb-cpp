@@ -23,7 +23,12 @@
 
 #include <rsb/Version.h>
 #include <rsb/Factory.h>
+
+#include <rsb/eventprocessing/EventReceivingStrategyFactory.h>
+#include <rsb/eventprocessing/EventSendingStrategyFactory.h>
+
 #include <rsb/transport/Factory.h>
+
 #include <rsb/converter/Repository.h>
 
 using namespace std;
@@ -47,6 +52,11 @@ int main(int argc, char** argv) {
         cout << endl << "Default Configuration" << endl;
 
         cout << rsb::Factory::getInstance().getDefaultParticipantConfig() << endl;
+
+        cout << endl << "Event Processing" << endl;
+
+        cout << eventprocessing::EventReceivingStrategyFactory::getInstance() << endl;
+        cout << eventprocessing::EventSendingStrategyFactory::getInstance() << endl;
 
         cout << endl << "Connectors" << endl;
 
