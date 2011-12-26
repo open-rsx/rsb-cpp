@@ -19,37 +19,16 @@
 
 #pragma once
 
-#include <list>
+#include <string>
 
-#include <rsc/runtime/Properties.h>
+#include <rsc/patterns/Factory.h>
 
-#include "../transport/Connector.h"
 #include "EventSendingStrategy.h"
 
 namespace rsb {
 namespace eventprocessing {
 
-/** This event sending strategy just passes incoming events to its
- * associated @ref rsb::transport::OutConnector s without
- * modification, queueing or anything else.
- *
- * @author jmoringe
- */
-class RSB_EXPORT DirectEventSendingStrategy: public EventSendingStrategy {
-public:
-    static EventSendingStrategy* create (const rsc::runtime::Properties& props);
-
-    void printContents(std::ostream& stream) const;
-
-    void addConnector(transport::OutConnectorPtr connector);
-    void removeConnector(transport::OutConnectorPtr connector);
-
-    void process(EventPtr e);
-private:
-    typedef std::list<transport::OutConnectorPtr> ConnectorList;
-
-    ConnectorList connectors;
-};
+typedef rsc::patterns::SingletonFactory<std::string, EventSendingStrategy> EventSendingStrategyFactory;
 
 }
 }

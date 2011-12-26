@@ -25,11 +25,13 @@
 
 using namespace std;
 
+using namespace rsc::runtime;
+
 namespace rsb {
 namespace eventprocessing {
 
-string DirectEventSendingStrategy::getClassName() const {
-    return "DirectEventSendingStrategy";
+EventSendingStrategy* DirectEventSendingStrategy::create(const Properties& props) {
+    return new DirectEventSendingStrategy();
 }
 
 void DirectEventSendingStrategy::printContents(ostream& stream) const {

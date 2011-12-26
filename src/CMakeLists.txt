@@ -160,6 +160,7 @@ SET(HEADERS rsb/CommException.h
 
             rsb/eventprocessing/Handler.h
             rsb/eventprocessing/EventSendingStrategy.h
+            rsb/eventprocessing/EventSendingStrategyFactory.h
             rsb/eventprocessing/DirectEventSendingStrategy.h
             rsb/eventprocessing/EventReceivingStrategy.h
             rsb/eventprocessing/EventReceivingStrategyFactory.h

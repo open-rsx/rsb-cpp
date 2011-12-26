@@ -25,8 +25,8 @@
 #include "DirectEventReceivingStrategy.h"
 #include "ParallelEventReceivingStrategy.h"
 
-//#include "EventSendingStrategyFactory.h"
-//#include "DirectEventSendingStrategy.h"
+#include "EventSendingStrategyFactory.h"
+#include "DirectEventSendingStrategy.h"
 
 namespace rsb {
 namespace eventprocessing {
@@ -51,12 +51,12 @@ void registerDefaultEventProcessingStrategies() {
                 &ParallelEventReceivingStrategy::create);
     }
 
-    // {
-    //     EventSendingStrategyFactory& factory
-    //         = EventSendingStrategyFactory::getInstance();
-    //
-    //     factory.impls().register_("direct", &DirectEventSendingStrategy::create);
-    // }
+    {
+        EventSendingStrategyFactory& factory
+            = EventSendingStrategyFactory::getInstance();
+
+        factory.impls().register_("direct", &DirectEventSendingStrategy::create);
+    }
 }
 
 }
