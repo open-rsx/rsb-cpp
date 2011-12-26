@@ -70,6 +70,7 @@ void registerDefaultTransports() {
             options.insert("host");
             options.insert("port");
             options.insert("server");
+            options.insert("tcpnodelay");
 
             factory.registerConnector("socket",
                                       &socket::InPushConnector::create,
@@ -118,10 +119,12 @@ void registerDefaultTransports() {
             options.insert("host");
             options.insert("port");
             options.insert("server");
+            options.insert("tcpnodelay");
 
             factory.registerConnector("socket",
                                       &socket::OutConnector::create,
-                                      "socket");
+                                      "socket",
+                                      options);
         }
     }
 
