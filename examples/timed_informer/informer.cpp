@@ -39,8 +39,10 @@ namespace po = boost::program_options;
 class FloodingTask: public rsc::threading::PeriodicTask {
 public:
 
-    FloodingTask(Informer<string>::Ptr informer, const unsigned int& ms = 2) :
-            rsc::threading::PeriodicTask(ms), iteration(1), informer(informer) {
+    FloodingTask(Informer<string>::Ptr informer, const unsigned int& ms = 2,
+            const string& payload = "") :
+            rsc::threading::PeriodicTask(ms), iteration(1), informer(informer), payload(
+                    payload) {
     }
 
     virtual ~FloodingTask() {
@@ -49,7 +51,7 @@ public:
     virtual void execute() {
 
         string temp = boost::str(
-                boost::format("this is iteration %d") % iteration++);
+                boost::format("this is iteration %d") % iteration++) + payload;
         boost::shared_ptr<string> data(new string(temp));
         informer->publish(data);
 
@@ -59,6 +61,7 @@ private:
 
     unsigned long long iteration;
     Informer<string>::Ptr informer;
+    string payload;
 
 };
 
@@ -67,7 +70,8 @@ int main(int argc, char* argv[]) {
     po::options_description desc("Allowed options");
     desc.add_options()("int,i", po::value<unsigned int>(), "interval in ms")(
             "scope,s", po::value<string>(), "destination scope")("help,h",
-            "help message");
+            "help message")("payload,p", po::value<unsigned int>(),
+            "Add additional payload of specified size (bytes)");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -82,6 +86,12 @@ int main(int argc, char* argv[]) {
     unsigned int intervalMs = vm["int"].as<unsigned int>();
     Scope scope = vm["scope"].as<string>();
 
+    string payload;
+    if (vm.count("payload")) {
+        payload = rsc::misc::randAlnumStr(vm["payload"].as<unsigned int>());
+        cout << "Generated payload of size " << payload.size() << endl;
+    }
+
     cout << "sending on " << scope << " with interval " << intervalMs << endl;
 
     // ---
@@ -93,7 +103,7 @@ int main(int argc, char* argv[]) {
     rsc::threading::ThreadedTaskExecutor exec;
 
     exec.schedule(
-            rsc::threading::TaskPtr(new FloodingTask(informer, intervalMs)));
+            rsc::threading::TaskPtr(new FloodingTask(informer, intervalMs, payload)));
 
     while (true) {
         boost::this_thread::sleep(boost::posix_time::seconds(1000));
