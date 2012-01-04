@@ -21,6 +21,7 @@
 #include <rsc/misc/UUID.h>
 
 #include "Filter.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace filter {
@@ -31,7 +32,7 @@ namespace filter {
  *
  * @author jmoringe
  */
-class OriginFilter: public Filter {
+class RSB_EXPORT OriginFilter: public Filter {
 public:
     /**
      * Creates a new origin filter that matches event originating from
