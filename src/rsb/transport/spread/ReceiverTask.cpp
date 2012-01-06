@@ -102,6 +102,9 @@ void ReceiverTask::execute() {
         NotificationPtr completeNotification =
                 handleAndJoinFragmentedNotification(notification);
         if (completeNotification) {
+            RSCTRACE(
+                    logger,
+                    "ReceiverTask::execute fragmented notification joined, last message " << message);
             notifyHandler(completeNotification);
         }
 
