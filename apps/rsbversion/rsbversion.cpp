@@ -28,6 +28,8 @@
 
 #include <stdlib.h>
 
+#include <boost/program_options.hpp>
+
 #include <rsb/Version.h>
 #include <rsb/Factory.h>
 
@@ -39,38 +41,106 @@
 #include <rsb/converter/Repository.h>
 
 using namespace std;
+
+using namespace boost::program_options;
+
 using namespace rsb;
 
+bool version         = true;
+bool verbose         = false;
+bool configuration   = false;
+bool eventProcessing = false;
+bool connectors      = false;
+bool converters      = false;
+
+options_description options("Allowed options");
+
+bool handleCommandline(int argc, char *argv[]) {
+    options.add_options()
+        ("help",
+         "Display a help message.")
+        ("version",
+         bool_switch(&version)->default_value(true),
+         "Display version information?")
+        ("verbose",
+         bool_switch(&verbose),
+         "Display all available information? This is equivalent to specifying "
+"all other flags simultaneously.")
+        ("configuration",
+         bool_switch(&configuration),
+         "Display configuration information?")
+        ("event-processing",
+         bool_switch(&eventProcessing),
+         "Display available event processing strategies?")
+        ("connectors",
+         bool_switch(&connectors),
+         "Display available connectors?")
+        ("converters",
+         bool_switch(&converters),
+         "Display available converters?")
+        ;
+
+    variables_map map;
+    store(command_line_parser(argc, argv)
+          .options(options)
+          .run(), map);
+    notify(map);
+    if (map.count("help"))
+        return true;
+
+    return false;
+}
+
+void usage() {
+    cout << "usage: info [OPTIONS]" << endl;
+    cout << options << endl;
+}
+
 int main(int argc, char** argv) {
-    bool verbose = false;
-    if (argc == 2 && string(argv[1]) == "--verbose") {
-        verbose = true;
+
+    // Handle commandline arguments.
+    try {
+        if (handleCommandline(argc, argv)) {
+            usage(); // --help
+            return EXIT_SUCCESS;
+        }
+    } catch (const std::exception& e) {
+        cerr << "Error parsing command line: " << e.what() << endl;
+        usage();
+        return EXIT_FAILURE;
     }
 
-    cout << "Version: " << Version::string() << ", build "
-         << Version::buildString() << ", abi " << Version::abi()
-         << endl;
+    // Initialize everything.
+    rsb::Factory::getInstance();
 
-    if (verbose) {
-        rsb::Factory::getInstance();
+    if (version || verbose) {
+        cout << "Version: " << Version::string() << ", build "
+             << Version::buildString() << ", abi " << Version::abi()
+             << endl;
+    }
 
-        cout << endl;
-
+    if (configuration || verbose) {
         cout << endl << "Default Configuration" << endl;
 
         cout << rsb::Factory::getInstance().getDefaultParticipantConfig() << endl;
+    }
 
+    if (eventProcessing || verbose) {
         cout << endl << "Event Processing" << endl;
 
         cout << eventprocessing::EventReceivingStrategyFactory::getInstance() << endl;
         cout << eventprocessing::EventSendingStrategyFactory::getInstance() << endl;
+    }
 
+    if (connectors || verbose) {
         cout << endl << "Connectors" << endl;
 
         cout << rsb::transport::InPullFactory::getInstance() << endl;
         cout << rsb::transport::InPushFactory::getInstance() << endl;
         cout << rsb::transport::OutFactory::getInstance() << endl;
+    }
 
+    if (converters || verbose)  {
         cout << endl << "Converters" << endl;
 
         cout << *rsb::converter::stringConverterRepository() << endl;
