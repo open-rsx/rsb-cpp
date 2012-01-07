@@ -92,27 +92,6 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/inprocess/InConnector.cpp
             rsb/transport/inprocess/OutConnector.cpp
 
-            rsb/transport/spread/InConnector.cpp
-            rsb/transport/spread/InPullConnector.cpp
-            rsb/transport/spread/OutConnector.cpp
-            rsb/transport/spread/ReceiverTask.cpp
-            rsb/transport/spread/MembershipManager.cpp
-            rsb/transport/spread/SpreadConnection.cpp
-            rsb/transport/spread/SpreadConnector.cpp
-            rsb/transport/spread/SpreadGroup.cpp
-            rsb/transport/spread/SpreadMessage.cpp
-            rsb/transport/spread/Assembly.cpp
-
-            rsb/transport/socket/Types.cpp
-            rsb/transport/socket/BusConnection.cpp
-            rsb/transport/socket/Bus.cpp
-            rsb/transport/socket/BusServer.cpp
-            rsb/transport/socket/Factory.cpp
-            rsb/transport/socket/ConnectorBase.cpp
-            rsb/transport/socket/InPushConnector.cpp
-            rsb/transport/socket/OutConnector.cpp
-            rsb/transport/socket/Serialization.cpp
-
             rsb/util/MD5.cpp
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
@@ -201,27 +180,6 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/inprocess/InConnector.h
             rsb/transport/inprocess/OutConnector.h
 
-            rsb/transport/spread/InConnector.h
-            rsb/transport/spread/InPullConnector.h
-            rsb/transport/spread/OutConnector.h
-            rsb/transport/spread/ReceiverTask.h
-            rsb/transport/spread/MembershipManager.h
-            rsb/transport/spread/SpreadConnection.h
-            rsb/transport/spread/SpreadConnector.h
-            rsb/transport/spread/SpreadGroup.h
-            rsb/transport/spread/SpreadMessage.h
-            rsb/transport/spread/Assembly.h
-
-            rsb/transport/socket/Types.h
-            rsb/transport/socket/BusConnection.h
-            rsb/transport/socket/Bus.h
-            rsb/transport/socket/BusServer.h
-            rsb/transport/socket/Factory.h
-            rsb/transport/socket/ConnectorBase.h
-            rsb/transport/socket/InPushConnector.h
-            rsb/transport/socket/OutConnector.h
-            rsb/transport/socket/Serialization.h
-
             rsb/util/MD5.h
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
@@ -229,6 +187,50 @@ SET(HEADERS rsb/CommException.h
 
             ${PROTO_HEADERS})
 
+IF(WITH_SPREAD_TRANSPORT)
+    LIST(APPEND SOURCES rsb/transport/spread/InConnector.cpp
+                        rsb/transport/spread/InPullConnector.cpp
+                        rsb/transport/spread/OutConnector.cpp
+                        rsb/transport/spread/ReceiverTask.cpp
+                        rsb/transport/spread/MembershipManager.cpp
+                        rsb/transport/spread/SpreadConnection.cpp
+                        rsb/transport/spread/SpreadConnector.cpp
+                        rsb/transport/spread/SpreadGroup.cpp
+                        rsb/transport/spread/SpreadMessage.cpp
+                        rsb/transport/spread/Assembly.cpp)
+    LIST(APPEND HEADERS rsb/transport/spread/InConnector.h
+                        rsb/transport/spread/InPullConnector.h
+                        rsb/transport/spread/OutConnector.h
+                        rsb/transport/spread/ReceiverTask.h
+                        rsb/transport/spread/MembershipManager.h
+                        rsb/transport/spread/SpreadConnection.h
+                        rsb/transport/spread/SpreadConnector.h
+                        rsb/transport/spread/SpreadGroup.h
+                        rsb/transport/spread/SpreadMessage.h
+                        rsb/transport/spread/Assembly.h)
+ENDIF()
+
+IF(WITH_SOCKET_TRANSPORT)
+    LIST(APPEND SOURCES rsb/transport/socket/Types.cpp
+                        rsb/transport/socket/BusConnection.cpp
+                        rsb/transport/socket/Bus.cpp
+                        rsb/transport/socket/BusServer.cpp
+                        rsb/transport/socket/Factory.cpp
+                        rsb/transport/socket/ConnectorBase.cpp
+                        rsb/transport/socket/InPushConnector.cpp
+                        rsb/transport/socket/OutConnector.cpp
+                        rsb/transport/socket/Serialization.cpp)
+    LIST(APPEND HEADERS rsb/transport/socket/Types.h
+                        rsb/transport/socket/BusConnection.h
+                        rsb/transport/socket/Bus.h
+                        rsb/transport/socket/BusServer.h
+                        rsb/transport/socket/Factory.h
+                        rsb/transport/socket/ConnectorBase.h
+                        rsb/transport/socket/InPushConnector.h
+                        rsb/transport/socket/OutConnector.h
+                        rsb/transport/socket/Serialization.h)
+ENDIF()
+                 
 IF(WIN32)
     ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
 ELSE()
@@ -236,7 +238,6 @@ ELSE()
 ENDIF()
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
-MESSAGE(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_LIBRARIES}
                                   ${PROTOBUF_LIBRARIES}
                                   ${RSC_LIBRARIES}

@@ -72,6 +72,8 @@ ENDIF()
 
 OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
 OPTION(BUILD_EXAMPLES "Decide if the examples shall be built or not" ON)
+OPTION(BUILD_SPREAD_TRANSPORT "Decide if the spread transport shall be built or not" ON)
+OPTION(BUILD_SOCKET_TRANSPORT "Decide if the socket transport shall be built or not" ON)
 
 # --- project settings ---
 
@@ -108,7 +110,7 @@ SET(RSB_PROTOCOL_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.8")
 FIND_PACKAGE(RSBProtocol ${RSB_PROTOCOL_VERSION} REQUIRED)
 
 SET(SPREAD_IGNORE_EXECUTABLE TRUE)
-FIND_PACKAGE(Spread REQUIRED)
+FIND_PACKAGE(Spread)
 IF(NOT SPREAD_EXECUTABLE)
     MESSAGE(STATUS "Spread executable not found. Unit tests will not be built!")
 ENDIF()
@@ -124,6 +126,27 @@ INCLUDE_DIRECTORIES(BEFORE src ${CMAKE_BINARY_DIR}/src)
 LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
 FIND_PACKAGE(Doxygen)
+
+# --- based on the dependencies, find out what to really build ---
+
+SET(WITH_SPREAD_TRANSPORT FALSE)
+IF(BUILD_SPREAD_TRANSPORT AND SPREAD_FOUND)
+    SET(WITH_SPREAD_TRANSPORT TRUE)
+ENDIF()
+SET(WITH_SOCKET_TRANSPORT ${BUILD_SOCKET_TRANSPORT})
+
+IF(WITH_SPREAD_TRANSPORT)
+    MESSAGE(STATUS "Enabled spread transport")
+    ADD_DEFINITIONS(-DRSB_WITH_SPREAD_TRANSPORT=)
+ELSE()
+    MESSAGE(STATUS "Disabled spread transport")
+ENDIF()
+IF(WITH_SOCKET_TRANSPORT)
+    MESSAGE(STATUS "Enabled socket transport")
+    ADD_DEFINITIONS(-DRSB_WITH_SOCKET_TRANSPORT=)
+ELSE()
+    MESSAGE(STATUS "Disabled socket transport")
+ENDIF()
 
 # --- source code ---
 

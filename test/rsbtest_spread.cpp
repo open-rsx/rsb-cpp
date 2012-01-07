@@ -41,7 +41,8 @@ using namespace rsc::subprocess;
 int main(int argc, char* argv[]) {
 
     srand(time(NULL));
-    SubprocessPtr spread = startSpread();
+
+    AddGlobalTestEnvironment(new SpreadEnvironment);
 
     rsb::converter::registerDefaultConverters();
 

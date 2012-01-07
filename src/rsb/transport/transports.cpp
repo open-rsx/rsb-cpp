@@ -26,15 +26,21 @@
 
 #include "Factory.h"
 
+#include <boost/thread.hpp>
+
 #include "inprocess/InConnector.h"
 #include "inprocess/OutConnector.h"
 
+#ifdef RSB_WITH_SPREAD_TRANSPORT
 #include "spread/InConnector.h"
 #include "spread/InPullConnector.h"
 #include "spread/OutConnector.h"
+#endif
 
+#ifdef RSB_WITH_SOCKET_TRANSPORT
 #include "socket/InPushConnector.h"
 #include "socket/OutConnector.h"
+#endif
 
 #include "transports.h"
 
@@ -61,6 +67,7 @@ void registerDefaultTransports() {
                                   &inprocess::InConnector::create,
                                   "inprocess");
 
+#ifdef RSB_WITH_SPREAD_TRANSPORT
         {
             set<string> options;
             options.insert("host");
@@ -71,7 +78,9 @@ void registerDefaultTransports() {
                                       "spread",
                                       options);
         }
+#endif
 
+#ifdef RSB_WITH_SOCKET_TRANSPORT
         {
             set<string> options;
             options.insert("host");
@@ -84,12 +93,15 @@ void registerDefaultTransports() {
                                       "socket",
                                       options);
         }
+#endif
+
     }
 
     // In-direction, pull-style connectors
     {
         InPullFactory& factory = InPullFactory::getInstance();
 
+#ifdef RSB_WITH_SPREAD_TRANSPORT
         {
             set<string> options;
             options.insert("host");
@@ -100,6 +112,8 @@ void registerDefaultTransports() {
                                       "spread",
                                       options);
         }
+#endif
+
     }
 
     // Out-direction connectors
@@ -109,6 +123,7 @@ void registerDefaultTransports() {
                                   &inprocess::OutConnector::create,
                                   "inprocess");
 
+#ifdef RSB_WITH_SPREAD_TRANSPORT
         {
             set<string> options;
             options.insert("host");
@@ -120,7 +135,9 @@ void registerDefaultTransports() {
                                       "spread",
                                       options);
         }
+#endif
 
+#ifdef RSB_WITH_SOCKET_TRANSPORT
         {
             set<string> options;
             options.insert("host");
@@ -133,6 +150,8 @@ void registerDefaultTransports() {
                                       "socket",
                                       options);
         }
+#endif
+
     }
 
 }

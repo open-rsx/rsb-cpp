@@ -110,18 +110,20 @@ TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME}
 
 # --- spread connector test ---
 
-SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
-                            rsb/transport/spread/AssemblyTest.cpp
-                            rsb/transport/spread/SpreadConnectionTest.cpp
-                            rsb/transport/spread/SpreadConnectorTest.cpp
-                            rsb/transport/spread/SpreadMessageTest.cpp
-                            rsb/transport/spread/MembershipManagerTest.cpp)
-
-ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
-TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
-                      ${CONNECTOR_TEST_NAME})
-
-ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+IF(WITH_SPREAD_TRANSPORT)
+    SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
+                                rsb/transport/spread/AssemblyTest.cpp
+                                rsb/transport/spread/SpreadConnectionTest.cpp
+                                rsb/transport/spread/SpreadConnectorTest.cpp
+                                rsb/transport/spread/SpreadMessageTest.cpp
+                                rsb/transport/spread/MembershipManagerTest.cpp)
+    
+    ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
+    TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
+                          ${CONNECTOR_TEST_NAME})
+    
+    ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+ENDIF()
 
 # --- inprocess connector test ---
 
@@ -147,7 +149,7 @@ ENDIF()
 
 # --- spread symlink workaround ---
 
-IF(TEST_SPREAD_CONFIG_SYMLINK)
+IF(WITH_SPREAD_TRANSPORT AND TEST_SPREAD_CONFIG_SYMLINK)
 
     ADD_CUSTOM_COMMAND(TARGET ${RSB_TEST_NAME} PRE_BUILD
                        COMMAND ${CMAKE_COMMAND} -E remove ${TEST_SPREAD_CONFIG_SYMLINK}

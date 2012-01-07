@@ -35,31 +35,52 @@
 #include <rsc/logging/LoggerFactory.h>
 #include <rsc/subprocess/Subprocess.h>
 
+#include <gtest/gtest.h>
+
 #include "testconfig.h"
 
 inline void setupLogging() {
 
-	rsc::logging::LoggerFactory::getInstance().reconfigure(
-			rsc::logging::Logger::LEVEL_TRACE);
+    rsc::logging::LoggerFactory::getInstance().reconfigure(
+            rsc::logging::Logger::LEVEL_TRACE);
 
 }
 
 inline rsc::subprocess::SubprocessPtr startSpread() {
-	std::vector<std::string> spreadArgs;
-	spreadArgs.push_back("-n");
-	spreadArgs.push_back("localhost");
-	spreadArgs.push_back("-c");
-	spreadArgs.push_back(SPREAD_CONFIG_FILE);
-	std::cout << "Calling " << SPREAD_EXECUTABLE << " with args:";
-	for (std::vector<std::string>::iterator it = spreadArgs.begin(); it
-			!= spreadArgs.end(); ++it) {
-		std::cout << *it << ", ";
-	}
-	std::cout << std::endl;
-	rsc::subprocess::SubprocessPtr proc =
-			rsc::subprocess::Subprocess::newInstance(SPREAD_EXECUTABLE,
-					spreadArgs);
-	boost::this_thread::sleep(boost::posix_time::seconds(2));
-	return proc;
+    std::vector<std::string> spreadArgs;
+    spreadArgs.push_back("-n");
+    spreadArgs.push_back("localhost");
+    spreadArgs.push_back("-c");
+    spreadArgs.push_back(SPREAD_CONFIG_FILE);
+    std::cout << "Calling " << SPREAD_EXECUTABLE << " with args:";
+    for (std::vector<std::string>::iterator it = spreadArgs.begin();
+            it != spreadArgs.end(); ++it) {
+        std::cout << *it << ", ";
+    }
+    std::cout << std::endl;
+    rsc::subprocess::SubprocessPtr proc =
+            rsc::subprocess::Subprocess::newInstance(SPREAD_EXECUTABLE,
+                    spreadArgs);
+    boost::this_thread::sleep(boost::posix_time::seconds(2));
+    return proc;
 }
+
+/**
+ * An Environment for googletest which starts spread.
+ *
+ * @author jwienke
+ */
+class SpreadEnvironment: public testing::Environment {
+public:
+    inline virtual ~SpreadEnvironment() {
+    }
+    inline virtual void SetUp() {
+        spreadProcess = startSpread();
+    }
+    inline virtual void TearDown() {
+        spreadProcess.reset();
+    }
+private:
+    rsc::subprocess::SubprocessPtr spreadProcess;
+};
 

@@ -76,7 +76,7 @@ public:
 
     UserInformerTask(Informer<string>::Ptr informer,
             const unsigned int& numEvents) :
-        informer(informer), numEvents(numEvents), sentEvents(0) {
+            informer(informer), numEvents(numEvents), sentEvents(0) {
 
     }
 
@@ -84,9 +84,10 @@ public:
     }
 
     void execute() {
-        EventPtr e(new Event(Scope("/blah"),
-                             boost::shared_ptr<string>(new string("hello world")),
-                             rsc::runtime::typeName<string>()));
+        EventPtr e(
+                new Event(Scope("/blah"),
+                        boost::shared_ptr<string>(new string("hello world")),
+                        rsc::runtime::typeName<string>()));
         e->mutableMetaData().setUserInfo("foo", "blubb");
         e->mutableMetaData().setUserTime("tttt");
         e->mutableMetaData().setUserTime("xxxx", boost::uint64_t(42));
@@ -111,36 +112,38 @@ public:
     }
 };
 
-
-TEST_P(RoundtripTest, testRoundtrip)
-{
+TEST_P(RoundtripTest, testRoundtrip) {
 
     Factory::killInstance();
     Factory& factory = Factory::getInstance();
     ParticipantConfig config;
     ParticipantConfig::Transport transport(GetParam());
     rsc::runtime::Properties p = transport.getOptions();
-    p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
+    p.set<string>("port", lexical_cast<string>(SPREAD_PORT));
     transport.setOptions(p);
     config.addTransport(transport);
-    config.setQualityOfServiceSpec(QualityOfServiceSpec(
-            QualityOfServiceSpec::ORDERED, QualityOfServiceSpec::RELIABLE));
+    config.setQualityOfServiceSpec(
+            QualityOfServiceSpec(QualityOfServiceSpec::ORDERED,
+                    QualityOfServiceSpec::RELIABLE));
     config.setErrorStrategy(ParticipantConfig::EXIT);
     factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/blah");
 
     ListenerPtr listener = factory.createListener(scope);
-    Informer<string>::Ptr informer = factory.createInformer<string> (scope);
+    Informer<string>::Ptr informer = factory.createInformer<string>(scope);
 
     // domain objects
     unsigned int numEvents = 10;
-    boost::shared_ptr<UserInformerTask> source(new UserInformerTask(informer,
-            10));
+    boost::shared_ptr<UserInformerTask> source(
+            new UserInformerTask(informer, 10));
     WaitingObserver observer(numEvents, scope);
 
-    listener->addHandler(rsb::HandlerPtr(new EventFunctionHandler(boost::bind(
-            &WaitingObserver::handler, &observer, _1))), true);
+    listener->addHandler(
+            rsb::HandlerPtr(
+                    new EventFunctionHandler(
+                            boost::bind(&WaitingObserver::handler, &observer,
+                                    _1))), true);
 
     // task execution service
     TaskExecutorPtr exec(new ThreadedTaskExecutor);
@@ -160,34 +163,47 @@ TEST_P(RoundtripTest, testRoundtrip)
 
         EXPECT_EQ(sent->getEventId(), received->getEventId());
         EXPECT_EQ(sent->getType(), received->getType());
-        EXPECT_EQ(*(boost::static_pointer_cast<string>(sent->getData())), *(boost::static_pointer_cast<string>(received->getData())));
+        EXPECT_EQ(*(boost::static_pointer_cast<string>(sent->getData())),
+                *(boost::static_pointer_cast<string>(received->getData())));
 
         EXPECT_EQ(informer->getId(), sent->getMetaData().getSenderId());
         EXPECT_GT(sent->getMetaData().getCreateTime(), (boost::uint64_t) 0);
         EXPECT_GT(sent->getMetaData().getSendTime(), (boost::uint64_t) 0);
-        EXPECT_GE(sent->getMetaData().getSendTime(), sent->getMetaData().getCreateTime());
-        EXPECT_GT(received->getMetaData().getReceiveTime(), (boost::uint64_t) 0);
-        EXPECT_GT(received->getMetaData().getDeliverTime(), (boost::uint64_t) 0);
-        EXPECT_GE(received->getMetaData().getDeliverTime(), received->getMetaData().getReceiveTime());
-        EXPECT_GE(received->getMetaData().getReceiveTime(), sent->getMetaData().getSendTime());
+        EXPECT_GE(sent->getMetaData().getSendTime(),
+                sent->getMetaData().getCreateTime());
+        EXPECT_GT(received->getMetaData().getReceiveTime(),
+                (boost::uint64_t) 0);
+        EXPECT_GT(received->getMetaData().getDeliverTime(),
+                (boost::uint64_t) 0);
+        EXPECT_GE(received->getMetaData().getDeliverTime(),
+                received->getMetaData().getReceiveTime());
+        EXPECT_GE(received->getMetaData().getReceiveTime(),
+                sent->getMetaData().getSendTime());
         set<string> userInfoKeys = received->getMetaData().userInfoKeys();
         EXPECT_EQ(sent->getMetaData().userInfoKeys(), userInfoKeys);
-        for (set<string>::const_iterator keyIt = userInfoKeys.begin(); keyIt != userInfoKeys.end(); ++keyIt) {
-            EXPECT_EQ(sent->getMetaData().getUserInfo(*keyIt), received->getMetaData().getUserInfo(*keyIt));
+        for (set<string>::const_iterator keyIt = userInfoKeys.begin();
+                keyIt != userInfoKeys.end(); ++keyIt) {
+            EXPECT_EQ(sent->getMetaData().getUserInfo(*keyIt),
+                    received->getMetaData().getUserInfo(*keyIt));
         }
         set<string> userTimeKeys = received->getMetaData().userTimeKeys();
         EXPECT_EQ(sent->getMetaData().userTimeKeys(), userTimeKeys);
-        for (set<string>::const_iterator keyIt = userTimeKeys.begin(); keyIt != userTimeKeys.end(); ++keyIt) {
-            EXPECT_EQ(sent->getMetaData().getUserTime(*keyIt), received->getMetaData().getUserTime(*keyIt));
+        for (set<string>::const_iterator keyIt = userTimeKeys.begin();
+                keyIt != userTimeKeys.end(); ++keyIt) {
+            EXPECT_EQ(sent->getMetaData().getUserTime(*keyIt),
+                    received->getMetaData().getUserTime(*keyIt));
         }
 
     }
 
 }
 
-INSTANTIATE_TEST_CASE_P(IntegrqationTest,
-                        RoundtripTest,
-                        ::testing::Values("spread", "inprocess"));
+INSTANTIATE_TEST_CASE_P(InprocessTransport, RoundtripTest,
+        ::testing::Values(string("inprocess")));
+#ifdef RSB_WITH_SPREAD_TRANSPORT
+    INSTANTIATE_TEST_CASE_P(SpreadTransport, RoundtripTest,
+            ::testing::Values(string("spread")));
+#endif
 
 // ------ informer test ------
 
@@ -196,13 +212,15 @@ protected:
 
     static void SetUpTestCase() {
 
+        // TODO jwienke: this is possibly error prone because it uses the user's
+        //               environment for the configuration
         Factory::killInstance();
         Factory& factory = Factory::getInstance();
         ParticipantConfig config = factory.getDefaultParticipantConfig();
         ParticipantConfig::Transport spreadTransport = config.getTransport(
                 "spread");
         rsc::runtime::Properties p = spreadTransport.getOptions();
-        p.set<string> ("port", lexical_cast<string> (SPREAD_PORT));
+        p.set<string>("port", lexical_cast<string>(SPREAD_PORT));
         spreadTransport.setOptions(p);
         config.addTransport(spreadTransport);
         factory.setDefaultParticipantConfig(config);
@@ -210,7 +228,6 @@ protected:
     }
 
     static void TearDownTestCase() {
-
     }
 
     virtual void SetUp() {
@@ -220,25 +237,29 @@ protected:
 
 };
 
-
-TEST_F(InformerTest, testTypeCheck)
-{
+TEST_F(InformerTest, testTypeCheck) {
     Factory& factory = Factory::getInstance();
 
     boost::shared_ptr<string> payload(new string("foo"));
     {
-        Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
-        EXPECT_THROW(informer->publish(payload, "not-string"), invalid_argument);
+        Informer<string>::Ptr informer = factory.createInformer<string>(
+                Scope("/"), ParticipantConfig());
+        EXPECT_THROW(informer->publish(payload, "not-string"),
+                invalid_argument);
 
-        InformerBasePtr informerBase = factory.createInformerBase(Scope("/"), "std::string");
-        EXPECT_THROW(informerBase->publish(payload, "not-string"), invalid_argument);
+        InformerBasePtr informerBase = factory.createInformerBase(Scope("/"),
+                "std::string", ParticipantConfig());
+        EXPECT_THROW(informerBase->publish(payload, "not-string"),
+                invalid_argument);
     }
     {
-        Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/"));
+        Informer<string>::Ptr informer = factory.createInformer<string>(
+                Scope("/"), ParticipantConfig());
         EventPtr event(new Event(Scope("/"), payload, "not-string"));
         EXPECT_THROW(informer->publish(event), invalid_argument);
 
-        InformerBasePtr informerBase = factory.createInformerBase(Scope("/"), "std::string");
+        InformerBasePtr informerBase = factory.createInformerBase(Scope("/"),
+                "std::string", ParticipantConfig());
         EXPECT_THROW(informerBase->publish(event), invalid_argument);
     }
 
@@ -248,22 +269,26 @@ TEST_F(InformerTest, testTypeCheck)
     // the converter selection step after we get through the checks
     // employed by the Informer.
 
-    ParticipantConfig config = Factory::getInstance().getDefaultParticipantConfig();
-    config.mutableTransport("inprocess").setEnabled(false);
-    config.mutableTransport("spread").setEnabled(true);
-
-    {
-        Informer<AnyType>::Ptr informer = factory.createInformer<AnyType> (Scope("/"), config);
-        EXPECT_THROW(informer->publish(payload, "arbitrary-type"), rsc::runtime::NoSuchObject);
-        EventPtr event(new Event(Scope("/"), payload, "arbitrary-type"));
-        EXPECT_THROW(informer->publish(event), rsc::runtime::NoSuchObject);
-    }
+    // TODO this requires a transport with conversion but we cannot assume any
+    //      we need to create a mock to reenable this test
+//    ParticipantConfig config = Factory::getInstance().getDefaultParticipantConfig();
+//    config.mutableTransport("inprocess").setEnabled(false);
+//    config.mutableTransport("spread").setEnabled(true);
+//
+//    {
+//        Informer<AnyType>::Ptr informer = factory.createInformer<AnyType>(
+//                Scope("/"), config);
+//        EXPECT_THROW(informer->publish(payload, "arbitrary-type"),
+//                rsc::runtime::NoSuchObject);
+//        EventPtr event(new Event(Scope("/"), payload, "arbitrary-type"));
+//        EXPECT_THROW(informer->publish(event), rsc::runtime::NoSuchObject);
+//    }
 }
 
-TEST_F(InformerTest, testScopeCheck)
-{
+TEST_F(InformerTest, testScopeCheck) {
     Factory& factory = Factory::getInstance();
-    Informer<string>::Ptr informer = factory.createInformer<string> (Scope("/foo"));
+    Informer<string>::Ptr informer = factory.createInformer<string>(
+            Scope("/foo"), ParticipantConfig());
     boost::shared_ptr<string> payload(new string("foo"));
 
     // Wrong: unrelated scope
@@ -280,62 +305,72 @@ TEST_F(InformerTest, testScopeCheck)
 
     // OK: subscope
     {
-        EventPtr event(new Event(Scope("/foo/subscope"), payload, typeName<string>()));
+        EventPtr event(
+                new Event(Scope("/foo/subscope"), payload, typeName<string>()));
         informer->publish(event);
     }
 }
 
-TEST_F(InformerTest, testReturnValue)
-{
+TEST_F(InformerTest, testReturnValue) {
     Factory& factory = Factory::getInstance();
     const Scope scope("/return/value/test");
-    Informer<string>::Ptr informer = factory.createInformer<string> (scope,
-            Factory::getInstance().getDefaultParticipantConfig());
+    Informer<string>::Ptr informer = factory.createInformer<string>(scope,
+            ParticipantConfig());
 
     {
-        EventPtr event = informer->publish(boost::shared_ptr<string> (
-                new string("foo")));
+        EventPtr event = informer->publish(
+                boost::shared_ptr<string>(new string("foo")));
         EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
 
     {
         EventPtr event = informer->publish(
-                boost::shared_ptr<void> (new string("foo")), rsc::runtime::typeName<
-                        std::string>());
+                boost::shared_ptr<void>(new string("foo")),
+                rsc::runtime::typeName<std::string>());
         EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
     }
 
 }
 
-TEST_F(InformerTest, testConversionException)
-{
+// TODO jwienke: I am not sure whether this should be tested all the time using
+//               a mock transport?
+#ifdef RSB_WITH_SPREAD_TRANSPORT
+TEST_F(InformerTest, testConversionException) {
 
     Factory& factory = Factory::getInstance();
 
-    ParticipantConfig config = Factory::getInstance().getDefaultParticipantConfig();
+    ParticipantConfig config =
+            Factory::getInstance().getDefaultParticipantConfig();
     config.mutableTransport("inprocess").setEnabled(false);
     config.mutableTransport("spread").setEnabled(true);
 
     const Scope scope("/damn/strange/scope");
-    Informer<string>::Ptr informer
-        = factory.createInformer<string> (scope,
-                                          config,
-                                          "IAmNotConvertible");
-    EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo"))), runtime_error);
-    EXPECT_THROW(informer->publish(boost::shared_ptr<string> (new string("foo")), "IAmNotConvertible"), runtime_error);
+    Informer<string>::Ptr informer = factory.createInformer<string>(scope,
+            config, "IAmNotConvertible");
+    EXPECT_THROW(
+            informer->publish(boost::shared_ptr<string> (new string("foo"))),
+            runtime_error);
+    EXPECT_THROW(
+            informer->publish(boost::shared_ptr<string> (new string("foo")), "IAmNotConvertible"),
+            runtime_error);
 
-    EventPtr e(new Event(scope,
-                         boost::shared_ptr<string> (new string("foo")),
-                         "IAmNotConvertible"));
+    EventPtr e(
+            new Event(scope, boost::shared_ptr<string>(new string("foo")),
+                    "IAmNotConvertible"));
     EXPECT_THROW(informer->publish(e), runtime_error);
 
 }
+#endif
 
 int main(int argc, char* argv[]) {
 
+    srand(time(NULL));
+
     setupLogging();
 
-    SubprocessPtr spread = startSpread();
+#ifdef RSB_WITH_SPREAD_TRANSPORT
+    AddGlobalTestEnvironment(new SpreadEnvironment);
+#endif
 
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
