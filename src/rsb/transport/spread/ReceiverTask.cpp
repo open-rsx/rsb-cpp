@@ -144,19 +144,25 @@ void ReceiverTask::notifyHandler(NotificationPtr notification) {
 
     EventPtr e(new Event());
 
-    // TODO error handling
-    InConnector::ConverterPtr c = this->connector->getConverter(
-            notification->wire_schema());
-    converter::AnnotatedData deserialized = c->deserialize(
-            notification->wire_schema(), notification->data());
+    // TODO fix error handling, see #796
+    try {
+        InConnector::ConverterPtr c = this->connector->getConverter(
+                notification->wire_schema());
+        converter::AnnotatedData deserialized = c->deserialize(
+                notification->wire_schema(), notification->data());
 
-    fillEvent(e, *notification, deserialized.second, deserialized.first);
+        fillEvent(e, *notification, deserialized.second, deserialized.first);
 
-    e->mutableMetaData().setReceiveTime();
+        e->mutableMetaData().setReceiveTime();
 
-    boost::recursive_mutex::scoped_lock lock(handlerMutex);
-    if (this->handler) {
-        this->handler->handle(e);
+        boost::recursive_mutex::scoped_lock lock(handlerMutex);
+        if (this->handler) {
+            this->handler->handle(e);
+        }
+    } catch (const std::exception& ex) {
+        RSCWARN(logger, "ReceiverTask::notifyHandler catched std exception: " << ex.what() );
+    } catch (...) {
+        RSCWARN(logger, "ReceiverTask::notifyHandler catched unknown exception" );
     }
 
 }
