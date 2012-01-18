@@ -42,6 +42,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
 
             rsb/converter/BoolConverter.cpp
+            rsb/converter/ByteArrayConverter.cpp
             rsb/converter/Converter.cpp
             rsb/converter/EventsByScopeMapConverter.cpp
             rsb/converter/ProtocolBufferConverter.cpp
@@ -50,9 +51,9 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/SchemaAndByteArrayConverter.cpp
             rsb/converter/SerializationException.cpp
             rsb/converter/StringConverter.cpp
+            rsb/converter/TypeNameConverterPredicate.cpp
             rsb/converter/Uint64Converter.cpp
             rsb/converter/VoidConverter.cpp
-            rsb/converter/ByteArrayConverter.cpp
             rsb/converter/converters.cpp
 
             rsb/eventprocessing/Handler.cpp
@@ -121,6 +122,7 @@ SET(HEADERS rsb/CommException.h
             rsb/UnsupportedQualityOfServiceException.h
 
             rsb/converter/BoolConverter.h
+            rsb/converter/ByteArrayConverter.h
             rsb/converter/Converter.h
             rsb/converter/EventsByScopeMapConverter.h
             rsb/converter/ProtocolBufferConverter.h
@@ -132,9 +134,9 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/SchemaAndByteArrayConverter.h
             rsb/converter/SerializationException.h
             rsb/converter/StringConverter.h
+            rsb/converter/TypeNameConverterPredicate.h
             rsb/converter/Uint64Converter.h
             rsb/converter/VoidConverter.h
-            rsb/converter/ByteArrayConverter.h
             rsb/converter/converters.h
 
             rsb/eventprocessing/Handler.h
