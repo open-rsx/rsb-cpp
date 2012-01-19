@@ -74,14 +74,16 @@ void PushInRouteConfigurator::activate() {
     // Retrieve the set of connectors and ourselves to the list of
     // handlers of each connector.
     InRouteConfigurator::ConnectorSet connectors = getConnectors();
-    for (InRouteConfigurator::ConnectorSet::const_iterator it = connectors.begin();
-	 it != connectors.end(); ++it) {
-	InPushConnectorPtr connector = dynamic_pointer_cast<InPushConnector>(*it);
-	assert(connector);
-	connector->addHandler(HandlerPtr(new EventFunctionHandler(boost::bind(
-								      &PushEventReceivingStrategy::handle,
-								      this->eventReceivingStrategy,
-								      _1))));
+    for (InRouteConfigurator::ConnectorSet::const_iterator it =
+            connectors.begin(); it != connectors.end(); ++it) {
+        InPushConnectorPtr connector = dynamic_pointer_cast<InPushConnector>(
+                *it);
+        assert(connector);
+        connector->addHandler(
+                HandlerPtr(
+                        new EventFunctionHandler(
+                                boost::bind(&PushEventReceivingStrategy::handle,
+                                        this->eventReceivingStrategy, _1))));
     }
 }
 
