@@ -72,8 +72,9 @@ Scope InConnector::getScope() const {
 }
 
 void InConnector::setScope(const Scope& scope) {
-    if (this->active)
+    if (this->active) {
         throw std::runtime_error("Cannot set scope while active");
+    }
 
     this->scope = scope;
 }
