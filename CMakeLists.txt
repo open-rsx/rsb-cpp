@@ -62,6 +62,8 @@ SET(EXECUTABLE_OUTPUT_PATH ${OUTPUT_PATH})
 
 # --- global compiler flags ---
 
+SET(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/")
+
 INCLUDE(PedanticCompilerWarnings)
 
 IF(WIN32)
