@@ -76,6 +76,7 @@ OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
 OPTION(BUILD_EXAMPLES "Decide if the examples shall be built or not" ON)
 OPTION(BUILD_SPREAD_TRANSPORT "Decide if the spread transport shall be built or not" ON)
 OPTION(BUILD_SOCKET_TRANSPORT "Decide if the socket transport shall be built or not" ON)
+OPTION(CMAKE_PACKAGE_CACHE "Disabled/Enable CMake Package Cache for RSB" OFF)
 
 # --- project settings ---
 
@@ -194,7 +195,10 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc DESTINATION lib/pkgconfig)
 
 # --- cmake config files ---
 
-EXPORT(PACKAGE RSB)
+IF(CMAKE_PACKAGE_CACHE)
+    MESSAGE(STATUS "Exported RSB to CMake Package Cache")
+    EXPORT(PACKAGE RSB)
+ENDIF(CMAKE_PACKAGE_CACHE)
 
 CONFIGURE_FILE(RSBBuildTreeSettings.cmake.in
                "${CMAKE_BINARY_DIR}/RSBBuildTreeSettings.cmake" @ONLY)
