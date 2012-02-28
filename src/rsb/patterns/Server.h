@@ -88,6 +88,43 @@ public:
     };
 
     /**
+     * A callback which allows any kind of reply type but is restricted to a
+     * single request type.
+     *
+     * @author jwienke
+     * @tparam RequestType request type class
+     */
+    template<class RequestType>
+    class RSB_EXPORT AnyReplyTypeCallback : public CallbackBase {
+    public:
+        // typeid is due to msvc strangeness
+        AnyReplyTypeCallback(const std::string& requestType
+                 = rsc::runtime::typeName(typeid(RequestType))) :
+            CallbackBase(requestType, "") {
+        }
+
+        /**
+         * Implement this method to perform actions.
+         *
+         * @param methodName called method
+         * @param input input data for the method
+         * @return result data for the method with type name added
+         * @throw std::exception all exceptions based on this type are
+         *                       automatically caught and delivered to the
+         *                       remote server
+         */
+        virtual AnnotatedData call(const std::string& methodName,
+                boost::shared_ptr<RequestType> input) = 0;
+    private:
+        AnnotatedData intlCall(const std::string& methodName,
+                boost::shared_ptr<void> input) {
+            return call(methodName,
+                    boost::static_pointer_cast<RequestType>(input));
+        }
+
+    };
+
+    /**
      * Callback object used to register one method for a server.
      *
      * @tparam RequestType the data type of the request payload
