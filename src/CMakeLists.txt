@@ -45,6 +45,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/ByteArrayConverter.cpp
             rsb/converter/Converter.cpp
             rsb/converter/EventsByScopeMapConverter.cpp
+            rsb/converter/EventIdConverter.cpp
             rsb/converter/ProtocolBufferConverter.cpp
             rsb/converter/Repository.cpp
             rsb/converter/RegexConverterPredicate.cpp
@@ -125,6 +126,7 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/ByteArrayConverter.h
             rsb/converter/Converter.h
             rsb/converter/EventsByScopeMapConverter.h
+            rsb/converter/EventIdConverter.h
             rsb/converter/ProtocolBufferConverter.h
             rsb/converter/ConverterSelectionStrategy.h
             rsb/converter/UnambiguousConverterMap.h

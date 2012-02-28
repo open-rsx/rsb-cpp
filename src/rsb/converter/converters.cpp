@@ -32,6 +32,7 @@
 #include "BoolConverter.h"
 #include "ByteArrayConverter.h"
 #include "EventsByScopeMapConverter.h"
+#include "EventIdConverter.h"
 #include "StringConverter.h"
 #include "Uint64Converter.h"
 #include "VoidConverter.h"
@@ -50,6 +51,8 @@ void registerDefaultConverters() {
                 Converter<std::string>::Ptr(new BoolConverter));
         stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new ByteArrayConverter));
+        stringConverterRepository()->registerConverter(
+                Converter<std::string>::Ptr(new EventIdConverter));
         stringConverterRepository()->registerConverter(
                 Converter<std::string>::Ptr(new StringConverter));
         stringConverterRepository()->registerConverter(
