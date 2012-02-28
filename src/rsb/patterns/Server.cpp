@@ -118,8 +118,10 @@ public:
 
 };
 
-Server::Server(const Scope& scope) :
-    scope(scope) {
+Server::Server(const Scope& scope, const ParticipantConfig &listenerConfig,
+        const ParticipantConfig &informerConfig) :
+        scope(scope), listenerConfig(listenerConfig), informerConfig(
+                informerConfig) {
 }
 
 Server::~Server() {
@@ -136,11 +138,10 @@ void Server::registerMethod(const std::string& methodName, CallbackPtr callback)
     Informer<AnyType>::Ptr informer =
             Factory::getInstance().createInformer<AnyType> (scope.concat(Scope(
                     "/reply")).concat(Scope("/" + methodName)),
-                    Factory::getInstance().getDefaultParticipantConfig(),
-                    "");
+                    informerConfig, "");
 
     ListenerPtr listener = Factory::getInstance().createListener(scope.concat(
-            Scope("/request")).concat(Scope("/" + methodName)));
+            Scope("/request")).concat(Scope("/" + methodName)), listenerConfig);
     listener->addHandler(HandlerPtr(new RequestHandler(methodName, callback,
             informer)));
     this->requestListeners.insert(listener);

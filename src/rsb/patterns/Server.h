@@ -38,6 +38,7 @@
 
 #include "../Informer.h"
 #include "../Listener.h"
+#include "../ParticipantConfig.h"
 #include "../Scope.h"
 #include "rsb/rsbexports.h"
 
@@ -226,7 +227,8 @@ public:
 
     typedef boost::shared_ptr<IntlCallback> CallbackPtr;
 
-    Server(const Scope& scope);
+    Server(const Scope& scope, const ParticipantConfig &listenerConfig,
+            const ParticipantConfig &informerConfig);
     virtual ~Server();
 
     /**
@@ -241,6 +243,8 @@ public:
 private:
 
     Scope scope;
+    ParticipantConfig listenerConfig;
+    ParticipantConfig informerConfig;
 
     std::set<ListenerPtr> requestListeners;
 

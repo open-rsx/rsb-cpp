@@ -149,8 +149,11 @@ ReaderPtr Factory::createReader(const Scope& scope,
     return ReaderPtr(new Reader(createInPullConnectors(config), scope, config));
 }
 
-patterns::ServerPtr Factory::createServer(const Scope& scope) {
-    return patterns::ServerPtr(new patterns::Server(scope));
+patterns::ServerPtr Factory::createServer(const Scope& scope,
+        const ParticipantConfig &listenerConfig,
+        const ParticipantConfig &informerConfig) {
+    return patterns::ServerPtr(
+            new patterns::Server(scope, listenerConfig, informerConfig));
 }
 
 patterns::RemoteServerPtr Factory::createRemoteServer(const Scope& scope) {
