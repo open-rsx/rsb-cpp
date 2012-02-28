@@ -92,6 +92,21 @@ public:
     virtual ~RemoteServer();
 
     /**
+     * Prepares an Event which can be used for a request based on typed data.
+     *
+     * @param args data for the event
+     * @tparam I data type for the data in the event
+     * @return event containing the data and appropriate type tags
+     */
+    template<class I>
+    EventPtr prepareRequestEvent(boost::shared_ptr<I> args) {
+        EventPtr request(new Event);
+        request->setType(rsc::runtime::typeName<I>());
+        request->setData(args);
+        return request;
+    }
+
+    /**
      * Call the method named @a methodName on the remote server,
      * passing it the event @a data as argument and returning an event
      * which contains the value returned by the remote method.
@@ -122,10 +137,7 @@ public:
     template <typename O, typename I>
     DataFuture<O> callAsync(const std::string&    methodName,
                             boost::shared_ptr<I> args) {
-        EventPtr request(new Event);
-        request->setType(rsc::runtime::typeName<I>());
-        request->setData(args);
-        return DataFuture<O>(callAsync(methodName, request));
+        return DataFuture<O>(callAsync(methodName, prepareRequestEvent(args)));
     }
 
     /**
