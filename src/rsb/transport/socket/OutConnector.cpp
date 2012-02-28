@@ -78,7 +78,7 @@ void OutConnector::handle(EventPtr event) {
 
     EventPtr busEvent(new Event(*event));
     boost::shared_ptr<string> wireData(new string());
-    converter::AnnotatedData d(busEvent->getType(), busEvent->getData());
+    AnnotatedData d(busEvent->getType(), busEvent->getData());
     string wireSchema = getConverter(busEvent->getType())->serialize(d, *wireData);
     busEvent->setData(wireData);
     busEvent->mutableMetaData().setUserInfo("rsb.wire-schema", wireSchema);

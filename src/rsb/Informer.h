@@ -245,8 +245,8 @@ public:
      * @param scope the scope under which the data are published
      * @param config the config that was used to setup this informer
      * @param type string describing the type of data sent by this
-     *             informer. The emtpy string indicates that data of
-     *             arbitry type can be sent through this informer.
+     *             informer. The empty string indicates that data of
+     *             arbitrary type can be sent through this informer.
      *
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createInformer instead of calling this directly.

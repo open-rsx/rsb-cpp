@@ -148,7 +148,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification) {
     try {
         InConnector::ConverterPtr c = this->connector->getConverter(
                 notification->wire_schema());
-        converter::AnnotatedData deserialized = c->deserialize(
+        AnnotatedData deserialized = c->deserialize(
                 notification->wire_schema(), notification->data());
 
         fillEvent(e, *notification, deserialized.second, deserialized.first);

@@ -104,10 +104,10 @@ public:
         reply->setMethod("REPLY");
         reply->addCause(event->getEventId());
         try {
-            VoidPtr returnData
+            AnnotatedData returnData
                 = callback->intlCall(methodName, event->getData());
-            reply->setType(callback->getReplyType());
-            reply->setData(returnData);
+            reply->setType(returnData.first);
+            reply->setData(returnData.second);
         } catch (const exception& e) {
             reply->setType(typeName<string>());
             reply->setData(boost::shared_ptr<string>(new string(typeName(e) + ": " + e.what())));
@@ -137,7 +137,7 @@ void Server::registerMethod(const std::string& methodName, CallbackPtr callback)
             Factory::getInstance().createInformer<AnyType> (scope.concat(Scope(
                     "/reply")).concat(Scope("/" + methodName)),
                     Factory::getInstance().getDefaultParticipantConfig(),
-                    callback->getReplyType());
+                    "");
 
     ListenerPtr listener = Factory::getInstance().createListener(scope.concat(
             Scope("/request")).concat(Scope("/" + methodName)));

@@ -37,10 +37,10 @@ class SimpleImageConverter: public rsb::converter::Converter<std::string> {
 public:
     SimpleImageConverter();
 
-    std::string serialize(const rsb::converter::AnnotatedData& data,
+    std::string serialize(const rsb::AnnotatedData& data,
             std::string& wire);
 
-    rsb::converter::AnnotatedData deserialize(const std::string& wireSchema,
+    rsb::AnnotatedData deserialize(const std::string& wireSchema,
             const std::string& wire);
 };
 

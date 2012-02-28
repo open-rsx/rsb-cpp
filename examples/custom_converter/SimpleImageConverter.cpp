@@ -32,6 +32,7 @@ using namespace std;
 
 using namespace boost;
 
+using namespace rsb;
 using namespace rsb::converter;
 
 namespace converter_tutorial {

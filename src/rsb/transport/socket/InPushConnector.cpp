@@ -116,7 +116,7 @@ void InPushConnector::handle(EventPtr busEvent) {
     string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
 
     // Apply the configured converter.
-    converter::AnnotatedData d
+    AnnotatedData d
         = getConverter(wireSchema)->deserialize(wireSchema, *wireData);
     event->setData(d.second);
     event->setType(d.first);

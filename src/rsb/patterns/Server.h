@@ -42,7 +42,6 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace patterns {
 
 /**
@@ -64,9 +63,8 @@ public:
         virtual ~IntlCallback();
 
         virtual std::string getRequestType() const = 0;
-        virtual std::string getReplyType() const = 0;
 
-        virtual boost::shared_ptr<void>
+        virtual AnnotatedData
                 intlCall(const std::string& methodName,
                         boost::shared_ptr<void> input) = 0;
 
@@ -121,10 +119,10 @@ public:
         virtual boost::shared_ptr<ReplyType> call(const std::string& methodName,
                                                   boost::shared_ptr<RequestType> input) = 0;
     private:
-        boost::shared_ptr<void> intlCall(const std::string& methodName,
-                                         boost::shared_ptr<void> input) {
-            return call(methodName,
-                        boost::static_pointer_cast<RequestType>(input));
+        AnnotatedData intlCall(const std::string& methodName,
+                boost::shared_ptr<void> input) {
+            return std::make_pair(getReplyType(), call(methodName,
+                        boost::static_pointer_cast<RequestType>(input)));
         }
     };
 
@@ -151,10 +149,10 @@ public:
         virtual void call(const std::string& methodName,
                           boost::shared_ptr<RequestType> input) = 0;
     private:
-        boost::shared_ptr<void> intlCall(const std::string& methodName,
+        AnnotatedData intlCall(const std::string& methodName,
                 boost::shared_ptr<void> input) {
             call(methodName, boost::static_pointer_cast<RequestType>(input));
-            return boost::shared_ptr<void>();
+            return make_pair(getReplyType(), boost::shared_ptr<void>());
         }
 
     };
@@ -164,10 +162,10 @@ public:
     public:
       // typeid is due to msvc strangeness
       Callback(const std::string& requestType
-	       = rsc::runtime::typeName(typeid(void)),
-	       const std::string& replyType
-	       = rsc::runtime::typeName(typeid(ReplyType))) :
-	  CallbackBase(requestType, replyType) {
+           = rsc::runtime::typeName(typeid(void)),
+           const std::string& replyType
+           = rsc::runtime::typeName(typeid(ReplyType))) :
+      CallbackBase(requestType, replyType) {
       }
 
       /**
@@ -179,12 +177,13 @@ public:
        *                       automatically caught and delivered to the
        *                       remote server
        */
-      virtual boost::shared_ptr<ReplyType> call(const std::string& methodName) = 0;
+        virtual boost::shared_ptr<ReplyType> call(
+                const std::string& methodName) = 0;
     private:
-	boost::shared_ptr<void> intlCall(const std::string& methodName,
-				       boost::shared_ptr<void> input) {
-	    return call(methodName);
-	}
+        AnnotatedData intlCall(const std::string& methodName,
+                boost::shared_ptr<void> input) {
+            return std::make_pair(getReplyType(), call(methodName));
+        }
 
     };
 

@@ -99,7 +99,7 @@ TEST(EventsByScopeMapConverterTest, testRoundtrip) {
     string wireSchema = converter.serialize(
             make_pair(rsc::runtime::typeName<EventsByScopeMap>(), message),
             wire);
-    converter::AnnotatedData data = converter.deserialize(wireSchema, wire);
+    AnnotatedData data = converter.deserialize(wireSchema, wire);
 
     boost::shared_ptr<EventsByScopeMap> convertedData =
             boost::static_pointer_cast<EventsByScopeMap>(data.second);

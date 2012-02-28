@@ -42,8 +42,6 @@
 namespace rsb {
 namespace converter {
 
-typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
-
 #define RSB_TYPE_TAG(T) (reinterpret_cast<T*> (0))
 
 /**

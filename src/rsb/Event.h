@@ -250,4 +250,9 @@ private:
 
 typedef boost::shared_ptr<Event> EventPtr;
 
+/**
+ * A combination of data type and the actual data.
+ */
+typedef std::pair<std::string, boost::shared_ptr<void> > AnnotatedData;
+
 }
