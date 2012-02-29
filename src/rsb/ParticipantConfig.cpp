@@ -303,9 +303,20 @@ ParticipantConfig ParticipantConfig::fromConfiguration(
         const ParticipantConfig& defaults) {
     ParticipantConfig result = defaults;
     try {
+        result = fromFile(systemConfigDirectory() / "rsb.conf", result);
+    } catch (runtime_error& e) {
+        RSCWARN(Logger::getLogger("rsb.ParticipantConfig"),
+                "Could not find a system-wide configuration file ("
+                << e.what()
+                << ").");
+    }
+    try {
         result = fromFile(userConfigDirectory() / "rsb.conf", result);
     } catch (runtime_error& e) {
-        RSCWARN(Logger::getLogger("rsb.ParticipantConfig"), "Could not find a user config directory for parsing the config file.");
+        RSCWARN(Logger::getLogger("rsb.ParticipantConfig"),
+                "Could not find a user-specific configuration file ("
+                << e.what()
+                << ").");
     }
     result = fromFile("rsb.conf", result);
     result = fromEnvironment(result);
