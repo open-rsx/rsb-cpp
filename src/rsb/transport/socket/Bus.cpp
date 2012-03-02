@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -194,10 +194,24 @@ void Bus::handle(EventPtr event) {
     RSCDEBUG(logger, "Dispatching outgoing event " << event << " to connections");
 
     string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
+    list<BusConnectionPtr> failing;
     for (list<BusConnectionPtr>::iterator it = this->connections.begin();
          it != this->connections.end(); ++it) {
         RSCDEBUG(logger, "Dispatching to connection " << *it);
-        (*it)->sendEvent(event, wireSchema);
+        try {
+            (*it)->sendEvent(event, wireSchema);
+        } catch (const std::exception& e) {
+            RSCWARN(logger, "Send failure (" << e.what() << "); will close connection later");
+            // We record failing connections instead of closing them
+            // immediately to avoid invalidating the iterator.
+            failing.push_back(*it);
+        }
+    }
+
+    // This should remove all references to the connection objects.
+    for (list<BusConnectionPtr>::const_iterator it = failing.begin();
+         it != failing.end(); ++it) {
+        removeConnection(*it);
     }
 }
 
