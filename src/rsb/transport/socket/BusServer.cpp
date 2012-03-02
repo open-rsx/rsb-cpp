@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This program is free software; you can redistribute it
  * and/or modify it under the terms of the GNU General
@@ -41,8 +41,16 @@ BusServer::BusServer(uint16_t    port,
     : Bus(service, tcpnodelay),
       logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
-      service(service) {
+      service(service),
+      shutdown(false) {
     acceptOne();
+}
+
+
+BusServer::~BusServer() {
+    this->shutdown = true;
+    this->acceptor.cancel();
+    sleep(1); /** TODO(jmoringe, 2012-03-02): hack */
 }
 
 void BusServer::acceptOne() {
@@ -54,7 +62,7 @@ void BusServer::acceptOne() {
                                placeholders::error));
 }
 
-void BusServer::handleAccept(SocketPtr                 socket,
+void BusServer::handleAccept(SocketPtr                        socket,
                              const boost::system::error_code& error) {
     if (!error) {
         //
@@ -63,12 +71,13 @@ void BusServer::handleAccept(SocketPtr                 socket,
         BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false, isTcpnodelay()));
         addConnection(connection);
         connection->startReceiving();
-    } else {
+    } else if (!this->shutdown){
         RSCWARN(logger, "Accept failure, trying to continue");
     }
 
-    // Continue accepting connections.
-    acceptOne();
+    // Maybe continue accepting connections.
+    if (!this->shutdown)
+        acceptOne();
 }
 
 void BusServer::handleIncoming(EventPtr         event,
