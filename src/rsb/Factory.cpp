@@ -145,21 +145,33 @@ void Factory::configureLogging() {
 
     OptionBasedConfigurator loggingConfigurator;
 
-    {
+    try {
         boost::filesystem::ifstream stream(
                 systemConfigDirectory() / "rsb.conf");
         if (stream) {
             ConfigFileSource source(stream);
             source.provideOptions(loggingConfigurator);
         }
+    } catch (const runtime_error& e) {
+        RSCWARN(this->logger,
+                "Could not find a system-wide configuration file ("
+                << e.what()
+                << ").");
     }
-    {
+
+    try {
         boost::filesystem::ifstream stream(userConfigDirectory() / "rsb.conf");
         if (stream) {
             ConfigFileSource source(stream);
             source.provideOptions(loggingConfigurator);
         }
+    } catch (const runtime_error& e) {
+        RSCWARN(logger,
+                "Could not find a user-specific configuration file ("
+                << e.what()
+                << ").");
     }
+
     {
         boost::filesystem::ifstream stream("rsb.conf");
         if (stream) {

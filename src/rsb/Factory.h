@@ -94,9 +94,9 @@ public:
      * @param scope the scope of the informer
      * @param dataType A string representation of the type of data
      *                 sent via the new @ref Informer.
-     * @param config the configuration for the informer to use, defaults to the
+     * @param config The configuration for the informer to use, defaults to the
      *               general config held in this factory.
-     * @return a shared_ptr pointing to the a @ref InformerBase
+     * @return A shared_ptr pointing to the a @ref InformerBase
      *         instance.
      * @throw RSBError If the requested informer cannot be created.
      */
