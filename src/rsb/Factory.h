@@ -164,9 +164,16 @@ public:
      *
      * @param scope The scope at which the remote server object
      * exposes itself.
+     * @param listenerConfig configuration to use for all reply listeners
+     * @param informerConfig configuration to use for all request informers
      * @return A shared_ptr to the new @ref RemoteServer object.
      */
-    patterns::RemoteServerPtr createRemoteServer(const Scope& scope);
+    patterns::RemoteServerPtr createRemoteServer(
+            const Scope& scope,
+            const ParticipantConfig &listenerConfig =
+                    Factory::getInstance().getDefaultParticipantConfig(),
+            const ParticipantConfig &informerConfig =
+                    Factory::getInstance().getDefaultParticipantConfig());
 
     /**
      * Returns the default configuration for new participants.

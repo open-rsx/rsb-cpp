@@ -38,9 +38,10 @@
 #include <rsc/threading/Future.h>
 
 #include "../Event.h"
+#include "../Exception.h"
 #include "../Informer.h"
 #include "../Listener.h"
-#include "../Exception.h"
+#include "../ParticipantConfig.h"
 #include "../Scope.h"
 #include "rsb/rsbexports.h"
 
@@ -88,7 +89,8 @@ public:
      * @param scope The base scope of the server the methods of which
      * will be called.
      */
-    RemoteServer(const Scope& scope);
+    RemoteServer(const Scope& scope, const ParticipantConfig &listenerConfig,
+            const ParticipantConfig &informerConfig);
     virtual ~RemoteServer();
 
     /**
@@ -195,6 +197,8 @@ private:
     rsc::logging::LoggerPtr logger;
 
     Scope scope;
+    ParticipantConfig listenerConfig;
+    ParticipantConfig informerConfig;
 
     class MethodSet {
     public:

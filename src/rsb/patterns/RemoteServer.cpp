@@ -112,10 +112,15 @@ public:
 
 };
 
-RemoteServer::RemoteServer(const Scope& scope) :
-    logger(Logger::getLogger(str(format("rsb.patterns.RemoteServer[%1%]")
-                                 % scope.toString()))),
-    scope(scope) {
+RemoteServer::RemoteServer(const Scope& scope,
+        const ParticipantConfig &listenerConfig,
+        const ParticipantConfig &informerConfig) :
+        logger(
+                Logger::getLogger(
+                        str(
+                                format("rsb.patterns.RemoteServer[%1%]")
+                                        % scope.toString()))), scope(scope), listenerConfig(
+                listenerConfig), informerConfig(informerConfig) {
     // TODO check that this server is alive...
     // TODO probably it would be a good idea to request some method infos from
     //      the server, e.g. for type checking
@@ -132,20 +137,20 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
     if (!methodSets.count(methodName)) {
 
         // start a listener to wait for the reply
-        const Scope replyScope = scope.concat(Scope("/reply")).concat(Scope("/"
-                + methodName));
-        ListenerPtr listener =
-                Factory::getInstance().createListener(replyScope);
+        const Scope replyScope = scope.concat(Scope("/reply")).concat(
+                Scope("/" + methodName));
+        ListenerPtr listener = Factory::getInstance().createListener(replyScope,
+                listenerConfig);
 
-        boost::shared_ptr<WaitingEventHandler>
-            handler(new WaitingEventHandler(logger));
+        boost::shared_ptr<WaitingEventHandler> handler(
+                new WaitingEventHandler(logger));
         listener->addHandler(handler);
 
         // informer for requests
         Informer<void>::Ptr informer = Factory::getInstance().createInformer<
-                void> (scope.concat(Scope("/request")).concat(Scope("/"
-                + methodName)),
-                Factory::getInstance().getDefaultParticipantConfig(), sendType);
+                void>(
+                scope.concat(Scope("/request")).concat(Scope("/" + methodName)),
+                informerConfig, sendType);
 
         MethodSet set;
         set.methodName = methodName;

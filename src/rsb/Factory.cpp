@@ -156,8 +156,11 @@ patterns::ServerPtr Factory::createServer(const Scope& scope,
             new patterns::Server(scope, listenerConfig, informerConfig));
 }
 
-patterns::RemoteServerPtr Factory::createRemoteServer(const Scope& scope) {
-    return patterns::RemoteServerPtr(new patterns::RemoteServer(scope));
+patterns::RemoteServerPtr Factory::createRemoteServer(const Scope& scope,
+        const ParticipantConfig &listenerConfig,
+        const ParticipantConfig &informerConfig) {
+    return patterns::RemoteServerPtr(
+            new patterns::RemoteServer(scope, listenerConfig, informerConfig));
 }
 
 ParticipantConfig Factory::getDefaultParticipantConfig() const {
