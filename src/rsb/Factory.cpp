@@ -26,6 +26,12 @@
 
 #include "Factory.h"
 
+#include <boost/filesystem/fstream.hpp>
+
+#include <rsc/config/ConfigFileSource.h>
+#include <rsc/config/Environment.h>
+#include <rsc/logging/OptionBasedConfigurator.h>
+
 #include "eventprocessing/strategies.h"
 
 #include "converter/converters.h"
@@ -38,6 +44,7 @@
 
 using namespace std;
 
+using namespace rsc::config;
 using namespace rsc::logging;
 using namespace rsc::runtime;
 
@@ -123,9 +130,49 @@ Factory::Factory() :
     }
 
     RSCDEBUG(logger, "Default config " << defaultConfig);
+
+    configureLogging();
+
 }
 
 Factory::~Factory() {
+}
+
+void Factory::configureLogging() {
+
+    // TODO the cascade is basically duplicated from ParticipantConfig. We
+    // should refactor this
+
+    OptionBasedConfigurator loggingConfigurator;
+
+    {
+        boost::filesystem::ifstream stream(
+                systemConfigDirectory() / "rsb.conf");
+        if (stream) {
+            ConfigFileSource source(stream);
+            source.provideOptions(loggingConfigurator);
+        }
+    }
+    {
+        boost::filesystem::ifstream stream(userConfigDirectory() / "rsb.conf");
+        if (stream) {
+            ConfigFileSource source(stream);
+            source.provideOptions(loggingConfigurator);
+        }
+    }
+    {
+        boost::filesystem::ifstream stream("rsb.conf");
+        if (stream) {
+            ConfigFileSource source(stream);
+            source.provideOptions(loggingConfigurator);
+        }
+    }
+
+    {
+        EnvironmentVariableSource source("RSC_");
+        source.provideOptions(loggingConfigurator);
+    }
+
 }
 
 transport::OutFactory& Factory::getOutFactoryInstance() {

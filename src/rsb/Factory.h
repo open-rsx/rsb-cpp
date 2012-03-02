@@ -224,6 +224,8 @@ private:
     std::vector<transport::InPushConnectorPtr>
         createInPushConnectors(const ParticipantConfig& config);
 
+    void configureLogging();
+
 };
 
 }
