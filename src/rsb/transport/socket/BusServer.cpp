@@ -28,6 +28,8 @@
 
 #include <boost/bind.hpp>
 
+#include <boost/thread/thread_time.hpp>
+
 #include "../../MetaData.h"
 #include "Factory.h"
 
@@ -57,7 +59,7 @@ BusServer::BusServer(uint16_t    port,
 BusServer::~BusServer() {
     this->shutdown = true;
     this->acceptor.cancel();
-    sleep(1); /** TODO(jmoringe, 2012-03-02): hack */
+    boost::this_thread::sleep(boost::posix_time::seconds(1)); /** TODO(jmoringe, 2012-03-02): hack */
 }
 
 void BusServer::acceptOne() {
