@@ -26,12 +26,16 @@
 
 #include "BusServer.h"
 
+#include <list>
+
 #include <boost/bind.hpp>
 
 #include <boost/thread/thread_time.hpp>
 
 #include "../../MetaData.h"
 #include "Factory.h"
+
+using namespace std;
 
 using namespace boost;
 
@@ -98,12 +102,28 @@ void BusServer::handleIncoming(EventPtr         event,
         recursive_mutex::scoped_lock lock(getConnectionLock());
 
         ConnectionList connections = getConnections();
+        list<BusConnectionPtr> failing;
         for (ConnectionList::iterator it = connections.begin();
              it != connections.end(); ++it) {
             if (*it != connection) {
                 RSCDEBUG(logger, "Delivering to connection " << *it);
-                (*it)->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
+                try {
+                    (*it)->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
+                } catch (const std::exception& e) {
+                    RSCWARN(logger, "Send failure (" << e.what() << "); will close connection later");
+                    // We record failing connections instead of
+                    // closing them immediately to avoid invalidating
+                    // the iterator.
+                    failing.push_back(*it);
+                }
             }
+        }
+
+        // This should remove all references to the connection
+        // objects.
+        for (list<BusConnectionPtr>::const_iterator it = failing.begin();
+        it != failing.end(); ++it) {
+            removeConnection(*it);
         }
     }
 }
