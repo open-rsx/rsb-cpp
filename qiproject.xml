@@ -1,0 +1,4 @@
+<project name="rsb">
+	<depends buildtime="true" names="rsc"/>
+	<depends buildtime="true" names="rsb-protocol"/>
+</project>
