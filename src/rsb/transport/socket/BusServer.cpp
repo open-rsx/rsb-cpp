@@ -71,8 +71,8 @@ void BusServer::acceptOne() {
 
     RSCINFO(logger, "Listening on " << this->acceptor.local_endpoint());
     acceptor.async_accept(*socket,
-                          bind(&BusServer::handleAccept, this, socket,
-                               placeholders::error));
+                          boost::bind(&BusServer::handleAccept, this, socket,
+                                      placeholders::error));
 }
 
 void BusServer::handleAccept(SocketPtr                        socket,
