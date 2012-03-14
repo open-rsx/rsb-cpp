@@ -39,8 +39,6 @@
 
 using namespace std;
 
-using namespace boost;
-
 using namespace rsc::logging;
 
 using namespace boost::asio;
@@ -87,7 +85,7 @@ boost::recursive_mutex& Bus::getConnectionLock() {
 }
 
 void Bus::addSink(InPushConnectorPtr sink) {
-    recursive_mutex::scoped_lock lock(this->connectorLock);
+    boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
     Scope scope = sink->getScope();
     RSCDEBUG(logger, "Adding sink " << sink << " to scope " << scope);
@@ -96,7 +94,7 @@ void Bus::addSink(InPushConnectorPtr sink) {
 }
 
 void Bus::removeSink(InPushConnector* sink) {
-    recursive_mutex::scoped_lock lock(this->connectorLock);
+    boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
     Scope scope = sink->getScope();
     RSCDEBUG(logger, "Removing sink " << sink << " from scope " << scope);
@@ -125,14 +123,14 @@ void Bus::removeSink(InPushConnector* sink) {
 }
 
 void Bus::addConnector(ConnectorBase* connector) {
-    recursive_mutex::scoped_lock lock(this->connectorLock);
+    boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
     RSCDEBUG(logger, "Adding connector " << connector);
     this->connectors.push_back(connector);
 }
 
 void Bus::removeConnector(ConnectorBase* connector) {
-    recursive_mutex::scoped_lock lock(this->connectorLock);
+    boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
     RSCDEBUG(logger, "Removing connector " << connector);
     this->connectors.remove(connector);
@@ -147,7 +145,7 @@ void Bus::removeConnector(ConnectorBase* connector) {
 void Bus::addConnection(BusConnectionPtr connection) {
     RSCDEBUG(logger, "Adding connection " << connection);
 
-    recursive_mutex::scoped_lock lock(this->connectionLock);
+    boost::recursive_mutex::scoped_lock lock(this->connectionLock);
 
     this->connections.push_back(connection);
 }
@@ -155,7 +153,7 @@ void Bus::addConnection(BusConnectionPtr connection) {
 void Bus::removeConnection(BusConnectionPtr connection) {
     RSCDEBUG(logger, "Removing connection " << connection);
 
-    recursive_mutex::scoped_lock lock(this->connectionLock);
+    boost::recursive_mutex::scoped_lock lock(this->connectionLock);
 
     this->connections.remove(connection);
 }
@@ -168,7 +166,7 @@ void Bus::handleIncoming(EventPtr         event,
     RSCDEBUG(logger, "Relevant scopes " << scopes);
 
     {
-        recursive_mutex::scoped_lock lock(this->connectorLock);
+        boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
         for (vector<Scope>::const_iterator it = scopes.begin(); it != scopes.end(); ++it) {
             SinkMap::const_iterator it_ = this->sinks.find(*it);
@@ -189,7 +187,7 @@ void Bus::handleIncoming(EventPtr         event,
 }
 
 void Bus::handle(EventPtr event) {
-    recursive_mutex::scoped_lock lock(this->connectionLock);
+    boost::recursive_mutex::scoped_lock lock(this->connectionLock);
 
     RSCDEBUG(logger, "Dispatching outgoing event " << event << " to connections");
 

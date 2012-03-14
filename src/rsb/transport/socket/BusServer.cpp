@@ -37,8 +37,6 @@
 
 using namespace std;
 
-using namespace boost;
-
 using namespace boost::asio;
 using boost::asio::ip::tcp;
 
