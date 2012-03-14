@@ -97,7 +97,7 @@ void BusServer::handleIncoming(EventPtr         event,
 
     RSCDEBUG(logger, "Delivering received event to connections " << event);
     {
-        recursive_mutex::scoped_lock lock(getConnectionLock());
+        boost::recursive_mutex::scoped_lock lock(getConnectionLock());
 
         ConnectionList connections = getConnections();
         list<BusConnectionPtr> failing;
