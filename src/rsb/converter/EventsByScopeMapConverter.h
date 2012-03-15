@@ -60,9 +60,9 @@ public:
      */
     EventsByScopeMapConverter(
             ConverterSelectionStrategy<std::string>::Ptr serializationConverters =
-                    stringConverterRepository()->getConvertersForSerialization(),
+                    converterRepository<std::string>()->getConvertersForSerialization(),
             ConverterSelectionStrategy<std::string>::Ptr deserializationConverters =
-                    stringConverterRepository()->getConvertersForDeserialization());
+                    converterRepository<std::string>()->getConvertersForDeserialization());
     virtual ~EventsByScopeMapConverter();
 
     std::string getClassName() const;

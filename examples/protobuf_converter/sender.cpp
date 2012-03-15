@@ -41,12 +41,12 @@ using namespace rsb::converter;
 using namespace tutorial::protobuf_converter;
 
 int main() {
-    // Register a specific template instanciation of the
+    // Register a specific template instantiation of the
     // ProtocolBufferConverter for our SimpleImage protocol buffer
     // message.
     shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
             new ProtocolBufferConverter<SimpleImage> ());
-    stringConverterRepository()->registerConverter(converter);
+    converterRepository<std::string>()->registerConverter(converter);
 
     // Create an informer which has the SimpleImage protocol buffer
     // message as its data type.

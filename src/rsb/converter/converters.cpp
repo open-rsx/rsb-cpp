@@ -37,6 +37,8 @@
 #include "Uint64Converter.h"
 #include "VoidConverter.h"
 
+using namespace std;
+
 namespace rsb {
 namespace converter {
 
@@ -47,17 +49,17 @@ void registerDefaultConverters() {
 
     boost::mutex::scoped_lock lock(registrationMutex);
     if (!registered) {
-        stringConverterRepository()->registerConverter(
+        converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new BoolConverter));
-        stringConverterRepository()->registerConverter(
+        converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new ByteArrayConverter));
-        stringConverterRepository()->registerConverter(
+        converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new EventIdConverter));
-        stringConverterRepository()->registerConverter(
+        converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new StringConverter));
-        stringConverterRepository()->registerConverter(
+        converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new Uint64Converter));
-        stringConverterRepository()->registerConverter(
+        converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new VoidConverter));
         registered = true;
     }

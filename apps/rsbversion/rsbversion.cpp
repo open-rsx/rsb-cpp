@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
     if (converters || verbose)  {
         cout << endl << "Converters" << endl;
 
-        cout << *rsb::converter::stringConverterRepository() << endl;
+        cout << *rsb::converter::converterRepository<string>() << endl;
     }
 
     return EXIT_SUCCESS;

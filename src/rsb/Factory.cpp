@@ -254,7 +254,7 @@ Factory::createInPullConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << transportIt->getConverters());
             // TODO we should not have to know the transport's wire-type here
             ConverterSelectionStrategy<string>::Ptr converters
-                = stringConverterRepository()
+                = converterRepository<string>()
                 ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
             RSCDEBUG(logger, "Selected converters for transport `"
                      << transportIt->getName() << "': " << converters);
@@ -283,7 +283,7 @@ Factory::createInPushConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << transportIt->getConverters());
             // TODO we should not have to know the transport's wire-type here
             ConverterSelectionStrategy<string>::Ptr converters
-                = stringConverterRepository()
+                = converterRepository<string>()
                 ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
             RSCDEBUG(logger, "Selected converters for transport `"
                      << transportIt->getName() << "': " << converters);
@@ -312,7 +312,7 @@ Factory::createOutConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << transportIt->getConverters());
             // TODO we should not have to know the transport's wire-type here
             ConverterSelectionStrategy<string>::Ptr converters
-                = stringConverterRepository()
+                = converterRepository<string>()
                 ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
             RSCDEBUG(logger, "Selected converters for transport `"
                      << transportIt->getName() << "': " << converters);

@@ -47,7 +47,7 @@ int main() {
     // Try senderNoConverter.cpp to see what happens, if the converter
     // is not registered.
     shared_ptr<SimpleImageConverter> converter(new SimpleImageConverter());
-    stringConverterRepository()->registerConverter(converter);
+    converterRepository<std::string>()->registerConverter(converter);
 
     // Create an Informer object that is parametrized with the
     // data-type SimpleImage.

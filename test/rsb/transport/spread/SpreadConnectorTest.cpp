@@ -43,13 +43,13 @@ using namespace testing;
 static int dummy = pullInConnectorTest();
 
 InPushConnectorPtr createSpreadInConnector() {
-    return InPushConnectorPtr(new rsb::spread::InConnector(stringConverterRepository()->getConvertersForDeserialization(),
+    return InPushConnectorPtr(new rsb::spread::InConnector(converterRepository<string>()->getConvertersForDeserialization(),
 						       defaultHost(),
 						       SPREAD_PORT));
 }
 
 OutConnectorPtr createSpreadOutConnector() {
-    return OutConnectorPtr(new rsb::spread::OutConnector(stringConverterRepository()->getConvertersForSerialization(),
+    return OutConnectorPtr(new rsb::spread::OutConnector(converterRepository<string>()->getConvertersForSerialization(),
 							 defaultHost(),
 							 SPREAD_PORT));
 }

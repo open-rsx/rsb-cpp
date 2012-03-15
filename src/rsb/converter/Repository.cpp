@@ -26,15 +26,32 @@
 
 #include "Repository.h"
 
+#include <map>
+
+#include <boost/thread/mutex.hpp>
+
 using namespace std;
 
 namespace rsb {
 namespace converter {
 
+static map<string, void*> repositoriesByName;
+static boost::mutex repositoriesByNameMutex;
+
+void* converterRepositoryByName(const string &wireTypeName,
+        RepositoryCreater &creater) {
+    boost::mutex::scoped_lock lock(repositoriesByNameMutex);
+    if (repositoriesByName.count(wireTypeName) == 0) {
+        repositoriesByName[wireTypeName] = creater.create();
+    }
+    return repositoriesByName[wireTypeName];
+}
+
 Repository<string>::Ptr stringConverterRepository() {
-	static Repository<string>::Ptr collection(new Repository<
-			string> );
-	return collection;
+    return converterRepository<string>();
+}
+
+RepositoryCreater::~RepositoryCreater() {
 }
 
 }

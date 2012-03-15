@@ -58,7 +58,7 @@ int main() {
     // message.
     boost::shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
             new ProtocolBufferConverter<SimpleImage> ());
-    stringConverterRepository()->registerConverter(converter);
+    converterRepository<string>()->registerConverter(converter);
 
     // Create a listener to receive SimpleImage protocol buffer
     // messages.
