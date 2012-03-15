@@ -46,9 +46,9 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-BusServer::BusServer(uint16_t    port,
-                     bool        tcpnodelay,
-                     io_service& service)
+BusServer::BusServer(boost::uint16_t port,
+                     bool            tcpnodelay,
+                     io_service&     service)
     : Bus(service, tcpnodelay),
       logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
@@ -70,7 +70,7 @@ void BusServer::acceptOne() {
     RSCINFO(logger, "Listening on " << this->acceptor.local_endpoint());
     acceptor.async_accept(*socket,
                           boost::bind(&BusServer::handleAccept, this, socket,
-                                      placeholders::error));
+                                      boost::asio::placeholders::error));
 }
 
 void BusServer::handleAccept(SocketPtr                        socket,
