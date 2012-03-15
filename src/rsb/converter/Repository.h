@@ -310,6 +310,11 @@ typename Repository<WireType>::Ptr converterRepository() {
             rsc::misc::NullDeleter());
 }
 
+/**
+ * @deprecated use #converterRepository() instead
+ * @return converter repository for converters that converter to std::string
+ *         wires
+ */
 DEPRECATED(RSB_EXPORT Repository<std::string>::Ptr stringConverterRepository());
 
 }
