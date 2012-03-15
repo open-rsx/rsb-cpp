@@ -272,7 +272,7 @@ public:
  * @return converter repository.
  * @note currently an internal method. Do not use it.
  */
-void* converterRepositoryByName(const std::string &wireTypeName,
+RSB_EXPORT void* converterRepositoryByName(const std::string &wireTypeName,
         RepositoryCreater &creater);
 
 /**
