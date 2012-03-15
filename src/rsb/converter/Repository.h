@@ -250,7 +250,7 @@ private:
  * @author jwienke
  * @note internal class
  */
-class RepositoryCreater {
+class RSB_EXPORT RepositoryCreater {
 public:
     virtual ~RepositoryCreater();
 
