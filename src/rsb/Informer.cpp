@@ -106,7 +106,7 @@ void InformerBase::checkedPublish(EventPtr event) {
         throw invalid_argument(
                 boost::str(
                         boost::format(
-                                "Specified event type %1% does not match listener type %2%.")
+                                "Specified event type %1% does not match informer type %2%.")
                                 % event->getType() % getType()));
     }
     // Check event scope against informer's declared scope.
@@ -115,7 +115,7 @@ void InformerBase::checkedPublish(EventPtr event) {
         throw invalid_argument(
                 boost::str(
                         boost::format(
-                                "Specified event scope %1% does not match listener scope %2%.")
+                                "Specified event scope %1% does not match informer scope %2%.")
                                 % event->getScopePtr() % getScope()));
     }
 
