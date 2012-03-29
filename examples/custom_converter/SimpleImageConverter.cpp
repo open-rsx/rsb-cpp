@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -67,7 +67,7 @@ string SimpleImageConverter::serialize(const AnnotatedData& data, string& wire) 
     wire.resize(4 + 4 + numPixels);
     copy((char*) &image->width, ((char*) &image->width) + 4, wire.begin());
     copy((char*) &image->height, ((char*) &image->height) + 4, wire.begin() + 4);
-    copy((char*) &image->data, ((char*) &image->data) + numPixels,
+    copy((char*) image->data, ((char*) image->data) + numPixels,
             wire.begin() + 8);
 
     // Return the wire-schema of the serialized representation in
