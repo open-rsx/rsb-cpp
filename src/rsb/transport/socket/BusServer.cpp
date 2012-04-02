@@ -37,8 +37,6 @@
 
 using namespace std;
 
-using namespace boost;
-
 using namespace boost::asio;
 using boost::asio::ip::tcp;
 
@@ -48,9 +46,9 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-BusServer::BusServer(uint16_t    port,
-                     bool        tcpnodelay,
-                     io_service& service)
+BusServer::BusServer(boost::uint16_t port,
+                     bool            tcpnodelay,
+                     io_service&     service)
     : Bus(service, tcpnodelay),
       logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
@@ -71,8 +69,8 @@ void BusServer::acceptOne() {
 
     RSCINFO(logger, "Listening on " << this->acceptor.local_endpoint());
     acceptor.async_accept(*socket,
-                          bind(&BusServer::handleAccept, this, socket,
-                               placeholders::error));
+                          boost::bind(&BusServer::handleAccept, this, socket,
+                                      boost::asio::placeholders::error));
 }
 
 void BusServer::handleAccept(SocketPtr                        socket,
@@ -99,7 +97,7 @@ void BusServer::handleIncoming(EventPtr         event,
 
     RSCDEBUG(logger, "Delivering received event to connections " << event);
     {
-        recursive_mutex::scoped_lock lock(getConnectionLock());
+        boost::recursive_mutex::scoped_lock lock(getConnectionLock());
 
         ConnectionList connections = getConnections();
         list<BusConnectionPtr> failing;
