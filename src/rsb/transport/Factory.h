@@ -176,22 +176,21 @@ public:
      * options recognized by the implementation.
      */
     void registerConnector(const std::string& name,
-			   const CreateFunction& constructor,
-			   const std::set<std::string>& schemas = std::set<std::string>(),
-			   const std::set<std::string>& options = std::set<std::string>()) {
-	Factory::impls().register_(name, constructor);
+            const CreateFunction& constructor,
+            const std::set<std::string>& schemas = std::set<std::string>(),
+            const std::set<std::string>& options = std::set<std::string>()) {
+        Factory::impls().register_(name, constructor);
 
-	ConnectorInfo info(name, schemas, options);
-	this->infos.insert(std::make_pair(name, info));
+        ConnectorInfo info(name, schemas, options);
+        this->infos.insert(std::make_pair(name, info));
     }
 
     void registerConnector(const std::string& name,
-			   const CreateFunction& constructor,
-			   const std::string& schema,
-			   const std::set<std::string>& options = std::set<std::string>()) {
-	std::set<std::string> schemas;
-	schemas.insert(schema);
-	registerConnector(name, constructor, schemas, options);
+            const CreateFunction& constructor, const std::string& schema,
+            const std::set<std::string>& options = std::set<std::string>()) {
+        std::set<std::string> schemas;
+        schemas.insert(schema);
+        registerConnector(name, constructor, schemas, options);
     }
 private:
     InfoMap infos;
