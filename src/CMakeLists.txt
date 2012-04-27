@@ -139,6 +139,7 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/TypeNameConverterPredicate.h
             rsb/converter/Uint64Converter.h
             rsb/converter/VoidConverter.h
+            rsb/converter/RosettaConverter.h
             rsb/converter/converters.h
 
             rsb/eventprocessing/Handler.h
@@ -234,7 +235,7 @@ IF(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/OutConnector.h
                         rsb/transport/socket/Serialization.h)
 ENDIF()
-                 
+
 IF(WIN32)
     ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
 ELSE()
