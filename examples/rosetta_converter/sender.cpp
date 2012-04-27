@@ -24,20 +24,13 @@
  *
  * ============================================================ */
 
-#include <iostream>
-
-#include <boost/thread.hpp>
-
 #include <rsb/Factory.h>
-#include <rsb/Handler.h>
 #include <rsb/converter/Repository.h>
 #include <rsb/converter/ProtocolBufferConverter.h>
 
 // See ../CMakeLists.txt for the generation of this file.
 // The generated file can be found in ${BUILD_DIR}/protobuf_converter
 #include <protobuf_converter/SimpleImage.pb.h>
-
-using namespace std;
 
 using namespace boost;
 
@@ -47,27 +40,28 @@ using namespace rsb::converter;
 // The generated protocol buffer class is in this namespace.
 using namespace tutorial::protobuf_converter;
 
-void printImage(boost::shared_ptr<SimpleImage> image) {
-    cout << "received " << image->width() << "x" << image->height() << " image"
-            << endl;
-}
-
 int main() {
-    // Register a specific template instanciation of the
+    // Register a specific template instantiation of the
     // ProtocolBufferConverter for our SimpleImage protocol buffer
     // message.
-    boost::shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
+    shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
             new ProtocolBufferConverter<SimpleImage> ());
-    converterRepository<string>()->registerConverter(converter);
+    converterRepository<std::string>()->registerConverter(converter);
 
-    // Create a listener to receive SimpleImage protocol buffer
-    // messages.
-    ListenerPtr listener = Factory::getInstance().createListener(
-            Scope("/tutorial/converter"));
-    listener->addHandler(
-            HandlerPtr(new DataFunctionHandler<SimpleImage> (&printImage)));
+    // Create an informer which has the SimpleImage protocol buffer
+    // message as its data type.
+    Informer<SimpleImage>::Ptr informer =
+            Factory::getInstance().createInformer<SimpleImage> (
+                    Scope("/tutorial/converter"));
 
-    boost::this_thread::sleep(boost::posix_time::seconds(20));
+    // Create and publish an instance of SimpleImage. To see the
+    // event, you can, for example use the RSB logger utility or the
+    // receiver program in this directory.
+    Informer<SimpleImage>::DataPtr data(new SimpleImage());
+    data->set_width(10);
+    data->set_height(10);
+    data->set_data(new char[100], 100);
+    informer->publish(data);
 
     return EXIT_SUCCESS;
 }
