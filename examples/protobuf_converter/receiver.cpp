@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -25,17 +25,19 @@
  * ============================================================ */
 
 #include <iostream>
+#include <fstream>
 
 #include <boost/thread.hpp>
 
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
+
 #include <rsb/converter/Repository.h>
-#include <rsb/converter/ProtocolBufferConverter.h>
+#include <rsb/converter/RosettaConverter.h>
 
 // See ../CMakeLists.txt for the generation of this file.
 // The generated file can be found in ${BUILD_DIR}/protobuf_converter
-#include <protobuf_converter/SimpleImage.pb.h>
+#include <rosetta_converter/SimpleImage_Bottle.hh>
 
 using namespace std;
 
@@ -44,8 +46,8 @@ using namespace boost;
 using namespace rsb;
 using namespace rsb::converter;
 
-// The generated protocol buffer class is in this namespace.
-using namespace tutorial::protobuf_converter;
+// The generated data-holder class is in this namespace.
+using namespace tutorial::rosetta_converter;
 
 void printImage(boost::shared_ptr<SimpleImage> image) {
     cout << "received " << image->width() << "x" << image->height() << " image"
@@ -54,18 +56,22 @@ void printImage(boost::shared_ptr<SimpleImage> image) {
 
 int main() {
     // Register a specific template instanciation of the
-    // ProtocolBufferConverter for our SimpleImage protocol buffer
-    // message.
-    boost::shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
-            new ProtocolBufferConverter<SimpleImage> ());
+    // RosettaConverter for our SimpleImage data type.
+    boost::shared_ptr< RosettaConverter<rosetta::MechanismBottle, SimpleImage> >
+        converter(new  RosettaConverter<rosetta::MechanismBottle, SimpleImage>());
     converterRepository<string>()->registerConverter(converter);
 
-    // Create a listener to receive SimpleImage protocol buffer
-    // messages.
-    ListenerPtr listener = Factory::getInstance().createListener(
-            Scope("/tutorial/converter"));
-    listener->addHandler(
-            HandlerPtr(new DataFunctionHandler<SimpleImage> (&printImage)));
+    ifstream stream("/tmp/SimpleImage.bottle", ios::binary);
+    char buffer[24];
+    stream.read(buffer, 24);
+    string data(buffer, buffer + 24);
+    RosettaConverter<rosetta::MechanismBottle, SimpleImage> c;
+    printImage(static_pointer_cast<SimpleImage>(c.deserialize("rosetta::MechanismBottle:tutorial::rosetta_converter::SimpleImage",
+                                                              data).second));
+
+    // Create a listener to receive SimpleImage data.
+    ListenerPtr listener = Factory::getInstance().createListener(Scope("/tutorial/converter"));
+    listener->addHandler(HandlerPtr(new DataFunctionHandler<SimpleImage> (&printImage)));
 
     boost::this_thread::sleep(boost::posix_time::seconds(20));
 
