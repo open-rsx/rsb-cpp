@@ -215,6 +215,8 @@ INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake DESTINATION share/rsb)
 EXPORT(TARGETS ${RSB_NAME} FILE "${CMAKE_BINARY_DIR}/RSBDepends.cmake")
 INSTALL(EXPORT RSBDepends
         DESTINATION "share/rsb")
+        
+INSTALL(FILES COPYING.txt DESTINATION share/doc/rsb RENAME copyright)
 
 # --- documentation gneration ---
 
