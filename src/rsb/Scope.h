@@ -139,7 +139,14 @@ public:
     static const char COMPONENT_SEPARATOR;
 private:
 
-    mutable std::string scopestring;
+    /**
+     * Updates the contents of @c scopestring based on @c components. Calling
+     * this method is necessary if @c components is modified directly without
+     * using one of the constructors.
+     */
+    void updateStringCache();
+
+    std::string scopestring;
     std::vector<std::string> components;
 
 };
