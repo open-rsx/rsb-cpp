@@ -45,10 +45,13 @@ const char Scope::COMPONENT_SEPARATOR = '/';
  * /([a-zA-Z0-9]+/)* and split at '/' characters.
  *
  * @param s String representation that should be verified and split.
- * @param components A vector in which the extracted scope components
- * should be stored
+ * @param components A vector in which the extracted scope components should be
+ *                   stored
+ * @param normalizedString returns a normalized version of the scope's string
+ *                         representation
  */
-inline void verifyAndSplit(const string& s, vector<string>& components) {
+inline void verifyAndSplit(const string& s, vector<string>& components,
+        string& normalizedString) {
     if (s.empty()) {
         throw invalid_argument("Empty scope string given.");
     }
@@ -99,6 +102,14 @@ inline void verifyAndSplit(const string& s, vector<string>& components) {
     if (prev + 1 != next) {
         components.push_back(string(prev + 1, next));
     }
+
+    // now build the normalized string. ATM we only need to check for the
+    // trailing slash, All other things are handled by the checks before
+    normalizedString = s;
+    if (*(--s.end()) != Scope::COMPONENT_SEPARATOR) {
+        normalizedString += Scope::COMPONENT_SEPARATOR;
+    }
+
 }
 
 Scope::Scope(const string& s) :
@@ -106,7 +117,7 @@ Scope::Scope(const string& s) :
     // reserve a number of vector components that should be enough for most
     // realistic scopes. This speeds up parsing.
     components.reserve(10);
-    verifyAndSplit(s, this->components);
+    verifyAndSplit(s, this->components, this->scopestring);
 }
 
 Scope::Scope(const char *scope) :
@@ -114,7 +125,7 @@ Scope::Scope(const char *scope) :
     // reserve a number of vector components that should be enough for most
     // realistic scopes. This speeds up parsing.
     components.reserve(10);
-    verifyAndSplit(string(scope), this->components);
+    verifyAndSplit(string(scope), this->components, this->scopestring);
 }
 
 Scope::Scope() :
@@ -129,24 +140,6 @@ const vector<string>& Scope::getComponents() const {
 }
 
 const std::string& Scope::toString() const {
-    if (this->scopestring.empty()) {
-
-        unsigned int scopesize = 1;
-        for (vector<string>::const_iterator it = components.begin();
-                it != components.end(); ++it) {
-            scopesize += it->size() + 1;
-        }
-
-        this->scopestring.resize(scopesize);
-        this->scopestring[0] = COMPONENT_SEPARATOR;
-        string::iterator cursor = scopestring.begin() + 1;
-        for (vector<string>::const_iterator it = components.begin();
-                it != components.end(); ++it) {
-            std::copy(it->begin(), it->end(), cursor);
-            cursor += it->size();
-            *cursor++ = COMPONENT_SEPARATOR;
-        }
-    }
     return this->scopestring;
 }
 
@@ -158,6 +151,7 @@ Scope Scope::concat(const Scope& childScope) const {
             it != childScope.components.end(); ++it) {
         result.components.push_back(*it);
     }
+    result.updateStringCache();
 
     return result;
 }
@@ -192,6 +186,24 @@ bool Scope::isSuperScopeOf(const Scope& other) const {
     return true;
 }
 
+void Scope::updateStringCache() {
+    unsigned int scopesize = 1;
+    for (vector<string>::const_iterator it = components.begin();
+            it != components.end(); ++it) {
+        scopesize += it->size() + 1;
+    }
+
+    this->scopestring.resize(scopesize);
+    this->scopestring[0] = COMPONENT_SEPARATOR;
+    string::iterator cursor = scopestring.begin() + 1;
+    for (vector<string>::const_iterator it = components.begin();
+            it != components.end(); ++it) {
+        std::copy(it->begin(), it->end(), cursor);
+        cursor += it->size();
+        *cursor++ = COMPONENT_SEPARATOR;
+    }
+}
+
 vector<Scope> Scope::superScopes(const bool& includeSelf) const {
 
     vector<Scope> result;
@@ -207,6 +219,7 @@ vector<Scope> Scope::superScopes(const bool& includeSelf) const {
             for (size_t i = 0; i < requiredComponents; ++i) {
                 super.components.push_back(components[i]);
             }
+            super.updateStringCache();
             result.push_back(super);
 
         }
