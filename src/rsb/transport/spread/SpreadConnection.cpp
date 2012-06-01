@@ -84,46 +84,44 @@ void SpreadConnection::activate() {
     char spreadPrivateGroup[MAX_GROUP_NAME];
     int ret = SP_connect(spreadname.c_str(), 0, 0, 0, &con, spreadPrivateGroup);
     spreadpg = string(spreadPrivateGroup);
+    stringstream errorString;
     if (ret != ACCEPT_SESSION) {
+        errorString << "Error connecting to '" << spreadname << "': ";
         switch (ret) {
         case ILLEGAL_SPREAD:
-            RSCFATAL(
-                    logger,
-                    "spread connect error: connection to spread daemon at " << spreadname << " failed, check port and hostname");
+            errorString
+                    << "connection to spread daemon at "
+                    << spreadname << " failed, check port and hostname";
             break;
         case COULD_NOT_CONNECT:
-            RSCFATAL(
-                    logger,
-                    "spread connect error: connection to spread daemon failed due to socket errors");
+            errorString
+                    << "connection to spread daemon failed due to socket errors, check port and hostname";
             break;
         case CONNECTION_CLOSED:
-            RSCFATAL(
-                    logger,
-                    "spread connect error: communication errors occurred during setup of connection");
+            errorString
+                    << "communication errors occurred during setup of connection";
             break;
         case REJECT_VERSION:
-            RSCFATAL(logger,
-                    "spread connect error: daemon or library version mismatch");
+            errorString
+                    << "daemon or library version mismatch";
             break;
         case REJECT_NO_NAME:
-            RSCFATAL(logger,
-                    "spread connect error: protocol error during setup");
+            errorString << "protocol error during setup";
             break;
         case REJECT_ILLEGAL_NAME:
-            RSCFATAL(
-                    logger,
-                    "spread connect error: name provided violated requirement, length or illegal character");
+            errorString
+                    << "name provided violated requirement, length or illegal character";
             break;
         case REJECT_NOT_UNIQUE:
-            RSCFATAL(
-                    logger,
-                    "spread connect error: name provided is not unique on this daemon");
+            errorString
+                    << "name provided is not unique on this daemon";
             break;
         default:
-            RSCFATAL(logger, "unknown spread connect error, value: " << ret);
+            errorString << "unknown spread connect error, value: " << ret;
         }
         SP_error(ret);
-        throw CommException("Error during connection to spread daemon");
+        RSCFATAL(logger, errorString.str());
+        throw CommException(errorString.str());
     } else {
         RSCDEBUG(logger, "success, private group id is " << spreadpg);
     }
