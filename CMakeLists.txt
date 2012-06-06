@@ -76,14 +76,6 @@ ENDIF()
 OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
 OPTION(BUILD_EXAMPLES "Decide if the examples shall be built or not" ON)
 
-# --- project settings ---
-
-SET(GTEST_DIR "${CMAKE_SOURCE_DIR}/3rdparty/gmock/gtest")
-SET(GTEST_INCLUDE_DIR "${GTEST_DIR}/include")
-SET(GMOCK_DIR "${CMAKE_SOURCE_DIR}/3rdparty/gmock")
-SET(GMOCK_INCLUDE_DIR "${GMOCK_DIR}/include")
-SET(GMOCK_LIBRARY_NAME "gmock")
-
 # --- dependency handling ---
 
 SET(Boost_USE_MULTITHREADED ON)
@@ -129,7 +121,12 @@ FIND_PACKAGE(Doxygen)
 
 # --- source code ---
 
-ADD_SUBDIRECTORY(3rdparty)
+# first, we need to export the protocol files
+IF(WIN32)
+    ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
+ELSE()
+    ADD_DEFINITIONS("-DRSB_PROTOCOL_EXPORT=")
+ENDIF()
 
 ADD_SUBDIRECTORY(src)
 IF(BUILD_EXAMPLES)
@@ -139,7 +136,12 @@ ADD_SUBDIRECTORY(apps)
 
 ENABLE_TESTING()
 IF(BUILD_TESTS AND SPREAD_EXECUTABLE)
-    ADD_SUBDIRECTORY(test)
+    INCLUDE(ProvideGoogleMock)
+    IF(GMOCK_AVAILABLE)
+        ADD_SUBDIRECTORY(test)
+    ELSE()
+        MESSAGE(WARNING "Could not build unit tests even though desired because Google Mock could not be installed.")
+    ENDIF()
 ENDIF()
 
 # --- pkgconfig file ---

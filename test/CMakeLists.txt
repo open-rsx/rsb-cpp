@@ -5,8 +5,7 @@ INCLUDE_DIRECTORIES(BEFORE ../src
                            ${CMAKE_CURRENT_BINARY_DIR}
                            ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
                            ${CMAKE_CURRENT_BINARY_DIR}/../src
-                           ${GTEST_INCLUDE_DIR}
-                           ${GMOCK_INCLUDE_DIR}
+                           ${GMOCK_INCLUDE_DIRS}
                            ${CMAKE_CURRENT_BINARY_DIR}
                            ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -37,7 +36,7 @@ ADD_EXECUTABLE(${RSB_TEST_NAME} ${RSB_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${RSB_TEST_NAME}
                       ${RSB_NAME}
                       ${Boost_LIBRARIES}
-                      ${GMOCK_LIBRARY_NAME})
+                      ${GMOCK_LIBRARIES})
 
 ADD_TEST(${RSB_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${RSB_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 
@@ -67,7 +66,7 @@ ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
                       ${RSB_NAME}
                       ${Boost_LIBRARIES}
-                      ${GMOCK_LIBRARY_NAME})
+                      ${GMOCK_LIBRARIES})
 
 ADD_TEST(${CORE_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${CORE_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 
@@ -106,7 +105,7 @@ ADD_LIBRARY(${CONNECTOR_TEST_NAME} STATIC rsb/transport/ConnectorTest.cpp
                                           rsb/InformerTask.cpp
                                           rsb/InformerTask.h)
 TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME} 
-                                             ${GMOCK_LIBRARY_NAME})
+                                             ${GMOCK_LIBRARIES})
 
 # --- spread connector test ---
 
