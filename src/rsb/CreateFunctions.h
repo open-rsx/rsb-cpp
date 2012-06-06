@@ -55,7 +55,7 @@ createInformer(const Scope& scope,
                = Factory::getInstance().getDefaultParticipantConfig(),
                const std::string& dataType
                = detail::TypeName<DataType>()()) {
-    return Factory::createInformer<DataType>(scope, config, dataType);
+    return Factory::getInstance().createInformer<DataType>(scope, config, dataType);
 }
 
 /**
