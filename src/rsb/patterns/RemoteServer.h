@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -144,6 +144,25 @@ public:
 
     /**
      * Call the method named @a methodName on the remote server,
+     * without arguments and returning the value returned by the
+     * remote method.
+     *
+     * @tparam O type of the method return value.
+     * @param methodName Name of the method that should be called.
+     * @return A @ref DataFuture object from which the result (a
+     * shared_ptr to an object of type @a O) of the method call can be
+     * obtained at the caller's discretion.
+     */
+    template <typename O>
+    DataFuture<O> callAsync(const std::string& methodName) {
+        EventPtr request(new Event());
+        request->setType(rsc::runtime::typeName<void>());
+        request->setData(VoidPtr(malloc(10)));
+        return DataFuture<O>(callAsync(methodName, request));
+    }
+
+    /**
+     * Call the method named @a methodName on the remote server,
      * passing it the event @a data as argument and returning an event
      * which contains the value returned by the remote method.
      *
@@ -168,7 +187,7 @@ public:
 
     /**
      * Call the method named @a methodName on the remote server,
-     * passing it the argument object @a args and returning the value
+     * passing it the argument object @a args and return the value
      * returned by the remote method.
      *
      * This method blocks until the computation on the remote side has
@@ -192,6 +211,30 @@ public:
                               boost::shared_ptr<I> args,
                               unsigned int         maxReplyWaitTime = 25) {
         return callAsync<O>(methodName, args).get(maxReplyWaitTime);
+    }
+
+    /**
+     * Call the method named @a methodName on the remote server,
+     * without arguments and return the value returned by the remote
+     * method.
+     *
+     * This method blocks until the computation on the remote side has
+     * been completed and the result has been received.
+     *
+     * @tparam O type of the method return value.
+     * @param methodName Name of the method that should be called.
+     * @param maxReplyWaitTime Maximum number of seconds to wait for a
+     * reply from the server when calling a method.
+     * @return The result of the method call.
+     * @throw rsc::threading::FutureTimeoutException if the method
+     * call is not completed within the maximum waiting time.
+     * @throw rsc::threading::FutureTaskExecutionException if the
+     * method call fails.
+     */
+    template <typename O>
+    boost::shared_ptr<O> call(const std::string& methodName,
+                              unsigned int       maxReplyWaitTime = 25) {
+        return callAsync<O>(methodName).get(maxReplyWaitTime);
     }
 private:
     rsc::logging::LoggerPtr logger;
