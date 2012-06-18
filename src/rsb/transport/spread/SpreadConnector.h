@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -34,11 +35,14 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/misc/UUID.h>
 
+#include "../../Scope.h"
+#include "../../QualityOfServiceSpec.h"
+
 #include "../Connector.h"
-#include "ReceiverTask.h"
+
 #include "MembershipManager.h"
 #include "SpreadConnection.h"
-#include "../../QualityOfServiceSpec.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {

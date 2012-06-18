@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,28 +29,33 @@
 #include <string>
 
 #include <rsc/runtime/Properties.h>
+
 #include <rsc/threading/TaskExecutor.h>
 
-#include "../../filter/ScopeFilter.h"
 #include "../InPushConnector.h"
 #include "../ConverterSelectingConnector.h"
+
 #include "SpreadConnector.h"
+#include "ReceiverTask.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace spread {
 
+class ReceiverTask;
+
 /**
  * @author jmoringe
  */
-class RSB_EXPORT InConnector: public transport::InPushConnector,
-                              public transport::ConverterSelectingConnector<std::string> {
+class RSB_EXPORT InPushConnector: public transport::InPushConnector,
+                                  public transport::ConverterSelectingConnector<std::string> {
     friend class ReceiverTask;
 public:
-    InConnector(converter::ConverterSelectionStrategy<std::string>::Ptr converters,
+    InPushConnector(converter::ConverterSelectionStrategy<std::string>::Ptr converters,
                 const std::string& host = defaultHost(),
                 unsigned int port = defaultPort());
-    virtual ~InConnector();
+    virtual ~InPushConnector();
 
     std::string getClassName() const;
     void printContents(std::ostream& stream) const;
@@ -65,8 +70,7 @@ public:
     void addHandler(eventprocessing::HandlerPtr handler);
     void removeHandler(eventprocessing::HandlerPtr handler);
 
-    static transport::InPushConnector* create(
-            const rsc::runtime::Properties& args);
+    static transport::InPushConnector* create(const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
 
@@ -76,7 +80,6 @@ private:
     boost::shared_ptr<Scope> activationScope;
 
     rsc::threading::TaskExecutorPtr exec;
-    //   boost::shared_ptr<StatusTask> st;
     boost::shared_ptr<ReceiverTask> rec;
 };
 

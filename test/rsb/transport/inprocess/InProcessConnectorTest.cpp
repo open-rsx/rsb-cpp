@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -34,22 +34,29 @@
 #include "../ConnectorTest.h"
 
 using namespace std;
-using namespace rsb::inprocess;
-using namespace rsb::transport;
 using namespace testing;
+
+using namespace rsb::transport;
+using namespace rsb::inprocess;
 
 static int dummy = pullInConnectorTest();
 
-rsb::transport::InPushConnectorPtr createInProcessInConnector() {
-    return rsb::transport::InPushConnectorPtr(new rsb::inprocess::InConnector());
+InPullConnectorPtr createInProcessInPullConnector() {
+    return InPullConnectorPtr((rsb::transport::InPullConnector*) 0
+                              /*new rsb::inprocess::InPullConnector()*/);
 }
 
-rsb::transport::OutConnectorPtr createInProcessOutConnector() {
-    return rsb::transport::OutConnectorPtr(new rsb::inprocess::OutConnector());
+InPushConnectorPtr createInProcessInPushConnector() {
+    return InPushConnectorPtr(new rsb::inprocess::InConnector());
 }
 
-const ConnectorTestSetup inProcessSetup(createInProcessInConnector,
-        createInProcessOutConnector);
+OutConnectorPtr createInProcessOutConnector() {
+    return OutConnectorPtr(new rsb::inprocess::OutConnector());
+}
+
+const ConnectorTestSetup inProcessSetup(createInProcessInPullConnector,
+                                        createInProcessInPushConnector,
+                                        createInProcessOutConnector);
 
 INSTANTIATE_TEST_CASE_P(InProcessConnector,
         ConnectorTest,

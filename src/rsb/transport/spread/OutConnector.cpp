@@ -28,10 +28,13 @@
 
 #include <rsc/misc/langutils.h>
 
-#include "../../protocol/ProtocolException.h"
 #include "../../MetaData.h"
 #include "../../EventId.h"
 #include "../../Scope.h"
+
+#include "../../protocol/ProtocolException.h"
+#include "../../protocol/FragmentedNotification.h"
+
 
 using namespace std;
 

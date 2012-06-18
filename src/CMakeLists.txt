@@ -1,4 +1,3 @@
-
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb)
@@ -193,7 +192,7 @@ SET(HEADERS rsb/CommException.h
             ${PROTO_HEADERS})
 
 IF(WITH_SPREAD_TRANSPORT)
-    LIST(APPEND SOURCES rsb/transport/spread/InConnector.cpp
+    LIST(APPEND SOURCES rsb/transport/spread/InPushConnector.cpp
                         rsb/transport/spread/InPullConnector.cpp
                         rsb/transport/spread/OutConnector.cpp
                         rsb/transport/spread/ReceiverTask.cpp
@@ -203,7 +202,7 @@ IF(WITH_SPREAD_TRANSPORT)
                         rsb/transport/spread/SpreadGroup.cpp
                         rsb/transport/spread/SpreadMessage.cpp
                         rsb/transport/spread/Assembly.cpp)
-    LIST(APPEND HEADERS rsb/transport/spread/InConnector.h
+    LIST(APPEND HEADERS rsb/transport/spread/InPushConnector.h
                         rsb/transport/spread/InPullConnector.h
                         rsb/transport/spread/OutConnector.h
                         rsb/transport/spread/ReceiverTask.h

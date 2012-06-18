@@ -29,25 +29,29 @@
 #include <rsc/misc/langutils.h>
 #include <rsc/debug/DebugTools.h>
 
-#include "../../converter/Converter.h"
 #include "../../CommException.h"
 #include "../../MetaData.h"
 #include "../../EventId.h"
+
+#include "../../converter/Converter.h"
+
 #include "SpreadConnection.h"
-#include "InConnector.h"
+#include "InPushConnector.h"
 
 using namespace std;
+
+using namespace rsc::logging;
+
 using namespace rsb;
 using namespace rsb::protocol;
 using namespace rsb::transport;
 using namespace rsb::eventprocessing;
-using namespace rsc::logging;
 
 namespace rsb {
 namespace spread {
 
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
-        InConnector* connector) :
+        InPushConnector* connector) :
         logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")), con(
                 s), connector(connector), assemblyPool(new AssemblyPool()), handler(
                 handler) {
@@ -146,7 +150,7 @@ void ReceiverTask::notifyHandler(NotificationPtr notification) {
 
     // TODO fix error handling, see #796
     try {
-        InConnector::ConverterPtr c = this->connector->getConverter(
+        InPushConnector::ConverterPtr c = this->connector->getConverter(
                 notification->wire_schema());
         AnnotatedData deserialized = c->deserialize(
                 notification->wire_schema(), notification->data());

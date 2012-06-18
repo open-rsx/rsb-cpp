@@ -33,7 +33,6 @@ using namespace std;
 using namespace rsc::logging;
 using namespace rsc::runtime;
 
-using namespace rsb::eventprocessing;
 using namespace rsb::converter;
 
 namespace rsb {

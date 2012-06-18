@@ -3,6 +3,7 @@
  * This file is part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,9 +25,11 @@
  *
  * ============================================================ */
 
-#include "InConnector.h"
+#include "InPushConnector.h"
 
 #include <rsc/threading/ThreadedTaskExecutor.h>
+
+#include "../../Scope.h"
 
 using namespace std;
 
@@ -40,42 +43,42 @@ using namespace rsb::converter;
 namespace rsb {
 namespace spread {
 
-transport::InPushConnector* InConnector::create(const Properties& args) {
+transport::InPushConnector* InPushConnector::create(const Properties& args) {
     static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
-    return new InConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
-			   args.get<string>                       ("host", defaultHost()),
-			   args.getAs<unsigned int>               ("port", defaultPort()));
+    return new InPushConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
+                               args.get<string>                       ("host", defaultHost()),
+                               args.getAs<unsigned int>               ("port", defaultPort()));
 }
 
-InConnector::InConnector(const ConverterSelectionStrategyPtr converters,
+InPushConnector::InPushConnector(const ConverterSelectionStrategyPtr converters,
 			 const string&		       host,
 			 unsigned int                   port) :
     transport::ConverterSelectingConnector<string>(converters), logger(
-            Logger::getLogger("rsb.spread.InConnector")), active(false),
+            Logger::getLogger("rsb.spread.InPushConnector")), active(false),
             connector(new SpreadConnector(host, port)) {
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
     this->rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(
             this->connector->getConnection(), HandlerPtr(), this));
 }
 
-InConnector::~InConnector() {
+InPushConnector::~InPushConnector() {
     if (this->active) {
         deactivate();
     }
 }
 
-string InConnector::getClassName() const {
-    return "InConnector";
+string InPushConnector::getClassName() const {
+    return "InPushConnector";
 }
 
-void InConnector::printContents(ostream& stream) const {
+void InPushConnector::printContents(ostream& stream) const {
     stream << "active = " << this->active
 	   << "connector = " << this->connector;
 }
 
-void InConnector::activate() {
+void InPushConnector::activate() {
     this->connector->activate();
 
     // (re-)start threads
@@ -91,7 +94,7 @@ void InConnector::activate() {
 
 }
 
-void InConnector::deactivate() {
+void InPushConnector::deactivate() {
     this->rec->cancel();
     if (this->connector->getConnection()->isActive()) {
 	this->connector->getConnection()->interruptReceive();
@@ -101,7 +104,7 @@ void InConnector::deactivate() {
     this->active = false;
 }
 
-void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& specs) {
+void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& specs) {
     this->connector->setQualityOfServiceSpecs(specs);
     if (specs.getReliability() >= QualityOfServiceSpec::RELIABLE) {
         this->rec->setPruning(false);
@@ -110,18 +113,18 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& specs) {
     }
 }
 
-void InConnector::addHandler(HandlerPtr handler) {
+void InPushConnector::addHandler(HandlerPtr handler) {
     assert(this->handlers.empty());
     transport::InPushConnector::addHandler(handler);
     this->rec->setHandler(this->handlers.front());
 }
 
-void InConnector::removeHandler(HandlerPtr handler) {
+void InPushConnector::removeHandler(HandlerPtr handler) {
     transport::InPushConnector::addHandler(handler);
     this->rec->setHandler(HandlerPtr());
 }
 
-void InConnector::setScope(const Scope& scope) {
+void InPushConnector::setScope(const Scope& scope) {
     if (!active) {
         activationScope.reset(new Scope(scope));
     } else {

@@ -35,15 +35,17 @@
 #include <rsc/threading/ThreadedTaskExecutor.h>
 #include <rsc/misc/langutils.h>
 
-#include "rsb/transport/Connector.h"
-#include "rsb/transport/spread/SpreadConnector.h"
-#include "rsb/transport/spread/InConnector.h"
-#include "rsb/transport/spread/OutConnector.h"
-#include "rsb/filter/Filter.h"
 #include "rsb/Handler.h"
 #include "rsb/MetaData.h"
 #include "rsb/EventId.h"
 #include "rsb/Scope.h"
+
+#include "rsb/filter/Filter.h"
+
+#include "rsb/transport/Connector.h"
+#include "rsb/transport/spread/SpreadConnector.h"
+#include "rsb/transport/spread/InPushConnector.h"
+#include "rsb/transport/spread/OutConnector.h"
 
 #include "../InformerTask.h"
 
@@ -51,25 +53,31 @@
 #include "testconfig.h"
 
 using namespace std;
+
+using namespace testing;
+
+using namespace rsc::threading;
+
 using namespace rsb;
-using namespace rsb::test;
 using namespace rsb::filter;
 using namespace rsb::transport;
 using namespace rsb::spread;
-using namespace testing;
-using namespace rsc::threading;
+
+using namespace rsb::test;
 
 int pullInConnectorTest() {
     return 0;
 }
 
 TEST_P(ConnectorTest, testConstruction) {
-    ASSERT_NO_THROW(GetParam().createInConnector());
+    ASSERT_NO_THROW(GetParam().createInPullConnector());
+    ASSERT_NO_THROW(GetParam().createInPushConnector());
     ASSERT_NO_THROW(GetParam().createOutConnector());
 }
 
 TEST_P(ConnectorTest, testConnection) {
-    ASSERT_NO_THROW(GetParam().createInConnector()->activate());
+    ASSERT_NO_THROW(GetParam().createInPullConnector()->activate());
+    ASSERT_NO_THROW(GetParam().createInPushConnector()->activate());
     //ASSERT_NO_THROW(GetParam().createOutConnector()->activate());
 }
 
@@ -132,7 +140,7 @@ TEST_P(ConnectorTest, testHierarchySending) {
         Scope receiveScope = *receiveScopeIt;
 
         // in connector
-        InPushConnectorPtr in = GetParam().createInConnector();
+        InPushConnectorPtr in = GetParam().createInPushConnector();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(receiveScope);
         in->activate();
@@ -211,7 +219,7 @@ TEST_P(ConnectorTest, testRoundtripDynamicScopes) {
     ASSERT_NO_THROW(out->activate());
 
     // in connector
-    InPushConnectorPtr in = GetParam().createInConnector();
+    InPushConnectorPtr in = GetParam().createInPushConnector();
     in->setQualityOfServiceSpecs(qosSpecs);
     in->setScope(Scope("/"));
     ASSERT_NO_THROW(in->activate());
@@ -260,7 +268,7 @@ TEST_P(ConnectorTest, testRoundtrip) {
             sizeIt != sizes.end(); ++sizeIt) {
 
         // in connector
-        InPushConnectorPtr in = GetParam().createInConnector();
+        InPushConnectorPtr in = GetParam().createInPushConnector();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(scope);
         ASSERT_NO_THROW(in->activate());

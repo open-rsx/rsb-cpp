@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,34 +29,45 @@
 #include <gmock/gmock.h>
 
 #include "rsb/converter/Repository.h"
-#include "rsb/transport/spread/InConnector.h"
+
+#include "rsb/transport/spread/InPullConnector.h"
+#include "rsb/transport/spread/InPushConnector.h"
 #include "rsb/transport/spread/OutConnector.h"
 
 #include "testconfig.h"
 #include "../ConnectorTest.h"
 
 using namespace std;
-using namespace rsb::spread;
-using namespace rsb::transport;
-using namespace rsb::converter;
+
 using namespace testing;
+
+using namespace rsb::converter;
+using namespace rsb::transport;
+using namespace rsb::spread;
 
 static int dummy = pullInConnectorTest();
 
-InPushConnectorPtr createSpreadInConnector() {
-    return InPushConnectorPtr(new rsb::spread::InConnector(converterRepository<string>()->getConvertersForDeserialization(),
-						       defaultHost(),
-						       SPREAD_PORT));
+InPullConnectorPtr createSpreadInPullConnector() {
+    return InPullConnectorPtr(new rsb::spread::InPullConnector(converterRepository<string>()->getConvertersForDeserialization(),
+                                                               defaultHost(),
+                                                               SPREAD_PORT));
+}
+
+InPushConnectorPtr createSpreadInPushConnector() {
+    return InPushConnectorPtr(new rsb::spread::InPushConnector(converterRepository<string>()->getConvertersForDeserialization(),
+                                                               defaultHost(),
+                                                               SPREAD_PORT));
 }
 
 OutConnectorPtr createSpreadOutConnector() {
     return OutConnectorPtr(new rsb::spread::OutConnector(converterRepository<string>()->getConvertersForSerialization(),
-							 defaultHost(),
-							 SPREAD_PORT));
+                                                         defaultHost(),
+                                                         SPREAD_PORT));
 }
 
-const ConnectorTestSetup spreadSetup(createSpreadInConnector,
-        createSpreadOutConnector);
+const ConnectorTestSetup spreadSetup(createSpreadInPullConnector,
+                                     createSpreadInPushConnector,
+                                     createSpreadOutConnector);
 
 INSTANTIATE_TEST_CASE_P(SpreadConnector,
         ConnectorTest,

@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,30 +25,31 @@
  *
  * ============================================================ */
 
-#include <iostream>
-
 #include <string.h>
 #include <math.h>
 
 #include <rsc/misc/Registry.h>
 
-#include "SpreadConnector.h"
-#include "SpreadConnection.h"
 #include "../../CommException.h"
-#include "../../converter/Converter.h"
 #include "../../UnsupportedQualityOfServiceException.h"
 #include "../../util/MD5.h"
 #include "../../Scope.h"
 
+#include "../../converter/Converter.h"
+
+#include "SpreadConnection.h"
+#include "SpreadConnector.h"
+
 #include <sp.h>
 
 using namespace std;
+
 using namespace rsc::logging;
 using namespace rsc::runtime;
+
 using namespace rsb;
 using namespace rsb::util;
 using namespace rsb::transport;
-using namespace rsc::threading;
 
 namespace rsb {
 namespace spread {
@@ -55,11 +57,11 @@ namespace spread {
 const SpreadConnector::QoSMap SpreadConnector::qosMapping =
         SpreadConnector::buildQoSMapping();
 
-SpreadConnector::SpreadConnector(const std::string& host, unsigned int port) {
+SpreadConnector::SpreadConnector(const string& host, unsigned int port) {
     init(host, port);
 }
 
-void SpreadConnector::init(const std::string& host, unsigned int port) {
+void SpreadConnector::init(const string& host, unsigned int port) {
     this->logger = Logger::getLogger("rsb.spread.SpreadConnector");
     RSCDEBUG(logger, "SpreadConnector::init() entered");
     this->activated = false;
@@ -87,11 +89,11 @@ void SpreadConnector::deactivate() {
     this->activated = false;
 }
 
-void SpreadConnector::join(const std::string& name) {
+void SpreadConnector::join(const string& name) {
     this->memberships->join(name, this->con);
 }
 
-void SpreadConnector::leave(const std::string& name) {
+void SpreadConnector::leave(const string& name) {
     this->memberships->leave(name, this->con);
 }
 
@@ -157,7 +159,7 @@ void SpreadConnector::setQualityOfServiceSpecs(
     RSCDEBUG(logger, "Selected new message type " << messageQoS);
 }
 
-const std::vector<std::string>& SpreadConnector::makeGroupNames(
+const vector<string>& SpreadConnector::makeGroupNames(
         const Scope& scope) const {
 
     boost::upgrade_lock<boost::shared_mutex> lock(groupNameCacheMutex);
@@ -179,7 +181,7 @@ const std::vector<std::string>& SpreadConnector::makeGroupNames(
     }
 
     // Warm-up cache
-    std::vector<std::string>& cacheItem = this->groupNameCache[scope];
+    vector<string>& cacheItem = this->groupNameCache[scope];
     vector<Scope> scopes = scope.superScopes(true);
     for (vector<Scope>::const_iterator scopeIt = scopes.begin(); scopeIt
             != scopes.end(); ++scopeIt) {
