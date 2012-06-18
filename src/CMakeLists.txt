@@ -195,6 +195,7 @@ IF(WITH_SPREAD_TRANSPORT)
     LIST(APPEND SOURCES rsb/transport/spread/InPushConnector.cpp
                         rsb/transport/spread/InPullConnector.cpp
                         rsb/transport/spread/OutConnector.cpp
+                        rsb/transport/spread/MessageHandler.cpp
                         rsb/transport/spread/ReceiverTask.cpp
                         rsb/transport/spread/MembershipManager.cpp
                         rsb/transport/spread/SpreadConnection.cpp
@@ -205,6 +206,7 @@ IF(WITH_SPREAD_TRANSPORT)
     LIST(APPEND HEADERS rsb/transport/spread/InPushConnector.h
                         rsb/transport/spread/InPullConnector.h
                         rsb/transport/spread/OutConnector.h
+                        rsb/transport/spread/MessageHandler.h
                         rsb/transport/spread/ReceiverTask.h
                         rsb/transport/spread/MembershipManager.h
                         rsb/transport/spread/SpreadConnection.h

@@ -3,6 +3,7 @@
  * This file is part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -47,12 +48,13 @@ transport::InPullConnector* InPullConnector::create(const Properties& args) {
                                args.getAs<unsigned int>                ("port", defaultPort()));
 }
 
-InPullConnector::InPullConnector(ConverterSelectionStrategyPtr  converters,
-                                 const string&		       host,
-                                 unsigned int                   port):
-    transport::ConverterSelectingConnector<string>(converters), logger(
-            Logger::getLogger("rsb.spread.InPullConnector")), active(false),
-            connector(new SpreadConnector(host, port)) {
+InPullConnector::InPullConnector(ConverterSelectionStrategyPtr converters,
+                                 const string&                 host,
+                                 unsigned int                  port) :
+    logger(Logger::getLogger("rsb.spread.InPullConnector")),
+    active(false),
+    connector(new SpreadConnector(host, port)),
+    processor(converters) {
 }
 
 InPullConnector::~InPullConnector() {
@@ -99,12 +101,19 @@ void InPullConnector::setScope(const Scope& scope) {
 }
 
 EventPtr InPullConnector::raiseEvent(bool block) {
+    assert(block);
+
     SpreadMessagePtr message(new SpreadMessage());
-    if (block) {
+    while (true) {
         this->connector->receive(message);
-    }
-    // TODO implement
-    return EventPtr();
+        assert(message);
+        if (message->getType() != SpreadMessage::REGULAR) {
+            continue;
+        }
+        break;
+    };
+
+    return this->processor.processMessage(message);
 }
 
 }

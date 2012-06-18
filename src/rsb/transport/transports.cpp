@@ -60,6 +60,15 @@ void registerDefaultTransports() {
     }
     registered = true;
 
+#ifdef RSB_WITH_SPREAD_TRANSPORT
+
+    // Verify that the version of the library that we linked against
+    // is compatible with the version of the headers we compiled
+    // against.
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#endif
+
     // In-direction, push-style connectors
     {
         InPushFactory& factory = InPushFactory::getInstance();

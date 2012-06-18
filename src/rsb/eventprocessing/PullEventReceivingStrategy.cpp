@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -48,14 +48,10 @@ public:
     FilterSet filters;
 
     ConnectorSet connectors;
-    /**
-     * Stores event obtained via connector callbacks.
-     * */
-    EventPtr currentEvent;
 };
 
-PullEventReceivingStrategy::PullEventReceivingStrategy(
-        const set<InPullConnectorPtr>& connectors) : d(new Impl) {
+PullEventReceivingStrategy::PullEventReceivingStrategy(const set<InPullConnectorPtr>& connectors) :
+    d(new Impl) {
     d->connectors = connectors;
 }
 
@@ -72,25 +68,20 @@ void PullEventReceivingStrategy::removeFilter(FilterPtr filter) {
 
 EventPtr PullEventReceivingStrategy::raiseEvent(bool block) {
     // Go through our connectors and ask them to emit an event. If one
-    // connector does emit an event, our handle method gets called and
-    // may store the event if it matches our filters.
+    // connector does emit an event, we filter and potentially return
+    // it.
     for (ConnectorSet::iterator it = d->connectors.begin(); it
             != d->connectors.end(); ++it) {
-        if ((*it)->raiseEvent(block)) {
-            if (d->currentEvent) {
-                EventPtr result = d->currentEvent;
-                d->currentEvent.reset();
-                return result;
-            }
+        EventPtr event((*it)->raiseEvent(block));
+        if (event) {
+            // TODO filter
+            return event;
         }
     }
     return EventPtr();
 }
 
-void PullEventReceivingStrategy::handle(EventPtr event) {
-    // TODO filter
-    d->currentEvent = event;
-}
+void PullEventReceivingStrategy::handle(EventPtr /*event*/) {} // not used
 
 std::string PullEventReceivingStrategy::getClassName() const {
     return "PullEventReceivingStrategy";

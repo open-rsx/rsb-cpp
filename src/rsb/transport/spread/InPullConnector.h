@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -32,7 +32,10 @@
 
 #include "../InPullConnector.h"
 #include "../ConverterSelectingConnector.h"
+
 #include "SpreadConnector.h"
+#include "MessageHandler.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -44,9 +47,10 @@ namespace spread {
  *
  * @author jmoringe
  */
-class RSB_EXPORT InPullConnector: public transport::InPullConnector,
-                                  public transport::ConverterSelectingConnector<std::string> {
+class RSB_EXPORT InPullConnector: public transport::InPullConnector {
 public:
+    typedef rsb::transport::ConverterSelectingConnector<std::string>::ConverterSelectionStrategyPtr ConverterSelectionStrategyPtr;
+
     InPullConnector(ConverterSelectionStrategyPtr converters,
                     const std::string& host = defaultHost(),
                     unsigned int port = defaultPort());
@@ -72,6 +76,7 @@ private:
 
     SpreadConnectorPtr connector;
     boost::shared_ptr<Scope> activationScope;
+    MessageHandler processor;
 };
 
 }

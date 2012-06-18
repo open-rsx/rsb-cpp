@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -56,13 +56,11 @@ namespace eventprocessing {
  * usually is a @ref Participant ). The Retrieval works (roughly) as
  * follows:
  *
- * -# The client calls the emit method of the @c
+ * -# The client calls the raiseEvent method of the @c
  *    PullEventReceivingStrategy instance
- * -# The instance calls the emit methods of its connectors
- * -# A connector calls the handle method of the instance
- * -# The instance performs event filtering
+ * -# The instance calls the raiseEvent methods of its connectors
  * -# If the event has not been discarded during filtering, it is
- *    returned from emit
+ *    returned from raiseEvent
  *
  * @author jmoringe
  */
@@ -82,15 +80,6 @@ public:
      * @return A pointer to the received event.
      */
     EventPtr raiseEvent(bool block);
-
-    /**
-     * This method is called by @ref rsb::transport::InPullConnector s
-     * in response to calls to their emit methods.
-     *
-     * @param event The @ref Event that should be filtered and
-     * potentially be delivered to the client.
-     */
-    void handle(EventPtr event);
 private:
 
     class Impl;
@@ -98,6 +87,8 @@ private:
 
     std::string getClassName() const;
     void printContents(std::ostream& stream) const;
+
+    void handle(EventPtr event); // not used
 };
 
 typedef boost::shared_ptr<PullEventReceivingStrategy> PullEventReceivingStrategyPtr;
