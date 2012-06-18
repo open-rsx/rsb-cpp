@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,9 +30,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <rsc/logging/Logger.h>
-#include <rsc/logging/LoggerFactory.h>
-
 #include <rsb/Factory.h>
 
 using namespace std;
@@ -40,9 +38,8 @@ using namespace rsc::misc;
 using namespace rsb;
 
 int main(int argc, char** argv) {
-    LoggerFactory::getInstance().reconfigure(Logger::LEVEL_TRACE);
-    LoggerPtr logger = Logger::getLogger("reader");
-
+    // Set up the scope to receive on either from the command line
+    // argument or use the default scope of the informer example.
     Scope scope;
     if (argc > 1) {
         scope = Scope(argv[1]);
@@ -50,13 +47,17 @@ int main(int argc, char** argv) {
         scope = Scope("/example/informer");
     }
 
+    // Create a reader which synchronously receives events on the
+    // specified scope.
     Factory& factory = Factory::getInstance();
     ReaderPtr reader = factory.createReader(scope);
-    RSCINFO(logger, "Reader setup finished. Waiting for messages on scope " << scope);
+    cout << "Reader setup finished. Waiting for messages on scope " << scope
+         << endl;
 
+    // Print events as they are received.
     while (true) {
         EventPtr event = reader->read();
-        RSCINFO(logger, "Received event " << event);
+        cout << event << endl;
     }
 
     return EXIT_SUCCESS;
