@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -32,7 +32,7 @@
 #include "inprocess/OutConnector.h"
 
 #ifdef RSB_WITH_SPREAD_TRANSPORT
-#include "spread/InConnector.h"
+#include "spread/InPushConnector.h"
 #include "spread/InPullConnector.h"
 #include "spread/OutConnector.h"
 #endif
@@ -74,7 +74,7 @@ void registerDefaultTransports() {
             options.insert("port");
 
             factory.registerConnector("spread",
-                                      &spread::InConnector::create,
+                                      &spread::InPushConnector::create,
                                       "spread",
                                       options);
         }
