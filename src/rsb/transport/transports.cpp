@@ -26,6 +26,8 @@
 
 #include "Factory.h"
 
+#include <stdexcept>
+
 #include <boost/thread.hpp>
 
 #include "inprocess/InConnector.h"
@@ -85,6 +87,7 @@ void registerDefaultTransports() {
             factory.registerConnector("spread",
                                       &spread::InPushConnector::create,
                                       "spread",
+                                      true,
                                       options);
         }
 #endif
@@ -100,6 +103,7 @@ void registerDefaultTransports() {
             factory.registerConnector("socket",
                                       &socket::InPushConnector::create,
                                       "socket",
+                                      true,
                                       options);
         }
 #endif
@@ -119,6 +123,7 @@ void registerDefaultTransports() {
             factory.registerConnector("spread",
                                       &spread::InPullConnector::create,
                                       "spread",
+                                      true,
                                       options);
         }
 #endif
@@ -142,6 +147,7 @@ void registerDefaultTransports() {
             factory.registerConnector("spread",
                                       &spread::OutConnector::create,
                                       "spread",
+                                      true,
                                       options);
         }
 #endif
@@ -157,12 +163,52 @@ void registerDefaultTransports() {
             factory.registerConnector("socket",
                                       &socket::OutConnector::create,
                                       "socket",
+                                      true,
                                       options);
         }
 #endif
 
     }
 
+}
+
+bool isRemote(const string& transportName) {
+    bool remote;
+    bool validResult = false;
+    try {
+        InPullFactory& factory = InPullFactory::getInstance();
+        InPullFactory::ConnectorInfo info
+            = factory.getConnectorInfo(transportName);
+        remote = info.isRemote();
+        validResult = true;
+    } catch (const rsc::runtime::NoSuchObject&) {
+    }
+    try {
+        InPushFactory& factory = InPushFactory::getInstance();
+        InPushFactory::ConnectorInfo info
+            = factory.getConnectorInfo(transportName);
+        if (validResult && (remote != info.isRemote())) {
+            throw std::logic_error("connectors of one transport disagree about remoteness.");
+        }
+        remote = info.isRemote();
+        validResult = true;
+    } catch (const rsc::runtime::NoSuchObject&) {
+    }
+    try {
+        OutFactory& factory = OutFactory::getInstance();
+        OutFactory::ConnectorInfo info
+            = factory.getConnectorInfo(transportName);
+        if (validResult && (remote != info.isRemote())) {
+            throw std::logic_error("connectors of one transport disagree about remoteness.");
+        }
+        remote = info.isRemote();
+        validResult = true;
+    } catch (const rsc::runtime::NoSuchObject&) {
+    }
+    if (!validResult) {
+        throw rsc::runtime::NoSuchObject(transportName);
+    }
+    return remote;
 }
 
 }

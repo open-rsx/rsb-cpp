@@ -51,8 +51,8 @@ namespace transport {
  */
 template <typename Interface>
 class ConnectorFactory: public rsc::patterns::Factory<std::string, Interface>,
-			public rsc::patterns::Singleton< ConnectorFactory<Interface> >,
-			public rsc::runtime::Printable {
+                        public rsc::patterns::Singleton< ConnectorFactory<Interface> >,
+                        public rsc::runtime::Printable {
 public:
     /**
      * Instances of this class describe capabilities and properties of
@@ -62,44 +62,55 @@ public:
      */
     class ConnectorInfo: public rsc::runtime::Printable {
     public:
-	typedef std::set<std::string> SchemaList;
-	typedef std::set<std::string> OptionList;
+        typedef std::set<std::string> SchemaList;
+        typedef std::set<std::string> OptionList;
 
-	ConnectorInfo(const std::string& name,
-		      const SchemaList& schemas,
-		      const OptionList& options) :
-	    name(name), schemas(schemas), options(options) {
-	    this->options.insert("enabled");
-	}
+        ConnectorInfo(const std::string& name,
+                      const SchemaList& schemas,
+                      bool remote,
+                      const OptionList& options) :
+            name(name), schemas(schemas), remote(remote), options(options) {
+            this->options.insert("enabled");
+        }
 
-	/**
-	 * Return the name of the implementation.
-	 */
-	std::string getName() const {
-	    return this->name;
-	}
+        /**
+         * Return the name of the implementation.
+         */
+        std::string getName() const {
+            return this->name;
+        }
 
-	/**
-	 * Return the set of schemas supported by the connector
-	 * implementation.
-	 *
-	 * @return A @ref std::set containing the supported schemas as
-	 * strings.
-	 */
-	SchemaList getSchemas() const {
-	    return this->schemas;
-	}
+        /**
+         * Return the set of schemas supported by the connector
+         * implementation.
+         *
+         * @return A @ref std::set containing the supported schemas as
+         * strings.
+         */
+        SchemaList getSchemas() const {
+            return this->schemas;
+        }
 
-	/**
-	 * Return a list of option names describing configurations
-	 * options recognized by the implementation.
-	 *
-	 * @return A @ref std::set containing the names of recognized
-	 * options.
-	 */
-	OptionList getOptions() const {
-	    return this->options;
-	}
+        /**
+         * Return a list of option names describing configurations
+         * options recognized by the implementation.
+         *
+         * @return A @ref std::set containing the names of recognized
+         * options.
+         */
+        OptionList getOptions() const {
+            return this->options;
+        }
+
+        /**
+         * Return "remoteness" of the implementation.
+         *
+         * @return @c true if the transport allows communication
+         *         across process boundaries, @c false otherwise.
+         */
+        bool isRemote() const {
+            return this->remote;
+        }
 
         bool operator<(const ConnectorInfo& other) const {
             if (this->name < other.name) {
@@ -108,25 +119,31 @@ public:
                 if (this->schemas < other.schemas) {
                     return true;
                 } else if (this->schemas == other.schemas) {
-                    return this->options < other.options;
+                    if (this->remote < other.remote) {
+                        return true;
+                    } else if (this->remote == other.remote) {
+                        return this->options < other.options;
+                    }
                 }
             }
             return false;
         }
     private:
-	std::string name;
-	SchemaList schemas;
-	OptionList options;
+        std::string name;
+        SchemaList schemas;
+        bool remote;
+        OptionList options;
 
-	std::string getClassName() const {
-	    return "ConnectorInfo";
-	}
+        std::string getClassName() const {
+            return "ConnectorInfo";
+        }
 
-	void printContents(std::ostream& stream) const {
-	    stream << this->name
-		   << ", schemas = " << this->schemas
-		   << ", options = " << this->options;
-	}
+        void printContents(std::ostream& stream) const {
+            stream << this->name
+                   << ", schemas = " << this->schemas
+                   << ", remote = " << this->remote
+                   << ", options = " << this->options;
+        }
     };
 
 private:
@@ -146,11 +163,11 @@ public:
      * cannot be found.
      */
     ConnectorInfo getConnectorInfo(const std::string& name) const {
-	typename InfoMap::const_iterator it = this->infos.find(name);
-	if (it == this->infos.end()) {
-	    throw rsc::runtime::NoSuchObject(name);
-	}
-	return it->second;
+        typename InfoMap::const_iterator it = this->infos.find(name);
+        if (it == this->infos.end()) {
+            throw rsc::runtime::NoSuchObject(name);
+        }
+        return it->second;
     }
 
     std::set<ConnectorInfo> getConnectorInfos() const {
@@ -178,34 +195,36 @@ public:
     void registerConnector(const std::string& name,
             const CreateFunction& constructor,
             const std::set<std::string>& schemas = std::set<std::string>(),
+            bool remote = true,
             const std::set<std::string>& options = std::set<std::string>()) {
         Factory::impls().register_(name, constructor);
 
-        ConnectorInfo info(name, schemas, options);
+        ConnectorInfo info(name, schemas, remote, options);
         this->infos.insert(std::make_pair(name, info));
     }
 
     void registerConnector(const std::string& name,
             const CreateFunction& constructor, const std::string& schema,
+            bool remote = true,
             const std::set<std::string>& options = std::set<std::string>()) {
         std::set<std::string> schemas;
         schemas.insert(schema);
-        registerConnector(name, constructor, schemas, options);
+        registerConnector(name, constructor, schemas, remote, options);
     }
 private:
     InfoMap infos;
 
     std::string getClassName() const {
-	return "ConnectorFactory<" + rsc::runtime::typeName<Interface>() + ">";
+        return "ConnectorFactory<" + rsc::runtime::typeName<Interface>() + ">";
     }
 
     void printContents(std::ostream& stream) const {
-	const ImplMapProxy& implementations = Factory::impls();
-	stream << std::endl;
-	for (typename ImplMapProxy::const_iterator it = implementations.begin(); it
-		 != implementations.end(); ++it) {
-	    stream << "\t" << getConnectorInfo(it->first) << std::endl;
-	}
+        const ImplMapProxy& implementations = Factory::impls();
+        stream << std::endl;
+        for (typename ImplMapProxy::const_iterator it = implementations.begin(); it
+                 != implementations.end(); ++it) {
+            stream << "\t" << getConnectorInfo(it->first) << std::endl;
+        }
     }
 };
 
