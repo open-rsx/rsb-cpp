@@ -76,7 +76,8 @@ void registerDefaultTransports() {
         InPushFactory& factory = InPushFactory::getInstance();
         factory.registerConnector("inprocess",
                                   &inprocess::InConnector::create,
-                                  "inprocess");
+                                  "inprocess",
+                                  false);
 
 #ifdef RSB_WITH_SPREAD_TRANSPORT
         {
@@ -135,7 +136,8 @@ void registerDefaultTransports() {
         OutFactory& factory = OutFactory::getInstance();
         factory.registerConnector("inprocess",
                                   &inprocess::OutConnector::create,
-                                  "inprocess");
+                                  "inprocess",
+                                  false);
 
 #ifdef RSB_WITH_SPREAD_TRANSPORT
         {
