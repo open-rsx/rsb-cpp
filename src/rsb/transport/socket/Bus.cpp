@@ -187,29 +187,58 @@ void Bus::handleIncoming(EventPtr         event,
 }
 
 void Bus::handle(EventPtr event) {
-    boost::recursive_mutex::scoped_lock lock(this->connectionLock);
+    // Dispatch to our own connectors.
+    RSCDEBUG(logger, "Delivering outgoing event to connectors " << event);
 
-    RSCDEBUG(logger, "Dispatching outgoing event " << event << " to connections");
+    vector<Scope> scopes = event->getScopePtr()->superScopes(true);
+    RSCDEBUG(logger, "Relevant scopes " << scopes);
 
-    string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
-    list<BusConnectionPtr> failing;
-    for (list<BusConnectionPtr>::iterator it = this->connections.begin();
-         it != this->connections.end(); ++it) {
-        RSCDEBUG(logger, "Dispatching to connection " << *it);
-        try {
-            (*it)->sendEvent(event, wireSchema);
-        } catch (const std::exception& e) {
-            RSCWARN(logger, "Send failure (" << e.what() << "); will close connection later");
-            // We record failing connections instead of closing them
-            // immediately to avoid invalidating the iterator.
-            failing.push_back(*it);
+    {
+        boost::recursive_mutex::scoped_lock lock(this->connectorLock);
+
+        for (vector<Scope>::const_iterator it = scopes.begin(); it != scopes.end(); ++it) {
+            SinkMap::const_iterator it_ = this->sinks.find(*it);
+            if (it_ != this->sinks.end()) {
+                const SinkList& connectors = it_->second;
+
+                for (SinkList::const_iterator it__ = connectors.begin(); it__
+                         != connectors.end(); ++it__) {
+                    InPushConnectorPtr connector = it__->lock();
+                    if (connector) {
+                        RSCDEBUG(logger, "Delivering to connector " << connector << " in " << *it);
+                        connector->handle(event);
+                    }
+                }
+            }
         }
     }
 
-    // This should remove all references to the connection objects.
-    for (list<BusConnectionPtr>::const_iterator it = failing.begin();
-         it != failing.end(); ++it) {
-        removeConnection(*it);
+    // Dispatch to outgoing connections.
+    {
+        boost::recursive_mutex::scoped_lock lock(this->connectionLock);
+
+        RSCDEBUG(logger, "Dispatching outgoing event " << event << " to connections");
+
+        string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
+        list<BusConnectionPtr> failing;
+        for (list<BusConnectionPtr>::iterator it = this->connections.begin();
+             it != this->connections.end(); ++it) {
+            RSCDEBUG(logger, "Dispatching to connection " << *it);
+            try {
+                (*it)->sendEvent(event, wireSchema);
+            } catch (const std::exception& e) {
+                RSCWARN(logger, "Send failure (" << e.what() << "); will close connection later");
+                // We record failing connections instead of closing them
+                // immediately to avoid invalidating the iterator.
+                failing.push_back(*it);
+            }
+        }
+
+        // This should remove all references to the connection objects.
+        for (list<BusConnectionPtr>::const_iterator it = failing.begin();
+             it != failing.end(); ++it) {
+            removeConnection(*it);
+        }
     }
 }
 
