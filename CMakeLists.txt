@@ -106,7 +106,7 @@ FIND_PACKAGE(RSBProtocol ${RSB_PROTOCOL_VERSION} REQUIRED)
 
 SET(SPREAD_IGNORE_EXECUTABLE TRUE)
 IF(BUILD_SPREAD_TRANSPORT)
-	FIND_PACKAGE(Spread 4.0)
+    FIND_PACKAGE(Spread 4.0)
 ENDIF()
 IF(NOT SPREAD_EXECUTABLE)
     MESSAGE(STATUS "Spread executable not found. Unit tests will not be built!")
@@ -212,7 +212,7 @@ INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake DESTINATION share/rsb)
 EXPORT(TARGETS ${RSB_NAME} FILE "${CMAKE_BINARY_DIR}/RSBDepends.cmake")
 INSTALL(EXPORT RSBDepends
         DESTINATION "share/rsb")
-        
+
 INSTALL(FILES COPYING.txt DESTINATION share/doc/rsb RENAME copyright)
 
 # --- documentation gneration ---
@@ -244,7 +244,11 @@ SET(VERSION_SUFFIX "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}")
 # --------------------------------------------------------------------
 # !!! Do not change these two lines !!!
 SET(CPACK_PACKAGE_VERSION   "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
-SET(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}${VERSION_SUFFIX}-${CPACK_PACKAGE_VERSION}_${LSB_CODENAME}_${LSB_PROCESSOR_ARCH}")
+IF(BUILD_SPREAD_TRANSPORT)
+    SET(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-spread${VERSION_SUFFIX}-${CPACK_PACKAGE_VERSION}_${LSB_CODENAME}_${LSB_PROCESSOR_ARCH}")
+ELSE()
+    SET(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}${VERSION_SUFFIX}-${CPACK_PACKAGE_VERSION}_${LSB_CODENAME}_${LSB_PROCESSOR_ARCH}")
+ENDIF()
 # --------------------------------------------------------------------
 
 IF(NOT CPACK_GENERATOR)
@@ -257,16 +261,33 @@ SET(CPACK_PACKAGE_VENDOR "CoR-Lab Bielefeld University")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING.txt")
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    SET(CPACK_DEBIAN_PACKAGE_NAME "rsb${VERSION_SUFFIX}")
-    SET(CPACK_DEBIAN_PACKAGE_VERSION ${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH})
-    SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Sebastian Wrede (swrede@techfak.uni-bielefeld.de)")
-    SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus")
-    SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-    SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
-    SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libprotoc-dev, rsc${VERSION_SUFFIX}, libboost-regex-dev")
-    # build dependencies protobuf-compiler, rsbprotocol
-    SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "doxygen, lcov, cppcheck, sloccount, spread (>= 4.0), protobuf-compiler")
+    IF(BUILD_SPREAD_TRANSPORT)
+        SET(CPACK_DEBIAN_PACKAGE_NAME "rsb-spread${VERSION_SUFFIX}")
+        SET(CPACK_DEBIAN_PACKAGE_VERSION ${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH})
+        SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Sebastian Wrede (swrede@techfak.uni-bielefeld.de)")
+        SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (with builtin Spread transport)")
+        SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+        SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+        SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+        SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libprotoc-dev, rsc${VERSION_SUFFIX}, libboost-regex-dev")
+        # build dependencies protobuf-compiler, rsbprotocol
+        SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "doxygen, lcov, cppcheck, sloccount, spread (>= 4.0), protobuf-compiler")
+        # TODO(jmoringe): CPack does not seem to support conflicts
+        SET(CPACK_DEBIAN_PACKAGE_CONFLICTS "rsb${VERSION_SUFFIX}")
+    ELSE()
+        SET(CPACK_DEBIAN_PACKAGE_NAME "rsb${VERSION_SUFFIX}")
+        SET(CPACK_DEBIAN_PACKAGE_VERSION ${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH})
+        SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Sebastian Wrede (swrede@techfak.uni-bielefeld.de)")
+        SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus")
+        SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+        SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+        SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+        SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libprotoc-dev, rsc${VERSION_SUFFIX}, libboost-regex-dev")
+        # build dependencies protobuf-compiler, rsbprotocol
+        SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "doxygen, lcov, cppcheck, sloccount, protobuf-compiler")
+        # TODO(jmoringe): CPack does not seem to support conflicts
+        SET(CPACK_DEBIAN_PACKAGE_CONFLICTS "rsb-spread${VERSION_SUFFIX}")
+    ENDIF()
 ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 INCLUDE(CPack)
