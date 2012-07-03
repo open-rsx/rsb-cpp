@@ -78,7 +78,7 @@ TEST_P(ConnectorTest, testConstruction) {
 TEST_P(ConnectorTest, testConnection) {
     ASSERT_NO_THROW(GetParam().createInPullConnector()->activate());
     ASSERT_NO_THROW(GetParam().createInPushConnector()->activate());
-    //ASSERT_NO_THROW(GetParam().createOutConnector()->activate());
+    ASSERT_NO_THROW(GetParam().createOutConnector()->activate());
 }
 
 TEST_P(ConnectorTest, testSendLongGroupNames) {
