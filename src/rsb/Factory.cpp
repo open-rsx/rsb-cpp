@@ -114,7 +114,14 @@ Factory::Factory() :
     this->defaultConfig = ParticipantConfig();
     for (set<string>::const_iterator it = availableTransports.begin();
          it != availableTransports.end(); ++it) {
-        this->defaultConfig.addTransport(ParticipantConfig::Transport(*it, *it == "inprocess"));
+        this->defaultConfig.addTransport(ParticipantConfig::Transport(*it, *it == "socket"));
+    }
+
+    // If there is only one transport, we can blindly enable it since
+    // the user could end up without any enabled transport otherwise.
+    if (this->defaultConfig.getTransports().size() == 1) {
+        string name = this->defaultConfig.getTransports()[0].getName();
+        this->defaultConfig.mutableTransport(name).setEnabled(true);
     }
 
     // Merge with user configuration (configuration files, environment
