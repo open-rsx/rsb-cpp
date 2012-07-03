@@ -120,7 +120,7 @@ Factory::Factory() :
     // If there is only one transport, we can blindly enable it since
     // the user could end up without any enabled transport otherwise.
     if (this->defaultConfig.getTransports().size() == 1) {
-        string name = this->defaultConfig.getTransports()[0].getName();
+        string name = this->defaultConfig.getTransports().begin()->getName();
         this->defaultConfig.mutableTransport(name).setEnabled(true);
     }
 
