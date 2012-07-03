@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,7 +24,7 @@
  *
  * ============================================================ */
 
-#include "InConnector.h"
+#include "InPushConnector.h"
 
 #include "Bus.h"
 #include "../../MetaData.h"
@@ -37,41 +37,41 @@ using namespace rsc::runtime;
 namespace rsb {
 namespace inprocess {
 
-InConnector::InConnector() :
-    logger(Logger::getLogger("rsb.inprocess.InConnector")), active(false) {
+InPushConnector::InPushConnector() :
+    logger(Logger::getLogger("rsb.inprocess.InPushConnector")), active(false) {
 }
 
-transport::InPushConnector* InConnector::create(const Properties& args) {
-    LoggerPtr logger = Logger::getLogger("rsb.inprocess.InConnector");
-    RSCDEBUG(logger, "Creating InConnector with properties " << args);
+transport::InPushConnector* InPushConnector::create(const Properties& args) {
+    LoggerPtr logger = Logger::getLogger("rsb.inprocess.InPushConnector");
+    RSCDEBUG(logger, "Creating InPushConnector with properties " << args);
 
     // Seems to have confused some users.
     // See https://code.cor-lab.de/issues/649
     // if (args.has("converters")) {
-    //   RSCWARN(logger, "`converters' property found when constructing inprocess::InConnector. This connector does not support (or require) converters.");
+    //   RSCWARN(logger, "`converters' property found when constructing inprocess::InPushConnector. This connector does not support (or require) converters.");
     // }
-    return new InConnector();
+    return new InPushConnector();
 }
 
-InConnector::~InConnector() {
+InPushConnector::~InPushConnector() {
     if (this->active) {
         deactivate();
     }
 }
 
-string InConnector::getClassName() const {
-    return "InConnector";
+string InPushConnector::getClassName() const {
+    return "InPushConnector";
 }
 
-void InConnector::printContents(ostream& stream) const {
+void InPushConnector::printContents(ostream& stream) const {
     stream << "scope = " << scope;
 }
 
-Scope InConnector::getScope() const {
+Scope InPushConnector::getScope() const {
     return this->scope;
 }
 
-void InConnector::setScope(const Scope& scope) {
+void InPushConnector::setScope(const Scope& scope) {
     if (this->active) {
         throw std::runtime_error("Cannot set scope while active");
     }
@@ -79,22 +79,22 @@ void InConnector::setScope(const Scope& scope) {
     this->scope = scope;
 }
 
-void InConnector::activate() {
+void InPushConnector::activate() {
     RSCDEBUG(logger, "Activating");
-    Bus::getInstance().addSink(boost::dynamic_pointer_cast<InConnector>(
+    Bus::getInstance().addSink(boost::dynamic_pointer_cast<InPushConnector>(
             shared_from_this()));
     this->active = true;
 }
 
-void InConnector::deactivate() {
+void InPushConnector::deactivate() {
     RSCDEBUG(logger, "Deactivating");
     Bus::getInstance().removeSink(this);
 }
 
-void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
+void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
 }
 
-void InConnector::handle(EventPtr event) {
+void InPushConnector::handle(EventPtr event) {
 
     /** TODO(jmoringe, 2011-11-07): This ensures not overwriting
      * earlier receive timestamp added by different

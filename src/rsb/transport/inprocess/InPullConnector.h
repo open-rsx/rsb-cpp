@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -31,7 +31,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/Properties.h>
 
-#include "../InPushConnector.h"
+#include "../InPullConnector.h"
 #include "../../eventprocessing/Handler.h"
 #include "../../Scope.h"
 #include "rsb/rsbexports.h"
@@ -42,11 +42,11 @@ namespace inprocess {
 /**
  * @author jmoringe
  */
-class RSB_EXPORT InConnector: public transport::InPushConnector,
+class RSB_EXPORT InPullConnector: public transport::InPullConnector,
         public eventprocessing::Handler {
 public:
-    InConnector();
-    virtual ~InConnector();
+    InPullConnector();
+    virtual ~InPullConnector();
 
     std::string getClassName() const;
     void printContents(std::ostream& stream) const;
@@ -61,7 +61,9 @@ public:
 
     void handle(EventPtr event);
 
-    static rsb::transport::InPushConnector* create(
+    EventPtr raiseEvent(bool block);
+
+    static rsb::transport::InPullConnector* create(
             const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
@@ -71,7 +73,7 @@ private:
     bool active;
 };
 
-typedef boost::shared_ptr<InConnector> InConnectorPtr;
+typedef boost::shared_ptr<InPullConnector> InPullConnectorPtr;
 
 }
 }

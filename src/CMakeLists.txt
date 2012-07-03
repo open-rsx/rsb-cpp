@@ -90,7 +90,8 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/transports.cpp
 
             rsb/transport/inprocess/Bus.cpp
-            rsb/transport/inprocess/InConnector.cpp
+            rsb/transport/inprocess/InPullConnector.cpp
+            rsb/transport/inprocess/InPushConnector.cpp
             rsb/transport/inprocess/OutConnector.cpp
 
             rsb/util/MD5.cpp
@@ -181,7 +182,8 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/transports.h
 
             rsb/transport/inprocess/Bus.h
-            rsb/transport/inprocess/InConnector.h
+            rsb/transport/inprocess/InPullConnector.h
+            rsb/transport/inprocess/InPushConnector.h
             rsb/transport/inprocess/OutConnector.h
 
             rsb/util/MD5.h

@@ -30,7 +30,8 @@
 
 #include <boost/thread.hpp>
 
-#include "inprocess/InConnector.h"
+#include "inprocess/InPullConnector.h"
+#include "inprocess/InPushConnector.h"
 #include "inprocess/OutConnector.h"
 
 #ifdef RSB_WITH_SPREAD_TRANSPORT
@@ -75,7 +76,7 @@ void registerDefaultTransports() {
     {
         InPushFactory& factory = InPushFactory::getInstance();
         factory.registerConnector("inprocess",
-                                  &inprocess::InConnector::create,
+                                  &inprocess::InPushConnector::create,
                                   "inprocess",
                                   false);
 

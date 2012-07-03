@@ -27,7 +27,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "rsb/transport/inprocess/InConnector.h"
+#include "rsb/transport/inprocess/InPullConnector.h"
+#include "rsb/transport/inprocess/InPushConnector.h"
 #include "rsb/transport/inprocess/OutConnector.h"
 
 #include "testconfig.h"
@@ -36,22 +37,18 @@
 using namespace std;
 using namespace testing;
 
-using namespace rsb::transport;
-using namespace rsb::inprocess;
-
 static int dummy = pullInConnectorTest();
 
-InPullConnectorPtr createInProcessInPullConnector() {
-    return InPullConnectorPtr((rsb::transport::InPullConnector*) 0
-                              /*new rsb::inprocess::InPullConnector()*/);
+rsb::transport::InPullConnectorPtr createInProcessInPullConnector() {
+    return rsb::transport::InPullConnectorPtr(new rsb::inprocess::InPullConnector());
 }
 
-InPushConnectorPtr createInProcessInPushConnector() {
-    return InPushConnectorPtr(new rsb::inprocess::InConnector());
+rsb::transport::InPushConnectorPtr createInProcessInPushConnector() {
+    return rsb::transport::InPushConnectorPtr(new rsb::inprocess::InPushConnector());
 }
 
-OutConnectorPtr createInProcessOutConnector() {
-    return OutConnectorPtr(new rsb::inprocess::OutConnector());
+rsb::transport::OutConnectorPtr createInProcessOutConnector() {
+    return rsb::transport::OutConnectorPtr(new rsb::inprocess::OutConnector());
 }
 
 const ConnectorTestSetup inProcessSetup(createInProcessInPullConnector,

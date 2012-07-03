@@ -56,7 +56,7 @@ void Bus::printContents(ostream& stream) const {
     stream << "sinks = " << sinks;
 }
 
-void Bus::addSink(InConnectorPtr sink) {
+void Bus::addSink(InPushConnectorPtr sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
     RSCDEBUG(logger, "Adding sink " << sink);
@@ -66,7 +66,7 @@ void Bus::addSink(InConnectorPtr sink) {
         RSCDEBUG(logger,
                 "No entry in sink map for event scope " << sink->getScope());
 
-        set<boost::weak_ptr<InConnector> > connectors;
+        set<boost::weak_ptr<InPushConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
                 != this->sinks.end(); ++it_) {
             RSCDEBUG(
@@ -100,7 +100,7 @@ void Bus::addSink(InConnectorPtr sink) {
     }
 }
 
-void Bus::removeSink(InConnector* sink) {
+void Bus::removeSink(InPushConnector* sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
     vector<Scope> scopes = sink->getScope().superScopes(true);
@@ -156,7 +156,7 @@ void Bus::handleNoLock(EventPtr event) {
         RSCDEBUG(logger,
                 "No entry in sink map for event scope " << *event->getScopePtr());
 
-        set<boost::weak_ptr<InConnector> > connectors;
+        set<boost::weak_ptr<InPushConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
                 != this->sinks.end(); ++it_) {
             RSCDEBUG(
@@ -184,7 +184,7 @@ void Bus::handleNoLock(EventPtr event) {
     const SinkList& connectors = it->second;
     for (SinkList::const_iterator it__ = connectors.begin(); it__
             != connectors.end(); ++it__) {
-        InConnectorPtr connector = it__->lock();
+        InPushConnectorPtr connector = it__->lock();
         if (connector) {
             //            RSCDEBUG(logger, "Delivering to " << connector << " in " << *it);
             connector->handle(event);

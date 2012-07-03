@@ -26,53 +26,52 @@
 
 #pragma once
 
-#include <map>
-#include <list>
-
-#include <boost/thread/recursive_mutex.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
-#include <rsc/patterns/Singleton.h>
+#include <rsc/runtime/Properties.h>
 
-#include "../../Event.h"
-#include "../../Scope.h"
+#include "../InPushConnector.h"
 #include "../../eventprocessing/Handler.h"
-#include "InPushConnector.h"
+#include "../../Scope.h"
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace inprocess {
 
 /**
- *
  * @author jmoringe
  */
-class RSB_EXPORT Bus: public rsc::patterns::Singleton<Bus>,
+class RSB_EXPORT InPushConnector: public transport::InPushConnector,
         public eventprocessing::Handler {
 public:
-    Bus();
-    virtual ~Bus();
+    InPushConnector();
+    virtual ~InPushConnector();
 
     std::string getClassName() const;
     void printContents(std::ostream& stream) const;
 
-    void addSink(InPushConnectorPtr sink);
-    void removeSink(InPushConnector* sink);
+    Scope getScope() const;
+    void setScope(const Scope& scope);
+
+    void activate();
+    void deactivate();
+
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void handle(EventPtr event);
+
+    static rsb::transport::InPushConnector* create(
+            const rsc::runtime::Properties& args);
 private:
-    void handleNoLock(EventPtr event);
-
-    typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;
-    typedef std::map<Scope, SinkList> SinkMap;
-
     rsc::logging::LoggerPtr logger;
 
-    SinkMap sinks;
-    boost::recursive_mutex mutex;
+    Scope scope;
 
-    bool singleThreaded;
+    bool active;
 };
+
+typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;
 
 }
 }
