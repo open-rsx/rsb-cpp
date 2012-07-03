@@ -173,6 +173,7 @@ TEST(ParticipantConfigTest, testFromFile)
 
     EXPECT_EQ(config.getErrorStrategy(), ParticipantConfig::EXIT);
 
+#ifdef RSB_WITH_SPREAD_TRANSPORT
     ParticipantConfig::Transport spread = config.getTransport("spread");
     EXPECT_EQ(spread.getOptions().get<string>("host"), "localhost");
     EXPECT_EQ(spread.getOptions().getAs<unsigned int>("port"), 4803u);
@@ -180,6 +181,7 @@ TEST(ParticipantConfigTest, testFromFile)
     EXPECT_EQ(spread.getConverters().size(), 1u);
     EXPECT_EQ(spread.getConverters().begin()->first, "image");
     EXPECT_EQ(spread.getConverters().begin()->second, "IplImage");
+#endif
 
     for (unsigned int i = 3; i <= 6; ++i) {
         EXPECT_THROW(ParticipantConfig::fromFile(str(format("%1%/rsb.conf-semantic-errors-%2%")
