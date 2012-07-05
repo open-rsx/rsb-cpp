@@ -4,9 +4,9 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT(RSB)
 
 # version information
-SET(RSB_VERSION_MAJOR "0")
-SET(RSB_VERSION_MINOR "7")
-SET(RSB_VERSION_PATCH "0")
+SET(RSB_VERSION_MAJOR "0" CACHE STRING "Major project version part")
+SET(RSB_VERSION_MINOR "7" CACHE STRING "Minor project version part")
+SET(RSB_VERSION_PATCH "0" CACHE STRING "Patch project version part")
 SET(RSB_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH}")
 SET(RSB_ABI_VERSION "2")
 
