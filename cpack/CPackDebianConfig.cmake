@@ -21,8 +21,8 @@ SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
 SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 SET(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6, libprotoc-dev, rsc${VERSION_SUFFIX}, libboost-regex-dev")
-    # build dependencies protobuf-compiler, rsbprotocol
-    SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "doxygen, lcov, cppcheck, sloccount, protobuf-compiler")
+# build dependencies protobuf-compiler, rsbprotocol
+SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "doxygen, lcov, cppcheck, sloccount, protobuf-compiler")
 IF(WITH_SPREAD_TRANSPORT)
     SET(CPACK_DEBIAN_PACKAGE_NAME "rsb-spread${VERSION_SUFFIX}")
     SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "${CPACK_DEBIAN_PACKAGE_SUGGESTS}, spread (>= 4.0)")
