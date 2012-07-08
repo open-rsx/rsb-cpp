@@ -2,6 +2,17 @@ IF(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     MESSAGE(FATAL_ERROR "Cannot configure CPack to generate Debian packages on non-linux systems.")
 ENDIF()
 
+# To create a proper Debian/Ubuntu package, the following CMake
+# options should be used:
+
+SET(BUILD_TESTS OFF)
+SET(BUILD_EXAMPLES OFF)
+
+SET(CMAKE_BUILD_TYPE Release)
+SET(CPACK_STRIP_FILES "TRUE")
+
+# Actual packaging options
+
 SET(VERSION_SUFFIX "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}")
 
 INCLUDE(CheckLSBTypes)
@@ -15,8 +26,21 @@ ENDIF()
 SET(CPACK_GENERATOR "DEB")
 
 SET(CPACK_DEBIAN_PACKAGE_VERSION ${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH})
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Sebastian Wrede (swrede@techfak.uni-bielefeld.de)")
-SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (with builtin Spread transport)")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Sebastian Wrede <swrede@techfak.uni-bielefeld.de>")
+IF(WITH_SPREAD_TRANSPORT)
+    SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementatation with builtin Spread transport)
+ C++ library implementing the Robotics Service Bus (RSB), a
+ lightweight, extensible, event-driven middleware for robotic system
+ and other domain.")
+ELSE()
+    SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementatation)
+ C++ library implementing the Robotics Service Bus (RSB), a
+ lightweight, extensible, event-driven middleware for robotic system
+ and other domain.
+ .
+ This package is built with support for a network transport based on
+ the Spread group communication framework.")
+ENDIF()
 SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
 SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
@@ -33,4 +57,3 @@ ELSE()
     # TODO(jmoringe): CPack does not seem to support conflicts
     SET(CPACK_DEBIAN_PACKAGE_CONFLICTS "rsb-spread${VERSION_SUFFIX}")
 ENDIF()
-
