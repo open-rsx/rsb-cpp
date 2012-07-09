@@ -34,7 +34,11 @@
 #include <rsc/runtime/TypeStringTools.h>
 
 #include "Event.h"
+
 #include "eventprocessing/Handler.h"
+
+#include "filter/Filter.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -66,7 +70,7 @@ protected:
      * @param method the accepted method of this handler or empty string for
      *               all methods
      */
-    explicit Handler(const std::string& method = "");
+    explicit                                  Handler(const std::string& method = "");
 
     /**
      * Creates a new handler that only accepts events with the specified
@@ -74,7 +78,7 @@ protected:
      *
      * @param methods set of desired methods, empty for all methods
      */
-    explicit Handler(const std::set<std::string>& methods);
+    explicit                                  Handler(const std::set<std::string>& methods);
 
     virtual ~Handler();
 
@@ -82,10 +86,10 @@ protected:
         return rsc::runtime::typeName(typeid(*this));
     }
 private:
-    std::set<std::string> methods;
+    std::set<std::string>                     methods;
 };
 
-typedef boost::shared_ptr<Handler> HandlerPtr;
+typedef boost::shared_ptr<Handler>            HandlerPtr;
 
 typedef boost::function<void(EventPtr)> EventFunction;
 
@@ -97,14 +101,14 @@ typedef boost::function<void(EventPtr)> EventFunction;
 class RSB_EXPORT EventFunctionHandler: public Handler {
 public:
     EventFunctionHandler(const EventFunction& function,
-            const std::string& method = "");
+                         const std::string&   method      = "");
 
     std::string getClassName() const;
     void printContents(std::ostream& stream) const;
 
-    void handle(EventPtr event);
+    void                                      handle(EventPtr event);
 protected:
-    EventFunction function;
+    EventFunction                             function;
 };
 
 /**
@@ -119,7 +123,7 @@ protected:
 template<typename T>
 class DataFunctionHandler: public Handler {
 public:
-    typedef boost::shared_ptr<T> DataPtr;
+    typedef boost::shared_ptr<T>              DataPtr;
     typedef boost::function<void(DataPtr)> DataFunction;
 
     std::string getClassName() const {
@@ -128,7 +132,7 @@ public:
 
     void printContents(std::ostream& stream) const {
         stream << "DataType = " << rsc::runtime::typeName<T>()
-                << ", function = " << function;
+               << ", function = " << function;
     }
 
     DataFunctionHandler(const DataFunction& function) :
@@ -139,7 +143,7 @@ public:
         this->function(boost::static_pointer_cast<T>(event->getData()));
     }
 protected:
-    DataFunction function;
+    DataFunction                              function;
 };
 
 /**
@@ -161,6 +165,29 @@ public:
 
     virtual void notify(boost::shared_ptr<DataType> data) = 0;
 
+};
+
+/**
+ * A utility class that forwards events to another @ref rsb::Handler
+ * object if they match a given @ref rsb::filter::Filter.
+ *
+ * @author jmoringe
+ */
+class RSB_EXPORT FilteringHandler : public Handler {
+public:
+    FilteringHandler(rsb::filter::FilterPtr  filter,
+                     HandlerPtr next)
+        : filter(filter), next(next) {
+    }
+
+    void handle(EventPtr event) {
+        if (this->filter->match(event)) {
+            this->next->handle(event);
+        }
+    }
+protected:
+    rsb::filter::FilterPtr filter;
+    HandlerPtr             next;
 };
 
 }
