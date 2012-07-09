@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -104,6 +104,10 @@ void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*spe
 }
 
 void InPushConnector::handle(EventPtr busEvent) {
+    if (!this->active) {
+        throw std::runtime_error("Cannot handle events when not active");
+    }
+
     // busEvent is an intermediate object. The deserialization of the
     // payload still has to be performed.
     EventPtr event(busEvent);
