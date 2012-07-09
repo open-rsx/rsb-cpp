@@ -36,8 +36,11 @@
 
 #include "../../Event.h"
 #include "../../Scope.h"
+
 #include "../../eventprocessing/Handler.h"
-#include "InPushConnector.h"
+
+#include "InConnector.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -54,16 +57,16 @@ public:
     virtual ~Bus();
 
     std::string getClassName() const;
-    void printContents(std::ostream& stream) const;
+    //void printContents(std::ostream& stream) const;
 
-    void addSink(InPushConnectorPtr sink);
-    void removeSink(InPushConnector* sink);
+    void addSink(InConnectorPtr sink);
+    void removeSink(InConnector* sink);
 
     void handle(EventPtr event);
 private:
     void handleNoLock(EventPtr event);
 
-    typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;
+    typedef std::list< boost::weak_ptr<InConnector> > SinkList;
     typedef std::map<Scope, SinkList> SinkMap;
 
     rsc::logging::LoggerPtr logger;

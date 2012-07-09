@@ -46,6 +46,9 @@ namespace spread {
 class ReceiverTask;
 
 /**
+ * This class implements push-style event receiving for Spread-based
+ * transport.
+ *
  * @author jmoringe
  */
 class RSB_EXPORT InPushConnector: public transport::InPushConnector,

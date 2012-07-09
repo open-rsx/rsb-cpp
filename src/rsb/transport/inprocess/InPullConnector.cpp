@@ -33,12 +33,13 @@ using namespace std;
 
 using namespace rsc::logging;
 using namespace rsc::runtime;
+using namespace rsc::threading;
 
 namespace rsb {
 namespace inprocess {
 
 InPullConnector::InPullConnector() :
-    logger(Logger::getLogger("rsb.inprocess.InPullConnector")), active(false) {
+    logger(Logger::getLogger("rsb.inprocess.InPullConnector")) {
 }
 
 transport::InPullConnector* InPullConnector::create(const Properties& args) {
@@ -48,45 +49,10 @@ transport::InPullConnector* InPullConnector::create(const Properties& args) {
 }
 
 InPullConnector::~InPullConnector() {
-    if (this->active) {
-        deactivate();
-    }
 }
 
 string InPullConnector::getClassName() const {
     return "InPullConnector";
-}
-
-void InPullConnector::printContents(ostream& stream) const {
-    stream << "scope = " << scope;
-}
-
-Scope InPullConnector::getScope() const {
-    return this->scope;
-}
-
-void InPullConnector::setScope(const Scope& scope) {
-    if (this->active) {
-        throw std::runtime_error("Cannot set scope while active");
-    }
-
-    this->scope = scope;
-}
-
-void InPullConnector::activate() {
-    RSCDEBUG(logger, "Activating");
-    /* TODO(jmoringe, 2012-07-03): implement once we have a common
-     * base-class for In{Push,Pull}Connectors */
-    /*Bus::getInstance().addSink(boost::dynamic_pointer_cast<InConnector>(
-      shared_from_this()));*/
-    this->active = true;
-}
-
-void InPullConnector::deactivate() {
-    RSCDEBUG(logger, "Deactivating");
-    //Bus::getInstance().removeSink(this);
-    /* TODO(jmoringe, 2012-07-03): implement once we have a common
-     * base-class for In{Push,Pull}Connectors */
 }
 
 void InPullConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
@@ -100,10 +66,20 @@ void InPullConnector::handle(EventPtr event) {
     if (event->getMetaData().getReceiveTime() == 0) {
         event->mutableMetaData().setReceiveTime();
     }
-    /* TODO(jmoringe, 2012-07-03): queue event for later pull-retrieval */
+
+    this->queue.push(event);
 }
 
-EventPtr InPullConnector::raiseEvent(bool /*block*/) {
+EventPtr InPullConnector::raiseEvent(bool block) {
+    if (block) {
+        return this->queue.pop();
+    } else {
+        try {
+            return this->queue.tryPop();
+        } catch (const QueueEmptyException&) {
+            return EventPtr();
+        }
+    }
 }
 
 }

@@ -32,8 +32,9 @@
 #include <rsc/runtime/Properties.h>
 
 #include "../InPushConnector.h"
-#include "../../eventprocessing/Handler.h"
-#include "../../Scope.h"
+
+#include "InConnector.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -42,20 +43,13 @@ namespace inprocess {
 /**
  * @author jmoringe
  */
-class RSB_EXPORT InPushConnector: public transport::InPushConnector,
-        public eventprocessing::Handler {
+class RSB_EXPORT InPushConnector: public virtual transport::InPushConnector,
+                                  public virtual InConnector {
 public:
     InPushConnector();
     virtual ~InPushConnector();
 
     std::string getClassName() const;
-    void printContents(std::ostream& stream) const;
-
-    Scope getScope() const;
-    void setScope(const Scope& scope);
-
-    void activate();
-    void deactivate();
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
@@ -65,10 +59,6 @@ public:
             const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
-
-    Scope scope;
-
-    bool active;
 };
 
 typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;

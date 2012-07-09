@@ -26,7 +26,7 @@
 
 #include "InPushConnector.h"
 
-#include "Bus.h"
+#include "../../Event.h"
 #include "../../MetaData.h"
 
 using namespace std;
@@ -38,7 +38,7 @@ namespace rsb {
 namespace inprocess {
 
 InPushConnector::InPushConnector() :
-    logger(Logger::getLogger("rsb.inprocess.InPushConnector")), active(false) {
+    logger(Logger::getLogger("rsb.inprocess.InPushConnector")) {
 }
 
 transport::InPushConnector* InPushConnector::create(const Properties& args) {
@@ -54,48 +54,16 @@ transport::InPushConnector* InPushConnector::create(const Properties& args) {
 }
 
 InPushConnector::~InPushConnector() {
-    if (this->active) {
-        deactivate();
-    }
 }
 
 string InPushConnector::getClassName() const {
     return "InPushConnector";
 }
 
-void InPushConnector::printContents(ostream& stream) const {
-    stream << "scope = " << scope;
-}
-
-Scope InPushConnector::getScope() const {
-    return this->scope;
-}
-
-void InPushConnector::setScope(const Scope& scope) {
-    if (this->active) {
-        throw std::runtime_error("Cannot set scope while active");
-    }
-
-    this->scope = scope;
-}
-
-void InPushConnector::activate() {
-    RSCDEBUG(logger, "Activating");
-    Bus::getInstance().addSink(boost::dynamic_pointer_cast<InPushConnector>(
-            shared_from_this()));
-    this->active = true;
-}
-
-void InPushConnector::deactivate() {
-    RSCDEBUG(logger, "Deactivating");
-    Bus::getInstance().removeSink(this);
-}
-
 void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
 }
 
 void InPushConnector::handle(EventPtr event) {
-
     /** TODO(jmoringe, 2011-11-07): This ensures not overwriting
      * earlier receive timestamp added by different
      * connector. However, thread-safety issue remains.  */

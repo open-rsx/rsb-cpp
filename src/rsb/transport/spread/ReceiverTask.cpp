@@ -43,9 +43,9 @@ using namespace std;
 using namespace rsc::logging;
 
 using namespace rsb;
-using namespace rsb::protocol;
-using namespace rsb::transport;
 using namespace rsb::eventprocessing;
+using namespace rsb::transport;
+using namespace rsb::protocol;
 
 namespace rsb {
 namespace spread {
@@ -56,11 +56,7 @@ ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
                 s), connector(connector), assemblyPool(new AssemblyPool()), handler(
                 handler) {
 
-    // Verify that the version of the library that we linked against is
-    // compatible with the version of the headers we compiled against.
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-    RSCTRACE(logger, "ReceiverTask::RecieverTask, SpreadConnection: " << con);
+    RSCTRACE(logger, "ReceiverTask::ReceiverTask, SpreadConnection: " << con);
 
 }
 
@@ -90,25 +86,21 @@ void ReceiverTask::execute() {
             throw CommException("Failed to parse notification in pbuf format");
         }
 
-        RSCTRACE(
-                logger,
-                "Parsed event seqnum: " << notification->notification().event_id().sequence_number());
-        RSCTRACE(
-                logger,
-                "Binary length: " << notification->notification().data().length());
-        RSCTRACE(
-                logger,
-                "Number of split message parts: " << notification->num_data_parts());
         RSCTRACE(logger,
-                "... received message part    : " << notification->data_part());
+                 "Parsed event seqnum: " << notification->notification().event_id().sequence_number());
+        RSCTRACE(logger,
+                 "Binary length: " << notification->notification().data().length());
+        RSCTRACE(logger,
+                 "Number of split message parts: " << notification->num_data_parts());
+        RSCTRACE(logger,
+                 "... received message part    : " << notification->data_part());
 
         // Build data from parts
         NotificationPtr completeNotification =
                 handleAndJoinFragmentedNotification(notification);
         if (completeNotification) {
-            RSCTRACE(
-                    logger,
-                    "ReceiverTask::execute fragmented notification joined, last message " << message);
+            RSCTRACE(logger,
+                     "ReceiverTask::execute fragmented notification joined, last message " << message);
             notifyHandler(completeNotification);
         }
 
@@ -116,9 +108,8 @@ void ReceiverTask::execute() {
         // TODO QoS would not like swallowing the exception
         // TODO maybe at least use the ErrorHandlingStrategy here?
         rsc::debug::DebugToolsPtr tools = rsc::debug::DebugTools::newInstance();
-        RSCERROR(
-                logger,
-                "Error receiving spread message: " << e.what() << endl << tools->exceptionInfo(e));
+        RSCERROR(logger,
+                 "Error receiving spread message: " << e.what() << endl << tools->exceptionInfo(e));
     } catch (boost::thread_interrupted& e) {
         return;
     }
@@ -162,6 +153,8 @@ void ReceiverTask::notifyHandler(NotificationPtr notification) {
         boost::recursive_mutex::scoped_lock lock(handlerMutex);
         if (this->handler) {
             this->handler->handle(e);
+        } else {
+            RSCINFO(logger, "No handler");
         }
     } catch (const std::exception& ex) {
         RSCWARN(logger, "ReceiverTask::notifyHandler catched std exception: " << ex.what() );

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -52,11 +52,11 @@ string Bus::getClassName() const {
     return "Bus";
 }
 
-void Bus::printContents(ostream& stream) const {
-    stream << "sinks = " << sinks;
-}
+/*void Bus::printContents(ostream& stream) const {
+    stream << "sinks = " << this->sinks;
+    }*/
 
-void Bus::addSink(InPushConnectorPtr sink) {
+void Bus::addSink(InConnectorPtr sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
     RSCDEBUG(logger, "Adding sink " << sink);
@@ -66,7 +66,7 @@ void Bus::addSink(InPushConnectorPtr sink) {
         RSCDEBUG(logger,
                 "No entry in sink map for event scope " << sink->getScope());
 
-        set<boost::weak_ptr<InPushConnector> > connectors;
+        set<boost::weak_ptr<InConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
                 != this->sinks.end(); ++it_) {
             RSCDEBUG(
@@ -100,7 +100,7 @@ void Bus::addSink(InPushConnectorPtr sink) {
     }
 }
 
-void Bus::removeSink(InPushConnector* sink) {
+void Bus::removeSink(InConnector* sink) {
     boost::recursive_mutex::scoped_lock lock(this->mutex);
 
     vector<Scope> scopes = sink->getScope().superScopes(true);
@@ -156,7 +156,7 @@ void Bus::handleNoLock(EventPtr event) {
         RSCDEBUG(logger,
                 "No entry in sink map for event scope " << *event->getScopePtr());
 
-        set<boost::weak_ptr<InPushConnector> > connectors;
+        set<boost::weak_ptr<InConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
                 != this->sinks.end(); ++it_) {
             RSCDEBUG(
@@ -184,9 +184,9 @@ void Bus::handleNoLock(EventPtr event) {
     const SinkList& connectors = it->second;
     for (SinkList::const_iterator it__ = connectors.begin(); it__
             != connectors.end(); ++it__) {
-        InPushConnectorPtr connector = it__->lock();
+        InConnectorPtr connector = it__->lock();
         if (connector) {
-            //            RSCDEBUG(logger, "Delivering to " << connector << " in " << *it);
+            // RSCDEBUG(logger, "Delivering to " << connector << " in " << *it);
             connector->handle(event);
         }
     }

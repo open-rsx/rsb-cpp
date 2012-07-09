@@ -116,6 +116,11 @@ void registerDefaultTransports() {
     {
         InPullFactory& factory = InPullFactory::getInstance();
 
+        factory.registerConnector("inprocess",
+                                  &inprocess::InPullConnector::create,
+                                  "inprocess",
+                                  false);
+
 #ifdef RSB_WITH_SPREAD_TRANSPORT
         {
             set<string> options;

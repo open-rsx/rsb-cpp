@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is part of the RSB project
+ * This file is part of the RSB project.
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -22,19 +22,19 @@
  *   CoR-Lab, Research Institute for Cognition and Robotics
  *     Bielefeld University
  *
- * ============================================================ */
+ * ============================================================  */
 
 #pragma once
 
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
-#include <rsc/runtime/Properties.h>
-#include <rsc/threading/SynchronizedQueue.h>
 
-#include "../InPullConnector.h"
+#include "../../Scope.h"
 
-#include "InConnector.h"
+#include "../../eventprocessing/Handler.h"
+
+#include "../InConnector.h"
 
 #include "rsb/rsbexports.h"
 
@@ -42,31 +42,33 @@ namespace rsb {
 namespace inprocess {
 
 /**
+ *
+ *
  * @author jmoringe
  */
-class RSB_EXPORT InPullConnector: public transport::InPullConnector,
-                                  public InConnector {
+class RSB_EXPORT InConnector: public virtual transport::InConnector,
+                              public virtual eventprocessing::Handler {
 public:
-    InPullConnector();
-    virtual ~InPullConnector();
+    virtual ~InConnector();
 
-    std::string getClassName() const;
+    void printContents(std::ostream& stream) const;
 
-    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
+    virtual void activate();
+    virtual void deactivate();
 
-    void handle(EventPtr event);
-
-    EventPtr raiseEvent(bool block);
-
-    static rsb::transport::InPullConnector* create(
-            const rsc::runtime::Properties& args);
+    virtual Scope getScope() const;
+    virtual void setScope(const Scope& scope);
+protected:
+    InConnector();
 private:
     rsc::logging::LoggerPtr logger;
 
-    rsc::threading::SynchronizedQueue<EventPtr> queue;
+    Scope scope;
+
+    bool active;
 };
 
-typedef boost::shared_ptr<InPullConnector> InPullConnectorPtr;
+typedef boost::shared_ptr<InConnector> InConnectorPtr;
 
 }
 }

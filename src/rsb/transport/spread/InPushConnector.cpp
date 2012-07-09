@@ -53,8 +53,8 @@ transport::InPushConnector* InPushConnector::create(const Properties& args) {
 }
 
 InPushConnector::InPushConnector(const ConverterSelectionStrategyPtr converters,
-			 const string&		       host,
-			 unsigned int                   port) :
+                                 const string&                       host,
+                                 unsigned int                        port) :
     transport::ConverterSelectingConnector<string>(converters), logger(
             Logger::getLogger("rsb.spread.InPushConnector")), active(false),
             connector(new SpreadConnector(host, port)) {
@@ -75,7 +75,7 @@ string InPushConnector::getClassName() const {
 
 void InPushConnector::printContents(ostream& stream) const {
     stream << "active = " << this->active
-	   << "connector = " << this->connector;
+           << "connector = " << this->connector;
 }
 
 void InPushConnector::activate() {
@@ -97,8 +97,8 @@ void InPushConnector::activate() {
 void InPushConnector::deactivate() {
     this->rec->cancel();
     if (this->connector->getConnection()->isActive()) {
-	this->connector->getConnection()->interruptReceive();
-	this->rec->waitDone();
+        this->connector->getConnection()->interruptReceive();
+        this->rec->waitDone();
     }
     this->connector->deactivate();
     this->active = false;
