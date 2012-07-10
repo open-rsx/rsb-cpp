@@ -5,10 +5,10 @@ ENDIF()
 # To create a proper Debian/Ubuntu package, the following CMake
 # options should be used:
 
-SET(BUILD_TESTS OFF)
-SET(BUILD_EXAMPLES OFF)
+#SET(BUILD_TESTS OFF)
+#SET(BUILD_EXAMPLES OFF)
 
-SET(CMAKE_BUILD_TYPE Release)
+#SET(CMAKE_BUILD_TYPE Release)
 SET(CPACK_STRIP_FILES "TRUE")
 
 # Actual packaging options
@@ -31,15 +31,15 @@ IF(WITH_SPREAD_TRANSPORT)
     SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementatation with builtin Spread transport)
  C++ library implementing the Robotics Service Bus (RSB), a
  lightweight, extensible, event-driven middleware for robotic system
- and other domain.")
-ELSE()
-    SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementatation)
- C++ library implementing the Robotics Service Bus (RSB), a
- lightweight, extensible, event-driven middleware for robotic system
  and other domain.
  .
  This package is built with support for a network transport based on
  the Spread group communication framework.")
+ELSE()
+    SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementatation)
+ C++ library implementing the Robotics Service Bus (RSB), a
+ lightweight, extensible, event-driven middleware for robotic system
+ and other domain.")
 ENDIF()
 SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
