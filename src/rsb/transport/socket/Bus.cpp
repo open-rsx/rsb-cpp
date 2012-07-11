@@ -66,7 +66,7 @@ Bus::~Bus() {
         try {
             (*it)->disconnect();
         } catch (const std::exception& e) {
-            RSCERROR(logger, "Failed to disconnect connection " << *it
+            RSCDEBUG(logger, "Failed to disconnect connection " << *it
                      << ": " << e.what());
         }
     }
