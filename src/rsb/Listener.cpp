@@ -41,7 +41,6 @@ namespace rsb {
 class Listener::Impl {
 public:
     rsc::logging::LoggerPtr logger;
-    std::set<HandlerPtr> handlers;
     eventprocessing::PushInRouteConfiguratorPtr configurator;
 };
 
