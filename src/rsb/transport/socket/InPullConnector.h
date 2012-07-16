@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -31,13 +31,16 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
+
 #include <rsc/runtime/Properties.h>
+
+#include <rsc/threading/SynchronizedQueue.h>
 
 #include "../../Scope.h"
 
 #include "../../eventprocessing/Handler.h"
 
-#include "../InPushConnector.h"
+#include "../InPullConnector.h"
 
 #include "InConnector.h"
 
@@ -59,28 +62,32 @@ namespace socket {
  *
  * @author jmoringe
  */
-class RSB_EXPORT InPushConnector: public virtual InConnector,
-                                  public virtual transport::InPushConnector {
+class RSB_EXPORT InPullConnector: public virtual InConnector,
+                                  public virtual transport::InPullConnector {
 public:
-    static rsb::transport::InPushConnector* create(const rsc::runtime::Properties& args);
+    static rsb::transport::InPullConnector* create(const rsc::runtime::Properties& args);
 
     /**
-     * @copydoc ConnectorBase::ConnectorBase()
+     * @copydoc InConnector::InConnector()
      */
-    InPushConnector(ConverterSelectionStrategyPtr converters,
+    InPullConnector(ConverterSelectionStrategyPtr converters,
                     const std::string&            host,
                     unsigned int                  port,
                     Server                        server,
                     bool                          tcpnodelay);
 
-    virtual ~InPushConnector();
+    virtual ~InPullConnector();
 
-    void handle(EventPtr event);
+    void handle(rsb::EventPtr event);
+
+    EventPtr raiseEvent(bool block);
 private:
     rsc::logging::LoggerPtr logger;
+
+    rsc::threading::SynchronizedQueue<EventPtr> queue;
 };
 
-typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;
+typedef boost::shared_ptr<InPullConnector> InPullConnectorPtr;
 
 }
 }

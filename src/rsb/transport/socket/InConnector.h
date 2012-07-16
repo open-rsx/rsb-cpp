@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -37,9 +37,9 @@
 
 #include "../../eventprocessing/Handler.h"
 
-#include "../InPushConnector.h"
+#include "../InConnector.h"
 
-#include "InConnector.h"
+#include "ConnectorBase.h"
 
 #include "rsb/rsbexports.h"
 
@@ -59,28 +59,41 @@ namespace socket {
  *
  * @author jmoringe
  */
-class RSB_EXPORT InPushConnector: public virtual InConnector,
-                                  public virtual transport::InPushConnector {
+class RSB_EXPORT InConnector: public virtual ConnectorBase,
+                              public virtual transport::InConnector,
+                              public virtual eventprocessing::Handler {
 public:
-    static rsb::transport::InPushConnector* create(const rsc::runtime::Properties& args);
-
     /**
      * @copydoc ConnectorBase::ConnectorBase()
      */
-    InPushConnector(ConverterSelectionStrategyPtr converters,
-                    const std::string&            host,
-                    unsigned int                  port,
-                    Server                        server,
-                    bool                          tcpnodelay);
+    InConnector(ConverterSelectionStrategyPtr converters,
+		const std::string&            host,
+		unsigned int                  port,
+		Server                        server,
+		bool                          tcpnodelay);
 
-    virtual ~InPushConnector();
+    virtual ~InConnector();
 
-    void handle(EventPtr event);
+    Scope getScope() const;
+    void setScope(const Scope& scope);
+
+    void activate();
+    void deactivate();
+
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
+
+    virtual void handle(EventPtr event) = 0;
+protected:
+    volatile bool active;
 private:
     rsc::logging::LoggerPtr logger;
+
+    Scope scope;
+
+    void printContents(std::ostream& stream) const;
 };
 
-typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;
+typedef boost::shared_ptr<InConnector> InConnectorPtr;
 
 }
 }

@@ -227,7 +227,9 @@ IF(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/BusServer.cpp
                         rsb/transport/socket/Factory.cpp
                         rsb/transport/socket/ConnectorBase.cpp
+                        rsb/transport/socket/InConnector.cpp
                         rsb/transport/socket/InPushConnector.cpp
+                        rsb/transport/socket/InPullConnector.cpp
                         rsb/transport/socket/OutConnector.cpp
                         rsb/transport/socket/Serialization.cpp)
     LIST(APPEND HEADERS rsb/transport/socket/Types.h
@@ -236,7 +238,9 @@ IF(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/BusServer.h
                         rsb/transport/socket/Factory.h
                         rsb/transport/socket/ConnectorBase.h
+                        rsb/transport/socket/InConnector.h
                         rsb/transport/socket/InPushConnector.h
+                        rsb/transport/socket/InPullConnector.h
                         rsb/transport/socket/OutConnector.h
                         rsb/transport/socket/Serialization.h)
 ENDIF()

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -45,7 +45,7 @@
 
 #include "BusConnection.h"
 #include "ConnectorBase.h"
-#include "InPushConnector.h"
+#include "InConnector.h"
 
 #include "rsb/rsbexports.h"
 
@@ -75,8 +75,8 @@ public:
     Bus(boost::asio::io_service& service, bool tcpnodelay = false);
     virtual ~Bus();
 
-    void addSink(InPushConnectorPtr sink);
-    void removeSink(InPushConnector* sink);
+    void addSink(InConnectorPtr sink);
+    void removeSink(InConnector* sink);
 
     void addConnector(ConnectorBase* connector);
     void removeConnector(ConnectorBase* connector);
@@ -112,10 +112,10 @@ protected:
 
     virtual void suicide();
 private:
-    typedef std::list<ConnectorBase*>                    ConnectorList;
+    typedef std::list<ConnectorBase*>                ConnectorList;
 
-    typedef std::list<boost::weak_ptr<InPushConnector> > SinkList;
-    typedef std::map<Scope, SinkList>                    SinkMap;
+    typedef std::list<boost::weak_ptr<InConnector> > SinkList;
+    typedef std::map<Scope, SinkList>                SinkMap;
 
     rsc::logging::LoggerPtr  logger;
 

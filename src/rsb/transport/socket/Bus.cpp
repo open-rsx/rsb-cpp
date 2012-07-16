@@ -84,7 +84,7 @@ boost::recursive_mutex& Bus::getConnectionLock() {
     return this->connectionLock;
 }
 
-void Bus::addSink(InPushConnectorPtr sink) {
+void Bus::addSink(InConnectorPtr sink) {
     boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
     Scope scope = sink->getScope();
@@ -93,7 +93,7 @@ void Bus::addSink(InPushConnectorPtr sink) {
     connectors.push_back(sink);
 }
 
-void Bus::removeSink(InPushConnector* sink) {
+void Bus::removeSink(InConnector* sink) {
     boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
     Scope scope = sink->getScope();
@@ -104,7 +104,7 @@ void Bus::removeSink(InPushConnector* sink) {
     for (SinkList::iterator it = connectors.begin(); it != connectors.end(); ++it) {
         // If the weak pointer is dangling, we found our
         // sink. Otherwise, we can just check the pointer.
-        InPushConnectorPtr ptr = it->lock();
+        InConnectorPtr ptr = it->lock();
         if (!ptr || (ptr.get() == sink)) {
             RSCDEBUG(logger, "Found connector " << sink << " in scope " << scope);
             connectors.erase(it);
@@ -175,7 +175,7 @@ void Bus::handleIncoming(EventPtr         event,
 
                 for (SinkList::const_iterator it__ = connectors.begin(); it__
                          != connectors.end(); ++it__) {
-                    InPushConnectorPtr connector = it__->lock();
+                    InConnectorPtr connector = it__->lock();
                     if (connector) {
                         RSCDEBUG(logger, "Delivering to connector " << connector << " in " << *it);
                         connector->handle(event);
@@ -203,7 +203,7 @@ void Bus::handle(EventPtr event) {
 
                 for (SinkList::const_iterator it__ = connectors.begin(); it__
                          != connectors.end(); ++it__) {
-                    InPushConnectorPtr connector = it__->lock();
+                    InConnectorPtr connector = it__->lock();
                     if (connector) {
                         RSCDEBUG(logger, "Delivering to connector " << connector << " in " << *it);
                         connector->handle(event);

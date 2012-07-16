@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,10 +24,11 @@
  *
  * ============================================================ */
 
-#include "InPushConnector.h"
+#include "InPullConnector.h"
+
+#include "../../MetaData.h"
 
 #include "Factory.h"
-#include "../../MetaData.h"
 
 using namespace std;
 
@@ -35,36 +36,37 @@ using namespace boost;
 
 using namespace rsc::logging;
 using namespace rsc::runtime;
+using namespace rsc::threading;
 
 namespace rsb {
 namespace transport {
 namespace socket {
 
-transport::InPushConnector* InPushConnector::create(const Properties& args) {
-    LoggerPtr logger = Logger::getLogger("rsb.transport.socket.InPushConnector");
-    RSCDEBUG(logger, "Creating InPushConnector with properties " << args);
+transport::InPullConnector* InPullConnector::create(const Properties& args) {
+    LoggerPtr logger = Logger::getLogger("rsb.transport.socket.InPullConnector");
+    RSCDEBUG(logger, "Creating InPullConnector with properties " << args);
 
-    return new InPushConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
+    return new InPullConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
                                args.get<string>                       ("host",       DEFAULT_HOST),
                                args.getAs<unsigned int>               ("port",       DEFAULT_PORT),
                                args.getAs<Server>                     ("server",     SERVER_AUTO),
                                args.getAs<bool>                       ("tcpnodelay", false));
 }
 
-InPushConnector::InPushConnector(ConverterSelectionStrategyPtr converters,
+InPullConnector::InPullConnector(ConverterSelectionStrategyPtr converters,
                                  const string&                 host,
                                  unsigned int                  port,
                                  Server                        server,
                                  bool                          tcpnodelay) :
     ConnectorBase(converters, host, port, server, tcpnodelay),
-    InConnector(converters, host, port, server, tcpnodelay),
-    logger(Logger::getLogger("rsb.transport.socket.InPushConnector")) {
+    InConnector(converters, host, port, server, tcpnodelay),    
+    logger(Logger::getLogger("rsb.transport.socket.InPullConnector")) {
 }
 
-InPushConnector::~InPushConnector() {
+InPullConnector::~InPullConnector() {
 }
 
-void InPushConnector::handle(EventPtr busEvent) {
+void InPullConnector::handle(EventPtr busEvent) {
     if (!this->active) {
         throw std::runtime_error("Cannot handle events when not active");
     }
@@ -86,13 +88,21 @@ void InPushConnector::handle(EventPtr busEvent) {
     event->setData(d.second);
     event->setType(d.first);
 
-    // Dispatch the final result to all handlers (typically a single
-    // object implementing the EventReceivingStrategy interface).
-    for (HandlerList::iterator it = this->handlers.begin(); it
-            != this->handlers.end(); ++it) {
-        (*it)->handle(event);
+    this->queue.push(event);
+}
+
+EventPtr InPullConnector::raiseEvent(bool block) {
+    if (block) {
+        return this->queue.pop();
+    } else {
+        try {
+            return this->queue.tryPop();
+        } catch (const QueueEmptyException&) {
+            return EventPtr();
+        }
     }
 }
+
 
 }
 }
