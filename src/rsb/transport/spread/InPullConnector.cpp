@@ -104,16 +104,20 @@ EventPtr InPullConnector::raiseEvent(bool block) {
     assert(block);
 
     SpreadMessagePtr message(new SpreadMessage());
+    EventPtr event;
     while (true) {
         this->connector->receive(message);
         assert(message);
         if (message->getType() != SpreadMessage::REGULAR) {
             continue;
         }
-        break;
+        event = this->processor.processMessage(message);
+        if (event) {
+            return event;
+        }
     };
-
-    return this->processor.processMessage(message);
+    // This should never happen so far unless non-blocking (not implemented so far)
+    return EventPtr();
 }
 
 }
