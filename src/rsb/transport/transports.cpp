@@ -42,6 +42,7 @@
 
 #ifdef RSB_WITH_SOCKET_TRANSPORT
 #include "socket/InPushConnector.h"
+#include "socket/InPullConnector.h"
 #include "socket/OutConnector.h"
 #endif
 
@@ -130,6 +131,22 @@ void registerDefaultTransports() {
             factory.registerConnector("spread",
                                       &spread::InPullConnector::create,
                                       "spread",
+                                      true,
+                                      options);
+        }
+#endif
+
+#ifdef RSB_WITH_SOCKET_TRANSPORT
+        {
+            set<string> options;
+            options.insert("host");
+            options.insert("port");
+            options.insert("server");
+            options.insert("tcpnodelay");
+
+            factory.registerConnector("socket",
+                                      &socket::InPullConnector::create,
+                                      "socket",
                                       true,
                                       options);
         }
