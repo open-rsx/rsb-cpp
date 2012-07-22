@@ -132,8 +132,8 @@ void BusConnection::performSafeCleanup(const string& context) {
         try {
             disconnect();
         } catch (const std::exception& e) {
-            RSCERROR(logger, "Failed to disconnect (in " << context << "): "
-                     << e.what());
+            RSCDEBUG(logger, "Failed to disconnect (in " << context << "): "
+                     << e.what())
         }
     }
 }
@@ -150,9 +150,9 @@ void BusConnection::handleReadLength(const boost::system::error_code& error,
                                      size_t                    bytesTransferred) {
     if (error || (bytesTransferred != 4)) {
         if (!disconnecting) {
-            RSCWARN(logger, "Receive failure (error " << error << ")"
-                    << " or incomplete message header (received " << bytesTransferred << " bytes)"
-                    << "; closing connection");
+            RSCDEBUG(logger, "Receive failure (error " << error << ")"
+                     << " or incomplete message header (received " << bytesTransferred << " bytes)"
+                     << "; closing connection");
         }
         performSafeCleanup("handleReadLength");
         return;
