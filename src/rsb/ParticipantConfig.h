@@ -104,6 +104,13 @@ public:
         rsc::runtime::Properties getOptions() const;
 
         /**
+         * Returns the options for the transport.
+         *
+         * @return mutable reference to options for the transport
+         */
+        rsc::runtime::Properties& mutableOptions();
+
+        /**
          * Sets the options for the transport.
          *
          * @param options new options replacing all old ones

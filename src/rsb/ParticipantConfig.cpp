@@ -72,8 +72,13 @@ ParticipantConfig::Transport::ConverterNames ParticipantConfig::Transport::getCo
 }
 
 rsc::runtime::Properties ParticipantConfig::Transport::getOptions() const {
-    return options;
+    return this->options;
 }
+
+rsc::runtime::Properties& ParticipantConfig::Transport::mutableOptions() {
+    return this->options;
+}
+
 
 void ParticipantConfig::Transport::setOptions(const Properties& options) {
     this->options = options;
@@ -304,7 +309,7 @@ ParticipantConfig ParticipantConfig::fromConfiguration(
     ParticipantConfig result = defaults;
     try {
         result = fromFile(systemConfigDirectory() / "rsb.conf", result);
-    } catch (runtime_error& e) {
+    } catch (const runtime_error& e) {
         RSCWARN(Logger::getLogger("rsb.ParticipantConfig"),
                 "Could not find a system-wide configuration file ("
                 << e.what()
@@ -312,7 +317,7 @@ ParticipantConfig ParticipantConfig::fromConfiguration(
     }
     try {
         result = fromFile(userConfigDirectory() / "rsb.conf", result);
-    } catch (runtime_error& e) {
+    } catch (const runtime_error& e) {
         RSCWARN(Logger::getLogger("rsb.ParticipantConfig"),
                 "Could not find a user-specific configuration file ("
                 << e.what()
