@@ -198,7 +198,7 @@ void registerDefaultTransports() {
 }
 
 bool isRemote(const string& transportName) {
-    bool remote;
+    bool remote = false;
     bool validResult = false;
     try {
         InPullFactory& factory = InPullFactory::getInstance();
