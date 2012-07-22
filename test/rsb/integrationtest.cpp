@@ -217,14 +217,24 @@ protected:
         Factory::killInstance();
         Factory& factory = Factory::getInstance();
         ParticipantConfig config = factory.getDefaultParticipantConfig();
-        ParticipantConfig::Transport spreadTransport = config.getTransport(
-                "spread");
-        rsc::runtime::Properties p = spreadTransport.getOptions();
-        p.set<string>("port", lexical_cast<string>(SPREAD_PORT));
-        spreadTransport.setOptions(p);
-        config.addTransport(spreadTransport);
-        factory.setDefaultParticipantConfig(config);
 
+#ifdef RSB_WITH_SPREAD_TRANSPORT
+        {
+            ParticipantConfig::Transport& spreadTransport = config.mutableTransport("spread");
+            rsc::runtime::Properties& p = spreadTransport.mutableOptions();
+            p.set<string>("port", lexical_cast<string>(SPREAD_PORT));
+        }
+#endif
+
+#ifdef RSB_WITH_SOCKET_TRANSPORT
+        {
+            ParticipantConfig::Transport& socketTransport = config.mutableTransport("socket");
+            rsc::runtime::Properties& p = socketTransport.mutableOptions();
+            p.set<string>("port", lexical_cast<string>(SOCKET_PORT));
+        }
+#endif
+
+        factory.setDefaultParticipantConfig(config);
     }
 
     static void TearDownTestCase() {

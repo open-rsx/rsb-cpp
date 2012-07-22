@@ -1,4 +1,3 @@
-
 ENABLE_TESTING()
 
 INCLUDE_DIRECTORIES(BEFORE ../src
@@ -22,6 +21,8 @@ SET(REAL_SPREAD_CONFIG_FILE ${SPREAD_CONFIG_FILE})
 IF(TEST_SPREAD_CONFIG_SYMLINK)
     SET(REAL_SPREAD_CONFIG_FILE ${TEST_SPREAD_CONFIG_SYMLINK})
 ENDIF()
+
+SET(TEST_SOCKET_PORT 55555 CACHE STRING "the port to use in socket-transport tests")
 
 CONFIGURE_FILE(spread.conf.in ${SPREAD_CONFIG_FILE} @ONLY)
 CONFIGURE_FILE(testconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/testconfig.h)
@@ -104,7 +105,7 @@ ADD_LIBRARY(${CONNECTOR_TEST_NAME} STATIC rsb/transport/ConnectorTest.cpp
                                           rsb/transport/ConnectorTest.h
                                           rsb/InformerTask.cpp
                                           rsb/InformerTask.h)
-TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME} 
+TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME}
                                              ${GMOCK_LIBRARIES})
 
 # --- spread connector test ---
@@ -116,11 +117,11 @@ IF(WITH_SPREAD_TRANSPORT)
                                 rsb/transport/spread/SpreadConnectorTest.cpp
                                 rsb/transport/spread/SpreadMessageTest.cpp
                                 rsb/transport/spread/MembershipManagerTest.cpp)
-    
+
     ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
     TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
                           ${CONNECTOR_TEST_NAME})
-    
+
     ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 ENDIF()
 
