@@ -36,8 +36,8 @@ using namespace testing;
 int main(int argc, char* argv[]) {
 
     srand(time(NULL));
-	setupLogging();
-	rsb::converter::registerDefaultConverters();
+    setupLogging();
+    rsb::converter::registerDefaultConverters();
 
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
