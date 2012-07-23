@@ -34,7 +34,7 @@
 #define RSB_VERSION_MINOR @RSB_VERSION_MINOR@
 #define RSB_VERSION_PATCH @RSB_VERSION_PATCH@
 
-#define RSB_VERSION_NUMERIC @RSB_VERSION_NUMERIC@
+#define RSB_VERSION_NUMERIC (1@RSB_VERSION_NUMERIC@ - 1000000)
 
 #define RSB_ABI_VERSION @RSB_ABI_VERSION@
 
@@ -43,25 +43,24 @@ namespace rsb {
 class RSB_EXPORT Version {
 public:
 
-	static unsigned int major();
-	static unsigned int minor();
-	static unsigned int patch();
-	
-	static unsigned int numeric();
+    static unsigned int major();
+    static unsigned int minor();
+    static unsigned int patch();
 
-	static std::string string();
+    static unsigned int numeric();
 
-	static unsigned int abi();
+    static std::string string();
 
-	static std::string buildId();
-	static std::string buildDate();
+    static unsigned int abi();
 
-	static std::string buildString();
+    static std::string buildId();
+    static std::string buildDate();
+
+    static std::string buildString();
 
 private:
-	Version();
+    Version();
 
 };
 
 }
-
