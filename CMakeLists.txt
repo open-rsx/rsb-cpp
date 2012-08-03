@@ -227,7 +227,7 @@ ENABLE_SLOCCOUNT(FOLDERS src test examples apps)
 
 GENERATE_CPPCHECK(SOURCES src test apps examples
                   "${CMAKE_CURRENT_BINARY_DIR}/src" "${CMAKE_CURRENT_BINARY_DIR}/test" "${CMAKE_CURRENT_BINARY_DIR}/apps" "${CMAKE_CURRENT_BINARY_DIR}/examples"
-		  ENABLE_IDS style)
+                  ENABLE_IDS style)
 
 # --- package ---
 
