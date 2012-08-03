@@ -259,7 +259,7 @@ TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_LIBRARIES}
                                   ${CMAKE_THREAD_LIBS_INIT})
 SET_TARGET_PROPERTIES(${RSB_NAME}
                       PROPERTIES
-                      VERSION ${RSB_VERSION})
+                      VERSION ${SO_VERSION})
 # TODO why do we have to open sockets???
 IF(WIN32)
 	TARGET_LINK_LIBRARIES(${RSB_NAME} wsock32)

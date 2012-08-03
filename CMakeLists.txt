@@ -7,6 +7,7 @@ PROJECT(RSB)
 SET(VERSION_MAJOR "0" CACHE STRING "Major project version part")
 SET(VERSION_MINOR "7" CACHE STRING "Minor project version part")
 SET(RSB_ABI_VERSION "2")
+SET(SO_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
 
 # --- cmake settings ---
 
