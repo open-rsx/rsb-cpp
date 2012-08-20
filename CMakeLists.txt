@@ -112,18 +112,6 @@ IF(NOT SPREAD_EXECUTABLE)
     MESSAGE(STATUS "Spread executable not found. Unit tests will not be built!")
 ENDIF()
 
-INCLUDE_DIRECTORIES(BEFORE SYSTEM ${LIBS_INCLUDE_DIRS}
-                                  ${RSC_INCLUDE_DIRS}
-                                  ${Boost_INCLUDE_DIRS}
-                                  ${BOOSTTHREADPOOL_INCLUDE_DIRS}
-                                  ${BOOSTUUID_INCLUDE_DIRS}
-                                  ${PROTOBUF_INCLUDE_DIRS}
-                                  ${SPREAD_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(BEFORE src "${CMAKE_BINARY_DIR}/src")
-LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
-
-FIND_PACKAGE(Doxygen)
-
 # --- based on the dependencies, find out what to really build ---
 
 SET(WITH_SPREAD_TRANSPORT FALSE)
@@ -137,6 +125,8 @@ IF(WITH_SPREAD_TRANSPORT)
     ADD_DEFINITIONS(-DRSB_WITH_SPREAD_TRANSPORT=)
 ELSE()
     MESSAGE(STATUS "Disabled spread transport")
+    SET(SPREAD_INCLUDE_DIRS "")
+    SET(SPREAD_LIBRARIES "")
 ENDIF()
 IF(WITH_SOCKET_TRANSPORT)
     MESSAGE(STATUS "Enabled socket transport")
@@ -144,6 +134,18 @@ IF(WITH_SOCKET_TRANSPORT)
 ELSE()
     MESSAGE(STATUS "Disabled socket transport")
 ENDIF()
+
+INCLUDE_DIRECTORIES(BEFORE SYSTEM ${LIBS_INCLUDE_DIRS}
+                                  ${RSC_INCLUDE_DIRS}
+                                  ${Boost_INCLUDE_DIRS}
+                                  ${BOOSTTHREADPOOL_INCLUDE_DIRS}
+                                  ${BOOSTUUID_INCLUDE_DIRS}
+                                  ${PROTOBUF_INCLUDE_DIRS}
+                                  ${SPREAD_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(BEFORE src "${CMAKE_BINARY_DIR}/src")
+LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
+
+FIND_PACKAGE(Doxygen)
 
 # --- source code ---
 
