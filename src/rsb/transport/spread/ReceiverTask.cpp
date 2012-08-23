@@ -157,9 +157,9 @@ void ReceiverTask::notifyHandler(NotificationPtr notification) {
             RSCINFO(logger, "No handler");
         }
     } catch (const std::exception& ex) {
-        RSCWARN(logger, "ReceiverTask::notifyHandler catched std exception: " << ex.what() );
+        RSCWARN(logger, "ReceiverTask::notifyHandler caught std exception: " << ex.what() );
     } catch (...) {
-        RSCWARN(logger, "ReceiverTask::notifyHandler catched unknown exception" );
+        RSCWARN(logger, "ReceiverTask::notifyHandler caught unknown exception" );
     }
 
 }
