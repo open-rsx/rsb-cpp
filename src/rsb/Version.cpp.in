@@ -33,43 +33,43 @@ using namespace std;
 namespace rsb {
 
 unsigned int Version::major() {
-	return RSB_VERSION_MAJOR;
+    return RSB_VERSION_MAJOR;
 }
 
 unsigned int Version::minor() {
-	return RSB_VERSION_MINOR;
+    return RSB_VERSION_MINOR;
 }
 
 unsigned int Version::patch() {
-	return RSB_VERSION_PATCH;
+    return RSB_VERSION_PATCH;
 }
 
 unsigned int Version::numeric() {
-	return RSB_VERSION_NUMERIC;
+    return RSB_VERSION_NUMERIC;
 }
 
 string Version::string() {
-	ostringstream ss;
-	ss << major() << '.' << minor() << '.' << patch();
-	return ss.str();
+    ostringstream ss;
+    ss << major() << '.' << minor() << '.' << patch();
+    return ss.str();
 }
 
 unsigned int Version::abi() {
-	return @RSB_ABI_VERSION@;
+    return @RSB_ABI_VERSION@;
 }
 
 string Version::buildId() {
-	return "@RSB_WC_REVISION@";
+    return "@RSB_WC_REVISION@";
 }
 
 string Version::buildDate() {
-	return "@RSB_BUILD_DATE@";
+    return "@RSB_BUILD_DATE@";
 }
 
 string Version::buildString() {
-	ostringstream ss;
-	ss << buildId() << " (DATE " << buildDate() << ")";
-	return ss.str();
+    ostringstream ss;
+    ss << buildId() << " (DATE " << buildDate() << ")";
+    return ss.str();
 }
 
 }

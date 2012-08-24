@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,6 +30,8 @@
 #include <stdlib.h>
 
 #include <boost/program_options.hpp>
+
+#include <rsc/Version.h>
 
 #include <rsb/Version.h>
 #include <rsb/Factory.h>
@@ -116,6 +119,10 @@ int main(int argc, char** argv) {
     if (version || verbose) {
         cout << "Version: " << Version::string() << ", build "
              << Version::buildString() << ", abi " << Version::abi()
+             << endl
+             << endl
+             << "RSC Version: " << rsc::Version::string() << ", build "
+             << rsc::Version::buildString() << ", abi " << rsc::Version::abi()
              << endl;
     }
 
