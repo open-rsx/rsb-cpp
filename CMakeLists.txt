@@ -3,11 +3,9 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT(RSB)
 
-# version information
-SET(RSB_VERSION_MAJOR "0")
-SET(RSB_VERSION_MINOR "6")
-SET(RSB_VERSION_PATCH "0")
-SET(RSB_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.${RSB_VERSION_PATCH}")
+# default version information
+SET(VERSION_MAJOR "0" CACHE STRING "Major project version part")
+SET(VERSION_MINOR "6" CACHE STRING "Minor project version part")
 SET(RSB_ABI_VERSION "2")
 
 # --- cmake settings ---
@@ -15,7 +13,7 @@ SET(RSB_ABI_VERSION "2")
 SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
 
 # this must be done in the beginning to adjust the cmake path
-FIND_PACKAGE(RSC "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}" REQUIRED)
+FIND_PACKAGE(RSC "${VERSION_MAJOR}.${VERSION_MINOR}" REQUIRED)
 MESSAGE(STATUS "RSC version: ${RSC_VERSION}")
 MESSAGE(STATUS "RSC libraries: ${RSC_LIBRARIES}")
 MESSAGE(STATUS "RSC runtime library dirs: ${RSC_RUNTIME_LIBRARY_DIRS}")
@@ -38,15 +36,12 @@ INCLUDE(EnableCoverageReport)
 INCLUDE(EnableSlocCount)
 INCLUDE(GenerateDoxygen)
 INCLUDE(GenerateCppcheck)
+INCLUDE(DefineProjectVersion)
+INCLUDE(CurrentDate)
 
-FIND_PACKAGE(Subversion)
-INCLUDE(SubversionIsWc)
-SET(RSB_WC_REVISION "archive")
-Subversion_IS_WC(${CMAKE_CURRENT_SOURCE_DIR} IS_SVN_VERSION)
-IF(Subversion_FOUND AND IS_SVN_VERSION)
-    Subversion_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} RSB)
-    MESSAGE(STATUS "Current revision is ${RSB_WC_REVISION}")
-ENDIF()
+# finally we can deduce the real project version with the RSC macros
+DEFINE_PROJECT_VERSION(RSB_ ${VERSION_MAJOR} ${VERSION_MINOR} 0 "archive")
+CURRENT_DATE(RSB_BUILD_DATE)
 
 SET(RSB_NAME rsbcore)
 SET(RSB_TEST_NAME rsbtest)

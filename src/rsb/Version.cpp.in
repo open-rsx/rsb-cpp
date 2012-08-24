@@ -63,7 +63,7 @@ string Version::buildId() {
 }
 
 string Version::buildDate() {
-	return "@RSB_WC_LAST_CHANGED_DATE@";
+	return "@RSB_BUILD_DATE@";
 }
 
 string Version::buildString() {
