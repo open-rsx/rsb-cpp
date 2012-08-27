@@ -110,7 +110,7 @@ TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME}
 
 # --- spread connector test ---
 
-IF(WITH_SPREAD_TRANSPORT)
+IF(WITH_SPREAD_TRANSPORT AND SPREAD_EXECUTABLE)
     SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
                                 rsb/transport/spread/AssemblyTest.cpp
                                 rsb/transport/spread/SpreadConnectionTest.cpp
