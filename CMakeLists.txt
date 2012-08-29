@@ -44,11 +44,13 @@ INCLUDE(CurrentDate)
 DEFINE_PROJECT_VERSION(RSB_ ${VERSION_MAJOR} ${VERSION_MINOR} 0 "archive")
 CURRENT_DATE(RSB_BUILD_DATE)
 
-SET(RSB_NAME rsb)
-SET(RSB_TEST_NAME rsbtest)
-SET(CORE_TEST_NAME rsbtest_core)
-SET(SPREADPORT_TEST_NAME rsbtest_spread)
-SET(SPREADCONNECTION_TEST_NAME rsbtest_spreadconnection)
+SET(VERSION_SUFFIX "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}")
+
+SET(RSB_NAME                     rsb)
+SET(RSB_TEST_NAME                rsbtest)
+SET(CORE_TEST_NAME               rsbtest_core)
+SET(SPREADPORT_TEST_NAME         rsbtest_spread)
+SET(SPREADCONNECTION_TEST_NAME   rsbtest_spreadconnection)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
 
 SET(OUTPUT_PATH ${CMAKE_BINARY_DIR}/build)
