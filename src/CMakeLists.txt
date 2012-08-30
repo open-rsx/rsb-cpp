@@ -3,12 +3,14 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb)
 
 PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
-                      PROTOFILES ${RSBPROTO_FILES}
-                      PROTOROOT ${RSBPROTO_ROOT}
+                      PROTOFILES   ${RSBPROTO_FILES}
+                      PROTOROOT    ${RSBPROTO_ROOT}
                       EXPORT_MACRO RSB_PROTOCOL_EXPORT
-                      OUTPATH ${CMAKE_CURRENT_BINARY_DIR})
+                      OUTPATH      ${CMAKE_CURRENT_BINARY_DIR})
 
-CONFIGURE_FILE(rsb/rsbexports.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h @ONLY)
+CONFIGURE_FILE(rsb/rsbexports.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h
+               @ONLY)
 
 # version
 INCLUDE(PadString)
@@ -16,8 +18,12 @@ PAD_STRING(MAJOR_PADDED 2 "0" ${RSB_VERSION_MAJOR})
 PAD_STRING(MINOR_PADDED 2 "0" ${RSB_VERSION_MINOR})
 PAD_STRING(PATCH_PADDED 2 "0" ${RSB_VERSION_PATCH})
 SET(RSB_VERSION_NUMERIC "${MAJOR_PADDED}${MINOR_PADDED}${PATCH_PADDED}")
-CONFIGURE_FILE(rsb/Version.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp @ONLY)
-CONFIGURE_FILE(rsb/Version.h.in ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h @ONLY)
+CONFIGURE_FILE(rsb/Version.cpp.in
+               ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
+               @ONLY)
+CONFIGURE_FILE(rsb/Version.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
+               @ONLY)
 
 SET(SOURCES rsb/CommException.cpp
             rsb/Event.cpp
@@ -262,12 +268,12 @@ SET_TARGET_PROPERTIES(${RSB_NAME}
                       VERSION ${SO_VERSION})
 # TODO why do we have to open sockets???
 IF(WIN32)
-        TARGET_LINK_LIBRARIES(${RSB_NAME} wsock32)
+    TARGET_LINK_LIBRARIES(${RSB_NAME} wsock32)
 ENDIF()
 
 INSTALL(TARGETS ${RSB_NAME}
         EXPORT RSBDepends
         RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION lib NAMELINK_SKIP
         ARCHIVE DESTINATION lib)
-INSTALL_FILES_RECURSIVE(include HEADERS)
+INSTALL_FILES_RECURSIVE("include/${INSTALL_PATH_PREFIX}" HEADERS)

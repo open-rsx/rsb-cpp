@@ -1,10 +1,10 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 libdir=${prefix}/lib
-includedir=${prefix}/include
+includedir=${prefix}/include/@INSTALL_PATH_PREFIX@
 
 Name: Robotics Systems Bus
 Description: Fully event-driven Robotics Systems Bus
 Version: @RSB_VERSION@
-Requires: rsc
-Libs: -L${libdir} -l@RSB_NAME@
+Requires: rsc@VERSION_SUFFIX@
+Libs: -L${libdir} -l@RSB_NAME@.@SO_VERSION@
 Cflags: -I${includedir} @RSB_PROTOCOL_CFLAGS@

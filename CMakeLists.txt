@@ -4,10 +4,10 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT(RSB)
 
 # default version information
-SET(VERSION_MAJOR "0" CACHE STRING "Major project version part")
-SET(VERSION_MINOR "8" CACHE STRING "Minor project version part")
+SET(VERSION_MAJOR   "0" CACHE STRING "Major project version part")
+SET(VERSION_MINOR   "8" CACHE STRING "Minor project version part")
 SET(RSB_ABI_VERSION "2")
-SET(SO_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
+SET(SO_VERSION      "${VERSION_MAJOR}.${VERSION_MINOR}")
 
 # --- cmake settings ---
 
@@ -44,12 +44,11 @@ INCLUDE(CurrentDate)
 DEFINE_PROJECT_VERSION(RSB_ ${VERSION_MAJOR} ${VERSION_MINOR} 0 "archive")
 CURRENT_DATE(RSB_BUILD_DATE)
 
-SET(VERSION_SUFFIX "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}")
-
-SET(BINARY_PREFIX "rsb-")
-SET(BINARY_SUFFIX "cpp${VERSION_SUFFIX}")
-
-SET(RSB_NAME rsb)
+SET(RSB_NAME            rsb)
+SET(VERSION_SUFFIX      "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}")
+SET(INSTALL_PATH_PREFIX "${RSB_NAME}${VERSION_SUFFIX}")
+SET(BINARY_PREFIX       "${RSB_NAME}-")
+SET(BINARY_SUFFIX       "cpp${VERSION_SUFFIX}")
 
 SET(TOOLS info send)
 
@@ -59,9 +58,9 @@ SET(SPREADPORT_TEST_NAME         rsbtest_spread)
 SET(SPREADCONNECTION_TEST_NAME   rsbtest_spreadconnection)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
 
-SET(OUTPUT_PATH ${CMAKE_BINARY_DIR}/build)
-SET(ARCHIVE_OUTPUT_PATH ${OUTPUT_PATH})
-SET(LIBRARY_OUTPUT_PATH ${OUTPUT_PATH})
+SET(OUTPUT_PATH            ${CMAKE_BINARY_DIR}/build)
+SET(ARCHIVE_OUTPUT_PATH    ${OUTPUT_PATH})
+SET(LIBRARY_OUTPUT_PATH    ${OUTPUT_PATH})
 SET(EXECUTABLE_OUTPUT_PATH ${OUTPUT_PATH})
 
 # --- global compiler flags ---
@@ -194,7 +193,9 @@ ENDIF()
 # --- pkgconfig file ---
 
 CONFIGURE_FILE(rsb.pc.in rsb.pc @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc DESTINATION lib/pkgconfig)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc
+        DESTINATION lib/pkgconfig
+        RENAME      "${RSB_NAME}${VERSION_SUFFIX}.pc")
 
 # --- cmake config files ---
 
@@ -210,24 +211,34 @@ SET(LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
 IF(CMAKE_LINK_LIBRARY_SUFFIX)
     SET(LIB_SUFFIX ${CMAKE_LINK_LIBRARY_SUFFIX})
 ENDIF()
-CONFIGURE_FILE(RSBConfig.cmake.in ${CMAKE_BINARY_DIR}/RSBConfig.cmake @ONLY)
-INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake DESTINATION share/rsb)
-CONFIGURE_FILE(RSBConfigVersion.cmake.in ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake @ONLY)
-INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake DESTINATION share/rsb)
+CONFIGURE_FILE(RSBConfig.cmake.in
+               ${CMAKE_BINARY_DIR}/RSBConfig.cmake
+               @ONLY)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfig.cmake
+        DESTINATION "share/${INSTALL_PATH_PREFIX}")
+CONFIGURE_FILE(RSBConfigVersion.cmake.in
+               ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake
+               @ONLY)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/RSBConfigVersion.cmake
+        DESTINATION "share/${INSTALL_PATH_PREFIX}")
 
 EXPORT(TARGETS ${RSB_NAME} FILE "${CMAKE_BINARY_DIR}/RSBDepends.cmake")
-INSTALL(EXPORT RSBDepends
-        DESTINATION "share/rsb")
+INSTALL(EXPORT      RSBDepends
+        DESTINATION "share/${INSTALL_PATH_PREFIX}")
 
-INSTALL(FILES COPYING.txt DESTINATION share/doc/rsb RENAME copyright)
+INSTALL(FILES COPYING.txt
+        DESTINATION "share/doc/lib${INSTALL_PATH_PREFIX}"
+        RENAME      copyright)
 
-# --- documentation gneration ---
+# --- documentation generation ---
 
 GENERATE_DOXYGEN(VERSION "${RSB_VERSION}")
 
-# --- coverage ropert ---
+# --- coverage report ---
 
-ENABLE_COVERAGE_REPORT(TARGETS ${RSB_NAME} TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME} FILTER "*coverage/*" "*/test*")
+ENABLE_COVERAGE_REPORT(TARGETS ${RSB_NAME}
+                       TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME}
+                       FILTER "*coverage/*" "*/test*")
 
 # --- sloccount ---
 
