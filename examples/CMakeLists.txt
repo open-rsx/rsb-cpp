@@ -1,41 +1,3 @@
-
-SET(EX1 rsb_informer)
-SET(EX15 rsb_anyInformer)
-SET(EX16 timed_informer)
-SET(EX2 rsb_listener)
-SET(EX3 rsb_reader)
-
-SET(EX4 rsb_sendFile)
-SET(EX5 rsb_receiveFile)
-
-SET(EX6 rsb_simpleImageSender)
-SET(EX7 rsb_simpleImageSenderNoConverter)
-
-SET(EX8 rsb_interTransportInprocessAndSpread)
-SET(EX9 rsb_interTransportSpreadOnly)
-
-SET(EX10 rsb_simpleImagePBSender)
-SET(EX11 rsb_simpleImagePBReceiver)
-
-SET(EX12 rsb_queueProcessing)
-
-SET(EX13 rsb_metaDataSender)
-SET(EX14 rsb_metaDataReceiver)
-
-ADD_EXECUTABLE(${EX1} informer/informer.cpp)
-ADD_EXECUTABLE(${EX15} informer/anyInformer.cpp)
-ADD_EXECUTABLE(${EX2} listener/listener.cpp)
-ADD_EXECUTABLE(${EX3} reader/reader.cpp)
-
-ADD_EXECUTABLE(${EX4} informer/sendFile.cpp)
-ADD_EXECUTABLE(${EX5} listener/receiveFile.cpp)
-
-ADD_EXECUTABLE(${EX6} custom_converter/sender.cpp custom_converter/SimpleImageConverter.cpp)
-ADD_EXECUTABLE(${EX7} custom_converter/senderNoConverter.cpp)
-
-ADD_EXECUTABLE(${EX8} inter_transport/inprocessAndSpread.cpp)
-ADD_EXECUTABLE(${EX9} inter_transport/spreadOnly.cpp)
-
 # Protocol Buffers as domain objects
 PROTOBUF_GENERATE_CPP(protobuf_converter/SimpleImage.pb.cc
                       protobuf_converter/SimpleImage.pb.h
@@ -44,33 +6,56 @@ PROTOBUF_GENERATE_CPP(protobuf_converter/SimpleImage.pb.cc
                       OUTPATH    ${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-ADD_EXECUTABLE(${EX10} protobuf_converter/sender.cpp
-                       protobuf_converter/SimpleImage.pb.cc)
-ADD_EXECUTABLE(${EX11} protobuf_converter/receiver.cpp
-                       protobuf_converter/SimpleImage.pb.cc)
+MACRO(EXAMPLE NAME)
+    LIST(APPEND EXAMPLES ${BINARY})
+    SET(BINARY "example-${NAME}")
+    ADD_EXECUTABLE(${BINARY} ${ARGN})
+    TARGET_LINK_LIBRARIES(${BINARY} ${RSB_NAME})
+ENDMACRO()
 
-ADD_EXECUTABLE(${EX12} queue_processing/queueprocessing.cpp)
+EXAMPLE(informer
+        informer/informer.cpp)
+EXAMPLE(anyinformer
+        informer/anyInformer.cpp)
+EXAMPLE(timed-informer
+        timed_informer/informer.cpp)
+EXAMPLE(listener
+        listener/listener.cpp)
+EXAMPLE(reader
+        reader/reader.cpp)
 
-ADD_EXECUTABLE(${EX13} meta_data/sender.cpp)
-ADD_EXECUTABLE(${EX14} meta_data/receiver.cpp)
+EXAMPLE(send-file
+        informer/sendFile.cpp)
+EXAMPLE(receive-file
+        listener/receiveFile.cpp)
 
-ADD_EXECUTABLE(${EX16} timed_informer/informer.cpp)
+EXAMPLE(simple-image-sender
+        custom_converter/sender.cpp
+        custom_converter/SimpleImageConverter.cpp)
+EXAMPLE(simple-image-sender-no-converter
+        custom_converter/senderNoConverter.cpp)
 
-SET(EXAMPLES ${EX1} ${EX2} ${EX3} ${EX4} ${EX5} ${EX6} ${EX7} ${EX8} ${EX9} ${EX10} ${EX11} ${EX12} ${EX13} ${EX14} ${EX15} ${EX16})
+EXAMPLE(inter-transport-inprocess-and-spread
+        inter_transport/inprocessAndSpread.cpp)
+EXAMPLE(inter-transport-spread-only
+        inter_transport/spreadOnly.cpp)
 
-FOREACH(EXAMPLE ${EXAMPLES})
-    TARGET_LINK_LIBRARIES(${EXAMPLE} ${RSB_NAME})
-ENDFOREACH()
+EXAMPLE(simple-image-pb-sender
+        protobuf_converter/sender.cpp
+        protobuf_converter/SimpleImage.pb.cc)
+EXAMPLE(simple-image-pb-receiver
+        protobuf_converter/receiver.cpp
+        protobuf_converter/SimpleImage.pb.cc)
 
-INSTALL(TARGETS ${EXAMPLES}
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib)
+EXAMPLE(queueProcessing
+        queue_processing/queueprocessing.cpp)
 
-ADD_EXECUTABLE(doublecheck doublecheck.cpp)
-TARGET_LINK_LIBRARIES(doublecheck ${RSB_NAME})
+EXAMPLE(meta-data-sender
+        meta_data/sender.cpp)
+EXAMPLE(meta-data-receiver
+        meta_data/receiver.cpp)
 
-ADD_EXECUTABLE(server server/server.cpp)
-TARGET_LINK_LIBRARIES(server ${RSB_NAME})
+EXAMPLE(server server/server.cpp)
+EXAMPLE(client server/client.cpp)
 
-ADD_EXECUTABLE(client server/client.cpp)
-TARGET_LINK_LIBRARIES(client ${RSB_NAME})
+EXAMPLE(doublecheck doublecheck.cpp)
