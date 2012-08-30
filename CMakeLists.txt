@@ -46,7 +46,13 @@ CURRENT_DATE(RSB_BUILD_DATE)
 
 SET(VERSION_SUFFIX "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}")
 
-SET(RSB_NAME                     rsb)
+SET(BINARY_PREFIX "rsb-")
+SET(BINARY_SUFFIX "cpp${VERSION_SUFFIX}")
+
+SET(RSB_NAME rsb)
+
+SET(TOOLS info send)
+
 SET(RSB_TEST_NAME                rsbtest)
 SET(CORE_TEST_NAME               rsbtest_core)
 SET(SPREADPORT_TEST_NAME         rsbtest_spread)
