@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -47,7 +47,7 @@ string ByteArrayConverter::serialize(const AnnotatedData& /*data*/, string& /*wi
 }
 
 AnnotatedData ByteArrayConverter::deserialize(const std::string& /*wireType*/,
-		const string& wire) {
+                                              const string& wire) {
     return make_pair(getDataType(), boost::shared_ptr<string>(new string(wire.c_str(), wire.length())));
 }
 

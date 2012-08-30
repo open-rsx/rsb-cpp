@@ -26,8 +26,6 @@
 
 #include "VoidConverter.h"
 
-#include <rsc/misc/Registry.h>
-
 using namespace std;
 
 namespace rsb {
@@ -36,20 +34,20 @@ namespace converter {
 const string VoidConverter::TYPE = "void";
 
 VoidConverter::VoidConverter() :
-	Converter<string> (TYPE, RSB_TYPE_TAG(void)) {
+    Converter<string> (TYPE, RSB_TYPE_TAG(void)) {
 }
 
 VoidConverter::~VoidConverter() {
 }
 
 string VoidConverter::serialize(const AnnotatedData& /*data*/, string& wire) {
-	wire.clear();
-	return TYPE;
+    wire.clear();
+    return TYPE;
 }
 
 AnnotatedData VoidConverter::deserialize(const std::string& /*wireType*/,
-		const string& /*wire*/) {
-	return make_pair(getDataType(), boost::shared_ptr<void>());
+                                         const string& /*wire*/) {
+    return make_pair(getDataType(), boost::shared_ptr<void>());
 }
 
 }
