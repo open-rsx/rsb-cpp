@@ -15,39 +15,20 @@ SET(CPACK_STRIP_FILES "TRUE")
 
 SET(CPACK_GENERATOR "DEB")
 
-SET(CPACK_PACKAGE_VERSION           "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}${CPACK_PACKAGE_REVISION}")
-SET(CPACK_DEBIAN_PACKAGE_VERSION    "${CPACK_PACKAGE_VERSION}")
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Sebastian Wrede <swrede@techfak.uni-bielefeld.de>")
-IF(WITH_SPREAD_TRANSPORT)
-    SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementatation with builtin Spread transport)
- C++ library implementing the Robotics Service Bus (RSB), a
- lightweight, extensible, event-driven middleware for robotic system
- and other domain.
- .
- This package is built with support for a network transport based on
- the Spread group communication framework.")
-ELSE()
-    SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementatation)
+SET(CPACK_PACKAGE_VERSION            "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}${CPACK_PACKAGE_REVISION}")
+SET(CPACK_DEBIAN_PACKAGE_NAME        "lib${RSB_NAME}${VERSION_SUFFIX}")
+SET(CPACK_DEBIAN_PACKAGE_VERSION     "${CPACK_PACKAGE_VERSION}")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER  "Sebastian Wrede <swrede@techfak.uni-bielefeld.de>")
+SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementation)
  C++ library implementing the Robotics Service Bus (RSB), a
  lightweight, extensible, event-driven middleware for robotic system
  and other domain.")
-ENDIF()
-SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-SET(CPACK_DEBIAN_PACKAGE_SECTION  "devel")
+SET(CPACK_DEBIAN_PACKAGE_PRIORITY    "optional")
+SET(CPACK_DEBIAN_PACKAGE_SECTION     "devel")
 #SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE  "${CMAKE_SYSTEM_PROCESSOR}") # Debian uses different names here
-SET(CPACK_DEBIAN_PACKAGE_DEPENDS  "libc6, libprotoc-dev, libboost-regex-dev, rsc${VERSION_SUFFIX}")
+SET(CPACK_DEBIAN_PACKAGE_DEPENDS     "libc6, libprotoc-dev, libboost-regex-dev, librsc${VERSION_SUFFIX}")
+SET(CPACK_DEBIAN_PACKAGE_SUGGESTS    "doxygen, lcov, cppcheck, sloccount, protobuf-compiler")
 # build dependencies protobuf-compiler, rsbprotocol
-SET(CPACK_DEBIAN_PACKAGE_SUGGESTS "doxygen, lcov, cppcheck, sloccount, protobuf-compiler")
-IF(WITH_SPREAD_TRANSPORT)
-    SET(CPACK_DEBIAN_PACKAGE_NAME      "lib${RSB_NAME}-spread${VERSION_SUFFIX}")
-    SET(CPACK_DEBIAN_PACKAGE_SUGGESTS  "${CPACK_DEBIAN_PACKAGE_SUGGESTS}, spread (>= 4.0)")
-    # TODO(jmoringe): CPack does not seem to support conflicts
-    SET(CPACK_DEBIAN_PACKAGE_CONFLICTS "${RSB_NAME}${VERSION_SUFFIX}")
-ELSE()
-    SET(CPACK_DEBIAN_PACKAGE_NAME      "lib${RSB_NAME}${VERSION_SUFFIX}")
-    # TODO(jmoringe): CPack does not seem to support conflicts
-    SET(CPACK_DEBIAN_PACKAGE_CONFLICTS "${RSB_NAME}-spread${VERSION_SUFFIX}")
-ENDIF()
 
 # Generate postinst and prerm hooks
 SET(PACKAGE_ALT_PRIORITY "80")
