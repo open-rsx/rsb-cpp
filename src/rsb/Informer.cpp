@@ -128,7 +128,8 @@ void InformerBase::uncheckedPublish(EventPtr event) {
 }
 
 boost::uint32_t InformerBase::nextSequenceNumber() {
-    return ++this->currentSequenceNumber; /** TODO(jmoringe): needs atomic increment */
+    boost::mutex::scoped_lock lock(this->sequenceNumberMutex);
+    return this->currentSequenceNumber++;
 }
 
 }

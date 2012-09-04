@@ -30,6 +30,7 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
@@ -200,7 +201,9 @@ protected:
 
     std::string defaultType;
     eventprocessing::OutRouteConfiguratorPtr configurator;
+
     boost::uint32_t currentSequenceNumber;
+    boost::mutex sequenceNumberMutex;
 private:
     rsc::logging::LoggerPtr logger;
 };
