@@ -3,7 +3,7 @@
  * This file is a part of the RSB project.
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -212,7 +212,7 @@ ListenerPtr Factory::createListener(const Scope& scope,
 }
 
 ReaderPtr Factory::createReader(const Scope& scope,
-				const ParticipantConfig& config) {
+                                const ParticipantConfig& config) {
     return ReaderPtr(new Reader(createInPullConnectors(config), scope, config));
 }
 
