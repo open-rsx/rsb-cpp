@@ -35,6 +35,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/patterns/Singleton.h>
+#include <rsc/config/OptionHandler.h>
 
 #include "rsb/rsbexports.h"
 
@@ -224,7 +225,8 @@ private:
     std::vector<transport::InPushConnectorPtr>
         createInPushConnectors(const ParticipantConfig& config);
 
-    void configureLogging();
+    void configureSubsystem(rsc::config::OptionHandler& handler,
+                            const std::string& environmentVariablePrefix = "RSB_");
 
 };
 

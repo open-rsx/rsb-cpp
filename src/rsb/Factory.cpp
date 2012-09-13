@@ -31,7 +31,13 @@
 
 #include <rsc/config/ConfigFileSource.h>
 #include <rsc/config/Environment.h>
+
 #include <rsc/logging/OptionBasedConfigurator.h>
+
+#include <rsc/plugins/Manager.h>
+#include <rsc/plugins/Configurator.h>
+
+#include <rsb/Version.h>
 
 #include "eventprocessing/strategies.h"
 
@@ -78,9 +84,36 @@ namespace rsb {
 
 Factory::Factory() :
     logger(Logger::getLogger("rsb.Factory")) {
+
+    // Configure RSC-based logging.
+    {
+        rsc::logging::OptionBasedConfigurator configurator;
+        configureSubsystem(configurator, "RSC_");
+    }
+
+    // Register default implementation for all extension points.
+    RSCINFO(this->logger, "Registering default implementations");
     eventprocessing::registerDefaultEventProcessingStrategies();
     converter::registerDefaultConverters();
     transport::registerDefaultTransports();
+
+    // Configure plugin path and load plugins to register additional
+    // implementations for extension points.
+    //
+    // We use the following default plugin path:
+    // 1. $HOME/.rsb$MAJOR.$MINOR/plugins
+    // 2. $libdir/rsb$MAJOR.$MINOR/plugins
+    RSCINFO(this->logger, "Processing plugin configuration");
+    {
+        string versioned = str(boost::format("rsb%1%.%2%")
+                               % RSB_VERSION_MAJOR
+                               % RSB_VERSION_MINOR);
+        vector<boost::filesystem::path> defaultPath;
+        defaultPath.push_back(rsc::config::userHomeDirectory() / ("." + versioned) / "plugins");
+        defaultPath.push_back(Version::libdir() / versioned / "plugins");
+        rsc::plugins::Configurator configurator(defaultPath);
+        configureSubsystem(configurator);
+    }
 
     // Setup default participant config
     //
@@ -138,61 +171,57 @@ Factory::Factory() :
     }
 
     RSCDEBUG(logger, "Default config " << defaultConfig);
-
-    configureLogging();
-
 }
 
 Factory::~Factory() {
 }
 
-void Factory::configureLogging() {
+void Factory::configureSubsystem(OptionHandler& handler,
+                                 const std::string& environmentVariablePrefix) {
 
     // TODO the cascade is basically duplicated from ParticipantConfig. We
     // should refactor this
 
-    OptionBasedConfigurator loggingConfigurator;
 
     try {
         boost::filesystem::ifstream stream(
-                systemConfigDirectory() / "rsb.conf");
+            systemConfigDirectory() / "rsb.conf");
         if (stream) {
             ConfigFileSource source(stream);
-            source.provideOptions(loggingConfigurator);
+            source.provideOptions(handler);
         }
     } catch (const runtime_error& e) {
         RSCWARN(this->logger,
-                "Could not find a system-wide configuration file ("
-                << e.what()
-                << ").");
+                "Failed to process system-wide configuration file `"
+                << (systemConfigDirectory() / "rsb.conf") << "': "
+                << e.what());
     }
 
     try {
         boost::filesystem::ifstream stream(userConfigDirectory() / "rsb.conf");
         if (stream) {
             ConfigFileSource source(stream);
-            source.provideOptions(loggingConfigurator);
+            source.provideOptions(handler);
         }
     } catch (const runtime_error& e) {
-        RSCWARN(logger,
-                "Could not find a user-specific configuration file ("
-                << e.what()
-                << ").");
+        RSCWARN(this->logger,
+                "Failed to process user-specific configuration file `"
+                << (userConfigDirectory() / "rsb.conf") << "': "
+                << e.what());
     }
 
     {
         boost::filesystem::ifstream stream("rsb.conf");
         if (stream) {
             ConfigFileSource source(stream);
-            source.provideOptions(loggingConfigurator);
+            source.provideOptions(handler);
         }
     }
 
     {
-        EnvironmentVariableSource source("RSC_");
-        source.provideOptions(loggingConfigurator);
+        EnvironmentVariableSource source(environmentVariablePrefix);
+        source.provideOptions(handler);
     }
-
 }
 
 transport::OutFactory& Factory::getOutFactoryInstance() {

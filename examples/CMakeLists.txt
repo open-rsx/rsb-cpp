@@ -59,3 +59,6 @@ EXAMPLE(server server/server.cpp)
 EXAMPLE(client server/client.cpp)
 
 EXAMPLE(doublecheck doublecheck.cpp)
+
+ADD_LIBRARY(exampleplugin SHARED plugin/Plugin.cpp)
+TARGET_LINK_LIBRARIES(exampleplugin ${RSB_NAME})

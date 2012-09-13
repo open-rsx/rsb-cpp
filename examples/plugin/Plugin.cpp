@@ -2,7 +2,7 @@
  *
  * This file is a part of the RSB project
  *
- * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,46 +24,16 @@
  *
  * ============================================================ */
 
-#pragma once
+#include <rsc/plugins/Provider.h>
 
-#include <string>
+extern "C" {
 
-#include <boost/filesystem/path.hpp>
+    void RSC_PLUGIN_INIT_SYMBOL() {
+        // initialization
+    }
 
-#include "rsb/rsbexports.h"
-
-#define RSB_VERSION_MAJOR @RSB_VERSION_MAJOR@
-#define RSB_VERSION_MINOR @RSB_VERSION_MINOR@
-#define RSB_VERSION_PATCH @RSB_VERSION_PATCH@
-
-#define RSB_VERSION_NUMERIC (1@RSB_VERSION_NUMERIC@ - 1000000)
-
-#define RSB_ABI_VERSION @RSB_ABI_VERSION@
-
-namespace rsb {
-
-class RSB_EXPORT Version {
-public:
-
-    static unsigned int major();
-    static unsigned int minor();
-    static unsigned int patch();
-
-    static unsigned int numeric();
-
-    static std::string string();
-
-    static unsigned int abi();
-
-    static std::string buildId();
-    static std::string buildDate();
-
-    static std::string buildString();
-
-    static boost::filesystem::path libdir();
-private:
-    Version();
-
-};
+    void RSC_PLUGIN_SHUTDOWN_SYMBOL() {
+        // shutdown
+    }
 
 }
