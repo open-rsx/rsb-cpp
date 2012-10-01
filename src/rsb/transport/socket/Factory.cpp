@@ -212,6 +212,32 @@ void Factory::removeBusServer(BusPtr bus) {
     }
 }
 
+BusPtr Factory::getBus(const Server&          serverMode,
+                       const std::string&     host,
+                       const boost::uint16_t& port,
+                       bool                   tcpnodelay,
+                       ConnectorBase*         connector) {
+
+    switch (serverMode) {
+    case SERVER_NO:
+        return getBusClientFor(host, port, tcpnodelay, connector);
+    case SERVER_YES:
+        return getBusServerFor(host, port, tcpnodelay, connector);
+    case SERVER_AUTO:
+        try {
+            return getBusServerFor(host, port, tcpnodelay, connector);
+        } catch (const std::exception& e) {
+            RSCINFO(logger,
+                    "Could not create server for bus: " << e.what() << "; trying to access bus as client");
+            return getBusClientFor(host, port, tcpnodelay, connector);
+        }
+    default:
+        assert(false);
+        throw invalid_argument("Impossible Server enum value received");
+    }
+
+}
+
 void Factory::checkOptions(BusPtr bus, bool tcpnodelay) {
     if (bus->isTcpnodelay() != tcpnodelay) {
         throw invalid_argument(str(format("Requested tcpnodelay option %1% does not match existing option %2%")

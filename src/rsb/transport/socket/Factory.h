@@ -51,6 +51,9 @@ namespace socket {
  * For each endpoint (i.e. address and port), at most one client or
  * server bus provider can exist.
  *
+ * @attention This class is not thread safe and needs to be accessed in a
+ *            synchronized manner, except for #getBus.
+ *
  * @author jmoringe
  */
 class RSB_EXPORT Factory : public rsc::patterns::Singleton<Factory> {
@@ -60,15 +63,16 @@ class RSB_EXPORT Factory : public rsc::patterns::Singleton<Factory> {
 public:
     ~Factory();
 
-    BusPtr getBusClientFor(const std::string& host,
-                           boost::uint16_t    port,
-                           bool               tcpnodelay,
-                           ConnectorBase*     connector);
+    /**
+     * Returns either a BusClient or Server depending on the chosen
+     * @a serverMode and the existence of a server in the current process.
+     */
+    BusPtr getBus(const Server&          serverMode,
+                  const std::string&     host,
+                  const boost::uint16_t& port,
+                  bool                   tcpnodelay,
+                  ConnectorBase*         connector);
 
-    BusServerPtr getBusServerFor(const std::string& host,
-                                 boost::uint16_t    port,
-                                 bool               tcpnodelay,
-                                 ConnectorBase*     connector);
 private:
     typedef std::pair<std::string, boost::uint16_t>	     Endpoint;
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket>  SocketPtr;
@@ -89,6 +93,16 @@ private:
     boost::thread           thread;
 
     Factory();
+
+    BusPtr getBusClientFor(const std::string& host,
+                           boost::uint16_t    port,
+                           bool               tcpnodelay,
+                           ConnectorBase*     connector);
+
+    BusServerPtr getBusServerFor(const std::string& host,
+                                 boost::uint16_t    port,
+                                 bool               tcpnodelay,
+                                 ConnectorBase*     connector);
 
     void removeBusClient(BusPtr bus);
 
