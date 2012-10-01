@@ -158,6 +158,8 @@ BusPtr Factory::getBusClientFor(const string&  host,
 void Factory::removeBusClient(BusPtr bus) {
     RSCDEBUG(logger, "Removing client bus " << bus);
 
+    boost::mutex::scoped_lock lock(this->busMutex);
+
     for (BusClientMap::iterator it = this->busClients.begin();
          it != this->busClients.end(); ++it) {
         if (it->second == bus) {
@@ -202,6 +204,8 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
 void Factory::removeBusServer(BusPtr bus) {
     RSCDEBUG(logger, "Removing server bus " << bus);
 
+    boost::mutex::scoped_lock lock(this->busMutex);
+
     for (BusServerMap::iterator it = this->busServers.begin();
          it != this->busServers.end(); ++it) {
         if (it->second == bus) {
@@ -217,6 +221,8 @@ BusPtr Factory::getBus(const Server&          serverMode,
                        const boost::uint16_t& port,
                        bool                   tcpnodelay,
                        ConnectorBase*         connector) {
+
+    boost::mutex::scoped_lock lock(this->busMutex);
 
     switch (serverMode) {
     case SERVER_NO:
