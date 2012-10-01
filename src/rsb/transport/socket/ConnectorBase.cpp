@@ -60,39 +60,12 @@ ConnectorBase::~ConnectorBase() {
 void ConnectorBase::activate() {
     RSCDEBUG(logger, "Activating");
 
-    // This connector is added to the connector list of the bus by
-    // getBus{Server,Client}For.
+    // This connector is added to the connector list of the bus returned by
+    // getBus
     RSCINFO(logger, "Server mode: " << this->server);
     Factory& factory = Factory::getInstance();
-    switch (this->server) {
-    case SERVER_NO:
-        this->bus = factory.getBusClientFor(this->host,
-                                            this->port,
-                                            this->tcpnodelay,
-                                            this);
-        break;
-    case SERVER_YES:
-        this->bus = factory.getBusServerFor(this->host,
-                                            this->port,
-                                            this->tcpnodelay,
-                                            this);
-        break;
-    case SERVER_AUTO:
-        try {
-            this->bus = factory.getBusServerFor(this->host,
-                                                this->port,
-                                                this->tcpnodelay,
-                                                this);
-        } catch (const std::exception& e) {
-            RSCINFO(logger, "Could not create server for bus: " << e.what()
-                    << "; trying to access bus as client");
-            this->bus = factory.getBusClientFor(this->host,
-                                                this->port,
-                                                this->tcpnodelay,
-                                                this);
-        }
-        break;
-    }
+    this->bus = factory.getBus(this->server, this->host, this->port,
+            this->tcpnodelay, this);
 
     this->active = true;
 
