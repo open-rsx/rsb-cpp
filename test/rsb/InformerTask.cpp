@@ -53,7 +53,7 @@ InformerTask::~InformerTask() {
 void InformerTask::execute() {
 
     ++sentEvents;
-    cout << "sending event: " << sentEvents << endl;
+    //cout << "sending event: " << sentEvents << endl;
     Scope thisScope = scope;
     if (sentEvents % 2 == 0) {
         // should be filtered
@@ -73,7 +73,7 @@ void InformerTask::execute() {
         events.push_back(p);
     }
     if (sentEvents == 2 * numEvents) {
-        cout << endl;
+        //cout << endl;
         cancel();
     }
 
@@ -95,8 +95,8 @@ void WaitingObserver::handler(EventPtr e) {
     boost::recursive_mutex::scoped_lock lock(m);
     ++receivedEvents;
     events.push_back(e);
-    cout << "WaitingObserver #" << receivedEvents << "/" << desiredEvents
-            << " received on " << scope << ". Metadata: " << *e << endl;
+    //cout << "WaitingObserver #" << receivedEvents << "/" << desiredEvents
+    //        << " received on " << scope << ". Metadata: " << *e << endl;
     if (receivedEvents == desiredEvents) {
         condition.notify_all();
     }
