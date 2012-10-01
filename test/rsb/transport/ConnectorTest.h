@@ -35,7 +35,7 @@
 #include "rsb/transport/OutConnector.h"
 
 /**
- * Test configuration for different conector types.
+ * Test configuration for different connector types.
  *
  * @author jwienke
  */
