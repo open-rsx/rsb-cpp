@@ -61,6 +61,10 @@ OutConnector::OutConnector(ConverterSelectionStrategyPtr  converters,
     logger(Logger::getLogger("rsb.transport.socket.OutConnector")){
 }
 
+OutConnector::~OutConnector() {
+
+}
+
 void OutConnector::activate() {
     ConnectorBase::activate();
 }

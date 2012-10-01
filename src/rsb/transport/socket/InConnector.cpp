@@ -47,7 +47,6 @@ InConnector::InConnector(ConverterSelectionStrategyPtr converters,
                          Server                        server,
                          bool                          tcpnodelay) :
     ConnectorBase(converters, host, port, server, tcpnodelay),
-    active(false),
     logger(Logger::getLogger("rsb.transport.socket.InConnector")) {
 }
 
@@ -74,14 +73,10 @@ void InConnector::activate() {
     RSCDEBUG(logger, "Activating");
 
     getBus()->addSink(dynamic_pointer_cast<InConnector>(enable_shared_from_this<rsb::transport::InConnector>::shared_from_this()));
-
-    this->active = true;
 }
 
 void InConnector::deactivate() {
     RSCDEBUG(logger, "Deactivating");
-
-    this->active = false;
 
     RSCDEBUG(logger, "Removing ourselves from sink list of bus " << getBus());
     getBus()->removeSink(this);

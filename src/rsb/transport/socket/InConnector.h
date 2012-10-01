@@ -77,14 +77,12 @@ public:
     Scope getScope() const;
     void setScope(const Scope& scope);
 
-    void activate();
-    void deactivate();
+    virtual void activate();
+    virtual void deactivate();
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     virtual void handle(EventPtr event) = 0;
-protected:
-    volatile bool active;
 private:
     rsc::logging::LoggerPtr logger;
 

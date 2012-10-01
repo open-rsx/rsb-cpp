@@ -47,11 +47,14 @@ ConnectorBase::ConnectorBase(ConverterSelectionStrategyPtr converters,
                              Server                        server,
                              bool                          tcpnodelay) :
     ConverterSelectingConnector<string>(converters),
-    logger(Logger::getLogger("rsb.transport.socket.ConnectorBase")),
+    active(false), logger(Logger::getLogger("rsb.transport.socket.ConnectorBase")),
     host(host), port(port), server(server), tcpnodelay(tcpnodelay) {
 }
 
 ConnectorBase::~ConnectorBase() {
+    if (this->active) {
+        deactivate();
+    }
 }
 
 void ConnectorBase::activate() {
@@ -91,11 +94,15 @@ void ConnectorBase::activate() {
         break;
     }
 
+    this->active = true;
+
     RSCDEBUG(logger, "Using bus " << getBus());
 }
 
 void ConnectorBase::deactivate() {
     RSCDEBUG(logger, "Deactivating");
+
+    this->active = false;
 
     RSCDEBUG(logger, "Removing ourselves from connector list of bus " << getBus());
     getBus()->removeConnector(this);
