@@ -86,9 +86,11 @@ public:
 
     virtual ~ConnectorBase();
 protected:
-    void activate();
+    virtual void activate();
 
-    void deactivate();
+    virtual void deactivate();
+
+    volatile bool active;
 
     /**
      * Return the @ref Bus object through which this connector is

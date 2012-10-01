@@ -58,8 +58,10 @@ public:
                  Server                        server,
                  bool                          tcpnodelay);
 
-    void activate();
-    void deactivate();
+    virtual ~OutConnector();
+
+    virtual void activate();
+    virtual void deactivate();
 
     void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
