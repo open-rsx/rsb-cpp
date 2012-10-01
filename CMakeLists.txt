@@ -47,6 +47,7 @@ SET(RSB_NAME rsbcore)
 SET(RSB_TEST_NAME rsbtest)
 SET(CORE_TEST_NAME rsbtest_core)
 SET(SPREADCONNECTOR_TEST_NAME rsbtest_spread)
+SET(SOCKETCONNECTOR_TEST_NAME rsbtest_socket)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
 
 SET(OUTPUT_PATH ${CMAKE_BINARY_DIR}/build)
@@ -220,6 +221,7 @@ GENERATE_DOXYGEN(VERSION "${RSB_VERSION}")
 ENABLE_COVERAGE_REPORT(TARGETS ${RSB_NAME}
                        TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME}
                              ${SPREADCONNECTOR_TEST_NAME}
+                             ${SOCKETCONNECTOR_TEST_NAME}
                              ${INPROCESSCONNECTOR_TEST_NAME}
                        FILTER "*coverage/*" "*/test*")
 
