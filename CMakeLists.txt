@@ -52,7 +52,7 @@ SET(BINARY_SUFFIX       "cpp${VERSION_SUFFIX}")
 
 SET(TOOLS info send)
 
-SET(RSB_TEST_NAME                rsbtest)
+SET(RSB_TEST_NAME                rsbtest_integration)
 SET(CORE_TEST_NAME               rsbtest_core)
 SET(SPREADPORT_TEST_NAME         rsbtest_spread)
 SET(SPREADCONNECTION_TEST_NAME   rsbtest_spreadconnection)
