@@ -54,8 +54,7 @@ SET(TOOLS info send)
 
 SET(RSB_TEST_NAME                rsbtest_integration)
 SET(CORE_TEST_NAME               rsbtest_core)
-SET(SPREADPORT_TEST_NAME         rsbtest_spread)
-SET(SPREADCONNECTION_TEST_NAME   rsbtest_spreadconnection)
+SET(SPREADCONNECTOR_TEST_NAME    rsbtest_spread)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
 
 SET(OUTPUT_PATH            ${CMAKE_BINARY_DIR}/build)
@@ -233,7 +232,9 @@ GENERATE_DOXYGEN(VERSION "${RSB_VERSION}")
 # --- coverage report ---
 
 ENABLE_COVERAGE_REPORT(TARGETS ${RSB_NAME}
-                       TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME}
+                       TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME}
+                             ${SPREADCONNECTOR_TEST_NAME}
+                             ${INPROCESSCONNECTOR_TEST_NAME}
                        FILTER "*coverage/*" "*/test*")
 
 # --- sloccount ---

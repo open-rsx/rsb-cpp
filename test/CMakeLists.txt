@@ -111,18 +111,18 @@ TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME}
 # --- spread connector test ---
 
 IF(WITH_SPREAD_TRANSPORT AND SPREAD_EXECUTABLE)
-    SET(SPREADPORT_TEST_SOURCES rsbtest_spread.cpp
-                                rsb/transport/spread/AssemblyTest.cpp
-                                rsb/transport/spread/SpreadConnectionTest.cpp
-                                rsb/transport/spread/SpreadConnectorTest.cpp
-                                rsb/transport/spread/SpreadMessageTest.cpp
-                                rsb/transport/spread/MembershipManagerTest.cpp)
+    SET(SPREADCONNECTOR_TEST_SOURCES rsbtest_spread.cpp
+                                     rsb/transport/spread/AssemblyTest.cpp
+                                     rsb/transport/spread/SpreadConnectionTest.cpp
+                                     rsb/transport/spread/SpreadConnectorTest.cpp
+                                     rsb/transport/spread/SpreadMessageTest.cpp
+                                     rsb/transport/spread/MembershipManagerTest.cpp)
 
-    ADD_EXECUTABLE(${SPREADPORT_TEST_NAME} ${SPREADPORT_TEST_SOURCES})
-    TARGET_LINK_LIBRARIES(${SPREADPORT_TEST_NAME}
+    ADD_EXECUTABLE(${SPREADCONNECTOR_TEST_NAME} ${SPREADCONNECTOR_TEST_SOURCES})
+    TARGET_LINK_LIBRARIES(${SPREADCONNECTOR_TEST_NAME}
                           ${CONNECTOR_TEST_NAME})
 
-    ADD_TEST(${SPREADPORT_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADPORT_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+    ADD_TEST(${SPREADCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADCONNECTOR_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 ENDIF()
 
 # --- inprocess connector test ---
@@ -143,7 +143,7 @@ IF(WIN32)
     # requried for PATH entries with a slash before the semicolon
     STRING(REPLACE "\\;" ";" PATH_STRING "${PATH_STRING}")
     STRING(REPLACE ";" "\\;" PATH_STRING "${PATH_STRING}")
-    SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADPORT_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME} ${DEATH_TESTS}
+    SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADCONNECTOR_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME} ${DEATH_TESTS}
                  PROPERTY ENVIRONMENT "PATH=${PATH_STRING}")
 ENDIF()
 
@@ -155,7 +155,7 @@ IF(WITH_SPREAD_TRANSPORT AND TEST_SPREAD_CONFIG_SYMLINK)
                        COMMAND ${CMAKE_COMMAND} -E remove ${TEST_SPREAD_CONFIG_SYMLINK}
                        COMMAND ${CMAKE_COMMAND} -E create_symlink ${SPREAD_CONFIG_FILE} ${TEST_SPREAD_CONFIG_SYMLINK}
                        COMMENT "Creating spread test config symlink")
-    ADD_CUSTOM_COMMAND(TARGET ${SPREADPORT_TEST_NAME} PRE_BUILD
+    ADD_CUSTOM_COMMAND(TARGET ${SPREADCONNECTOR_TEST_NAME} PRE_BUILD
                        COMMAND ${CMAKE_COMMAND} -E remove ${TEST_SPREAD_CONFIG_SYMLINK}
                        COMMAND ${CMAKE_COMMAND} -E create_symlink ${SPREAD_CONFIG_FILE} ${TEST_SPREAD_CONFIG_SYMLINK}
                        COMMENT "Creating spread test config symlink")
