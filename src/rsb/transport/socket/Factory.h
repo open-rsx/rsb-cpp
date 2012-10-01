@@ -86,7 +86,7 @@ private:
 
     BusClientMap            busClients;
     BusServerMap            busServers;
-    /** TODO(jmoringe): locking */
+    boost::mutex            busMutex;
 
     boost::asio::io_service service;
     WorkPtr                 keepAlive;
