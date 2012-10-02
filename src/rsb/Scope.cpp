@@ -129,7 +129,7 @@ Scope::Scope(const char *scope) :
 }
 
 Scope::Scope() :
-        scopestring() {
+        scopestring("/") {
 }
 
 Scope::~Scope() {

@@ -176,3 +176,10 @@ TEST(ScopeTest, testSuperScopes)
     EXPECT_EQ(Scope("/this/is/a/test/"), supers[4]);
 
 }
+
+TEST(ScopeTest, testRootScopeConstruction)
+{
+    EXPECT_EQ(Scope(), Scope("/"));
+    EXPECT_TRUE(Scope().getComponents().empty());
+    EXPECT_TRUE(Scope("/").getComponents().empty());
+}
