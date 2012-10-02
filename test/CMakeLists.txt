@@ -141,6 +141,7 @@ ADD_TEST(${INPROCESSCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${INPROCESSCO
 IF(WITH_SOCKET_TRANSPORT)
 
     SET(SOCKETCONNECTOR_TEST_SOURCES rsbtest_socket.cpp
+                                     rsb/transport/socket/SocketServerRoutingTest.cpp
                                      rsb/transport/socket/SocketConnectorTest.cpp)
 
     ADD_EXECUTABLE(${SOCKETCONNECTOR_TEST_NAME} ${SOCKETCONNECTOR_TEST_SOURCES})
