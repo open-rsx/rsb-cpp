@@ -58,6 +58,9 @@ Factory::~Factory() {
     if (!this->busClients.empty()) {
         RSCWARN(logger, "Remaining bus clients: " << this->busClients);
     }
+    if (!this->busServers.empty()) {
+        RSCWARN(logger, "Remaining bus servers: " << this->busServers);
+    }
 
     RSCINFO(logger, "Stopping service thread");
     this->keepAlive.reset();

@@ -76,7 +76,6 @@ void BusServer::acceptOne() {
 void BusServer::handleAccept(SocketPtr                        socket,
                              const boost::system::error_code& error) {
     if (!error) {
-        //
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
 
         BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false, isTcpnodelay()));
@@ -87,8 +86,9 @@ void BusServer::handleAccept(SocketPtr                        socket,
     }
 
     // Maybe continue accepting connections.
-    if (!this->shutdown)
+    if (!this->shutdown) {
         acceptOne();
+    }
 }
 
 void BusServer::handleIncoming(EventPtr         event,
