@@ -109,7 +109,15 @@ Factory::Factory() :
                                % RSB_VERSION_MAJOR
                                % RSB_VERSION_MINOR);
         vector<boost::filesystem::path> defaultPath;
-        defaultPath.push_back(rsc::config::userHomeDirectory() / ("." + versioned) / "plugins");
+        // It may be impossible to determine a home directory for the
+        // current user. Warn, but don't throw.
+        try {
+            defaultPath.push_back(userHomeDirectory() / ("." + versioned) / "plugins");
+        } catch (const runtime_error& e) {
+            RSCWARN(this->logger,
+                    "Failed to determine user-specific plugin directory: "
+                    << e.what());
+        }
         defaultPath.push_back(Version::libdir() / versioned / "plugins");
         rsc::plugins::Configurator configurator(defaultPath);
         configure(configurator, "rsb.conf", "RSB_");
