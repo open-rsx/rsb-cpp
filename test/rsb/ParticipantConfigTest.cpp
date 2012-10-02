@@ -3,6 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -25,11 +26,14 @@
  * ============================================================ */
 
 #include <stdexcept>
+#include <fstream>
 
 #include <boost/format.hpp>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+#include <rsc/config/ConfigFileSource.h>
 
 #include "rsb/ParticipantConfig.h"
 
@@ -162,8 +166,10 @@ TEST(ParticipantConfigTest, testMutableOptions)
 
 TEST(ParticipantConfigTest, testFromFile)
 {
-    ParticipantConfig config = ParticipantConfig::fromFile(str(format(
-            "%1%/rsb.conf-for-smoke-test") % TEST_ROOT));
+    ifstream stream(str(format("%1%/rsb.conf-for-smoke-test") % TEST_ROOT).c_str());
+    rsc::config::ConfigFileSource source(stream);
+    ParticipantConfig config;
+    source.provideOptions(config);
     EXPECT_EQ(config.getOptions().getAs<unsigned int>("global"), 1u);
 
     EXPECT_EQ(config.getQualityOfServiceSpec().getReliability(),
@@ -184,9 +190,10 @@ TEST(ParticipantConfigTest, testFromFile)
 #endif
 
     for (unsigned int i = 3; i <= 6; ++i) {
-        EXPECT_THROW(ParticipantConfig::fromFile(str(format("%1%/rsb.conf-semantic-errors-%2%")
-                                % TEST_ROOT % i)),
-                invalid_argument);
+        ifstream stream(str(format("%1%/rsb.conf-semantic-errors-%2%") % TEST_ROOT % i).c_str());
+        rsc::config::ConfigFileSource source(stream);
+        ParticipantConfig config;
+        EXPECT_THROW(source.provideOptions(config), invalid_argument);
     }
 }
 

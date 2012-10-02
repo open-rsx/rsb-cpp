@@ -33,8 +33,6 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include <rsc/config/TypedValue.h>
-#include <rsc/config/ConfigFileSource.h>
-#include <rsc/config/Environment.h>
 #include <rsc/logging/Logger.h>
 
 using namespace std;
@@ -277,55 +275,6 @@ rsc::runtime::Properties& ParticipantConfig::mutableOptions() {
 
 void ParticipantConfig::setOptions(const Properties& options) {
     this->options = options;
-}
-
-ParticipantConfig ParticipantConfig::fromFile(const path& path,
-        const ParticipantConfig& defaults) {
-    LoggerPtr logger = Logger::getLogger("rsb.ParticipantConfig");
-    RSCDEBUG(logger, "Trying to load config from file " << path);
-
-    ParticipantConfig result = defaults;
-
-    boost::filesystem::ifstream stream(path);
-    if (stream) {
-        RSCDEBUG(logger, "Stream is open; proceeding");
-        ConfigFileSource(stream).provideOptions(result);
-    } else {
-        RSCDEBUG(logger, "Could not open file");
-    }
-
-    return result;
-}
-
-ParticipantConfig ParticipantConfig::fromEnvironment(
-        const ParticipantConfig& defaults) {
-    ParticipantConfig result = defaults;
-    EnvironmentVariableSource("RSB_").provideOptions(result);
-    return result;
-}
-
-ParticipantConfig ParticipantConfig::fromConfiguration(
-        const ParticipantConfig& defaults) {
-    ParticipantConfig result = defaults;
-    try {
-        result = fromFile(systemConfigDirectory() / "rsb.conf", result);
-    } catch (const runtime_error& e) {
-        RSCWARN(Logger::getLogger("rsb.ParticipantConfig"),
-                "Could not find a system-wide configuration file ("
-                << e.what()
-                << ").");
-    }
-    try {
-        result = fromFile(userConfigDirectory() / "rsb.conf", result);
-    } catch (const runtime_error& e) {
-        RSCWARN(Logger::getLogger("rsb.ParticipantConfig"),
-                "Could not find a user-specific configuration file ("
-                << e.what()
-                << ").");
-    }
-    result = fromFile("rsb.conf", result);
-    result = fromEnvironment(result);
-    return result;
 }
 
 void ParticipantConfig::handleOption(const vector<string>& key,

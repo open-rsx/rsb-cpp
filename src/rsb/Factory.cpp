@@ -29,7 +29,7 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-#include <rsc/config/ConfigFileSource.h>
+#include <rsc/config/Configuration.h>
 #include <rsc/config/Environment.h>
 
 #include <rsc/logging/OptionBasedConfigurator.h>
@@ -88,7 +88,7 @@ Factory::Factory() :
     // Configure RSC-based logging.
     {
         rsc::logging::OptionBasedConfigurator configurator;
-        configureSubsystem(configurator, "RSC_");
+        configure(configurator, "rsb.conf", "RSC_");
     }
 
     // Register default implementation for all extension points.
@@ -112,7 +112,7 @@ Factory::Factory() :
         defaultPath.push_back(rsc::config::userHomeDirectory() / ("." + versioned) / "plugins");
         defaultPath.push_back(Version::libdir() / versioned / "plugins");
         rsc::plugins::Configurator configurator(defaultPath);
-        configureSubsystem(configurator);
+        configure(configurator, "rsb.conf", "RSB_");
     }
 
     // Setup default participant config
@@ -160,8 +160,7 @@ Factory::Factory() :
 
     // Merge with user configuration (configuration files, environment
     // variables)
-    this->defaultConfig
-        = ParticipantConfig::fromConfiguration(this->defaultConfig);
+    configure(this->defaultConfig, "rsb.conf", "RSB_");
 
     // Issue a warning if the combination of available transport
     // implementations and user configuration leads to no enabled
@@ -174,54 +173,6 @@ Factory::Factory() :
 }
 
 Factory::~Factory() {
-}
-
-void Factory::configureSubsystem(OptionHandler& handler,
-                                 const std::string& environmentVariablePrefix) {
-
-    // TODO the cascade is basically duplicated from ParticipantConfig. We
-    // should refactor this
-
-
-    try {
-        boost::filesystem::ifstream stream(
-            systemConfigDirectory() / "rsb.conf");
-        if (stream) {
-            ConfigFileSource source(stream);
-            source.provideOptions(handler);
-        }
-    } catch (const runtime_error& e) {
-        RSCWARN(this->logger,
-                "Failed to process system-wide configuration file `"
-                << (systemConfigDirectory() / "rsb.conf") << "': "
-                << e.what());
-    }
-
-    try {
-        boost::filesystem::ifstream stream(userConfigDirectory() / "rsb.conf");
-        if (stream) {
-            ConfigFileSource source(stream);
-            source.provideOptions(handler);
-        }
-    } catch (const runtime_error& e) {
-        RSCWARN(this->logger,
-                "Failed to process user-specific configuration file `"
-                << (userConfigDirectory() / "rsb.conf") << "': "
-                << e.what());
-    }
-
-    {
-        boost::filesystem::ifstream stream("rsb.conf");
-        if (stream) {
-            ConfigFileSource source(stream);
-            source.provideOptions(handler);
-        }
-    }
-
-    {
-        EnvironmentVariableSource source(environmentVariablePrefix);
-        source.provideOptions(handler);
-    }
 }
 
 transport::OutFactory& Factory::getOutFactoryInstance() {

@@ -57,8 +57,6 @@ TEST_F(FactoryTest, testDefaultParticipantConfig)
 
     Factory& f = Factory::getInstance();
 
-    EXPECT_EQ(size_t(1), f.getDefaultParticipantConfig().getTransports().size());
-
     ParticipantConfig config;
     config.addTransport(ParticipantConfig::Transport("foo"));
     config.addTransport(ParticipantConfig::Transport("bar"));
