@@ -96,6 +96,7 @@ TEST_P(ConnectorTest, testSendLongGroupNames) {
     e->setEventId(rsc::misc::UUID(), 2323);
     out->handle(e);
 
+    out->deactivate();
 }
 
 TEST_P(ConnectorTest, testSetSendTime) {
@@ -116,6 +117,8 @@ TEST_P(ConnectorTest, testSetSendTime) {
     EXPECT_NE(boost::uint64_t(0), e->getMetaData().getSendTime());
     EXPECT_GE(e->getMetaData().getSendTime(), beforeSend);
     EXPECT_LE(e->getMetaData().getSendTime(), afterSend);
+
+    out->deactivate();
 
 }
 
@@ -246,6 +249,9 @@ TEST_P(ConnectorTest, testRoundtripDynamicScopes) {
     // compare sent and received events
     observer.waitReceived();
     EXPECT_EQ(repetitions * 2, observer.getEvents().size()) << "Roundtrip produced a different number of received messages";
+
+    out->deactivate();
+    in->deactivate();
 
 }
 

@@ -71,7 +71,7 @@ void InPushConnector::handle(EventPtr busEvent) {
 
     // busEvent is an intermediate object. The deserialization of the
     // payload still has to be performed.
-    EventPtr event(busEvent);
+    EventPtr event(new Event(*busEvent));
 
     event->mutableMetaData().setReceiveTime();
 
