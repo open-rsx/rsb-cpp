@@ -136,7 +136,7 @@ BusPtr Factory::getBusClientFor(const string&  host,
         socket.reset();
     }
     if (!socket) {
-        throw runtime_error(str(format("Could not connector to any of the endpoints to which %1%:%2% resolved.")
+        throw runtime_error(str(format("Could not connect to any of the endpoints to which %1%:%2% resolved.")
                                 % host % port));
     }
 
