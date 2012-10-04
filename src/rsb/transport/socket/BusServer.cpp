@@ -53,32 +53,44 @@ BusServer::BusServer(boost::uint16_t port,
       logger(Logger::getLogger("rsb.transport.socket.BusServer")),
       acceptor(service, tcp::endpoint(tcp::v4(), port)),
       service(service),
-      shutdown(false) {
-    acceptOne();
+      active(false), shutdown(false) {
 }
 
 
 BusServer::~BusServer() {
-    this->shutdown = true;
-    this->acceptor.cancel();
-    boost::this_thread::sleep(boost::posix_time::seconds(1)); /** TODO(jmoringe, 2012-03-02): hack */
+    if (this->active) {
+        deactivate();
+    }
 }
 
-void BusServer::acceptOne() {
+void BusServer::activate() {
+    acceptOne(boost::dynamic_pointer_cast<BusServer>(shared_from_this()));
+
+    this->active = true;
+}
+
+void BusServer::deactivate() {
+    this->shutdown = true;
+    this->acceptor.cancel();
+    this->active =  false;
+}
+
+void BusServer::acceptOne(BusServerPtr ref) {
     SocketPtr socket(new tcp::socket(this->service));
 
     RSCINFO(logger, "Listening on " << this->acceptor.local_endpoint());
     acceptor.async_accept(*socket,
-                          boost::bind(&BusServer::handleAccept, this, socket,
+                          boost::bind(&BusServer::handleAccept, this, ref, socket,
                                       boost::asio::placeholders::error));
 }
 
-void BusServer::handleAccept(SocketPtr                        socket,
+void BusServer::handleAccept(BusServerPtr                     ref,
+                             SocketPtr                        socket,
                              const boost::system::error_code& error) {
     if (!error) {
         RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
 
-        BusConnectionPtr connection(new BusConnection(shared_from_this(), socket, false, isTcpnodelay()));
+        BusConnectionPtr connection(new BusConnection(ref, socket, false, isTcpnodelay()));
         addConnection(connection);
         connection->startReceiving();
     } else if (!this->shutdown){
@@ -87,7 +99,7 @@ void BusServer::handleAccept(SocketPtr                        socket,
 
     // Maybe continue accepting connections.
     if (!this->shutdown) {
-        acceptOne();
+        acceptOne(ref);
     }
 }
 

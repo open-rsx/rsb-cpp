@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -195,6 +195,7 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
     RSCDEBUG(logger, "Did not find bus server; creating a new one");
 
     BusServerPtr result(new BusServer(port, tcpnodelay, this->service));
+    result->activate();
     this->busServers[endpoint] = result;
 
     result->addConnector(connector);
@@ -212,6 +213,7 @@ void Factory::removeBusServer(BusPtr bus) {
     for (BusServerMap::iterator it = this->busServers.begin();
          it != this->busServers.end(); ++it) {
         if (it->second == bus) {
+            boost::dynamic_pointer_cast<BusServer>(bus)->deactivate();
             this->busServers.erase(it);
             RSCDEBUG(logger, "Removed");
             return;
