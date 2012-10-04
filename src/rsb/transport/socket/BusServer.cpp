@@ -70,8 +70,13 @@ void BusServer::activate() {
 }
 
 void BusServer::deactivate() {
+    // Initiate shutdown squence, cancel acceptor and wait until the
+    // asynchronous callbacks signal completion of the shutdown
+    // sequence (see handleAccept()).
     this->shutdown = true;
     this->acceptor.cancel();
+    while (this->shutdown);
+
     this->active =  false;
 }
 
@@ -98,9 +103,15 @@ void BusServer::handleAccept(BusServerPtr                     ref,
         RSCWARN(logger, "Accept failure, trying to continue");
     }
 
-    // Maybe continue accepting connections.
+    // Maybe continue accepting connections. If not, a shutdown has
+    // been requested from another thread. In that case, we reset
+    // this->shutdown to false to indicate that the shutdown sequence
+    // is complete. The other thread can just busy-wait until
+    // this->shutdown == false.
     if (!this->shutdown) {
         acceptOne(ref);
+    } else {
+        this->shutdown = false;
     }
 }
 
