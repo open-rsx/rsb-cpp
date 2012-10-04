@@ -52,6 +52,8 @@
 #include "testhelpers.h"
 #include "testconfig.h"
 
+#include <rsb/Factory.h>
+
 using namespace std;
 
 using namespace testing;
@@ -70,15 +72,44 @@ int pullInConnectorTest() {
 }
 
 TEST_P(ConnectorTest, testConstruction) {
-    ASSERT_NO_THROW(GetParam().createInPullConnector());
-    ASSERT_NO_THROW(GetParam().createInPushConnector());
-    ASSERT_NO_THROW(GetParam().createOutConnector());
+    rsb::Factory::getInstance();
+    {
+        InPullConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createInPullConnector());
+    }
+    {
+        InPushConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createInPushConnector());
+    }
+    {
+        OutConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createOutConnector());
+    }
 }
 
 TEST_P(ConnectorTest, testConnection) {
-    ASSERT_NO_THROW(GetParam().createInPullConnector()->activate());
-    ASSERT_NO_THROW(GetParam().createInPushConnector()->activate());
-    ASSERT_NO_THROW(GetParam().createOutConnector()->activate());
+    rsb::Factory::getInstance();
+
+    {
+        InPullConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createInPullConnector());
+        ASSERT_NO_THROW(connector->activate());
+        ASSERT_NO_THROW(connector->deactivate());
+    }
+
+    {
+        InPushConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createInPushConnector());
+        ASSERT_NO_THROW(connector->activate());
+        ASSERT_NO_THROW(connector->deactivate());
+    }
+
+    {
+        OutConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createOutConnector());
+        ASSERT_NO_THROW(connector->activate());
+        ASSERT_NO_THROW(connector->deactivate());
+    }
 }
 
 TEST_P(ConnectorTest, testSendLongGroupNames) {
