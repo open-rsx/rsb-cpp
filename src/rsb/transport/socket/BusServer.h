@@ -64,6 +64,16 @@ public:
 
     virtual ~BusServer();
 
+    /**
+     * Activate the object.
+     *
+     * @note This member function can only be called when a @ref
+     *       boost::shared_ptr owning the object exists.
+     */
+    void activate();
+
+    void deactivate();
+
     void handleIncoming(EventPtr         event,
                         BusConnectionPtr connection);
 
@@ -75,11 +85,18 @@ private:
     boost::asio::ip::tcp::acceptor  acceptor;
     boost::asio::io_service&        service;
 
+    volatile bool                   active;
     volatile bool                   shutdown;
 
-    void acceptOne();
+    // These two member functions have the additional ref parameter to
+    // ensure that the BusServer object cannot be destroyed while
+    // callbacks are executed. This also means that
+    // BusServer::activate only when there is a shared_ptr owning the
+    // BusServer object. See BusServer::activate().
+    void acceptOne(boost::shared_ptr<BusServer> ref);
 
-    void handleAccept(SocketPtr                       socket,
+    void handleAccept(boost::shared_ptr<BusServer>     ref,
+                      SocketPtr                        socket,
                       const boost::system::error_code& error);
 
     void suicide();
