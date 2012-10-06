@@ -24,6 +24,7 @@
  *
  * ============================================================ */
 
+// mark-start::body
 #include <iostream>
 
 #include <stdlib.h>
@@ -68,3 +69,4 @@ int main(void) {
 
     return EXIT_SUCCESS;
 }
+// mark-end::body
