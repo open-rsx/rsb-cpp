@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -25,6 +25,7 @@
  *
  * ============================================================ */
 
+// mark-start::body
 #include <boost/format.hpp>
 
 #include <boost/thread.hpp>
@@ -104,3 +105,4 @@ int main(int /*argc*/, char** /*argv*/) {
     return EXIT_SUCCESS;
 
 }
+// mark-end::body
