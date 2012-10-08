@@ -26,32 +26,18 @@
  * ============================================================ */
 
 // mark-start::body
-#include <rsb/Factory.h>
-
 #include <boost/thread.hpp>
 
-#include <rsc/runtime/TypeStringTools.h>
-#include <rsc/logging/LoggerFactory.h>
-
-using namespace std;
+#include <rsb/Factory.h>
 
 using namespace rsb;
 using namespace rsb::patterns;
 
-class TestCallback: public Server::Callback<string, string> {
+class EchoCallback: public Server::Callback<std::string, std::string> {
 public:
-    boost::shared_ptr<string> call(const string& methodName,
-                                   boost::shared_ptr<string> input) {
-        return boost::shared_ptr<string>(
-                new string("reply to '" + *input + "' (method is '" + methodName + "')"));
-    }
-};
-
-class ErrorProducingCallback: public Server::Callback<string, string> {
-public:
-    boost::shared_ptr<string> call(const string& /*methodName*/,
-                                   boost::shared_ptr<string> /*input*/) {
-        throw runtime_error("Intentionally failing.");
+    boost::shared_ptr<std::string> call(const std::string& /*methodName*/,
+                                        boost::shared_ptr<std::string> input) {
+        return input;
     }
 };
 
@@ -59,16 +45,10 @@ int main(int /*argc*/, char** /*argv*/) {
     // Use the RSB factory to create a Server instance that provides
     // callable methods under the scope /example/server.
     Factory& factory = Factory::getInstance();
-    ServerPtr server = factory.createServer(Scope("/example/server"));
+    ServerPtr server = factory.createServer("/example/server");
 
-    // Register callable methods which dispatch method calls to
-    // instances of TestCallback and ErrorProducingCallback.
-    server->registerMethod("methodOne",
-                           Server::CallbackPtr(new TestCallback()));
-    server->registerMethod("methodTwo",
-                           Server::CallbackPtr(new TestCallback()));
-    server->registerMethod("methodError",
-                           Server::CallbackPtr(new ErrorProducingCallback()));
+    // Register method with name and implementing callback object.
+    server->registerMethod("echo", Server::CallbackPtr(new EchoCallback()));
 
     // Wait here so incoming method calls can be processed.
     boost::this_thread::sleep(boost::posix_time::seconds(1000));
