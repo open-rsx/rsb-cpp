@@ -25,47 +25,33 @@
  * ============================================================ */
 
 // mark-start::body
-#include <iostream>
-
 #include <stdlib.h>
-#include <math.h>
-
-#include <boost/timer.hpp>
-
-#include <rsc/logging/Logger.h>
 
 #include <rsb/Informer.h>
 #include <rsb/Factory.h>
 
 using namespace std;
-using namespace rsc::logging;
-using namespace rsc::misc;
 using namespace rsb;
 
 int main(void) {
 
-    // first get a factory instance that is used to create RSB domain objects
+    // First get a factory instance that is used to create RSB domain
+    // objects.
     Factory& factory = Factory::getInstance();
 
-    // create an informer that is capable of sending events containing string
-    // data on the scope "/example/informer".
-    Informer<string>::Ptr informer = factory.createInformer<string> (
-            Scope("/example/informer"));
+    // Create an informer that is capable of sending events containing
+    // string data on the scope "/example/informer".
+    Informer<string>::Ptr informer
+        = factory.createInformer<string> ("/example/informer");
 
-    // create data to send over the informer. Data is always maintained in
-    // shared_ptr instances. Informer provides a typedef DataPtr of the
-    // appropriate type according to its template parameter
-    Informer<string>::DataPtr s(new string("blub"));
+    // Create data to send over the informer. Data is always
+    // maintained in shared_ptr instances. Informer provides a typedef
+    // DataPtr of the appropriate type according to its template
+    // parameter
+    Informer<string>::DataPtr s(new string("example payload"));
 
-    boost::timer t;
-
-    // really send the data several times
-    for (int j = 0; j < 1200; j++) {
-        informer->publish(s);
-    }
-
-    cout << "Elapsed time for " << 1200 << " messages sent: " << t.elapsed()
-            << " s" << endl;
+    // Send the data.
+    informer->publish(s);
 
     return EXIT_SUCCESS;
 }

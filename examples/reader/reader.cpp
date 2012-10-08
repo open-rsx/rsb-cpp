@@ -25,40 +25,31 @@
  *
  * ============================================================ */
 
-#include <iostream>
-
+// mark-start::body
 #include <stdlib.h>
-#include <math.h>
+
+#include <iostream>
 
 #include <rsb/Factory.h>
 
-using namespace std;
-using namespace rsc::logging;
-using namespace rsc::misc;
 using namespace rsb;
 
 int main(int argc, char** argv) {
     // Set up the scope to receive on either from the command line
     // argument or use the default scope of the informer example.
-    Scope scope;
-    if (argc > 1) {
-        scope = Scope(argv[1]);
-    } else {
-        scope = Scope("/example/informer");
-    }
+    Scope scope(argc > 1 ? argv[1] : "/example/informer");
 
     // Create a reader which synchronously receives events on the
     // specified scope.
     Factory& factory = Factory::getInstance();
     ReaderPtr reader = factory.createReader(scope);
-    cout << "Reader setup finished. Waiting for messages on scope " << scope
-         << endl;
 
     // Print events as they are received.
     while (true) {
         EventPtr event = reader->read();
-        cout << event << endl;
+        std::cout << event << std::endl;
     }
 
     return EXIT_SUCCESS;
 }
+// mark-end::body
