@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -47,19 +47,9 @@ int main() {
         converter(new rsb::converter::ProtocolBufferConverter<SimpleImage>());
     rsb::converter::converterRepository<std::string>()->registerConverter(converter);
 
-    // Create an informer which has the SimpleImage protocol buffer
-    // message as its data type.
-    Informer<SimpleImage>::Ptr informer
-        = Factory::getInstance().createInformer<SimpleImage>("/example/converter");
-
-    // Create and publish an instance of SimpleImage. To see the
-    // event, you can, for example use the RSB logger utility or the
-    // receiver program in this directory.
-    Informer<SimpleImage>::DataPtr data(new SimpleImage());
-    data->set_width(10);
-    data->set_height(10);
-    data->set_data(new char[100], 100);
-    informer->publish(data);
+    // After the converter has been registered, the default
+    // configuration used by the Factory includes the converter.
+    Factory& factory = Factory::getInstance();
 
     return EXIT_SUCCESS;
 }

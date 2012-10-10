@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,12 +24,16 @@
  *
  * ============================================================ */
 
+// mark-start::body
+#include <stdlib.h>
+
 #include <iostream>
 
 #include <boost/thread.hpp>
 
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
+
 #include <rsb/converter/Repository.h>
 #include <rsb/converter/ProtocolBufferConverter.h>
 
@@ -37,37 +41,32 @@
 // The generated file can be found in ${BUILD_DIR}/protobuf_converter
 #include <protobuf_converter/SimpleImage.pb.h>
 
-using namespace std;
-
-using namespace boost;
-
 using namespace rsb;
-using namespace rsb::converter;
 
 // The generated protocol buffer class is in this namespace.
 using namespace tutorial::protobuf_converter;
 
 void printImage(boost::shared_ptr<SimpleImage> image) {
-    cout << "received " << image->width() << "x" << image->height() << " image"
-            << endl;
+    std::cout << "received " << image->width() << "x" << image->height() << " image"
+              << std::endl;
 }
 
 int main() {
     // Register a specific template instanciation of the
     // ProtocolBufferConverter for our SimpleImage protocol buffer
     // message.
-    boost::shared_ptr<ProtocolBufferConverter<SimpleImage> > converter(
-            new ProtocolBufferConverter<SimpleImage> ());
-    converterRepository<string>()->registerConverter(converter);
+    boost::shared_ptr< rsb::converter::ProtocolBufferConverter<SimpleImage> >
+        converter(new rsb::converter::ProtocolBufferConverter<SimpleImage>());
+    rsb::converter::converterRepository<std::string>()->registerConverter(converter);
 
     // Create a listener to receive SimpleImage protocol buffer
     // messages.
-    ListenerPtr listener = Factory::getInstance().createListener(
-            Scope("/tutorial/converter"));
-    listener->addHandler(
-            HandlerPtr(new DataFunctionHandler<SimpleImage> (&printImage)));
+    ListenerPtr listener
+        = Factory::getInstance().createListener("/example/converter");
+    listener->addHandler(HandlerPtr(new DataFunctionHandler<SimpleImage>(&printImage)));
 
     boost::this_thread::sleep(boost::posix_time::seconds(20));
 
     return EXIT_SUCCESS;
 }
+// mark-end::body
