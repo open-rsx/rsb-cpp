@@ -30,6 +30,8 @@
 #include <vector>
 #include <map>
 
+#include <rsc/logging/Logger.h>
+#include <rsc/logging/LoggerFactory.h>
 #include <rsc/runtime/NoSuchObject.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/runtime/Printable.h>
@@ -147,11 +149,16 @@ public:
     };
 
 private:
+    rsc::logging::LoggerPtr logger;
+
     typedef rsc::patterns::Factory<std::string, Interface> Factory;
     typedef typename Factory::CreateFunction CreateFunction;
     typedef typename Factory::ImplMapProxy ImplMapProxy;
     typedef std::map<std::string, ConnectorInfo> InfoMap; // forward
 public:
+    ConnectorFactory() :
+        logger(rsc::logging::LoggerFactory::getInstance().getLogger("rsb.transport.ConnectorFactory<" + rsc::runtime::typeName<Interface>() + ">")) {
+    }
 
     /** Return information regarding the connector implementation
      * named @a name.
@@ -197,6 +204,10 @@ public:
             const std::set<std::string>& schemas = std::set<std::string>(),
             bool remote = true,
             const std::set<std::string>& options = std::set<std::string>()) {
+        RSCINFO(this->logger, "Registering connector "
+                << name
+                << " for schemas " << schemas);
+
         Factory::impls().register_(name, constructor);
 
         ConnectorInfo info(name, schemas, remote, options);

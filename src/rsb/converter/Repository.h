@@ -161,6 +161,8 @@ public:
      *                              with the same wire type or data type
      */
     void registerConverter(ConverterPtr converter) {
+        RSCINFO(this->logger, "Registering converter " << converter);
+
         std::string wireSchema = converter->getWireSchema();
         std::string dataType = converter->getDataType();
         if (this->converters.find(std::make_pair(wireSchema, dataType))
