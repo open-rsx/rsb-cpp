@@ -141,8 +141,8 @@ private:
 
     void printContents(std::ostream& stream) const {
         stream << "wireType = " << rsc::runtime::typeName<WireType>()
-               << ", wireSchema = " << this->wireSchema
-               << ", dataType = " << this->dataType;
+               << ", wireSchema = " << getWireSchema()
+               << ", dataType = " << getDataType();
     }
 };
 
