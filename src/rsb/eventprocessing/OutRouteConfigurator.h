@@ -38,6 +38,8 @@
 
 namespace rsb {
 
+class Scope;
+
 class Event;
 typedef boost::shared_ptr<Event> EventPtr;
 class QualityOfServiceSpec;
@@ -51,12 +53,14 @@ namespace eventprocessing {
 
 /**
  * @author swrede
+ * @author jmoringe
+ *
  * @todo add configuration, provide preliminary set up interface
  */
 class RSB_EXPORT OutRouteConfigurator: public virtual rsc::runtime::Printable,
                                        private boost::noncopyable {
 public:
-    OutRouteConfigurator();
+    OutRouteConfigurator(const Scope& scope);
     virtual ~OutRouteConfigurator();
 
     std::string getClassName() const;

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -30,11 +30,13 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "../../Scope.h"
+
 #include "../ConverterSelectingConnector.h"
 
-#include "rsb/rsbexports.h"
-
 #include "Types.h"
+
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
@@ -85,6 +87,9 @@ public:
                   bool                          tcpnodelay);
 
     virtual ~ConnectorBase();
+
+    virtual Scope getScope() const;
+    virtual void setScope(const Scope& scope);
 protected:
     virtual void activate();
 
@@ -101,6 +106,8 @@ protected:
     BusPtr getBus();
 private:
     rsc::logging::LoggerPtr logger;
+
+    Scope                   scope;
 
     BusPtr                  bus;
 

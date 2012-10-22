@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -54,6 +54,9 @@ rsb::transport::OutConnector* OutConnector::create(const Properties& args) {
 
 string OutConnector::getClassName() const {
     return "OutConnector";
+}
+
+void OutConnector::setScope(const Scope& /*scope*/) {
 }
 
 void OutConnector::activate() {

@@ -80,6 +80,9 @@ void OutConnector::printContents(ostream& stream) const {
     stream << "connector = " << connector << ", active = " << active;
 }
 
+void OutConnector::setScope(const Scope& /*scope*/) {
+}
+
 void OutConnector::activate() {
     this->connector->activate();
     this->active = true;

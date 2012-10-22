@@ -78,6 +78,8 @@ public:
 
     virtual ~InPullConnector();
 
+    virtual void setScope(const Scope& scope);
+
     void handle(rsb::EventPtr event);
 
     EventPtr raiseEvent(bool block);

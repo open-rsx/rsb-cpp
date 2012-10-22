@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -55,6 +55,17 @@ ConnectorBase::~ConnectorBase() {
     if (this->active) {
         deactivate();
     }
+}
+
+Scope ConnectorBase::getScope() const {
+    return this->scope;
+}
+
+void ConnectorBase::setScope(const Scope& scope) {
+    if (this->active)
+        throw std::runtime_error("Cannot set scope while active");
+
+    this->scope = scope;
 }
 
 void ConnectorBase::activate() {

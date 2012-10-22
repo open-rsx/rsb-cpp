@@ -64,6 +64,10 @@ InPushConnector::InPushConnector(ConverterSelectionStrategyPtr converters,
 InPushConnector::~InPushConnector() {
 }
 
+void InPushConnector::setScope(const Scope& scope) {
+    ConnectorBase::setScope(scope);
+}
+
 void InPushConnector::handle(EventPtr busEvent) {
     if (!this->active) {
         throw std::runtime_error("Cannot handle events when not active");

@@ -29,10 +29,13 @@
 #include <rsc/runtime/ContainerIO.h>
 #include <rsc/logging/Logger.h>
 
-#include "DirectEventSendingStrategy.h"
-#include "../transport/OutConnector.h"
+#include "../Scope.h"
 #include "../QualityOfServiceSpec.h"
+
+#include "../transport/OutConnector.h"
 #include "../transport/Connector.h"
+
+#include "DirectEventSendingStrategy.h"
 #include "EventSendingStrategy.h"
 
 using namespace std;
@@ -49,18 +52,18 @@ typedef std::list<transport::OutConnectorPtr> ConnectorList;
 
 class OutRouteConfigurator::Impl {
 public:
-
     rsc::logging::LoggerPtr logger;
 
-    ConnectorList connectors;
+    Scope                   scope;
+    ConnectorList           connectors;
     EventSendingStrategyPtr eventSendingStrategy;
-    volatile bool shutdown;
-
+    volatile bool           shutdown;
 };
 
-OutRouteConfigurator::OutRouteConfigurator() :
+OutRouteConfigurator::OutRouteConfigurator(const Scope& scope) :
     d(new Impl) {
-    d->logger = Logger::getLogger("rsb.eventprocessing.OutRouteConfigurator");
+    d->logger   = Logger::getLogger("rsb.eventprocessing.OutRouteConfigurator");
+    d->scope    = scope;
     d->shutdown = false;
 }
 
@@ -85,6 +88,7 @@ void OutRouteConfigurator::activate() {
     // Activate all connectors.
     for (ConnectorList::iterator it = d->connectors.begin(); it
             != d->connectors.end(); ++it) {
+        (*it)->setScope(d->scope);
         (*it)->activate();
     }
 

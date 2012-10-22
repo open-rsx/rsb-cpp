@@ -30,12 +30,12 @@
 #include <boost/enable_shared_from_this.hpp>
 
 #include "../filter/FilterObserver.h"
+
 #include "Connector.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-
-class Scope;
 
 namespace transport {
 
@@ -54,13 +54,6 @@ public:
     typedef boost::shared_ptr<InConnector> Ptr;
 
     virtual ~InConnector();
-
-    /**
-     * Sets the scope this connector will receive events from.
-     *
-     * @param scope scope of the connector
-     */
-    virtual void setScope(const Scope& scope) = 0;
 };
 
 typedef InConnector::Ptr InConnectorPtr;

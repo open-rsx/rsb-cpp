@@ -35,14 +35,14 @@ using namespace std;
 
 namespace rsb {
 
-InformerBase::InformerBase(
-        const vector<transport::OutConnectorPtr>& connectors,
-        const Scope& scope, const ParticipantConfig& config,
-        const string& defaultType) :
+InformerBase::InformerBase(const vector<transport::OutConnectorPtr>& connectors,
+                           const Scope&                              scope,
+                           const ParticipantConfig&                  config,
+                           const string&                             defaultType) :
     Participant(scope, config), defaultType(defaultType),
-            currentSequenceNumber(0) {
+    configurator(new eventprocessing::OutRouteConfigurator(scope)),
+    currentSequenceNumber(0) {
     // TODO evaluate configuration
-    this->configurator.reset(new eventprocessing::OutRouteConfigurator());
     for (vector<transport::OutConnectorPtr>::const_iterator it =
             connectors.begin(); it != connectors.end(); ++it) {
         this->configurator->addConnector(*it);

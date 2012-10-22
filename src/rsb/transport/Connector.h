@@ -34,6 +34,7 @@
 
 namespace rsb {
 
+class Scope;
 class QualityOfServiceSpec;
 
 namespace transport {
@@ -44,6 +45,13 @@ namespace transport {
 class RSB_EXPORT Connector: public virtual rsc::runtime::Printable {
 public:
     virtual ~Connector();
+
+    /**
+     * Sets the scope this connector will send/receive events to/from.
+     *
+     * @param scope scope of the connector
+     */
+    virtual void setScope(const Scope& scope) = 0;
 
     /**
      * Activates the connector. Settings made between construction and

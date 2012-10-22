@@ -59,11 +59,15 @@ InPullConnector::InPullConnector(ConverterSelectionStrategyPtr converters,
                                  Server                        server,
                                  bool                          tcpnodelay) :
     ConnectorBase(converters, host, port, server, tcpnodelay),
-    InConnector(converters, host, port, server, tcpnodelay),    
+    InConnector(converters, host, port, server, tcpnodelay),
     logger(Logger::getLogger("rsb.transport.socket.InPullConnector")) {
 }
 
 InPullConnector::~InPullConnector() {
+}
+
+void InPullConnector::setScope(const Scope& scope) {
+    ConnectorBase::setScope(scope);
 }
 
 void InPullConnector::handle(EventPtr busEvent) {

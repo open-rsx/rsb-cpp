@@ -33,8 +33,6 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/Properties.h>
 
-#include "../../Scope.h"
-
 #include "../../eventprocessing/Handler.h"
 
 #include "../InConnector.h"
@@ -67,15 +65,12 @@ public:
      * @copydoc ConnectorBase::ConnectorBase()
      */
     InConnector(ConverterSelectionStrategyPtr converters,
-		const std::string&            host,
-		unsigned int                  port,
-		Server                        server,
-		bool                          tcpnodelay);
+                const std::string&            host,
+                unsigned int                  port,
+                Server                        server,
+                bool                          tcpnodelay);
 
     virtual ~InConnector();
-
-    Scope getScope() const;
-    void setScope(const Scope& scope);
 
     virtual void activate();
     virtual void deactivate();
@@ -85,8 +80,6 @@ public:
     virtual void handle(EventPtr event) = 0;
 private:
     rsc::logging::LoggerPtr logger;
-
-    Scope scope;
 
     void printContents(std::ostream& stream) const;
 };

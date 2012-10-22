@@ -56,17 +56,6 @@ InConnector::~InConnector() {
     }
 }
 
-Scope InConnector::getScope() const {
-    return this->scope;
-}
-
-void InConnector::setScope(const Scope& scope) {
-    if (this->active)
-        throw std::runtime_error("Cannot set scope while active");
-
-    this->scope = scope;
-}
-
 void InConnector::activate() {
     ConnectorBase::activate();
 
@@ -89,7 +78,7 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/
 }
 
 void InConnector::printContents(ostream& stream) const {
-    stream << "scope = " << scope;
+    stream << "scope = " << getScope();
 }
 
 }
