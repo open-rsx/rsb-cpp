@@ -136,10 +136,6 @@ public:
         bool remote;
         OptionList options;
 
-        std::string getClassName() const {
-            return "ConnectorInfo";
-        }
-
         void printContents(std::ostream& stream) const {
             stream << this->name
                    << ", schemas = " << this->schemas
@@ -224,10 +220,6 @@ public:
     }
 private:
     InfoMap infos;
-
-    std::string getClassName() const {
-        return "ConnectorFactory<" + rsc::runtime::typeName<Interface>() + ">";
-    }
 
     void printContents(std::ostream& stream) const {
         const ImplMapProxy& implementations = Factory::impls();

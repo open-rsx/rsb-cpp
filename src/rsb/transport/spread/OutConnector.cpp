@@ -72,10 +72,6 @@ OutConnector::~OutConnector() {
     }
 }
 
-string OutConnector::getClassName() const {
-    return "OutConnector";
-}
-
 void OutConnector::printContents(ostream& stream) const {
     stream << "connector = " << connector << ", active = " << active;
 }

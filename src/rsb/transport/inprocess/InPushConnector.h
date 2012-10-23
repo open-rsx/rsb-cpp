@@ -49,8 +49,6 @@ public:
     InPushConnector();
     virtual ~InPushConnector();
 
-    std::string getClassName() const;
-
     void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void handle(EventPtr event);

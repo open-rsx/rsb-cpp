@@ -49,7 +49,6 @@ public:
                     defaultPort(), unsigned int maxFragmentSize = 100000);
     virtual ~OutConnector();
 
-    std::string getClassName() const;
     void printContents(std::ostream& stream) const;
 
     void setScope(const Scope& scope);

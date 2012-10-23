@@ -42,8 +42,6 @@ class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {
 public:
     OutConnector();
 
-    std::string getClassName() const;
-
     void setScope(const Scope& scope);
 
     void activate();
@@ -53,8 +51,7 @@ public:
 
     void handle(rsb::EventPtr e);
 
-    static rsb::transport::OutConnector* create(
-            const rsc::runtime::Properties& args);
+    static rsb::transport::OutConnector* create(const rsc::runtime::Properties& args);
 private:
     Bus& bus;
 };

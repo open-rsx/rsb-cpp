@@ -69,10 +69,6 @@ InPushConnector::~InPushConnector() {
     }
 }
 
-string InPushConnector::getClassName() const {
-    return "InPushConnector";
-}
-
 void InPushConnector::printContents(ostream& stream) const {
     stream << "active = " << this->active
            << "connector = " << this->connector;

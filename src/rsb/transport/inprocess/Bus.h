@@ -56,7 +56,6 @@ public:
     Bus();
     virtual ~Bus();
 
-    std::string getClassName() const;
     //void printContents(std::ostream& stream) const;
 
     void addSink(InConnectorPtr sink);

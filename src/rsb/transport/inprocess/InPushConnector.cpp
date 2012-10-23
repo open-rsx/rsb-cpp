@@ -56,10 +56,6 @@ transport::InPushConnector* InPushConnector::create(const Properties& args) {
 InPushConnector::~InPushConnector() {
 }
 
-string InPushConnector::getClassName() const {
-    return "InPushConnector";
-}
-
 void InPushConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
 }
 

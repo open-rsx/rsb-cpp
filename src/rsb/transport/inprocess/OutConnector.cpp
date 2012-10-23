@@ -52,10 +52,6 @@ rsb::transport::OutConnector* OutConnector::create(const Properties& args) {
     return new OutConnector();
 }
 
-string OutConnector::getClassName() const {
-    return "OutConnector";
-}
-
 void OutConnector::setScope(const Scope& /*scope*/) {
 }
 

@@ -48,10 +48,6 @@ Bus::~Bus() {
     }
 }
 
-string Bus::getClassName() const {
-    return "Bus";
-}
-
 /*void Bus::printContents(ostream& stream) const {
     stream << "sinks = " << this->sinks;
     }*/
