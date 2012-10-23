@@ -52,6 +52,7 @@ using namespace rsb::util;
 using namespace rsb::transport;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 const SpreadConnector::QoSMap SpreadConnector::qosMapping =
@@ -62,7 +63,7 @@ SpreadConnector::SpreadConnector(const string& host, unsigned int port) {
 }
 
 void SpreadConnector::init(const string& host, unsigned int port) {
-    this->logger = Logger::getLogger("rsb.spread.SpreadConnector");
+    this->logger = Logger::getLogger("rsb.transport.spread.SpreadConnector");
     RSCDEBUG(logger, "SpreadConnector::init() entered");
     this->activated = false;
     // TODO ConnectionPool for SpreadConnections?!?
@@ -196,5 +197,6 @@ std::string SpreadConnector::makeGroupName(const Scope& scope) const {
     return MD5(scope.toString()).toHexString().substr(0, MAX_GROUP_NAME - 1);
 }
 
+}
 }
 }

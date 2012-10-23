@@ -42,12 +42,15 @@
 #include "testconfig.h"
 
 using namespace std;
-using namespace rsb;
-using namespace rsb::test;
-using namespace rsb::transport;
-using namespace rsb::spread;
+
 using namespace testing;
+
 using namespace rsc::threading;
+
+using namespace rsb;
+using namespace rsb::transport;
+using namespace rsb::transport::spread;
+using namespace rsb::test;
 
 TEST(AssemblyTest, testAssembly) {
 

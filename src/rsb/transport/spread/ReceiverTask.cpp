@@ -48,11 +48,12 @@ using namespace rsb::transport;
 using namespace rsb::protocol;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 ReceiverTask::ReceiverTask(SpreadConnectionPtr s, HandlerPtr handler,
         InPushConnector* connector) :
-        logger(rsc::logging::Logger::getLogger("rsb.spread.ReceiverTask")), con(
+        logger(rsc::logging::Logger::getLogger("rsb.transport.spread.ReceiverTask")), con(
                 s), connector(connector), assemblyPool(new AssemblyPool()), handler(
                 handler) {
 
@@ -173,5 +174,6 @@ void ReceiverTask::setPruning(const bool& pruning) {
     assemblyPool->setPruning(pruning);
 }
 
+}
 }
 }

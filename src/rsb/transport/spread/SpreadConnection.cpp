@@ -45,6 +45,7 @@ using namespace boost;
 using namespace rsc::logging;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 #define SPREAD_MAX_GROUPS   100
@@ -347,5 +348,6 @@ unsigned int defaultPort() {
     return DEFAULT_SPREAD_PORT;
 }
 
+}
 }
 }

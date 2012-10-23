@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -42,13 +42,14 @@ using namespace rsc::threading;
 using namespace rsb::protocol;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 Assembly::Assembly(rsb::protocol::FragmentedNotificationPtr n) :
         logger(
                 Logger::getLogger(
                         str(
-                                format("rsb.spread.Assembly[%1%]")
+                                format("rsb.transport.spread.Assembly[%1%]")
                                         % n->notification().event_id().sequence_number()))), receivedParts(
                 0), birthTime(microsec_clock::local_time()) {
     store.resize(n->num_data_parts());
@@ -107,7 +108,7 @@ AssemblyPool::PruningTask::PruningTask(Pool& pool,
         boost::recursive_mutex& poolMutex, const unsigned& ageS,
         const unsigned int& pruningIntervalMs) :
         PeriodicTask(pruningIntervalMs), logger(
-                Logger::getLogger("rsb.spread.AssemblyPool.PruningTask")), pool(
+                Logger::getLogger("rsb.transport.spread.AssemblyPool.PruningTask")), pool(
                 pool), poolMutex(poolMutex), maxAge(ageS) {
 }
 
@@ -129,7 +130,7 @@ void AssemblyPool::PruningTask::execute() {
 
 AssemblyPool::AssemblyPool(const unsigned int& ageS,
         const unsigned int& pruningIntervalMs) :
-        logger(Logger::getLogger("rsb.spread.AssemblyPool")), pruningAgeS(ageS), pruningIntervalMs(
+        logger(Logger::getLogger("rsb.transport.spread.AssemblyPool")), pruningAgeS(ageS), pruningIntervalMs(
                 pruningIntervalMs) {
     if (ageS == 0) {
         throw domain_error("Age must not be 0.");
@@ -214,5 +215,6 @@ rsb::protocol::NotificationPtr AssemblyPool::add(
 
 }
 
+}
 }
 }

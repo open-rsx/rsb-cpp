@@ -41,10 +41,11 @@ using namespace rsb::eventprocessing;
 using namespace rsb::converter;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 transport::InPushConnector* InPushConnector::create(const Properties& args) {
-    static LoggerPtr logger = Logger::getLogger("rsb.spread.InConnector");
+    static LoggerPtr logger = Logger::getLogger("rsb.transport.spread.InConnector");
     RSCDEBUG(logger, "creating InConnector with properties " << args);
 
     return new InPushConnector(args.get<ConverterSelectionStrategyPtr>("converters"),
@@ -56,7 +57,7 @@ InPushConnector::InPushConnector(const ConverterSelectionStrategyPtr converters,
                                  const string&                       host,
                                  unsigned int                        port) :
     transport::ConverterSelectingConnector<string>(converters), logger(
-            Logger::getLogger("rsb.spread.InPushConnector")), active(false),
+            Logger::getLogger("rsb.transport.spread.InPushConnector")), active(false),
             connector(new SpreadConnector(host, port)) {
     this->exec = TaskExecutorPtr(new ThreadedTaskExecutor);
     this->rec = boost::shared_ptr<ReceiverTask>(new ReceiverTask(
@@ -128,5 +129,6 @@ void InPushConnector::setScope(const Scope& scope) {
     }
 }
 
+}
 }
 }

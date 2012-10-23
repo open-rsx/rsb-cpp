@@ -40,6 +40,7 @@
 #pragma once
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 typedef std::map<std::string, std::pair<SpreadGroupPtr, int> > GroupMap;
@@ -84,6 +85,5 @@ private:
 typedef boost::shared_ptr<MembershipManager> MembershipManagerPtr;
 
 }
-
 }
-
+}

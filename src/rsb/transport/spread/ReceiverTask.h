@@ -52,6 +52,7 @@
 #include "Assembly.h"
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 class InPushConnector;
@@ -124,5 +125,6 @@ private:
     boost::recursive_mutex handlerMutex;
 };
 
+}
 }
 }

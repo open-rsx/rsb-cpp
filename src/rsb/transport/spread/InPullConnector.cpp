@@ -37,10 +37,11 @@ using namespace rsc::runtime;
 using namespace rsb::converter;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 transport::InPullConnector* InPullConnector::create(const Properties& args) {
-    static LoggerPtr logger = Logger::getLogger("rsb.spread.InPullConnector");
+    static LoggerPtr logger = Logger::getLogger("rsb.transport.spread.InPullConnector");
     RSCDEBUG(logger, "creating InPullConnector with properties " << args);
 
     return new InPullConnector(args.get<ConverterSelectionStrategyPtr> ("converters"),
@@ -51,7 +52,7 @@ transport::InPullConnector* InPullConnector::create(const Properties& args) {
 InPullConnector::InPullConnector(ConverterSelectionStrategyPtr converters,
                                  const string&                 host,
                                  unsigned int                  port) :
-    logger(Logger::getLogger("rsb.spread.InPullConnector")),
+    logger(Logger::getLogger("rsb.transport.spread.InPullConnector")),
     active(false),
     connector(new SpreadConnector(host, port)),
     processor(converters) {
@@ -116,5 +117,6 @@ EventPtr InPullConnector::raiseEvent(bool block) {
     return EventPtr();
 }
 
+}
 }
 }

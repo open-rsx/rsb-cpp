@@ -45,10 +45,11 @@ using namespace rsb::protocol;
 using namespace rsb::converter;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 transport::OutConnector* OutConnector::create(const Properties& args) {
-    static LoggerPtr logger = Logger::getLogger("rsb.spread.OutConnector");
+    static LoggerPtr logger = Logger::getLogger("rsb.transport.spread.OutConnector");
     RSCDEBUG(logger, "creating OutConnector with properties " << args);
 
     return new OutConnector(
@@ -61,7 +62,7 @@ transport::OutConnector* OutConnector::create(const Properties& args) {
 OutConnector::OutConnector(ConverterSelectionStrategyPtr converters,
         const string& host, unsigned int port, unsigned int maxFragmentSize) :
         transport::ConverterSelectingConnector<string>(converters), logger(
-                Logger::getLogger("rsb.spread.OutConnector")), active(false), connector(
+                Logger::getLogger("rsb.transport.spread.OutConnector")), active(false), connector(
                 new SpreadConnector(host, port)), maxFragmentSize(
                 maxFragmentSize), minDataSpace(5) {
 }
@@ -192,5 +193,6 @@ void OutConnector::handle(EventPtr event) {
 
 }
 
+}
 }
 }

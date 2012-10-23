@@ -32,10 +32,11 @@ using namespace std;
 using namespace rsc::logging;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 MembershipManager::MembershipManager() :
-    logger(Logger::getLogger("rsb.spread.MembershipManager")) {
+    logger(Logger::getLogger("rsb.transport.spread.MembershipManager")) {
     RSCTRACE(logger, "MembershipManager() entered");
     groups = boost::shared_ptr<GroupMap>(new GroupMap());
 }
@@ -86,5 +87,6 @@ void MembershipManager::leave(string group, SpreadConnectionPtr c) {
     }
 }
 
+}
 }
 }

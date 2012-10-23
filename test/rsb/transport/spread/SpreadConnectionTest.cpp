@@ -38,7 +38,7 @@
 
 using namespace std;
 using namespace rsb;
-using namespace rsb::spread;
+using namespace rsb::transport::spread;
 using namespace testing;
 
 TEST(SpreadConnectionTest, testErrorOnBufferSaturation)

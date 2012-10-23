@@ -41,6 +41,7 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 class ReceiverTask;
@@ -85,5 +86,6 @@ private:
     boost::shared_ptr<ReceiverTask> rec;
 };
 
+}
 }
 }

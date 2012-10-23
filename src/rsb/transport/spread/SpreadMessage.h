@@ -34,6 +34,7 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 /**
@@ -122,4 +123,4 @@ typedef boost::shared_ptr<SpreadMessage> SpreadMessagePtr;
 
 }
 }
-
+}

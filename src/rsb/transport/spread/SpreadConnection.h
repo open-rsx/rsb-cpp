@@ -40,6 +40,7 @@
 typedef int mailbox;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 RSB_EXPORT std::string defaultHost();
@@ -195,5 +196,5 @@ private:
 typedef boost::shared_ptr<SpreadConnection> SpreadConnectionPtr;
 
 }
-
+}
 }

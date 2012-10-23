@@ -38,10 +38,11 @@ using namespace std;
 using namespace rsc::logging;
 
 namespace {
-LoggerPtr logger(Logger::getLogger("rsb.spread.SpreadMessage"));
+LoggerPtr logger(Logger::getLogger("rsb.transport.spread.SpreadMessage"));
 }
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 SpreadMessage::SpreadMessage() :
@@ -126,5 +127,6 @@ void SpreadMessage::reset() {
     groups.clear();
 }
 
+}
 }
 }

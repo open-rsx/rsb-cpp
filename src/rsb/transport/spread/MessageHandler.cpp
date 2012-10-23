@@ -41,11 +41,12 @@ using namespace rsb::transport;
 using namespace rsb::protocol;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 MessageHandler::MessageHandler(ConverterSelectionStrategyPtr converters) :
     ConverterSelectingConnector<string>(converters),
-    logger(rsc::logging::Logger::getLogger("rsb.spread.MessageHandler")),
+    logger(rsc::logging::Logger::getLogger("rsb.transport.spread.MessageHandler")),
     assemblyPool(new AssemblyPool()) {
 }
 
@@ -110,5 +111,6 @@ void MessageHandler::setPruning(const bool& pruning) {
     this->assemblyPool->setPruning(pruning);
 }
 
+}
 }
 }

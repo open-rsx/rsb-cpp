@@ -34,7 +34,7 @@
 #include "testconfig.h"
 
 using namespace std;
-using namespace rsb::spread;
+using namespace rsb::transport::spread;
 using namespace testing;
 
 TEST(MembershipManagerTest, testRoundtrip)

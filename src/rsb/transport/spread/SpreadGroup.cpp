@@ -38,10 +38,11 @@ using namespace std;
 using namespace rsc::logging;
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 SpreadGroup::SpreadGroup(const string& n) :
-    name(n), logger(Logger::getLogger("rsb.spread.SpreadGroup")) {
+    name(n), logger(Logger::getLogger("rsb.transport.spread.SpreadGroup")) {
     RSCDEBUG(logger, "new spread group object, group name: " << n);
 }
 
@@ -104,5 +105,6 @@ void SpreadGroup::handleRetCode(const int& retCode,
 
 }
 
+}
 }
 }

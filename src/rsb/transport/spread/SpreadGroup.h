@@ -35,6 +35,7 @@
 #include "SpreadConnection.h"
 
 namespace rsb {
+namespace transport {
 namespace spread {
 
 /**
@@ -76,4 +77,4 @@ typedef boost::shared_ptr<SpreadGroup> SpreadGroupPtr;
 
 }
 }
-
+}

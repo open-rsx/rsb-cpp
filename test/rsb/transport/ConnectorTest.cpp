@@ -43,9 +43,6 @@
 #include "rsb/filter/Filter.h"
 
 #include "rsb/transport/Connector.h"
-#include "rsb/transport/spread/SpreadConnector.h"
-#include "rsb/transport/spread/InPushConnector.h"
-#include "rsb/transport/spread/OutConnector.h"
 
 #include "../InformerTask.h"
 
@@ -63,7 +60,6 @@ using namespace rsc::threading;
 using namespace rsb;
 using namespace rsb::filter;
 using namespace rsb::transport;
-using namespace rsb::spread;
 
 using namespace rsb::test;
 
