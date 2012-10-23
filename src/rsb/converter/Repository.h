@@ -72,8 +72,11 @@ public:
     typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForSerialization(
             const ConverterSelectionMap& selection =
                     ConverterSelectionMap()) const {
-        UnambiguousConverterMap<WireType>* result = new UnambiguousConverterMap<
-                WireType>();
+        RSCDEBUG(this->logger, "Build unambiguous map for serialization with selection "
+                 << selection);
+
+        boost::shared_ptr< UnambiguousConverterMap<WireType> >
+            result(new UnambiguousConverterMap<WireType>());
         for (typename ConverterMap::const_iterator it =
                 this->converters.begin(); it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
@@ -108,14 +111,17 @@ public:
                 result->addConverter(dataType, it->second);
             }
         }
-        return typename ConverterSelectionStrategy<WireType>::Ptr(result);
+        return result;
     }
 
     typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForDeserialization(
             const ConverterSelectionMap& selection =
                     ConverterSelectionMap()) const {
-        UnambiguousConverterMap<WireType>* result = new UnambiguousConverterMap<
-                WireType>();
+        RSCDEBUG(this->logger, "Build unambiguous map for deserialization with selection "
+                 << selection);
+
+        boost::shared_ptr< UnambiguousConverterMap<WireType> >
+            result(new UnambiguousConverterMap<WireType>());
         for (typename ConverterMap::const_iterator it =
                 this->converters.begin(); it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
@@ -150,7 +156,7 @@ public:
                 result->addConverter(wireSchema, it->second);
             }
         }
-        return typename ConverterSelectionStrategy<WireType>::Ptr(result);
+        return result;
     }
 
     /**
@@ -216,8 +222,9 @@ private:
         for (typename ConverterMap::const_iterator it =
                 this->converters.begin(); it != this->converters.end(); ++it) {
             stream << "\t" << std::setw(16) << std::left << it->first.first
-                    << " <-> " << std::setw(16) << std::left << it->first.second
-                    << ": " << *it->second << std::endl;
+                   << " <-> " << std::setw(16) << std::left << it->first.second
+                   << std::endl
+                   << "\t\t" << *it->second << std::endl;
         }
     }
 };
