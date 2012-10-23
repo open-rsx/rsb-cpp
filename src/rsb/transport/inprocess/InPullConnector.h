@@ -39,6 +39,7 @@
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+namespace transport{
 namespace inprocess {
 
 /**
@@ -66,5 +67,6 @@ private:
 
 typedef boost::shared_ptr<InPullConnector> InPullConnectorPtr;
 
+}
 }
 }

@@ -33,10 +33,11 @@ using namespace rsc::logging;
 using namespace rsb::transport;
 
 namespace rsb {
+namespace transport{
 namespace inprocess {
 
 Bus::Bus() :
-    logger(Logger::getLogger("rsb.inprocess.Bus")), singleThreaded(false) {
+    logger(Logger::getLogger("rsb.transport.inprocess.Bus")), singleThreaded(false) {
 }
 
 Bus::~Bus() {
@@ -188,5 +189,6 @@ void Bus::handleNoLock(EventPtr event) {
     }
 }
 
+}
 }
 }

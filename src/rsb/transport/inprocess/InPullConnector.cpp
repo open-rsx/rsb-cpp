@@ -36,15 +36,14 @@ using namespace rsc::runtime;
 using namespace rsc::threading;
 
 namespace rsb {
+namespace transport{
 namespace inprocess {
 
 InPullConnector::InPullConnector() :
-    logger(Logger::getLogger("rsb.inprocess.InPullConnector")) {
+    logger(Logger::getLogger("rsb.transport.inprocess.InPullConnector")) {
 }
 
 transport::InPullConnector* InPullConnector::create(const Properties& args) {
-    LoggerPtr logger = Logger::getLogger("rsb.inprocess.InPullConnector");
-    RSCDEBUG(logger, "Creating InPullConnector with properties " << args);
     return new InPullConnector();
 }
 
@@ -78,5 +77,6 @@ EventPtr InPullConnector::raiseEvent(bool block) {
     }
 }
 
+}
 }
 }

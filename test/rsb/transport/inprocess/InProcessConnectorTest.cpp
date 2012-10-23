@@ -40,15 +40,15 @@ using namespace testing;
 static int dummy = pullInConnectorTest();
 
 rsb::transport::InPullConnectorPtr createInProcessInPullConnector() {
-    return rsb::transport::InPullConnectorPtr(new rsb::inprocess::InPullConnector());
+    return rsb::transport::InPullConnectorPtr(new rsb::transport::inprocess::InPullConnector());
 }
 
 rsb::transport::InPushConnectorPtr createInProcessInPushConnector() {
-    return rsb::transport::InPushConnectorPtr(new rsb::inprocess::InPushConnector());
+    return rsb::transport::InPushConnectorPtr(new rsb::transport::inprocess::InPushConnector());
 }
 
 rsb::transport::OutConnectorPtr createInProcessOutConnector() {
-    return rsb::transport::OutConnectorPtr(new rsb::inprocess::OutConnector());
+    return rsb::transport::OutConnectorPtr(new rsb::transport::inprocess::OutConnector());
 }
 
 const ConnectorTestSetup inProcessSetup(createInProcessInPullConnector,

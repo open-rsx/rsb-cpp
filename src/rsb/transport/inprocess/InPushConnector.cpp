@@ -35,16 +35,14 @@ using namespace rsc::logging;
 using namespace rsc::runtime;
 
 namespace rsb {
+namespace transport{
 namespace inprocess {
 
 InPushConnector::InPushConnector() :
-    logger(Logger::getLogger("rsb.inprocess.InPushConnector")) {
+    logger(Logger::getLogger("rsb.transport.inprocess.InPushConnector")) {
 }
 
 transport::InPushConnector* InPushConnector::create(const Properties& args) {
-    LoggerPtr logger = Logger::getLogger("rsb.inprocess.InPushConnector");
-    RSCDEBUG(logger, "Creating InPushConnector with properties " << args);
-
     // Seems to have confused some users.
     // See https://code.cor-lab.de/issues/649
     // if (args.has("converters")) {
@@ -72,5 +70,6 @@ void InPushConnector::handle(EventPtr event) {
     }
 }
 
+}
 }
 }

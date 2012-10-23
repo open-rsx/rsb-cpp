@@ -34,6 +34,7 @@ using namespace rsc::logging;
 using namespace rsc::runtime;
 
 namespace rsb {
+namespace transport{
 namespace inprocess {
 
 OutConnector::OutConnector() :
@@ -41,9 +42,6 @@ OutConnector::OutConnector() :
 }
 
 rsb::transport::OutConnector* OutConnector::create(const Properties& args) {
-    LoggerPtr logger = Logger::getLogger("rsb.inprocess.OutConnector");
-    RSCDEBUG(logger, "Creating OutConnector with properties " << args);
-
     // Seems to have confused some users.
     // See https://code.cor-lab.de/issues/649
     // if (args.has("converters")) {
@@ -69,5 +67,6 @@ void OutConnector::handle(EventPtr event) {
     this->bus.handle(event);
 }
 
+}
 }
 }

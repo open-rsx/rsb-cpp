@@ -33,10 +33,11 @@ using namespace std;
 using namespace rsc::logging;
 
 namespace rsb {
+namespace transport{
 namespace inprocess {
 
 InConnector::InConnector() :
-    logger(Logger::getLogger("rsb.inprocess.InConnector")),
+    logger(Logger::getLogger("rsb.transport.inprocess.InConnector")),
     active(false) {
 }
 
@@ -78,5 +79,6 @@ void InConnector::deactivate() {
     Bus::getInstance().removeSink(this);
 }
 
+}
 }
 }
