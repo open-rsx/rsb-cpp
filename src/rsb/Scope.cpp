@@ -42,7 +42,7 @@ const char Scope::COMPONENT_SEPARATOR = '/';
 
 /**
  * Validate that @a s satisfies the regular expression
- * /([a-zA-Z0-9]+/)* and split at '/' characters.
+ * /([a-zA-Z0-9_]+/)* and splits it at '/' characters.
  *
  * @param s String representation that should be verified and split.
  * @param components A vector in which the extracted scope components should be
@@ -88,8 +88,9 @@ inline void verifyAndSplit(const string& s, vector<string>& components,
         // to the current scope component. Verify that it is a legal
         // scope component character.
         else if (!(('a' <= *next && *next <= 'z')
-                || ('A' <= *next && *next <= 'Z')
-                || ('0' <= *next && *next <= '9'))) {
+                   || ('A' <= *next && *next <= 'Z')
+                   || ('0' <= *next && *next <= '9')
+                   || (*next == '_'))) {
             throw invalid_argument(
                     str(
                             format(
