@@ -194,15 +194,6 @@ public:
     friend class rsc::patterns::Singleton<Factory>;
 
 private:
-
-    /**
-     * This function is only required to have the same factory instance on
-     * windows because there the Singleton template is instantiated once per
-     * compilation unit. For the template-based createInformer method this will
-     * then be in the caller's compilation unit. :/
-     */
-    transport::OutFactory& getOutFactoryInstance();
-
     /**
      * Singleton constructor.
      */

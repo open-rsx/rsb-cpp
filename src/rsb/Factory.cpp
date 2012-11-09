@@ -183,10 +183,6 @@ Factory::Factory() :
 Factory::~Factory() {
 }
 
-transport::OutFactory& Factory::getOutFactoryInstance() {
-    return transport::OutFactory::getInstance();
-}
-
 InformerBasePtr Factory::createInformerBase(const Scope&             scope,
                                             const string&            dataType,
                                             const ParticipantConfig& config) {
