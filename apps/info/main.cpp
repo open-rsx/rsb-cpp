@@ -142,9 +142,9 @@ int main(int argc, char** argv) {
     if (connectors || verbose) {
         cout << endl << "Connectors" << endl;
 
-        cout << rsb::transport::InPullFactory::getInstance() << endl;
-        cout << rsb::transport::InPushFactory::getInstance() << endl;
-        cout << rsb::transport::OutFactory::getInstance() << endl;
+        cout << rsb::transport::getInPullFactory() << endl;
+        cout << rsb::transport::getInPushFactory() << endl;
+        cout << rsb::transport::getOutFactory() << endl;
     }
 
     if (converters || verbose)  {

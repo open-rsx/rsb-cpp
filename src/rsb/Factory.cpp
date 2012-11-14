@@ -134,19 +134,19 @@ Factory::Factory() :
     // socket transport.
     set<string> availableTransports;
     {
-        set<InPullFactory::ConnectorInfo> infos = InPullFactory::getInstance().getConnectorInfos();
+        set<InPullFactory::ConnectorInfo> infos = getInPullFactory().getConnectorInfos();
         for (set<InPullFactory::ConnectorInfo>::const_iterator it
                  = infos.begin(); it != infos.end(); ++it) {
             availableTransports.insert(it->getName());
         }
     }{
-        set<InPushFactory::ConnectorInfo> infos = InPushFactory::getInstance().getConnectorInfos();
+        set<InPushFactory::ConnectorInfo> infos = getInPushFactory().getConnectorInfos();
         for (set<InPushFactory::ConnectorInfo>::const_iterator it
                  = infos.begin(); it != infos.end(); ++it) {
             availableTransports.insert(it->getName());
         }
     }{
-        set<OutFactory::ConnectorInfo> infos = OutFactory::getInstance().getConnectorInfos();
+        set<OutFactory::ConnectorInfo> infos = getOutFactory().getConnectorInfos();
         for (set<OutFactory::ConnectorInfo>::const_iterator it
                  = infos.begin(); it != infos.end(); ++it) {
             availableTransports.insert(it->getName());
