@@ -64,8 +64,10 @@ SET(SOURCES rsb/CommException.cpp
 
             rsb/eventprocessing/Handler.cpp
             rsb/eventprocessing/EventSendingStrategy.cpp
+            rsb/eventprocessing/EventSendingStrategyFactory.cpp
             rsb/eventprocessing/DirectEventSendingStrategy.cpp
             rsb/eventprocessing/EventReceivingStrategy.cpp
+            rsb/eventprocessing/EventReceivingStrategyFactory.cpp
             rsb/eventprocessing/PullEventReceivingStrategy.cpp
             rsb/eventprocessing/DirectEventReceivingStrategy.cpp
             rsb/eventprocessing/ParallelEventReceivingStrategy.cpp

@@ -135,8 +135,8 @@ int main(int argc, char** argv) {
     if (eventProcessing || verbose) {
         cout << endl << "Event Processing" << endl;
 
-        cout << eventprocessing::EventReceivingStrategyFactory::getInstance() << endl;
-        cout << eventprocessing::EventSendingStrategyFactory::getInstance() << endl;
+        cout << eventprocessing::getEventReceivingStrategyFactory() << endl;
+        cout << eventprocessing::getEventSendingStrategyFactory() << endl;
     }
 
     if (connectors || verbose) {

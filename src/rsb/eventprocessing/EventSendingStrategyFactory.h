@@ -31,11 +31,14 @@
 #include <rsc/patterns/Factory.h>
 
 #include "EventSendingStrategy.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace eventprocessing {
 
 typedef rsc::patterns::SingletonFactory<std::string, EventSendingStrategy> EventSendingStrategyFactory;
+
+RSB_EXPORT EventSendingStrategyFactory& getEventSendingStrategyFactory();
 
 }
 }

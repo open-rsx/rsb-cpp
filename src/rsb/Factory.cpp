@@ -252,7 +252,7 @@ Factory::createInPullConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << converters);
             options["converters"] = converters;
         }
-        connectors.push_back(InPullConnectorPtr(InPullFactory::getInstance().createInst(transportIt->getName(), options)));
+        connectors.push_back(InPullConnectorPtr(getInPullFactory().createInst(transportIt->getName(), options)));
     }
     return connectors;
 }
@@ -281,7 +281,7 @@ Factory::createInPushConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << converters);
             options["converters"] = converters;
         }
-        connectors.push_back(InPushConnectorPtr(InPushFactory::getInstance().createInst(transportIt->getName(), options)));
+        connectors.push_back(InPushConnectorPtr(getInPushFactory().createInst(transportIt->getName(), options)));
     }
     return connectors;
 }
@@ -310,7 +310,7 @@ Factory::createOutConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << converters);
             options["converters"] = converters;
         }
-        connectors.push_back(OutConnectorPtr(OutFactory::getInstance().createInst(transportIt->getName(), options)));
+        connectors.push_back(OutConnectorPtr(getOutFactory().createInst(transportIt->getName(), options)));
     }
     return connectors;
 }
