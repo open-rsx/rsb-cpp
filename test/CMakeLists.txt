@@ -27,6 +27,8 @@ SET(TEST_SOCKET_PORT 55555 CACHE STRING "the port to use in socket-transport tes
 CONFIGURE_FILE(spread.conf.in ${SPREAD_CONFIG_FILE} @ONLY)
 CONFIGURE_FILE(testconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/testconfig.h)
 
+SET(AVAILABLE_TESTS)
+
 # --- integration test ---
 
 SET(RSB_TEST_SOURCES rsb/integrationtest.cpp
@@ -40,6 +42,7 @@ TARGET_LINK_LIBRARIES(${RSB_TEST_NAME}
                       ${GMOCK_LIBRARIES})
 
 ADD_TEST(${RSB_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${RSB_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+LIST(APPEND AVAILABLE_TESTS ${RSB_TEST_NAME})
 
 # --- core test ---
 
@@ -70,6 +73,7 @@ TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
                       ${GMOCK_LIBRARIES})
 
 ADD_TEST(${CORE_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${CORE_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+LIST(APPEND AVAILABLE_TESTS ${CORE_TEST_NAME})
 
 # --- core death tests ---
 
@@ -80,7 +84,6 @@ TARGET_LINK_LIBRARIES(parallelStrategyDeathTest
                       ${RSB_NAME}
                       ${Boost_LIBRARIES})
 
-SET(DEATH_TESTS)
 FIND_PACKAGE(PythonInterp)
 IF(PYTHONINTERP_FOUND)
     ADD_TEST(parallelStrategyDeathTestException ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/deathTest.py"
@@ -93,7 +96,7 @@ IF(PYTHONINTERP_FOUND)
                                                --xml "${TEST_RESULT_DIR}/rsbtest-parallelStrategyDeathTestCatchAll.xml"
                                                --name deathTestCatchAll
                                                catchall)
-    SET(DEATH_TESTS parallelStrategyDeathTestException parallelStrategyDeathTestCatchAll)
+    LIST(APPEND AVAILABLE_TESTS parallelStrategyDeathTestException parallelStrategyDeathTestCatchAll)
 ELSE()
     MESSAGE(STATUS "Python interpreter not found, not enabling death tests")
 ENDIF()
@@ -123,6 +126,7 @@ IF(WITH_SPREAD_TRANSPORT AND SPREAD_EXECUTABLE)
                           ${CONNECTOR_TEST_NAME})
 
     ADD_TEST(${SPREADCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SPREADCONNECTOR_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+    LIST(APPEND AVAILABLE_TESTS ${SPREADCONNECTOR_TEST_NAME})
 ENDIF()
 
 # --- inprocess connector test ---
@@ -135,6 +139,7 @@ TARGET_LINK_LIBRARIES(${INPROCESSCONNECTOR_TEST_NAME}
                       ${CONNECTOR_TEST_NAME})
 
 ADD_TEST(${INPROCESSCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${INPROCESSCONNECTOR_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+LIST(APPEND AVAILABLE_TESTS ${INPROCESSCONNECTOR_TEST_NAME})
 
 # --- socket connector test ---
 
@@ -149,6 +154,7 @@ IF(WITH_SOCKET_TRANSPORT)
                           ${CONNECTOR_TEST_NAME})
 
     ADD_TEST(${SOCKETCONNECTOR_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${SOCKETCONNECTOR_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+    LIST(APPEND AVAILABLE_TESTS ${SOCKETCONNECTOR_TEST_NAME})
 
 ENDIF()
 
@@ -159,7 +165,7 @@ IF(WIN32)
     # requried for PATH entries with a slash before the semicolon
     STRING(REPLACE "\\;" ";" PATH_STRING "${PATH_STRING}")
     STRING(REPLACE ";" "\\;" PATH_STRING "${PATH_STRING}")
-    SET_PROPERTY(TEST ${RSB_TEST_NAME} ${CORE_TEST_NAME} ${SPREADCONNECTOR_TEST_NAME} ${SOCKETCONNECTOR_TEST_NAME} ${INPROCESSCONNECTOR_TEST_NAME} ${DEATH_TESTS}
+    SET_PROPERTY(TEST ${AVAILABLE_TESTS}
                  PROPERTY ENVIRONMENT "PATH=${PATH_STRING}")
 ENDIF()
 
