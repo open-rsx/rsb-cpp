@@ -27,6 +27,7 @@
 #pragma once
 
 #include <boost/cstdint.hpp>
+#include <boost/format.hpp>
 
 #include <rosetta/api.h>
 
@@ -39,69 +40,74 @@ namespace converter {
 /**
  *
  * @tparam Mechanism
- * @tparam Type
+ * @tparam DataType
+ * @tparam WireSchema
  *
  * @author jmoringe
  */
 template <typename Mechanism,
-          typename Type>
+          typename DataType,
+          typename WireSchema>
 class RosettaConverter : public Converter<std::string> {
 public:
     RosettaConverter();
     virtual ~RosettaConverter();
 
-    std::string
-    serialize(const AnnotatedData& data, std::string& wire);
+    std::string serialize(const AnnotatedData& data, std::string& wire);
 
-    AnnotatedData
-    deserialize(const std::string& wireType, const std::string& wire);
+    AnnotatedData deserialize(const std::string& wireType, const std::string& wire);
 };
 
 // Implementation
 
 template <typename Mechanism,
-          typename Type>
-RosettaConverter<Mechanism, Type>::RosettaConverter() :
-    Converter<std::string> (rsc::runtime::typeName<Type>(),
-                            rsc::runtime::typeName<Mechanism>()
-                                + ":" + rsc::runtime::typeName<Type>()) {
+          typename DataType,
+          typename WireSchema>
+RosettaConverter<Mechanism, DataType, WireSchema>::RosettaConverter() :
+    Converter<std::string>(rsc::runtime::typeName<DataType>(),
+                           boost::str(boost::format("rosetta<%1%,%2%>")
+                                      % Mechanism::name()
+                                      % WireSchema::name())) {
 }
 
 template <typename Mechanism,
-          typename Type>
-RosettaConverter<Mechanism, Type>::~RosettaConverter() {
+          typename DataType,
+          typename WireSchema>
+RosettaConverter<Mechanism, DataType, WireSchema>::~RosettaConverter() {
 }
 
 template <typename Mechanism,
-          typename Type>
-std::string
-RosettaConverter<Mechanism, Type>::serialize(const AnnotatedData& data,
-                                             std::string&         wireData) {
+          typename DataType,
+          typename WireSchema>
+std::string RosettaConverter<Mechanism, DataType, WireSchema>::serialize(const AnnotatedData& data,
+                                                                         std::string&         wireData) {
     assert(data.first == getDataType());
 
-    boost::shared_ptr<Type> object = boost::static_pointer_cast<Type>(data.second);
-    boost::uint64_t size = rosetta::packedSize<Mechanism>(*object);
+    boost::shared_ptr<DataType> object
+        = boost::static_pointer_cast<DataType>(data.second);
+    boost::uint64_t size = rosetta::packedSize<Mechanism, WireSchema>(*object);
     wireData.resize(size);
 
     std::vector<unsigned char> temp(size); /* TODO(jmoringe, 2012-04-25): temp */
-    rosetta::pack<Mechanism>(*object, temp, 0, size);
+    rosetta::pack<Mechanism, WireSchema>(*object, temp, 0, size);
     memcpy((void*) &wireData[0], (void*) &temp[0], size);
 
     return getWireSchema();
 }
 
 template <typename Mechanism,
-          typename Type>
+          typename DataType,
+          typename WireSchema>
 AnnotatedData
-RosettaConverter<Mechanism, Type>::deserialize(const std::string& wireSchema,
-                                               const std::string& wireData) {
+RosettaConverter<Mechanism, DataType, WireSchema>::deserialize(const std::string& wireSchema,
+                                                               const std::string& wireData) {
     assert(wireSchema == getWireSchema());
 
-    boost::shared_ptr<Type> result(new Type());
+    boost::shared_ptr<DataType> result(new DataType());
 
     std::vector<unsigned char> data(wireData.size()); /* TODO(jmoringe, 2012-04-25): temp */
     memcpy((void*) &data[0], (void*) &wireData[0], wireData.size());
-    rosetta::unpack<Mechanism>(data, *result, 0, wireData.size());
+    rosetta::unpack<Mechanism, WireSchema>(data, *result, 0, wireData.size());
 
     return std::make_pair(getDataType(), result);
 }
