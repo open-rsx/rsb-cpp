@@ -24,21 +24,14 @@
  *
  * ============================================================ */
 
-#pragma once
-
-#include <string>
-
-#include <rsc/patterns/Factory.h>
-
-#include "EventReceivingStrategy.h"
-#include "rsb/rsbexports.h"
+#include "EventSendingStrategyFactory.h"
 
 namespace rsb {
 namespace eventprocessing {
 
-typedef rsc::patterns::SingletonFactory<std::string, EventReceivingStrategy> EventReceivingStrategyFactory;
-
-RSB_EXPORT EventReceivingStrategyFactory& getEventReceivingStrategyFactory();
+EventSendingStrategyFactory& getEventSendingStrategyFactory() {
+    return EventSendingStrategyFactory::getInstance();
+}
 
 }
 }

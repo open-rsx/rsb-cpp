@@ -134,19 +134,19 @@ Factory::Factory() :
     // socket transport.
     set<string> availableTransports;
     {
-        set<InPullFactory::ConnectorInfo> infos = InPullFactory::getInstance().getConnectorInfos();
+        set<InPullFactory::ConnectorInfo> infos = getInPullFactory().getConnectorInfos();
         for (set<InPullFactory::ConnectorInfo>::const_iterator it
                  = infos.begin(); it != infos.end(); ++it) {
             availableTransports.insert(it->getName());
         }
     }{
-        set<InPushFactory::ConnectorInfo> infos = InPushFactory::getInstance().getConnectorInfos();
+        set<InPushFactory::ConnectorInfo> infos = getInPushFactory().getConnectorInfos();
         for (set<InPushFactory::ConnectorInfo>::const_iterator it
                  = infos.begin(); it != infos.end(); ++it) {
             availableTransports.insert(it->getName());
         }
     }{
-        set<OutFactory::ConnectorInfo> infos = OutFactory::getInstance().getConnectorInfos();
+        set<OutFactory::ConnectorInfo> infos = getOutFactory().getConnectorInfos();
         for (set<OutFactory::ConnectorInfo>::const_iterator it
                  = infos.begin(); it != infos.end(); ++it) {
             availableTransports.insert(it->getName());
@@ -252,7 +252,7 @@ Factory::createInPullConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << converters);
             options["converters"] = converters;
         }
-        connectors.push_back(InPullConnectorPtr(InPullFactory::getInstance().createInst(transportIt->getName(), options)));
+        connectors.push_back(InPullConnectorPtr(getInPullFactory().createInst(transportIt->getName(), options)));
     }
     return connectors;
 }
@@ -281,7 +281,7 @@ Factory::createInPushConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << converters);
             options["converters"] = converters;
         }
-        connectors.push_back(InPushConnectorPtr(InPushFactory::getInstance().createInst(transportIt->getName(), options)));
+        connectors.push_back(InPushConnectorPtr(getInPushFactory().createInst(transportIt->getName(), options)));
     }
     return connectors;
 }
@@ -310,7 +310,7 @@ Factory::createOutConnectors(const ParticipantConfig& config) {
                      << transportIt->getName() << "': " << converters);
             options["converters"] = converters;
         }
-        connectors.push_back(OutConnectorPtr(OutFactory::getInstance().createInst(transportIt->getName(), options)));
+        connectors.push_back(OutConnectorPtr(getOutFactory().createInst(transportIt->getName(), options)));
     }
     return connectors;
 }

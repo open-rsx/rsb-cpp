@@ -75,7 +75,7 @@ void registerDefaultTransports() {
 
     // In-direction, push-style connectors
     {
-        InPushFactory& factory = InPushFactory::getInstance();
+        InPushFactory& factory = getInPushFactory();
         factory.registerConnector("inprocess",
                                   &inprocess::InPushConnector::create,
                                   "inprocess",
@@ -115,7 +115,7 @@ void registerDefaultTransports() {
 
     // In-direction, pull-style connectors
     {
-        InPullFactory& factory = InPullFactory::getInstance();
+        InPullFactory& factory = getInPullFactory();
 
         factory.registerConnector("inprocess",
                                   &inprocess::InPullConnector::create,
@@ -156,7 +156,7 @@ void registerDefaultTransports() {
 
     // Out-direction connectors
     {
-        OutFactory& factory = OutFactory::getInstance();
+        OutFactory& factory = getOutFactory();
         factory.registerConnector("inprocess",
                                   &inprocess::OutConnector::create,
                                   "inprocess",
@@ -201,7 +201,7 @@ bool isRemote(const string& transportName) {
     bool remote = false;
     bool validResult = false;
     try {
-        InPullFactory& factory = InPullFactory::getInstance();
+        InPullFactory& factory = getInPullFactory();
         InPullFactory::ConnectorInfo info
             = factory.getConnectorInfo(transportName);
         remote = info.isRemote();
@@ -209,7 +209,7 @@ bool isRemote(const string& transportName) {
     } catch (const rsc::runtime::NoSuchObject&) {
     }
     try {
-        InPushFactory& factory = InPushFactory::getInstance();
+        InPushFactory& factory = getInPushFactory();
         InPushFactory::ConnectorInfo info
             = factory.getConnectorInfo(transportName);
         if (validResult && (remote != info.isRemote())) {
@@ -220,7 +220,7 @@ bool isRemote(const string& transportName) {
     } catch (const rsc::runtime::NoSuchObject&) {
     }
     try {
-        OutFactory& factory = OutFactory::getInstance();
+        OutFactory& factory = getOutFactory();
         OutFactory::ConnectorInfo info
             = factory.getConnectorInfo(transportName);
         if (validResult && (remote != info.isRemote())) {
