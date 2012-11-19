@@ -62,7 +62,7 @@ int main() {
     // Create a listener to receive SimpleImage protocol buffer
     // messages.
     ListenerPtr listener
-        = Factory::getInstance().createListener("/example/converter");
+        = getFactory().createListener("/example/converter");
     listener->addHandler(HandlerPtr(new DataFunctionHandler<SimpleImage>(&printImage)));
 
     boost::this_thread::sleep(boost::posix_time::seconds(20));

@@ -36,6 +36,10 @@
 namespace rsb {
 namespace eventprocessing {
 
+/**
+ * @note Do not use the Singleton::getInstance function. Instead use
+ *       #getEventReceivingStrategyFactory.
+ */
 typedef rsc::patterns::SingletonFactory<std::string, EventReceivingStrategy> EventReceivingStrategyFactory;
 
 RSB_EXPORT EventReceivingStrategyFactory& getEventReceivingStrategyFactory();

@@ -68,7 +68,7 @@ int pullInConnectorTest() {
 }
 
 TEST_P(ConnectorTest, testConstruction) {
-    rsb::Factory::getInstance();
+    rsb::getFactory();
     {
         InPullConnectorPtr connector;
         ASSERT_NO_THROW(connector = GetParam().createInPullConnector());
@@ -84,7 +84,7 @@ TEST_P(ConnectorTest, testConstruction) {
 }
 
 TEST_P(ConnectorTest, testConnection) {
-    rsb::Factory::getInstance();
+    rsb::getFactory();
 
     {
         InPullConnectorPtr connector;

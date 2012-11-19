@@ -91,7 +91,7 @@ public:
 
 int main(int argc, char** argv) {
 
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     LoggerPtr l = Logger::getLogger("receiver");
 

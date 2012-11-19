@@ -32,10 +32,13 @@
 
 #include <rsc/logging/Logger.h>
 #include <rsc/logging/LoggerFactory.h>
+#include <rsc/misc/langutils.h>
 #include <rsc/runtime/NoSuchObject.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/runtime/Printable.h>
 #include <rsc/patterns/Factory.h>
+
+#include <boost/type_traits.hpp>
 
 #include "InPullConnector.h"
 #include "InPushConnector.h"
@@ -44,6 +47,19 @@
 
 namespace rsb {
 namespace transport {
+
+template <typename Interface>
+class ConnectorFactory;
+
+typedef ConnectorFactory<InPullConnector> InPullFactory;
+
+typedef ConnectorFactory<InPushConnector> InPushFactory;
+
+typedef ConnectorFactory<OutConnector> OutFactory;
+
+RSB_EXPORT InPullFactory& getInPullFactory();
+RSB_EXPORT InPushFactory& getInPushFactory();
+RSB_EXPORT OutFactory& getOutFactory();
 
 /**
  * Objects of this class are specialized factories that construct @ref
@@ -54,9 +70,18 @@ namespace transport {
  */
 template <typename Interface>
 class ConnectorFactory: public rsc::patterns::Factory<std::string, Interface>,
-                        public rsc::patterns::Singleton< ConnectorFactory<Interface> >,
+                        private rsc::patterns::Singleton< ConnectorFactory<Interface> >,
                         public rsc::runtime::Printable {
 public:
+
+    /**
+     * @deprecated Singletons will be removed from RSB (see bug 1245). Please
+     *             use one of the get*Factory functions in the rsb::transport
+     *             namespace instead.
+     * @todo Remove this after the 0.8 release.
+     */
+    DEPRECATED(static ConnectorFactory<Interface>& getInstance());
+
     /**
      * Instances of this class describe capabilities and properties of
      * connector implementations.
@@ -148,13 +173,20 @@ public:
 private:
     rsc::logging::LoggerPtr logger;
 
+    static ConnectorFactory<Interface>& getInstanceBase() {
+        return rsc::patterns::Singleton< ConnectorFactory<Interface> >::getInstance();
+    }
+    friend InPullFactory& getInPullFactory();
+    friend InPushFactory& getInPushFactory();
+    friend OutFactory& getOutFactory();
+
     typedef rsc::patterns::Factory<std::string, Interface> Factory;
     typedef typename Factory::CreateFunction CreateFunction;
     typedef typename Factory::ImplMapProxy ImplMapProxy;
     typedef std::map<std::string, ConnectorInfo> InfoMap; // forward
 public:
     ConnectorFactory() :
-        logger(rsc::logging::LoggerFactory::getInstance().getLogger("rsb.transport.ConnectorFactory<" + rsc::runtime::typeName<Interface>() + ">")) {
+        logger(rsc::logging::Logger::getLogger("rsb.transport.ConnectorFactory<" + rsc::runtime::typeName<Interface>() + ">")) {
     }
 
     /** Return information regarding the connector implementation
@@ -232,15 +264,31 @@ private:
     }
 };
 
-typedef ConnectorFactory<InPullConnector> InPullFactory;
+template <typename Interface>
+ConnectorFactory<Interface>& ConnectorFactory<Interface>::getInstance() {
 
-typedef ConnectorFactory<InPushConnector> InPushFactory;
+    // This weird implementation is a tribute to backwards compatibility. We
+    // previously had a generic template class but now need to map it to
+    // specific getter implementations depending on the type. However, there
+    // is no chance in C++ to provide template specializations based on a return
+    // type of a method. Therefore, we do the distinction at runtime using.
+    // As all paths of the if-else expression are always possible from the
+    // compiler's point of view, we need to convince it for all paths that for
+    // any template parameter the correct type is returned by doing a harsh
+    // cast. This is unfortunately a bit complicated from a syntactical point of
+    // view to also achieve the correct reference behavior.
 
-typedef ConnectorFactory<OutConnector> OutFactory;
-
-RSB_EXPORT InPullFactory& getInPullFactory();
-RSB_EXPORT InPushFactory& getInPushFactory();
-RSB_EXPORT OutFactory& getOutFactory();
+    if (boost::is_same<Interface, InPullConnector>::value) {
+        return (*(ConnectorFactory<Interface>*) &getInPullFactory());
+    } else if (boost::is_same<Interface, InPushConnector>::value) {
+        return (*(ConnectorFactory<Interface>*) &getInPushFactory());
+    } else if (boost::is_same<Interface, OutConnector>::value) {
+        return (*(ConnectorFactory<Interface>*) &getOutFactory());
+    } else {
+        assert(false);
+        return (*(ConnectorFactory<Interface>*) 0);
+    }
+}
 
 }
 }

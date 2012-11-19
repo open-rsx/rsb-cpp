@@ -52,7 +52,7 @@ namespace rsb {
  *
  * Usage example:
  * @code
- * ReaderPtr reader = Factory::getInstance().createReader(Scope("/example/informer"));
+ * ReaderPtr reader = getFactory().createReader(Scope("/example/informer"));
  * reader->read();
  * @endcode
  *

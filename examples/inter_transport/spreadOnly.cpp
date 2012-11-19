@@ -49,7 +49,7 @@ int main() {
     //
     // The expected output is:
     // "received foo"
-    ListenerPtr listener = Factory::getInstance().createListener(
+    ListenerPtr listener = getFactory().createListener(
             Scope("/tutorial/transports"));
     listener->addHandler(
             HandlerPtr(new DataFunctionHandler<string> (&printEvent)));

@@ -53,7 +53,7 @@ namespace rsb {
  *
  * Usage example:
  * @code
- * Factory::getInstance().createInformer<AnyType>(Scope("/scope"));
+ * getFactory().createInformer<AnyType>(Scope("/scope"));
  * @endcode
  */
 class AnyType {
@@ -84,7 +84,7 @@ struct TypeName<AnyType> {
  *
  * The basic usage pattern is explained with this example code:
  * @code
- * InformerBasePtr informer = Factory::getInstance().createInformerBase(Scope("/example/informer"));
+ * InformerBasePtr informer = getFactory().createInformerBase(Scope("/example/informer"));
  * typename InformerBase::DataPtr<string>::type s(new string("blub"));
  * informer->publish(s);
  * @endcode
@@ -218,7 +218,7 @@ typedef boost::shared_ptr<InformerBase> InformerBasePtr;
  *
  * The basic usage pattern is explained with this example code:
  * @code
- * Informer<string>::Ptr informer = Factory::getInstance().createInformer<string>(Scope("/example/informer"));
+ * Informer<string>::Ptr informer = getFactory().createInformer<string>(Scope("/example/informer"));
  * Informer<string>::DataPtr s(new string("blub"));
  * informer->publish(s);
  * @endcode

@@ -53,13 +53,29 @@
 
 namespace rsb {
 
+class Factory;
+
+/**
+ * Returns a factory for client-level RSB objects.
+ *
+ * @return the factory instance to create client level RSB objects.
+ */
+RSB_EXPORT Factory& getFactory();
+
 /**
  * Factory for RSB user-level domain objects for communication patterns.
  *
  * @author jwienke
  */
-class RSB_EXPORT Factory: public rsc::patterns::Singleton<Factory> {
+class RSB_EXPORT Factory: private rsc::patterns::Singleton<Factory> {
 public:
+
+    /**
+     * @deprecated Singletons will be removed from RSB (see bug 1245). Please
+     *             use #getFactory instead.
+     * @todo Remove this after the 0.8 release.
+     */
+    DEPRECATED(static Factory& getInstance());
 
     virtual ~Factory();
 
@@ -81,7 +97,7 @@ public:
     typename Informer<DataType>::Ptr
     createInformer(const Scope& scope,
                    const ParticipantConfig& config
-                   = Factory::getInstance().getDefaultParticipantConfig(),
+                   = getFactory().getDefaultParticipantConfig(),
                    const std::string& dataType
                    = detail::TypeName<DataType>()()) {
         return typename Informer<DataType>::Ptr(new Informer<DataType> (
@@ -105,7 +121,7 @@ public:
                                        const std::string&       dataType
                                        = "",
                                        const ParticipantConfig& config
-                                       = Factory::getInstance().getDefaultParticipantConfig());
+                                       = getFactory().getDefaultParticipantConfig());
 
     /**
      * Creates a new listener for the specified scope.
@@ -117,7 +133,7 @@ public:
      */
     ListenerPtr createListener(const Scope& scope,
             const ParticipantConfig& config =
-                    Factory::getInstance().getDefaultParticipantConfig());
+                    getFactory().getDefaultParticipantConfig());
 
     /**
      * Creates a new @ref Reader object for the specified scope.
@@ -132,7 +148,7 @@ public:
      **/
     ReaderPtr createReader(const Scope& scope,
                            const ParticipantConfig& config =
-                           Factory::getInstance().getDefaultParticipantConfig());
+                           getFactory().getDefaultParticipantConfig());
 
     /**
      * Creates a Service instance operating on the given scope.
@@ -155,9 +171,9 @@ public:
     patterns::ServerPtr createServer(
             const Scope& scope,
             const ParticipantConfig &listenerConfig =
-                    Factory::getInstance().getDefaultParticipantConfig(),
+                    getFactory().getDefaultParticipantConfig(),
             const ParticipantConfig &informerConfig =
-                    Factory::getInstance().getDefaultParticipantConfig());
+                    getFactory().getDefaultParticipantConfig());
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
@@ -172,9 +188,9 @@ public:
     patterns::RemoteServerPtr createRemoteServer(
             const Scope& scope,
             const ParticipantConfig &listenerConfig =
-                    Factory::getInstance().getDefaultParticipantConfig(),
+                    getFactory().getDefaultParticipantConfig(),
             const ParticipantConfig &informerConfig =
-                    Factory::getInstance().getDefaultParticipantConfig());
+                    getFactory().getDefaultParticipantConfig());
 
     /**
      * Returns the default configuration for new participants.
@@ -198,6 +214,9 @@ private:
      * Singleton constructor.
      */
     Factory();
+
+    static Factory& getInstanceBase();
+    friend Factory& getFactory();
 
     rsc::logging::LoggerPtr logger;
 

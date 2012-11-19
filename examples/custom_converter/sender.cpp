@@ -52,7 +52,7 @@ int main() {
     // Create an Informer object that is parametrized with the
     // data-type SimpleImage.
     Informer<SimpleImage>::Ptr informer =
-            Factory::getInstance().createInformer<SimpleImage> (
+            getFactory().createInformer<SimpleImage> (
                     Scope("/tutorial/converter"));
 
     // Construct and send a SimpleImage object.

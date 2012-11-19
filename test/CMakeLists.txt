@@ -50,7 +50,6 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/EventTest.cpp
                       rsb/EventIdTest.cpp
                       rsb/EventQueuePushHandlerTest.cpp
-                      rsb/FactoryTest.cpp
                       rsb/HandlerTest.cpp
                       rsb/InformerTest.cpp
                       rsb/LocalServiceTest.cpp
@@ -74,6 +73,20 @@ TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
 
 ADD_TEST(${CORE_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${CORE_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
 LIST(APPEND AVAILABLE_TESTS ${CORE_TEST_NAME})
+
+# --- factory test ---
+# needs to be externalized to start with a fresh factory instance
+
+SET(FACTORY_TEST_SOURCES rsb/FactoryTest.cpp)
+
+ADD_EXECUTABLE(${FACTORY_TEST_NAME} ${FACTORY_TEST_SOURCES})
+TARGET_LINK_LIBRARIES(${FACTORY_TEST_NAME}
+                      ${RSB_NAME}
+                      ${Boost_LIBRARIES}
+                      ${GMOCK_LIBRARIES})
+
+ADD_TEST(${FACTORY_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${FACTORY_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+LIST(APPEND AVAILABLE_TESTS ${FACTORY_TEST_NAME})
 
 # --- core death tests ---
 

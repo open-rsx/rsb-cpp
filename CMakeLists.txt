@@ -54,6 +54,7 @@ SET(TOOLS info send)
 
 SET(RSB_TEST_NAME                rsbtest_integration)
 SET(CORE_TEST_NAME               rsbtest_core)
+SET(FACTORY_TEST_NAME            rsbtest_factory)
 SET(SPREADCONNECTOR_TEST_NAME    rsbtest_spread)
 SET(SOCKETCONNECTOR_TEST_NAME    rsbtest_socket)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)

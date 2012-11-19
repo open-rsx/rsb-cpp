@@ -49,7 +49,7 @@ int main() {
 
     // After the converter has been registered, the default
     // configuration used by the Factory includes the converter.
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     return EXIT_SUCCESS;
 }

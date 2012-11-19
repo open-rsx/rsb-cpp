@@ -49,7 +49,7 @@ using namespace boost::posix_time;
 
 int main(void) {
 
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
     unsigned int numMsg;
     string* binDoc = new string();
     string fileLoc;

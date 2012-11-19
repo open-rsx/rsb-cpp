@@ -35,9 +35,9 @@ using namespace rsc::runtime;
 using namespace rsb;
 using namespace rsb::transport;
 
-class TestConnector: public InConnector {
+class TestConnector: public InPullConnector {
 public:
-    static InConnector* create(const Properties&) {
+    static InPullConnector* create(const Properties&) {
         return new TestConnector();
     }
 
@@ -57,11 +57,22 @@ public:
     string getClassName() const {
         return "TestConnector";
     }
+
+    EventPtr raiseEvent(bool /*block*/) {
+        return EventPtr();
+    }
+
 };
 
 TEST(ConnectorFactoryTest, testRegister)
 {
-    ConnectorFactory<InConnector>& factory = ConnectorFactory<InConnector>::getInstance();
+    ConnectorFactory<InPullConnector>& factory = getInPullFactory();
     factory.registerConnector("bla", &TestConnector::create, "bla");
     factory.getConnectorInfo("bla");
+}
+
+TEST(ConnectorFactoryTest, testLegacyInstantiation) {
+    EXPECT_EQ((void*) &getInPullFactory(), (void*) &(InPullFactory::getInstance()));
+    EXPECT_EQ((void*) &getInPushFactory(), (void*) &(InPushFactory::getInstance()));
+    EXPECT_EQ((void*) &getOutFactory(), (void*) &(OutFactory::getInstance()));
 }

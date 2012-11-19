@@ -50,7 +50,7 @@ int main() {
     // Create an informer which has the SimpleImage protocol buffer
     // message as its data type.
     Informer<SimpleImage>::Ptr informer
-        = Factory::getInstance().createInformer<SimpleImage>("/example/converter");
+        = getFactory().createInformer<SimpleImage>("/example/converter");
 
     // Create and publish an instance of SimpleImage. To see the
     // event, you can, for example use the RSB logger utility or the

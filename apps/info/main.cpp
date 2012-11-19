@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
     }
 
     // Initialize everything.
-    rsb::Factory::getInstance();
+    rsb::getFactory();
 
     if (version || verbose) {
         cout << "Version: " << Version::string() << ", build "
@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
     if (configuration || verbose) {
         cout << endl << "Default Configuration" << endl;
 
-        cout << rsb::Factory::getInstance().getDefaultParticipantConfig() << endl;
+        cout << rsb::getFactory().getDefaultParticipantConfig() << endl;
     }
 
     if (eventProcessing || verbose) {

@@ -65,7 +65,7 @@ int main() {
     // connect the printEvent() function using an EventFunctionHandler
     // adapter.
     ListenerPtr listener
-        = Factory::getInstance().createListener(Scope("/example/metadata"));
+        = getFactory().createListener(Scope("/example/metadata"));
     listener->addHandler(HandlerPtr(new EventFunctionHandler(printEvent)));
 
     // Wait here, while the Listener object asynchronously receives

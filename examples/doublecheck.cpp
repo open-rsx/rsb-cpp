@@ -41,7 +41,7 @@ void printData(const std::string& name, boost::shared_ptr<string> e) {
 
 int main(int /*argc*/, char** /*argv*/) {
 
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     for (int i = 0; i < 3; ++i) {
 
