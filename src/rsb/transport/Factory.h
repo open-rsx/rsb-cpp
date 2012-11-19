@@ -38,6 +38,7 @@
 #include "InPullConnector.h"
 #include "InPushConnector.h"
 #include "OutConnector.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
@@ -233,6 +234,10 @@ typedef ConnectorFactory<InPullConnector> InPullFactory;
 typedef ConnectorFactory<InPushConnector> InPushFactory;
 
 typedef ConnectorFactory<OutConnector> OutFactory;
+
+RSB_EXPORT InPullFactory& getInPullFactory();
+RSB_EXPORT InPushFactory& getInPushFactory();
+RSB_EXPORT OutFactory& getOutFactory();
 
 }
 }

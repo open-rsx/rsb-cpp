@@ -107,7 +107,7 @@ EventReceivingStrategyPtr PushInRouteConfigurator::createEventReceivingStrategy(
     Properties options = getReceivingStrategyConfig().getOptions();
     RSCDEBUG(logger, "Instantiating event receiving strategy with config "
              << getReceivingStrategyConfig());
-    return EventReceivingStrategyPtr(EventReceivingStrategyFactory::getInstance().createInst(impl, options));
+    return EventReceivingStrategyPtr(getEventReceivingStrategyFactory().createInst(impl, options));
 }
 
 }

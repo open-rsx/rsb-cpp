@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is part of the RSB project
+ * This file is a part of the rsb-cpp project.
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,21 +24,22 @@
  *
  * ============================================================ */
 
-#pragma once
-
-#include <string>
-
-#include <rsc/patterns/Factory.h>
-
-#include "EventReceivingStrategy.h"
-#include "rsb/rsbexports.h"
+#include "Factory.h"
 
 namespace rsb {
-namespace eventprocessing {
+namespace transport {
 
-typedef rsc::patterns::SingletonFactory<std::string, EventReceivingStrategy> EventReceivingStrategyFactory;
+InPullFactory& getInPullFactory() {
+    return InPullFactory::getInstance();
+}
 
-RSB_EXPORT EventReceivingStrategyFactory& getEventReceivingStrategyFactory();
+InPushFactory& getInPushFactory() {
+    return InPushFactory::getInstance();
+}
+
+OutFactory& getOutFactory() {
+    return OutFactory::getInstance();
+}
 
 }
 }

@@ -128,16 +128,16 @@ int main(int argc, char** argv) {
     if (eventProcessing || verbose) {
         cout << endl << "Event Processing" << endl;
 
-        cout << eventprocessing::EventReceivingStrategyFactory::getInstance() << endl;
-        cout << eventprocessing::EventSendingStrategyFactory::getInstance() << endl;
+        cout << eventprocessing::getEventReceivingStrategyFactory() << endl;
+        cout << eventprocessing::getEventSendingStrategyFactory() << endl;
     }
 
     if (connectors || verbose) {
         cout << endl << "Connectors" << endl;
 
-        cout << rsb::transport::InPullFactory::getInstance() << endl;
-        cout << rsb::transport::InPushFactory::getInstance() << endl;
-        cout << rsb::transport::OutFactory::getInstance() << endl;
+        cout << rsb::transport::getInPullFactory() << endl;
+        cout << rsb::transport::getInPushFactory() << endl;
+        cout << rsb::transport::getOutFactory() << endl;
     }
 
     if (converters || verbose)  {
