@@ -52,10 +52,10 @@ template<class DataType>
 typename Informer<DataType>::Ptr
 createInformer(const Scope& scope,
                const ParticipantConfig& config
-               = Factory::getInstance().getDefaultParticipantConfig(),
+               = getFactory().getDefaultParticipantConfig(),
                const std::string& dataType
                = detail::TypeName<DataType>()()) {
-    return Factory::getInstance().createInformer<DataType>(scope, config, dataType);
+    return getFactory().createInformer<DataType>(scope, config, dataType);
 }
 
 /**
@@ -74,7 +74,7 @@ createInformer(const Scope& scope,
 RSB_EXPORT InformerBasePtr crateInformerBase(const Scope&             scope,
                                              const std::string&       dataType,
                                              const ParticipantConfig& config
-                                             = Factory::getInstance().getDefaultParticipantConfig());
+                                             = getFactory().getDefaultParticipantConfig());
 
 /**
  * Creates and returns a new @ref Listener for the @ref Scope @a
@@ -89,7 +89,7 @@ RSB_EXPORT InformerBasePtr crateInformerBase(const Scope&             scope,
  */
 RSB_EXPORT ListenerPtr createListener(const Scope& scope,
                                       const ParticipantConfig& config
-                                      = Factory::getInstance().getDefaultParticipantConfig());
+                                      = getFactory().getDefaultParticipantConfig());
 
 /**
  * Creates and returns a new @ref Reader object for @ref Scope @a
@@ -107,7 +107,7 @@ RSB_EXPORT ListenerPtr createListener(const Scope& scope,
  **/
 RSB_EXPORT ReaderPtr createReader(const Scope& scope,
                                   const ParticipantConfig& config
-                                  = Factory::getInstance().getDefaultParticipantConfig());
+                                  = getFactory().getDefaultParticipantConfig());
 
 /**
  * Creates and returns a Service instance operating on @ref Scope @a

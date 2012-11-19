@@ -37,25 +37,10 @@ using namespace std;
 using namespace testing;
 using namespace rsb;
 
-/**
- * Test fixture for rsb::Factory.
- *
- * @author jwienke
- */
-class FactoryTest: public ::testing::Test {
-protected:
-
-    virtual void SetUp() {
-        Factory::killInstance();
-    }
-
-};
-
-
-TEST_F(FactoryTest, testDefaultParticipantConfig)
+TEST(FactoryTest, testDefaultParticipantConfig)
 {
 
-    Factory& f = Factory::getInstance();
+    Factory& f = getFactory();
 
     ParticipantConfig config;
     config.addTransport(ParticipantConfig::Transport("foo"));
@@ -66,10 +51,10 @@ TEST_F(FactoryTest, testDefaultParticipantConfig)
 
 }
 
-TEST_F(FactoryTest, testCreateService)
+TEST(FactoryTest, testCreateService)
 {
 
-    Factory& f = Factory::getInstance();
+    Factory& f = getFactory();
 
     Scope scopeA("/a");
     Scope scopeB("/b/with/sub");
@@ -86,4 +71,13 @@ TEST_F(FactoryTest, testCreateService)
     EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sA));
     EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sB));
 
+}
+
+TEST(FactoryTest, testLegacyInstantiation) {
+    EXPECT_EQ((void*) &getFactory(), (void*) &(Factory::getInstance()));
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

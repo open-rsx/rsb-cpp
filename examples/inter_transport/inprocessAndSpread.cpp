@@ -45,11 +45,11 @@ int main() {
     // Adjust default configuration such that the inprocess and spread
     // transports are enabled.
     ParticipantConfig config =
-            Factory::getInstance().getDefaultParticipantConfig();
+            getFactory().getDefaultParticipantConfig();
     ParticipantConfig::Transport inprocess = config.getTransport("inprocess");
     inprocess.setEnabled(true);
     config.addTransport(inprocess);
-    Factory::getInstance().setDefaultParticipantConfig(config);
+    getFactory().setDefaultParticipantConfig(config);
 
     // Setup a listener. This listener uses the modified default
     // configuration above which amounts to one connector for the
@@ -60,7 +60,7 @@ int main() {
     // The expected output is therefore (modulo order of events):
     // "received foo     [via spread]
     //  received foo"    [via inprocess]
-    ListenerPtr listener = Factory::getInstance().createListener(
+    ListenerPtr listener = getFactory().createListener(
             Scope("/tutorial/transports"));
     listener->addHandler(
             HandlerPtr(new DataFunctionHandler<string> (&printEvent)));
@@ -70,7 +70,7 @@ int main() {
     // events via one connector for the inprocess transport and one
     // connector for the spread transport. The spread connector
     // enables participants in other processes to receive the events.
-    Informer<string>::Ptr informer = Factory::getInstance().createInformer<
+    Informer<string>::Ptr informer = getFactory().createInformer<
             string> (Scope("/tutorial/transports"));
 
     boost::shared_ptr<string> data(new string("foo"));

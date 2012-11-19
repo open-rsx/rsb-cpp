@@ -136,11 +136,11 @@ void Server::registerMethod(const std::string& methodName, CallbackPtr callback)
 
     // TODO check that the reply type is convertible
     Informer<AnyType>::Ptr informer =
-            Factory::getInstance().createInformer<AnyType> (scope.concat(Scope(
+            getFactory().createInformer<AnyType> (scope.concat(Scope(
                     "/reply")).concat(Scope("/" + methodName)),
                     informerConfig, "");
 
-    ListenerPtr listener = Factory::getInstance().createListener(scope.concat(
+    ListenerPtr listener = getFactory().createListener(scope.concat(
             Scope("/request")).concat(Scope("/" + methodName)), listenerConfig);
     listener->addHandler(HandlerPtr(new RequestHandler(methodName, callback,
             informer)));

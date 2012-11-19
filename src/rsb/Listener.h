@@ -68,7 +68,7 @@ typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;
  *
  * Usage example:
  * @code
- * ListenerPtr listener = Factory::getInstance().createListener(Scope("/example/informer"));
+ * ListenerPtr listener = getFactory().createListener(Scope("/example/informer"));
  * boost::shared_ptr<MyDataHandler> dh(new MyDataHandler());
  * listener->addHandler(dh);
  * @endcode

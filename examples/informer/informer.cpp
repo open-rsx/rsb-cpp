@@ -37,7 +37,7 @@ int main(void) {
 
     // First get a factory instance that is used to create RSB domain
     // objects.
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     // Create an informer that is capable of sending events containing
     // string data on the scope "/example/informer".

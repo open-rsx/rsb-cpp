@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 
     // First get a factory instance that is used to create RSB
     // objects.
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     // Set up the scope to receive on either from the command line
     // argument or use the default scope of the informer example.

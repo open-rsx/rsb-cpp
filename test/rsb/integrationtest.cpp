@@ -114,8 +114,8 @@ public:
 
 TEST_P(RoundtripTest, testRoundtrip) {
 
-    Factory::killInstance();
-    Factory& factory = Factory::getInstance();
+    //Factory::killInstance();
+    Factory& factory = getFactory();
     ParticipantConfig config;
     ParticipantConfig::Transport transport(GetParam());
     rsc::runtime::Properties p = transport.getOptions();
@@ -214,8 +214,8 @@ protected:
 
         // TODO jwienke: this is possibly error prone because it uses the user's
         //               environment for the configuration
-        Factory::killInstance();
-        Factory& factory = Factory::getInstance();
+        //Factory::killInstance();
+        Factory& factory = getFactory();
         ParticipantConfig config = factory.getDefaultParticipantConfig();
 
 #ifdef RSB_WITH_SPREAD_TRANSPORT
@@ -248,7 +248,7 @@ protected:
 };
 
 TEST_F(InformerTest, testTypeCheck) {
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     boost::shared_ptr<string> payload(new string("foo"));
     {
@@ -281,7 +281,7 @@ TEST_F(InformerTest, testTypeCheck) {
 
     // TODO this requires a transport with conversion but we cannot assume any
     //      we need to create a mock to reenable this test
-//    ParticipantConfig config = Factory::getInstance().getDefaultParticipantConfig();
+//    ParticipantConfig config = getFactory().getDefaultParticipantConfig();
 //    config.mutableTransport("inprocess").setEnabled(false);
 //    config.mutableTransport("spread").setEnabled(true);
 //
@@ -296,7 +296,7 @@ TEST_F(InformerTest, testTypeCheck) {
 }
 
 TEST_F(InformerTest, testScopeCheck) {
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
     Informer<string>::Ptr informer = factory.createInformer<string>(
             Scope("/foo"), ParticipantConfig());
     boost::shared_ptr<string> payload(new string("foo"));
@@ -322,7 +322,7 @@ TEST_F(InformerTest, testScopeCheck) {
 }
 
 TEST_F(InformerTest, testReturnValue) {
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
     const Scope scope("/return/value/test");
     Informer<string>::Ptr informer = factory.createInformer<string>(scope,
             ParticipantConfig());
@@ -347,10 +347,10 @@ TEST_F(InformerTest, testReturnValue) {
 #ifdef RSB_WITH_SPREAD_TRANSPORT
 TEST_F(InformerTest, testConversionException) {
 
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     ParticipantConfig config =
-            Factory::getInstance().getDefaultParticipantConfig();
+            getFactory().getDefaultParticipantConfig();
     config.mutableTransport("inprocess").setEnabled(false);
     config.mutableTransport("spread").setEnabled(true);
 

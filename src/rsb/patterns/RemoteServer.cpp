@@ -139,7 +139,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
         // start a listener to wait for the reply
         const Scope replyScope = scope.concat(Scope("/reply")).concat(
                 Scope("/" + methodName));
-        ListenerPtr listener = Factory::getInstance().createListener(replyScope,
+        ListenerPtr listener = getFactory().createListener(replyScope,
                 listenerConfig);
 
         boost::shared_ptr<WaitingEventHandler> handler(
@@ -147,7 +147,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
         listener->addHandler(handler);
 
         // informer for requests
-        Informer<void>::Ptr informer = Factory::getInstance().createInformer<
+        Informer<void>::Ptr informer = getFactory().createInformer<
                 void>(
                 scope.concat(Scope("/request")).concat(Scope("/" + methodName)),
                 informerConfig, sendType);

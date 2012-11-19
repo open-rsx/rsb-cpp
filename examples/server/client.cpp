@@ -36,7 +36,7 @@ using namespace rsb::patterns;
 int main(int /*argc*/, char** /*argv*/) {
     // Use the RSB factory to create a RemoteServer instance for the
     // server at scope /example/server.
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
     RemoteServerPtr remoteServer
         = factory.createRemoteServer("/example/server");
 

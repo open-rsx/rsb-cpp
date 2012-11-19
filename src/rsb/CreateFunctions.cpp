@@ -33,29 +33,29 @@ namespace rsb {
 InformerBasePtr crateInformerBase(const Scope&             scope,
                                   const string&            dataType,
                                   const ParticipantConfig& config) {
-    return Factory::getInstance().createInformerBase(scope, dataType, config);
+    return getFactory().createInformerBase(scope, dataType, config);
 }
 
 ListenerPtr createListener(const Scope&             scope,
                            const ParticipantConfig& config) {
-    return Factory::getInstance().createListener(scope, config);
+    return getFactory().createListener(scope, config);
 }
 
 ReaderPtr createReader(const Scope&             scope,
                        const ParticipantConfig& config) {
-    return Factory::getInstance().createReader(scope, config);
+    return getFactory().createReader(scope, config);
 }
 
 ServicePtr createService(const Scope& scope) {
-    return Factory::getInstance().createService(scope);
+    return getFactory().createService(scope);
 }
 
 patterns::ServerPtr createServer(const Scope& scope) {
-    return Factory::getInstance().createServer(scope);
+    return getFactory().createServer(scope);
 }
 
 patterns::RemoteServerPtr createRemoteServer(const Scope& scope) {
-    return Factory::getInstance().createRemoteServer(scope);
+    return getFactory().createRemoteServer(scope);
 }
 
 }

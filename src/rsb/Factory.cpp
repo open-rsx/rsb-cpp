@@ -82,6 +82,18 @@ std::map<typename C::value_type::first_type,
 
 namespace rsb {
 
+Factory& Factory::getInstance() {
+    return getFactory();
+}
+
+Factory& getFactory() {
+    return Factory::getInstanceBase();
+}
+
+Factory& Factory::getInstanceBase() {
+    return rsc::patterns::Singleton<Factory>::getInstance();
+}
+
 Factory::Factory() :
     logger(Logger::getLogger("rsb.Factory")) {
 

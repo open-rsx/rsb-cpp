@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
 
     // ---
 
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     Informer<string>::Ptr informer = factory.createInformer<string>(scope);
 

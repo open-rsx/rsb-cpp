@@ -44,7 +44,7 @@ public:
 int main(int /*argc*/, char** /*argv*/) {
     // Use the RSB factory to create a Server instance that provides
     // callable methods under the scope /example/server.
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
     ServerPtr server = factory.createServer("/example/server");
 
     // Register method with name and implementing callback object.

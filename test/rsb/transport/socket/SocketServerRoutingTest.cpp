@@ -47,7 +47,7 @@ using namespace testing;
 
 TEST(SocketServerRoutingTest, testEventRouting) {
 
-    ::rsb::Factory::getInstance();
+    ::rsb::getFactory();
 
     rsb::transport::OutConnectorPtr sender(
             new rsb::transport::socket::OutConnector(

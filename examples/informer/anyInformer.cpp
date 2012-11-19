@@ -44,7 +44,7 @@ using namespace rsb;
 int main(void) {
 
     // first get a factory instance that is used to create RSB domain objects
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     // create an informer that is capable of sending events containing any kind
     // of data on the scope "/example/informer".

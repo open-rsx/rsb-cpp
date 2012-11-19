@@ -51,7 +51,7 @@ int main() {
     // Create an informer which has the SimpleImage protocol buffer
     // message as its data type.
     Informer<SimpleImage>::Ptr informer =
-            Factory::getInstance().createInformer<SimpleImage> (
+            getFactory().createInformer<SimpleImage> (
                     Scope("/tutorial/converter"));
 
     // Create and publish an instance of SimpleImage. To see the

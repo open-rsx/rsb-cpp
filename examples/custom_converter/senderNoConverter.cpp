@@ -40,7 +40,7 @@ using namespace converter_tutorial;
 // no converter is available (or at least not registered).
 int main() {
     Informer<SimpleImage>::Ptr informer =
-            Factory::getInstance().createInformer<SimpleImage> (
+            getFactory().createInformer<SimpleImage> (
                     Scope("/tutorial/converter"));
 
     shared_ptr<SimpleImage> image(new SimpleImage());

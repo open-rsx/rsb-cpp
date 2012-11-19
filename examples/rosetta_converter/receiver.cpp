@@ -70,7 +70,7 @@ int main() {
                                                               data).second));
 
     // Create a listener to receive SimpleImage data.
-    ListenerPtr listener = Factory::getInstance().createListener(Scope("/tutorial/converter"));
+    ListenerPtr listener = getFactory().createListener(Scope("/tutorial/converter"));
     listener->addHandler(HandlerPtr(new DataFunctionHandler<SimpleImage> (&printImage)));
 
     boost::this_thread::sleep(boost::posix_time::seconds(20));

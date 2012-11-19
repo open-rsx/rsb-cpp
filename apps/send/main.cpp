@@ -39,7 +39,7 @@ using namespace rsb;
 
 int main(int argc, char** argv) {
 
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
 
     if (argc != 3) {
         cerr << "Usage: " << argv[0] << " [scope] [file with contents]" << endl;

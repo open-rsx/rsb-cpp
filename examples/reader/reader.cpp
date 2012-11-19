@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 
     // Create a reader which synchronously receives events on the
     // specified scope.
-    Factory& factory = Factory::getInstance();
+    Factory& factory = getFactory();
     ReaderPtr reader = factory.createReader(scope);
 
     // Print events as they are received.

@@ -42,7 +42,7 @@ int main() {
     // Create an Informer object for string data for the channel of
     // this example.
     Informer<string>::Ptr informer
-        = Factory::getInstance().createInformer<string>(Scope("/example/metadata"));
+        = getFactory().createInformer<string>(Scope("/example/metadata"));
 
     // Create and send data in loop.
     while (true) {
