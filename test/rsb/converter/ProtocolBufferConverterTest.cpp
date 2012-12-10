@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of RSB project
+ * This file is a part of the RSB project
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,23 +24,24 @@
  *
  * ============================================================ */
 
-#ifndef RSBEXPORTS_H_
-#define RSBEXPORTS_H_
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include <map>
-#include <string>
+#include "rsb/converter/ProtocolBufferConverter.h"
+#include "rsb/converter/TestMessage.pb.h"
 
-#if defined (_WIN32) 
-    #if defined(@RSB_NAME@_EXPORTS)
-        #define RSB_EXPORT __declspec(dllexport)
-        #define RSB_EXPIMP
-    #else
-        #define RSB_EXPORT __declspec(dllimport)
-        #define RSB_EXPIMP extern
-        #define RSB_IMPORT_TEMPLATES
-    #endif
-#else
-    #define RSB_EXPORT
-#endif
+using namespace std;
+using namespace rsb;
+using namespace rsb::converter;
+using namespace testing;
 
-#endif /* RSBEXPORTS_H_ */
+// This test tests linking errors with subclassing from a template-based class.
+// It is only effective if there is a second file doing exactly the same thing.
+// That's the reason why this file is duplicated in the source tree with
+// slightly different names.
+// For an explanation of the potential linking problems please refer to:
+// http://www.codesynthesis.com/~boris/blog/2010/01/18/dll-export-cxx-templates/
+TEST(ProtocolBufferConverterTest, testWindowsLinking)
+{
+    ProtocolBufferConverter<rsb::converter::TestMessage> converter;
+}
