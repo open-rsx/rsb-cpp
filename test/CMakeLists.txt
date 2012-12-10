@@ -43,6 +43,10 @@ ADD_TEST(${RSB_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${RSB_TEST_NAME} "--gtest_ou
 
 # --- core test ---
 
+PROTOBUF_GENERATE_CPP(TEST_PROTO_SOURCES TEST_PROTO_HEADERS
+                      PROTOFILES   rsb/converter/TestMessage.proto
+                      OUTPATH      ${CMAKE_CURRENT_BINARY_DIR})
+
 SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/EventTest.cpp
                       rsb/EventIdTest.cpp
@@ -59,11 +63,13 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/converter/EventCollectionsConverterTest.cpp
                       rsb/converter/RegexConverterPredicateTest.cpp
                       rsb/converter/PredicateConverterListTest.cpp
+                      rsb/converter/ProtocolBufferConverterLinkingTest.cpp
+                      rsb/converter/ProtocolBufferConverterTest.cpp
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
                       rsb/util/MD5Test.cpp
                       rsb/transport/FactoryTest.cpp)
 
-ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES})
+ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES} ${TEST_PROTO_SOURCES} ${TEST_PROTO_HEADERS})
 TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
                       ${RSB_NAME}
                       ${Boost_LIBRARIES}
