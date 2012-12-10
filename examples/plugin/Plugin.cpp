@@ -24,6 +24,7 @@
  *
  * ============================================================ */
 
+// mark-start::body
 #include <rsc/plugins/Provider.h>
 
 extern "C" {
@@ -37,3 +38,4 @@ extern "C" {
     }
 
 }
+// mark-end::body
