@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of RSB project
+ * This file is a part of the rsb-cpp project.
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,23 +24,27 @@
  *
  * ============================================================ */
 
-#ifndef RSBEXPORTS_H_
-#define RSBEXPORTS_H_
+#pragma once
 
-#include <map>
-#include <string>
+#include "rsb/converter/Converter.h"
 
-#if defined (_WIN32) 
-    #if defined(@RSB_NAME@_EXPORTS)
-        #define RSB_EXPORT __declspec(dllexport)
-        #define RSB_EXPIMP
-    #else
-        #define RSB_EXPORT __declspec(dllimport)
-        #define RSB_EXPIMP extern
-    #endif
-#else
-    #define RSB_EXPORT
-    #define RSB_EXPIMP
-#endif
+/**
+ * This converter is compiled into the unit tests to test windows compilation
+ * issues with the templatized Converter base class.
+ *
+ * @ref https://code.cor-lab.org/issues/1285
+ * @author jwienke
+ */
+class TestConverter: public rsb::converter::Converter<std::string> {
+public:
+    TestConverter();
+    virtual ~TestConverter();
 
-#endif /* RSBEXPORTS_H_ */
+    virtual std::string serialize(const rsb::AnnotatedData& data,
+            std::string& wire);
+
+    virtual rsb::AnnotatedData deserialize(const std::string& wireSchema,
+            const std::string& wire);
+
+};
+

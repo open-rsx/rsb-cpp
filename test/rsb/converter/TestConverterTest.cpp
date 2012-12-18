@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of RSB project
+ * This file is part of the RSB project
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 Johannes Wienke <jwienke@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,23 +24,17 @@
  *
  * ============================================================ */
 
-#ifndef RSBEXPORTS_H_
-#define RSBEXPORTS_H_
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
-#include <map>
-#include <string>
+#include "TestConverter.h"
 
-#if defined (_WIN32) 
-    #if defined(@RSB_NAME@_EXPORTS)
-        #define RSB_EXPORT __declspec(dllexport)
-        #define RSB_EXPIMP
-    #else
-        #define RSB_EXPORT __declspec(dllimport)
-        #define RSB_EXPIMP extern
-    #endif
-#else
-    #define RSB_EXPORT
-    #define RSB_EXPIMP
-#endif
+using namespace std;
+using namespace rsb;
+using namespace rsb::converter;
+using namespace testing;
 
-#endif /* RSBEXPORTS_H_ */
+TEST(TestConverterTest, testCompilation)
+{
+    TestConverter();
+}

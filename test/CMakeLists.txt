@@ -67,6 +67,9 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/converter/PredicateConverterListTest.cpp
                       rsb/converter/ProtocolBufferConverterLinkingTest.cpp
                       rsb/converter/ProtocolBufferConverterTest.cpp
+                      rsb/converter/TestConverter.cpp
+                      rsb/converter/TestConverter.h
+                      rsb/converter/TestConverterTest.cpp
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
                       rsb/util/MD5Test.cpp
                       rsb/transport/FactoryTest.cpp)
