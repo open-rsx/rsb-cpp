@@ -24,8 +24,7 @@
  *
  * ============================================================ */
 
-#ifndef RSBEXPORTS_H_
-#define RSBEXPORTS_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -42,5 +41,3 @@
     #define RSB_EXPORT
     #define RSB_EXPIMP
 #endif
-
-#endif /* RSBEXPORTS_H_ */
