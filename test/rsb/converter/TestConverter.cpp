@@ -1,8 +1,8 @@
 /* ============================================================
  *
- * This file is a part of RSB project
+ * This file is a part of the rsb-cpp project.
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2012 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,23 +24,21 @@
  *
  * ============================================================ */
 
-#ifndef RSBEXPORTS_H_
-#define RSBEXPORTS_H_
+#include "TestConverter.h"
 
-#include <map>
-#include <string>
+TestConverter::TestConverter() :
+        rsb::converter::Converter<std::string>("foo", "bar", true) {
+}
 
-#if defined (_WIN32) 
-    #if defined(@RSB_NAME@_EXPORTS)
-        #define RSB_EXPORT __declspec(dllexport)
-        #define RSB_EXPIMP
-    #else
-        #define RSB_EXPORT __declspec(dllimport)
-        #define RSB_EXPIMP extern
-    #endif
-#else
-    #define RSB_EXPORT
-    #define RSB_EXPIMP
-#endif
+TestConverter::~TestConverter() {
+}
 
-#endif /* RSBEXPORTS_H_ */
+std::string TestConverter::serialize(const rsb::AnnotatedData& /*data*/,
+        std::string& /*wire*/) {
+    return "";
+}
+
+rsb::AnnotatedData TestConverter::deserialize(const std::string& /*wireSchema*/,
+        const std::string& /*wire*/) {
+    return std::make_pair("", boost::shared_ptr<void>());
+}

@@ -146,5 +146,7 @@ private:
     }
 };
 
+RSB_EXPIMP template class RSB_EXPORT Converter<std::string>;
+
 }
 }

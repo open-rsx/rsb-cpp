@@ -35,10 +35,6 @@
 #include "Converter.h"
 #include "rsb/rsbexports.h"
 
-#if defined(RSB_IMPORT_TEMPLATES)
-template class __declspec(dllimport) rsb::converter::Converter<std::string>;
-#endif
-
 namespace rsb {
 namespace converter {
 
