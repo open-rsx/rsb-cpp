@@ -37,10 +37,10 @@
     #else
         #define RSB_EXPORT __declspec(dllimport)
         #define RSB_EXPIMP extern
-        #define RSB_IMPORT_TEMPLATES
     #endif
 #else
     #define RSB_EXPORT
+    #define RSB_EXPIMP
 #endif
 
 #endif /* RSBEXPORTS_H_ */
