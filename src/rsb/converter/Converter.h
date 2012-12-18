@@ -146,7 +146,9 @@ private:
     }
 };
 
+#if defined(_WIN32)
 RSB_EXPIMP template class RSB_EXPORT Converter<std::string>;
+#endif
 
 }
 }
