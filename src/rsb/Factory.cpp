@@ -100,7 +100,7 @@ Factory::Factory() :
     // Configure RSC-based logging.
     {
         rsc::logging::OptionBasedConfigurator configurator;
-        configure(configurator, "rsb.conf", "RSC_");
+        configure(configurator, "rsb.conf", "RSC_", false);
     }
 
     // Register default implementation for all extension points.
