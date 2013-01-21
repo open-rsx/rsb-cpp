@@ -143,7 +143,7 @@ public:
                     throw std::runtime_error(
                             boost::str(
                                     boost::format(
-                                            "Ambiguous converter set for wire-type `%1%' and wire-schema `%2%': candidate data-types are %3%; hint: add a configuration option `transport.<name>.converter.cpp.%2% = <one of %3%>' to resolve the ambiguity.")
+                                            "Ambiguous converter set for wire-type `%1%' and wire-schema `%2%': candidate data-types are %3%; hint: add a configuration option `transport.<name>.converter.cpp.\"%2%\" = <one of %3%>' to resolve the ambiguity.")
                                             % rsc::runtime::typeName<WireType>()
                                             % wireSchema % dataTypes));
                 }
