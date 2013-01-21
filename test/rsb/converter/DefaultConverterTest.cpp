@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -55,12 +56,10 @@ TEST_P(BoolConverterTest, testRoundtrip)
 	BoolConverter c;
 	string wire;
 	bool expected = GetParam();
-	string schema =
-			c.serialize(
-					make_pair(
-							rsc::runtime::typeName<bool>(),
-							boost::shared_ptr<void>(&expected,
-									rsc::misc::NullDeleter())), wire);
+	string schema
+            = c.serialize(make_pair(rsc::runtime::typeName<bool>(),
+                                    boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                          wire);
 	AnnotatedData result = c.deserialize(schema, wire);
 	EXPECT_EQ(expected, *(boost::static_pointer_cast<bool>(result.second)));
 

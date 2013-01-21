@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -38,34 +39,33 @@ namespace converter {
 const string BoolConverter::WIRE_SCHEMA = "bool";
 
 BoolConverter::BoolConverter() :
-	Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(bool)) {
+    Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(bool)) {
 }
 
 BoolConverter::~BoolConverter() {
 }
 
 string BoolConverter::serialize(const AnnotatedData& data, string& wire) {
-	assert(data.first == this->getDataType());
+    assert(data.first == this->getDataType());
 
-	boost::shared_ptr<bool> s = boost::static_pointer_cast<bool>(data.second);
-	if (*s) {
-		wire = "t";
-	} else {
-		wire.clear();
-	}
-	return WIRE_SCHEMA;
+    boost::shared_ptr<bool> s
+        = boost::static_pointer_cast<bool>(data.second);
+    wire.resize(1);
+    wire[0] = ((*s) ? 1 : 0);
+    return WIRE_SCHEMA;
 }
 
 AnnotatedData BoolConverter::deserialize(const std::string& wireSchema,
-		const string& wire) {
-	assert(wireSchema == WIRE_SCHEMA);
+                                         const string& wire) {
+    assert(wireSchema == WIRE_SCHEMA);
 
-	if (wire.empty()) {
-		return make_pair(getDataType(),
-				boost::shared_ptr<bool>(new bool(false)));
-	} else {
-		return make_pair(getDataType(), boost::shared_ptr<bool>(new bool(true)));
-	}
+    if (wire.size() == 1 && wire[0] == 0) {
+        return make_pair(getDataType(), boost::shared_ptr<bool>(new bool(false)));
+    } else if (wire.size() == 1 && wire[0] == 1) {
+        return make_pair(getDataType(), boost::shared_ptr<bool>(new bool(true)));
+    } else {
+        throw runtime_error("Invalid encoding for bool.");
+    }
 }
 
 }
