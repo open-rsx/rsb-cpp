@@ -104,6 +104,9 @@ public:
      * @param time timestamp in microseconds or 0 to use current system time
      */
     void setCreateTime(const boost::uint64_t& time = 0);
+    /**
+     * @param time time in seconds since unix epoche.
+     */
     void setCreateTime(const double& time);
     void setCreateTime(const boost::posix_time::ptime& time);
 
