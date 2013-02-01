@@ -206,15 +206,15 @@ public:
         /**
          * Logs a message using the logging mechanism.
          */
-        LOG,
+        ERROR_STRATEGY_LOG,
         /**
          * Uses stderr for printing a message.
          */
-        PRINT,
+        ERROR_STRATEGY_PRINT,
         /**
          * exits the program.
          */
-        EXIT
+        ERROR_STRATEGY_EXIT
     };
 
     /**

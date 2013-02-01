@@ -46,7 +46,7 @@ PushInRouteConfigurator::PushInRouteConfigurator(const Scope&             scope,
                                                  const ParticipantConfig& config) :
     InRouteConfigurator(scope, config),
     logger(Logger::getLogger("rsb.eventprocessing.PushInRouteConfigurator")),
-    errorStrategy(ParticipantConfig::LOG) {
+    errorStrategy(ParticipantConfig::ERROR_STRATEGY_LOG) {
 }
 
 PushInRouteConfigurator::~PushInRouteConfigurator() {

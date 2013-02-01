@@ -125,7 +125,7 @@ TEST_P(RoundtripTest, testRoundtrip) {
     config.setQualityOfServiceSpec(
             QualityOfServiceSpec(QualityOfServiceSpec::ORDERED,
                     QualityOfServiceSpec::RELIABLE));
-    config.setErrorStrategy(ParticipantConfig::EXIT);
+    config.setErrorStrategy(ParticipantConfig::ERROR_STRATEGY_EXIT);
     factory.setDefaultParticipantConfig(config);
 
     const Scope scope("/blah");

@@ -52,7 +52,7 @@ EventReceivingStrategy* DirectEventReceivingStrategy::create(const Properties& p
 
 DirectEventReceivingStrategy::DirectEventReceivingStrategy(bool singleThreaded) :
     logger(Logger::getLogger("rsb.eventprocessing.DirectEventReceivingStrategy")),
-    errorStrategy(ParticipantConfig::LOG),
+    errorStrategy(ParticipantConfig::ERROR_STRATEGY_LOG),
     singleThreaded(singleThreaded) {
 }
 
@@ -122,13 +122,13 @@ void DirectEventReceivingStrategy::handleDispatchError(const string& message) {
     boost::shared_lock<boost::shared_mutex> strategyLock(errorStrategyMutex);
 
     switch (errorStrategy) {
-    case ParticipantConfig::LOG:
+    case ParticipantConfig::ERROR_STRATEGY_LOG:
         RSCERROR(logger, message);
         break;
-    case ParticipantConfig::PRINT:
+    case ParticipantConfig::ERROR_STRATEGY_PRINT:
         cerr << message << endl;
         break;
-    case ParticipantConfig::EXIT:
+    case ParticipantConfig::ERROR_STRATEGY_EXIT:
         cerr << message << endl;
         exit(1);
         break;

@@ -178,7 +178,7 @@ void ParticipantConfig::EventProcessingStrategy::printContents(ostream& stream) 
 
 ParticipantConfig::ParticipantConfig() :
     logger(Logger::getLogger("rsb.ParticipantConfig")),
-    errorStrategy(LOG),
+    errorStrategy(ERROR_STRATEGY_LOG),
     eventReceivingStrategy("parallel"),
     eventSendingStrategy("direct") {
 }
@@ -315,11 +315,11 @@ void ParticipantConfig::handleOption(const vector<string>& key,
     } else if (key[0] == "errorhandling") {
         if (key[1] == "onhandlererror") {
             if (value == "LOG") {
-                this->errorStrategy = LOG;
+                this->errorStrategy = ERROR_STRATEGY_LOG;
             } else if (value == "PRINT") {
-                this->errorStrategy = PRINT;
+                this->errorStrategy = ERROR_STRATEGY_PRINT;
             } else if (value == "EXIT") {
-                this->errorStrategy = EXIT;
+                this->errorStrategy = ERROR_STRATEGY_EXIT;
             } else {
                 throw invalid_argument(str(format(
                         "The value `%1%' is invalid for the key `%2%'.")
