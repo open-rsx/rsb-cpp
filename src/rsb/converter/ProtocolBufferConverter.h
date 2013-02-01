@@ -38,14 +38,12 @@
 namespace rsb {
 namespace converter {
 
-namespace detail {
-
-RSB_EXPORT std::string typeNameToProtoName(const std::string& type_name);
-
-RSB_EXPORT std::string typeNameToWireSchema(const std::string& type_name);
-
-}
-
+/**
+ * A generic converter for data types based on Protocol Buffer messages.
+ *
+ * @author jmoringe
+ * @tparam ProtocolBuffer type of the protobuf message to be converted
+ */
 template<typename ProtocolBuffer>
 class ProtocolBufferConverter: public Converter<std::string> {
 public:
@@ -58,6 +56,40 @@ public:
 
     AnnotatedData
     deserialize(const std::string& wireType, const std::string& wire);
+
+private:
+
+    std::string typeNameToProtoName(const std::string& type_name) {
+        bool skip = false;
+    #ifdef WIN32
+        if (type_name.size() >= 6 && type_name.substr(0, 6) == "class ") {
+            skip = true;
+        }
+    #endif
+        std::string result = ".";
+        bool colon = false;
+        for (std::string::const_iterator it
+                 = type_name.begin() + (skip ? 6 : 0);
+                 it != type_name.end(); ++it) {
+            // Consume two (hopefully adjacent) ':', emit one '.'
+            if (*it == ':') {
+                if (colon) {
+                    colon = false;
+                } else {
+                    result.push_back('.');
+                    colon = true;
+                }
+            } else {
+                result.push_back(*it);
+            }
+        }
+        return result;
+    }
+
+    std::string typeNameToWireSchema(const std::string& type_name) {
+        return typeNameToProtoName(type_name);
+    }
+
 };
 
 // Implementation
@@ -65,7 +97,7 @@ public:
 template<typename ProtocolBuffer>
 ProtocolBufferConverter<ProtocolBuffer>::ProtocolBufferConverter() :
     Converter<std::string> (rsc::runtime::typeName<ProtocolBuffer>(),
-                            detail::typeNameToWireSchema(rsc::runtime::typeName<
+                            typeNameToWireSchema(rsc::runtime::typeName<
                                                          ProtocolBuffer>())) {
 }
 

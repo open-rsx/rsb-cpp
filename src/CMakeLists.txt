@@ -51,7 +51,6 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/Converter.cpp
             rsb/converter/EventsByScopeMapConverter.cpp
             rsb/converter/EventIdConverter.cpp
-            rsb/converter/ProtocolBufferConverter.cpp
             rsb/converter/Repository.cpp
             rsb/converter/RegexConverterPredicate.cpp
             rsb/converter/SchemaAndByteArrayConverter.cpp
