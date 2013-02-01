@@ -196,11 +196,11 @@ TEST(ParallelEventReceivingStrategyTest, testHandlerErrorStrategyException)
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
-    processor.setHandlerErrorStrategy(ParticipantConfig::LOG);
+    processor.setHandlerErrorStrategy(ParticipantConfig::ERROR_STRATEGY_LOG);
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
-    processor.setHandlerErrorStrategy(ParticipantConfig::PRINT);
+    processor.setHandlerErrorStrategy(ParticipantConfig::ERROR_STRATEGY_PRINT);
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
@@ -221,11 +221,11 @@ TEST(ParallelEventReceivingStrategyTest, testHandlerErrorStrategyCatchAll)
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
-    processor.setHandlerErrorStrategy(ParticipantConfig::LOG);
+    processor.setHandlerErrorStrategy(ParticipantConfig::ERROR_STRATEGY_LOG);
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
-    processor.setHandlerErrorStrategy(ParticipantConfig::PRINT);
+    processor.setHandlerErrorStrategy(ParticipantConfig::ERROR_STRATEGY_PRINT);
     processor.handle(event);
     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 

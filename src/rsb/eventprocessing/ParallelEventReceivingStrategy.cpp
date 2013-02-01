@@ -54,7 +54,7 @@ ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(unsigned int numT
     pool(numThreads,
          boost::bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
          boost::bind(&ParallelEventReceivingStrategy::filter, this, _1, _2)),
-    errorStrategy(ParticipantConfig::LOG) {
+    errorStrategy(ParticipantConfig::ERROR_STRATEGY_LOG) {
     pool.start();
 }
 
@@ -129,14 +129,14 @@ void ParallelEventReceivingStrategy::handleDispatchError(const string& message) 
 
     recursive_mutex::scoped_lock strategyLock(errorStrategyMutex);
     switch (errorStrategy) {
-    case ParticipantConfig::LOG:
+    case ParticipantConfig::ERROR_STRATEGY_LOG:
         RSCERROR(logger, message)
         ;
         break;
-    case ParticipantConfig::PRINT:
+    case ParticipantConfig::ERROR_STRATEGY_PRINT:
         cerr << message << endl;
         break;
-    case ParticipantConfig::EXIT:
+    case ParticipantConfig::ERROR_STRATEGY_EXIT:
         cerr << message << endl;
         exit(1);
         break;

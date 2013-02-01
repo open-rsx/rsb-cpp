@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
     ParallelEventReceivingStrategy processor(1);
     rsb::HandlerPtr exceptionHandler(new ErrorGeneratingHandler(catchAll));
     processor.addHandler(exceptionHandler, true);
-    processor.setHandlerErrorStrategy(ParticipantConfig::EXIT);
+    processor.setHandlerErrorStrategy(ParticipantConfig::ERROR_STRATEGY_EXIT);
 
     EventPtr event(new Event);
     event->setData(boost::shared_ptr<string>(new string("hello")));

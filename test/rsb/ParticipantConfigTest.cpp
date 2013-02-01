@@ -80,7 +80,7 @@ TEST(ParticipantConfigTest, testCreation)
     ParticipantConfig config;
     EXPECT_TRUE(config.getTransports().empty());
     EXPECT_EQ(QualityOfServiceSpec(), config.getQualityOfServiceSpec());
-    EXPECT_EQ(ParticipantConfig::LOG, config.getErrorStrategy());
+    EXPECT_EQ(ParticipantConfig::ERROR_STRATEGY_LOG, config.getErrorStrategy());
 
 }
 
@@ -177,7 +177,7 @@ TEST(ParticipantConfigTest, testFromFile)
     EXPECT_EQ(config.getQualityOfServiceSpec().getOrdering(),
             QualityOfServiceSpec::UNORDERED);
 
-    EXPECT_EQ(config.getErrorStrategy(), ParticipantConfig::EXIT);
+    EXPECT_EQ(config.getErrorStrategy(), ParticipantConfig::ERROR_STRATEGY_EXIT);
 
 #ifdef RSB_WITH_SPREAD_TRANSPORT
     ParticipantConfig::Transport spread = config.getTransport("spread");
@@ -201,7 +201,7 @@ TEST(ParticipantConfigTest, testErrorStrategy)
 {
 
     ParticipantConfig config;
-    const ParticipantConfig::ErrorStrategy strategy = ParticipantConfig::EXIT;
+    const ParticipantConfig::ErrorStrategy strategy = ParticipantConfig::ERROR_STRATEGY_EXIT;
     config.setErrorStrategy(strategy);
     EXPECT_EQ(strategy, config.getErrorStrategy());
 
