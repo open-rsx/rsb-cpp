@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,6 +24,7 @@
  *
  * ============================================================ */
 
+// mark-start::body
 #pragma once
 
 namespace converter_tutorial {
@@ -35,3 +36,4 @@ struct SimpleImage {
 };
 
 }
+// mark-end::body
