@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -31,28 +32,30 @@
 #include <boost/shared_ptr.hpp>
 
 #include "Converter.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace converter {
 
 /**
- * Converter for uint64 types.
+ * Converter for the uint64 type.
  *
  * @author jwienke
+ * @author jmoringe
  */
 class RSB_EXPORT Uint64Converter: public Converter<std::string> {
 public:
-	Uint64Converter();
-	virtual ~Uint64Converter();
+    Uint64Converter();
+    virtual ~Uint64Converter();
 
-	std::string serialize(const AnnotatedData& data, std::string& wire);
-	AnnotatedData deserialize(const std::string& wireSchema,
-			const std::string& wire);
+    std::string serialize(const AnnotatedData& data, std::string& wire);
+    AnnotatedData deserialize(const std::string& wireSchema,
+                              const std::string& wire);
 
 private:
 
-	static const std::string WIRE_SCHEMA;
+    static const std::string WIRE_SCHEMA;
 
 };
 

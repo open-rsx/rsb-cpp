@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- *               2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -27,10 +27,7 @@
 
 #include "Uint64Converter.h"
 
-#include <sstream>
-
 #include <boost/cstdint.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include "SerializationException.h"
 
@@ -44,7 +41,7 @@ namespace converter {
 const string Uint64Converter::WIRE_SCHEMA = "uint64";
 
 Uint64Converter::Uint64Converter() :
-	Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(uint64_t)) {
+    Converter<string> (WIRE_SCHEMA, RSB_TYPE_TAG(uint64_t)) {
 }
 
 Uint64Converter::~Uint64Converter() {
