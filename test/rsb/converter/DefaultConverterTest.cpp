@@ -43,8 +43,10 @@
 #include "rsb/converter/VoidConverter.h"
 
 using namespace std;
+
 using namespace rsb;
 using namespace rsb::converter;
+
 using namespace testing;
 
 class BoolConverterTest: public ::testing::TestWithParam<bool> {
@@ -53,21 +55,20 @@ class BoolConverterTest: public ::testing::TestWithParam<bool> {
 TEST_P(BoolConverterTest, testRoundtrip)
 {
 
-	BoolConverter c;
-	string wire;
-	bool expected = GetParam();
-	string schema
-            = c.serialize(make_pair(rsc::runtime::typeName<bool>(),
-                                    boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
-                          wire);
-	AnnotatedData result = c.deserialize(schema, wire);
-	EXPECT_EQ(expected, *(boost::static_pointer_cast<bool>(result.second)));
+    BoolConverter c;
+    string wire;
+    bool expected = GetParam();
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<bool>(),
+                                boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(expected, *(boost::static_pointer_cast<bool>(result.second)));
 
 }
 
 INSTANTIATE_TEST_CASE_P(DefaultConverterTest, BoolConverterTest,
-		::testing::Bool())
-;
+                        ::testing::Bool());
 
 class StringConverterTest: public ::testing::TestWithParam<string> {
 };
@@ -75,23 +76,20 @@ class StringConverterTest: public ::testing::TestWithParam<string> {
 TEST_P(StringConverterTest, testRoundtrip)
 {
 
-	StringConverter c;
-	string wire;
-	string expected = GetParam();
-	string schema =
-			c.serialize(
-					make_pair(
-							rsc::runtime::typeName<string>(),
-							boost::shared_ptr<void>(&expected,
-									rsc::misc::NullDeleter())), wire);
-	AnnotatedData result = c.deserialize(schema, wire);
-	EXPECT_EQ(expected, *(boost::static_pointer_cast<string>(result.second)));
+    StringConverter c;
+    string wire;
+    string expected = GetParam();
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<string>(),
+                                boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(expected, *(boost::static_pointer_cast<string>(result.second)));
 
 }
 
 INSTANTIATE_TEST_CASE_P(DefaultConverterTest, StringConverterTest,
-		::testing::Values("", "hello", " with space   inside ", "    %&$%&§$ſŧ←ðħſ"))
-;
+                        ::testing::Values("", "hello", " with space   inside ", "    %&$%&§$ſŧ←ðħſ"));
 
 class Uint64ConverterTest: public ::testing::TestWithParam<boost::uint64_t> {
 };
@@ -99,34 +97,31 @@ class Uint64ConverterTest: public ::testing::TestWithParam<boost::uint64_t> {
 TEST_P(Uint64ConverterTest, testRoundtrip)
 {
 
-	Uint64Converter c;
-	string wire;
-	boost::uint64_t expected = GetParam();
-	string schema =
-			c.serialize(
-					make_pair(
-							rsc::runtime::typeName<boost::uint64_t>(),
-							boost::shared_ptr<void>(&expected,
-									rsc::misc::NullDeleter())), wire);
-	AnnotatedData result = c.deserialize(schema, wire);
-	EXPECT_EQ(expected, *(boost::static_pointer_cast<boost::uint64_t>(result.second)));
+    Uint64Converter c;
+    string wire;
+    boost::uint64_t expected = GetParam();
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<boost::uint64_t>(),
+                                boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(expected, *(boost::static_pointer_cast<boost::uint64_t>(result.second)));
 
 }
 
 INSTANTIATE_TEST_CASE_P(DefaultConverterTest, Uint64ConverterTest,
-		::testing::Values<boost::uint64_t>(0, 1, 12342423439))
-;
+                        ::testing::Values<boost::uint64_t>(0, 1, 12342423439));
 
 TEST(VoidConverterTest, testRoundtrip)
 {
 
-	VoidConverter c;
-	string wire;
-	string schema =
-			c.serialize(
-					make_pair(rsc::runtime::typeName<void>(),
-							boost::shared_ptr<void>()), wire);
-	AnnotatedData result = c.deserialize(schema, wire);
-	EXPECT_EQ(rsc::runtime::typeName<void>(), result.first);
+    VoidConverter c;
+    string wire;
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<void>(),
+                                boost::shared_ptr<void>()),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(rsc::runtime::typeName<void>(), result.first);
 
 }
