@@ -6,5 +6,5 @@ Name: Robotics Systems Bus
 Description: Fully event-driven Robotics Systems Bus
 Version: @RSB_VERSION@
 Requires: rsc@VERSION_SUFFIX@
-Libs: -L${libdir} -l@RSB_NAME@.@SO_VERSION@
-Cflags: -I${includedir} @RSB_PROTOCOL_CFLAGS@
+Libs: ${libdir}/@CMAKE_SHARED_LIBRARY_PREFIX@@RSB_NAME@@CMAKE_SHARED_LIBRARY_SUFFIX@.@SO_VERSION@ @PKG_CONFIG_LIB_DEPS@
+Cflags: -I${includedir} @RSB_PROTOCOL_CFLAGS@ @PKG_CONFIG_INCLUDE_DEPS@

@@ -81,6 +81,7 @@ OPTION(BUILD_EXAMPLES "Decide if the examples shall be built or not" ON)
 OPTION(BUILD_SPREAD_TRANSPORT "Decide if the spread transport shall be built or not" ON)
 OPTION(BUILD_SOCKET_TRANSPORT "Decide if the socket transport shall be built or not" ON)
 OPTION(EXPORT_TO_CMAKE_PACKAGE_REGISTRY "If set to ON, RSB will be exported to the CMake user package registry so that downstream projects automatically find the workspace location in find_package calls." OFF)
+OPTION(EXPORT_BOOST_DEPENDENCY_TO_PKGCONFIG "Decide if boost dependencies are explicitly exported in the pkg-config file" ON)
 
 # --- dependency handling ---
 
@@ -202,6 +203,16 @@ ELSE()
 ENDIF()
 
 # --- pkgconfig file ---
+
+set(PKG_CONFIG_LIB_DEPS "")
+set(PKG_CONFIG_INCLUDE_DEPS "")
+if(EXPORT_BOOST_DEPENDENCY_TO_PKGCONFIG)
+    # Boost
+    list(APPEND PKG_CONFIG_LIB_DEPS " -L${Boost_LIBRARY_DIRS} -lboost_system ")
+    list(APPEND PKG_CONFIG_LIB_DEPS "${Boost_LIBRARIES}")
+    list(APPEND PKG_CONFIG_INCLUDE_DEPS "-I${Boost_INCLUDE_DIR}")
+endif()
+string (REPLACE ";" " " PKG_CONFIG_LIB_DEPS "${PKG_CONFIG_LIB_DEPS}")
 
 CONFIGURE_FILE(rsb.pc.in rsb.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rsb.pc
