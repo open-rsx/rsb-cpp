@@ -34,6 +34,7 @@
 #include "EventsByScopeMapConverter.h"
 #include "EventIdConverter.h"
 #include "StringConverter.h"
+#include "Uint32Converter.h"
 #include "Uint64Converter.h"
 #include "VoidConverter.h"
 
@@ -57,6 +58,8 @@ void registerDefaultConverters() {
                 Converter<std::string>::Ptr(new EventIdConverter));
         converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new StringConverter));
+        converterRepository<string>()->registerConverter(
+                Converter<std::string>::Ptr(new Uint32Converter));
         converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new Uint64Converter));
         converterRepository<string>()->registerConverter(
