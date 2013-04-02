@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -32,6 +32,7 @@
 #include <boost/program_options.hpp>
 
 #include <rsc/Version.h>
+#include <rsc/plugins/Manager.h>
 
 #include <rsb/Version.h>
 #include <rsb/Factory.h>
@@ -55,6 +56,7 @@ bool configuration   = false;
 bool eventProcessing = false;
 bool connectors      = false;
 bool converters      = false;
+bool plugins         = false;
 
 options_description options("Allowed options");
 
@@ -81,6 +83,9 @@ bool handleCommandline(int argc, char *argv[]) {
         ("converters",
          bool_switch(&converters),
          "Display available converters?")
+        ("plugins",
+         bool_switch(&plugins),
+         "Display available plugins?")
         ;
 
     variables_map map;
@@ -153,6 +158,21 @@ int main(int argc, char** argv) {
         cout << *rsb::converter::converterRepository<string>() << endl;
     }
 
+    if (plugins || verbose) {
+        cout << endl << "Plugins" << endl;
+
+        rsc::plugins::Manager& manager
+            = rsc::plugins::Manager::getInstance();
+        cout << "  Search path: " << manager.getPath() << endl;
+        cout << "  Available plugins: " << endl;
+        std::set<rsc::plugins::PluginPtr> plugins = manager.getPlugins();
+        
+        for (std::set<rsc::plugins::PluginPtr>::const_iterator it
+                 = plugins.begin(); it != plugins.end(); ++it) {
+            cout << "  * " << (*it)->getName() << endl;
+        }
+    }
+    
     return EXIT_SUCCESS;
 
 }
