@@ -3,7 +3,7 @@
  * This file is a part of the RSB project.
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -100,7 +100,7 @@ Factory::Factory() :
     // Configure RSC-based logging.
     {
         rsc::logging::OptionBasedConfigurator configurator;
-        configure(configurator, "rsb.conf", "RSC_", false);
+        configure(configurator, "rsb.conf", "RSC_", 0, 0, false);
     }
 
     // Register default implementation for all extension points.
@@ -132,7 +132,7 @@ Factory::Factory() :
         }
         defaultPath.push_back(Version::libdir() / versioned / "plugins");
         rsc::plugins::Configurator configurator(defaultPath);
-        configure(configurator, "rsb.conf", "RSB_");
+        configure(configurator, "rsb.conf", "RSB_", 0, 0, true);
     }
 
     // Setup default participant config
@@ -180,7 +180,7 @@ Factory::Factory() :
 
     // Merge with user configuration (configuration files, environment
     // variables)
-    configure(this->defaultConfig, "rsb.conf", "RSB_");
+    configure(this->defaultConfig, "rsb.conf", "RSB_", 0, 0, true);
 
     // Issue a warning if the combination of available transport
     // implementations and user configuration leads to no enabled
