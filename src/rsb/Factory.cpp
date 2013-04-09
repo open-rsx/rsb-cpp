@@ -100,7 +100,7 @@ Factory::Factory() :
     // Configure RSC-based logging.
     {
         rsc::logging::OptionBasedConfigurator configurator;
-        configure(configurator, "rsb.conf", "RSC_", 0, 0, false);
+        configure(configurator, "rsb.conf", "RSC_", 0, 0, false, Version::installPrefix());
     }
 
     // Register default implementation for all extension points.
@@ -132,7 +132,7 @@ Factory::Factory() :
         }
         defaultPath.push_back(Version::libdir() / versioned / "plugins");
         rsc::plugins::Configurator configurator(defaultPath);
-        configure(configurator, "rsb.conf", "RSB_", 0, 0, true);
+        configure(configurator, "rsb.conf", "RSB_", 0, 0, true, Version::installPrefix());
     }
 
     // Setup default participant config
@@ -180,7 +180,7 @@ Factory::Factory() :
 
     // Merge with user configuration (configuration files, environment
     // variables)
-    configure(this->defaultConfig, "rsb.conf", "RSB_", 0, 0, true);
+    configure(this->defaultConfig, "rsb.conf", "RSB_", 0, 0, true, Version::installPrefix());
 
     // Issue a warning if the combination of available transport
     // implementations and user configuration leads to no enabled

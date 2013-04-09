@@ -60,6 +60,7 @@ public:
 
     static std::string buildString();
 
+    static boost::filesystem::path installPrefix();
     static boost::filesystem::path libdir();
 private:
     Version();

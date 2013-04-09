@@ -72,6 +72,10 @@ string Version::buildString() {
     return ss.str();
 }
 
+boost::filesystem::path Version::installPrefix() {
+    return "@CMAKE_INSTALL_PREFIX@";
+}
+
 boost::filesystem::path Version::libdir() {
     return "@CMAKE_INSTALL_PREFIX@/lib";
 }
