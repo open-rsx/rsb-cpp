@@ -3,6 +3,7 @@
 	<name>rsb-cpp</name>
 	<comment></comment>
 	<projects>
+		<project>rsc</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -36,7 +37,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc}/${ProjName}/build</value>
+					<value>${ProjDirPath}/build-${git_branch}</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
