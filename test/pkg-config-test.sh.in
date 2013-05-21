@@ -6,12 +6,12 @@ set -e
 
 # Folder for installation
 TESTBINDIR=$(mktemp -d)
-#trap "rm -rf $TESTBINDIR" 0 INT QUIT ABRT PIPE TERM
+trap "rm -rf $TESTBINDIR" 0 INT QUIT ABRT PIPE TERM
 
 # Folder to build and execute test binary
 TESTINSTALLDIR=$(mktemp -d)
 TESTINSTALLPREFIX=$(echo $TESTINSTALLDIR@CMAKE_INSTALL_PREFIX@/)
-#trap "rm -rf $TESTINSTALLDIR" 0 INT QUIT ABRT PIPE TERM
+trap "rm -rf $TESTINSTALLDIR" 0 INT QUIT ABRT PIPE TERM
 
 echo "Install prefix is $(echo $TESTINSTALLPREFIX)"
 
@@ -30,8 +30,11 @@ cp @CMAKE_SOURCE_DIR@/examples/informer/informer.cpp $TESTBINDIR
 
 RESULTFILE=@TEST_RESULT_DIR@/@PKGCONFIG_TEST_NAME@.xml
 
+# Builds example based on pkgconfig and execute it
+# Writes results as JUnit XML 
 echo "[----------]"
 echo "[ BUILD    ]"
+export LD_LIBRARY_PATH=$TESTINSTALLPREFIX/lib
 export PKG_CONFIG_PATH=$TESTINSTALLPREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
 if g++ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@);
 then
@@ -39,8 +42,8 @@ echo "[       OK ]"
 else
 cat <<EOF > $RESULTFILE
 <testsuite>
-    <testcase classname="rsbtest_pkgconfig" name="rsbtest_pkgconfig">
-        <failure type="compile"> compilation of example failed </failure>
+    <testcase classname="PkgConfigTest" name="Build" />
+        <failure type="build"> build of example failed </failure>
     </testcase>
 </testsuite>
 EOF
@@ -53,14 +56,14 @@ then
 echo "[       OK ]"
 cat <<EOF > $RESULTFILE
 <testsuite>
-    <testcase classname="@PKGCONFIG_TEST_NAME@" name="@PKGCONFIG_TEST_NAME@" />
+    <testcase classname="PkgConfigTest" name="Execution" />
 </testsuite>
 EOF
 echo "[----------]"
 else
 cat <<EOF > $RESULTFILE
 <testsuite>
-    <testcase classname="@PKGCONFIG_TEST_NAME@" name="@PKGCONFIG_TEST_NAME@">
+    <testcase classname="PkgConfigTest" name="Execution">
         <failure type="execute"> execution of example failed </failure>
     </testcase>
 </testsuite>
