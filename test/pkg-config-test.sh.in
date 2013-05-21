@@ -6,12 +6,12 @@ set -e
 
 # Folder for installation
 TESTBINDIR=$(mktemp -d)
-trap "rm -rf $TESTBINDIR" 0 INT QUIT ABRT PIPE TERM
+#trap "rm -rf $TESTBINDIR" 0 INT QUIT ABRT PIPE TERM
 
 # Folder to build and execute test binary
 TESTINSTALLDIR=$(mktemp -d)
 TESTINSTALLPREFIX=$(echo $TESTINSTALLDIR@CMAKE_INSTALL_PREFIX@/)
-trap "rm -rf $TESTINSTALLDIR" 0 INT QUIT ABRT PIPE TERM
+#trap "rm -rf $TESTINSTALLDIR" 0 INT QUIT ABRT PIPE TERM
 
 echo "Install prefix is $(echo $TESTINSTALLPREFIX)"
 
@@ -28,14 +28,42 @@ mv tmp.pc $PKGCONFIGFILE
 cd $TESTBINDIR
 cp @CMAKE_SOURCE_DIR@/examples/informer/informer.cpp $TESTBINDIR
 
+RESULTFILE=@TEST_RESULT_DIR@/@PKGCONFIG_TEST_NAME@.xml
+
 echo "[----------]"
 echo "[ BUILD    ]"
 export PKG_CONFIG_PATH=$TESTINSTALLPREFIX/lib/pkgconfig
-g++ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@)
+if g++ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@);
+then
 echo "[       OK ]"
-
+else
+cat <<EOF > $RESULTFILE
+<testsuite>
+    <testcase classname="rsbtest_pkgconfig" name="rsbtest_pkgconfig">
+        <failure type="compile"> compilation of example failed </failure>
+    </testcase>
+</testsuite>
+EOF
+exit 0;
+fi
 echo "[ RUN      ]"
 [ -x informer ]
-./informer
+if ./informer;
+then
 echo "[       OK ]"
+cat <<EOF > $RESULTFILE
+<testsuite>
+    <testcase classname="@PKGCONFIG_TEST_NAME@" name="@PKGCONFIG_TEST_NAME@" />
+</testsuite>
+EOF
 echo "[----------]"
+else
+cat <<EOF > $RESULTFILE
+<testsuite>
+    <testcase classname="@PKGCONFIG_TEST_NAME@" name="@PKGCONFIG_TEST_NAME@">
+        <failure type="execute"> execution of example failed </failure>
+    </testcase>
+</testsuite>
+EOF
+exit 0;
+fi
