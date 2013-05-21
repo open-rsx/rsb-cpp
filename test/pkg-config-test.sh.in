@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Pkgconfig files of the dependencies have to be in the PKG_CONFIG_PATH
+
+set -e
+
+# Folder for installation
+TESTBINDIR=$(mktemp -d)
+trap "rm -rf $TESTBINDIR" 0 INT QUIT ABRT PIPE TERM
+
+# Folder to build and execute test binary
+TESTINSTALLDIR=$(mktemp -d)
+TESTINSTALLPREFIX=$(echo $TESTINSTALLDIR@CMAKE_INSTALL_PREFIX@/)
+trap "rm -rf $TESTINSTALLDIR" 0 INT QUIT ABRT PIPE TERM
+
+echo "Install prefix is $(echo $TESTINSTALLPREFIX)"
+
+# Install this project
+cd @CMAKE_SOURCE_DIR@/build
+make install DESTDIR=$TESTINSTALLDIR
+
+# Update pkg-config prefix
+PKGCONFIGFILE=$TESTINSTALLPREFIX/lib/pkgconfig/@RSB_NAME@@VERSION_SUFFIX@.pc
+sed 's#prefix=.*#prefix='$TESTINSTALLPREFIX'#' $PKGCONFIGFILE > tmp.pc
+mv tmp.pc $PKGCONFIGFILE
+
+# Generate, build and execute test binary
+cd $TESTBINDIR
+cp @CMAKE_SOURCE_DIR@/examples/informer/informer.cpp $TESTBINDIR
+
+echo "[----------]"
+echo "[ BUILD    ]"
+export PKG_CONFIG_PATH=$TESTINSTALLPREFIX/lib/pkgconfig
+g++ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@)
+echo "[       OK ]"
+
+echo "[ RUN      ]"
+[ -x informer ]
+./informer
+echo "[       OK ]"
+echo "[----------]"

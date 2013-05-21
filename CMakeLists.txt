@@ -58,6 +58,7 @@ SET(FACTORY_TEST_NAME            rsbtest_factory)
 SET(SPREADCONNECTOR_TEST_NAME    rsbtest_spread)
 SET(SOCKETCONNECTOR_TEST_NAME    rsbtest_socket)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
+SET(PKGCONFIG_TEST_NAME          rsbtest_pkgconfig)
 
 SET(OUTPUT_PATH            "${CMAKE_BINARY_DIR}/build")
 SET(ARCHIVE_OUTPUT_PATH    ${OUTPUT_PATH})

@@ -180,6 +180,13 @@ IF(WITH_SOCKET_TRANSPORT)
 
 ENDIF()
 
+
+# --- pkg-config test ---
+IF(UNIX)
+    configure_file(pkg-config-test.sh.in ${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh)
+    add_test(${PKGCONFIG_TEST_NAME} "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
+ENDIF()
+
 # --- windows cleanup ---
 
 IF(WIN32)
