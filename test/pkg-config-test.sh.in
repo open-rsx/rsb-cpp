@@ -32,7 +32,7 @@ RESULTFILE=@TEST_RESULT_DIR@/@PKGCONFIG_TEST_NAME@.xml
 
 echo "[----------]"
 echo "[ BUILD    ]"
-export PKG_CONFIG_PATH=$TESTINSTALLPREFIX/lib/pkgconfig
+export PKG_CONFIG_PATH=$TESTINSTALLPREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
 if g++ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@);
 then
 echo "[       OK ]"
@@ -44,7 +44,7 @@ cat <<EOF > $RESULTFILE
     </testcase>
 </testsuite>
 EOF
-exit 0;
+exit
 fi
 echo "[ RUN      ]"
 [ -x informer ]
@@ -65,5 +65,5 @@ cat <<EOF > $RESULTFILE
     </testcase>
 </testsuite>
 EOF
-exit 0;
+exit
 fi
