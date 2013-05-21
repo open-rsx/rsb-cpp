@@ -41,8 +41,9 @@ then
 echo "[       OK ]"
 else
 cat <<EOF > $RESULTFILE
+<?xml version="1.0" encoding="UTF-8"?>
 <testsuite>
-    <testcase classname="PkgConfigTest" name="Build" />
+    <testcase classname="PkgConfigTest" name="Build">
         <failure type="build"> build of example failed </failure>
     </testcase>
 </testsuite>
@@ -55,6 +56,7 @@ if ./informer;
 then
 echo "[       OK ]"
 cat <<EOF > $RESULTFILE
+<?xml version="1.0" encoding="UTF-8"?>
 <testsuite>
     <testcase classname="PkgConfigTest" name="Execution" />
 </testsuite>
@@ -62,6 +64,7 @@ EOF
 echo "[----------]"
 else
 cat <<EOF > $RESULTFILE
+<?xml version="1.0" encoding="UTF-8"?>
 <testsuite>
     <testcase classname="PkgConfigTest" name="Execution">
         <failure type="execute"> execution of example failed </failure>
