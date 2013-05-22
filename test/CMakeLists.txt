@@ -183,8 +183,8 @@ ENDIF()
 
 # --- pkg-config test ---
 IF(UNIX)
-    configure_file(pkg-config-test.sh.in ${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh)
-    add_test(${PKGCONFIG_TEST_NAME} "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
+    CONFIGURE_FILE(pkg-config-test.sh.in "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
+    ADD_TEST(${PKGCONFIG_TEST_NAME} "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
 ENDIF()
 
 # --- windows cleanup ---
