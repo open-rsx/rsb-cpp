@@ -5,11 +5,11 @@
 set -e
 
 # Folder for installation
-TESTBINDIR=$(mktemp -d)
+TESTBINDIR=$(mktemp -d /tmp/tmp.XXXXXXXXXXXX)
 trap "rm -rf $TESTBINDIR" 0 INT QUIT ABRT PIPE TERM
 
 # Folder to build and execute test binary
-TESTINSTALLDIR=$(mktemp -d)
+TESTINSTALLDIR=$(mktemp -d /tmp/tmp.XXXXXXXXXXXX)
 TESTINSTALLPREFIX=$(echo $TESTINSTALLDIR@CMAKE_INSTALL_PREFIX@/)
 trap "rm -rf $TESTINSTALLDIR" 0 INT QUIT ABRT PIPE TERM
 
