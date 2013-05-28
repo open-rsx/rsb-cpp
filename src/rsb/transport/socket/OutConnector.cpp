@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -49,7 +49,7 @@ transport::OutConnector* OutConnector::create(const Properties& args) {
                             args.get<string>                       ("host",       DEFAULT_HOST),
                             args.getAs<unsigned int>               ("port",       DEFAULT_PORT),
                             args.getAs<Server>                     ("server",     SERVER_AUTO),
-                            args.getAs<bool>                       ("tcpnodelay", false));
+                            args.getAs<bool>                       ("tcpnodelay", true));
 }
 
 OutConnector::OutConnector(ConverterSelectionStrategyPtr  converters,
