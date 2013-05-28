@@ -264,7 +264,7 @@ INSTALL(EXPORT      RSBDepends
 
 # --- documentation generation ---
 
-GENERATE_DOXYGEN(VERSION "${RSB_VERSION}")
+GENERATE_DOXYGEN(VERSION "${RSB_VERSION}" INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/${INSTALL_PATH_PREFIX}")
 
 # --- coverage report ---
 
