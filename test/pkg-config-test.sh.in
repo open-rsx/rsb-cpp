@@ -34,7 +34,8 @@ RESULTFILE=@TEST_RESULT_DIR@/@PKGCONFIG_TEST_NAME@.xml
 # Writes results as JUnit XML 
 echo "[----------]"
 echo "[ BUILD    ]"
-export LD_LIBRARY_PATH=$TESTINSTALLPREFIX/lib
+export LD_LIBRARY_PATH=$TESTINSTALLPREFIX/lib:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$TESTINSTALLPREFIX/lib:$DYLD_LIBRARY_PATH
 export PKG_CONFIG_PATH=$TESTINSTALLPREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
 if g++ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@);
 then
