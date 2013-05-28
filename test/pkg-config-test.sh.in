@@ -16,7 +16,7 @@ trap "rm -rf $TESTINSTALLDIR" 0 INT QUIT ABRT PIPE TERM
 echo "Install prefix is $(echo $TESTINSTALLPREFIX)"
 
 # Install this project
-cd @CMAKE_SOURCE_DIR@/build
+cd @CMAKE_BINARY_DIR@
 make install DESTDIR=$TESTINSTALLDIR
 
 # Update pkg-config prefix
