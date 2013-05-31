@@ -53,12 +53,12 @@ Server::CallbackBase::CallbackBase(const string& requestType,
     : requestType(requestType), replyType(replyType) {
 }
 
-string Server::CallbackBase::getRequestType() const {
-    return requestType;
+const string& Server::CallbackBase::getRequestType() const {
+    return this->requestType;
 }
 
-string Server::CallbackBase::getReplyType() const {
-    return replyType;
+const string& Server::CallbackBase::getReplyType() const {
+    return this->replyType;
 }
 
 class RequestHandler: public Handler {

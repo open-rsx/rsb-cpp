@@ -64,7 +64,7 @@ public:
 
         virtual ~IntlCallback();
 
-        virtual std::string getRequestType() const = 0;
+        virtual const std::string& getRequestType() const = 0;
 
         virtual AnnotatedData
                 intlCall(const std::string& methodName,
@@ -79,8 +79,8 @@ public:
      */
     class RSB_EXPORT CallbackBase : public IntlCallback {
     public:
-        virtual std::string getRequestType() const;
-        virtual std::string getReplyType() const;
+        virtual const std::string& getRequestType() const;
+        virtual const std::string& getReplyType() const;
     protected:
         CallbackBase(const std::string& requestType,
                      const std::string& replyType);
