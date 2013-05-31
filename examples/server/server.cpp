@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -41,6 +41,12 @@ public:
     }
 };
 
+class VoidVoidCallback: public Server::Callback<void, void> {
+    void call(const std::string& /*methodName*/) {
+        std::cout << "void-void method called" << std::endl;
+    }
+};
+
 int main(int /*argc*/, char** /*argv*/) {
     // Use the RSB factory to create a Server instance that provides
     // callable methods under the scope /example/server.
@@ -49,6 +55,7 @@ int main(int /*argc*/, char** /*argv*/) {
 
     // Register method with name and implementing callback object.
     server->registerMethod("echo", Server::CallbackPtr(new EchoCallback()));
+    server->registerMethod("void", Server::CallbackPtr(new VoidVoidCallback()));
 
     // Wait here so incoming method calls can be processed.
     boost::this_thread::sleep(boost::posix_time::seconds(1000));

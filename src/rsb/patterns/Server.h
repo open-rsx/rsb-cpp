@@ -3,6 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -249,6 +250,43 @@ private:
     std::set<ListenerPtr> requestListeners;
 
     std::map<std::string, Informer<AnyType>::Ptr> methods;
+
+};
+
+// Since this is a complete specialization of Server::Callback, it
+// cannot be declared inline in Server like the partial
+// specializations (see C++03, §14.7.3/2:).
+
+/**
+ * A callback which does not take a request and does not produce a
+ * result.
+ *
+ * @author jmoringe.
+ */
+template<>
+class RSB_EXPORT Server::Callback<void, void>: public Server::CallbackBase {
+ public:
+    // typeid is due to msvc strangeness
+    Callback() :
+        Server::CallbackBase(rsc::runtime::typeName(typeid(void)),
+                             rsc::runtime::typeName(typeid(void))) {
+    }
+
+    /**
+     * Implement this method to perform actions.
+     *
+     * @param methodName called method
+     * @throw std::exception all exceptions based on this type are
+     *                       automatically caught and delivered to the
+     *                       remote server
+     */
+    virtual void call(const std::string& methodName) = 0;
+ private:
+    AnnotatedData intlCall(const std::string& methodName,
+                           boost::shared_ptr<void> /*input*/) {
+        call(methodName);
+        return std::make_pair(getReplyType(), boost::shared_ptr<void>());
+    }
 
 };
 

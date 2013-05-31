@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -48,6 +48,8 @@ int main(int /*argc*/, char** /*argv*/) {
     boost::shared_ptr<std::string> result
         = remoteServer->call<std::string>("echo", request);
     std::cout << "Server replied: " << *result << std::endl;
+
+    remoteServer->call<void>("void");
 
     return EXIT_SUCCESS;
 }
