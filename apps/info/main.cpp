@@ -161,11 +161,11 @@ int main(int argc, char** argv) {
     if (plugins || verbose) {
         cout << endl << "Plugins" << endl;
 
-        rsc::plugins::Manager& manager
-            = rsc::plugins::Manager::getInstance();
-        cout << "  Search path: " << manager.getPath() << endl;
+        rsc::plugins::ManagerPtr manager
+            = getFactory().getPluginManager();
+        cout << "  Search path: " << manager->getPath() << endl;
         cout << "  Available plugins: " << endl;
-        std::set<rsc::plugins::PluginPtr> plugins = manager.getPlugins();
+        std::set<rsc::plugins::PluginPtr> plugins = manager->getPlugins();
         
         for (std::set<rsc::plugins::PluginPtr>::const_iterator it
                  = plugins.begin(); it != plugins.end(); ++it) {

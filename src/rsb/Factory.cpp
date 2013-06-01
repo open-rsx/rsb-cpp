@@ -95,7 +95,8 @@ Factory& Factory::getInstanceBase() {
 }
 
 Factory::Factory() :
-    logger(Logger::getLogger("rsb.Factory")) {
+    logger(Logger::getLogger("rsb.Factory")),
+    pluginManager(new rsc::plugins::Manager()) {
 
     // Configure RSC-based logging.
     {
@@ -131,7 +132,7 @@ Factory::Factory() :
                     << e.what());
         }
         defaultPath.push_back(Version::libdir() / versioned / "plugins");
-        rsc::plugins::Configurator configurator(defaultPath);
+        rsc::plugins::Configurator configurator(pluginManager, defaultPath);
         configure(configurator, "rsb.conf", "RSB_", 0, 0, true, Version::installPrefix());
     }
 
@@ -325,6 +326,10 @@ Factory::createOutConnectors(const ParticipantConfig& config) {
         connectors.push_back(OutConnectorPtr(getOutFactory().createInst(transportIt->getName(), options)));
     }
     return connectors;
+}
+
+rsc::plugins::ManagerPtr Factory::getPluginManager() const {
+    return this->pluginManager;
 }
 
 }

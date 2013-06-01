@@ -36,6 +36,7 @@
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/patterns/Singleton.h>
 #include <rsc/config/OptionHandler.h>
+#include <rsc/plugins/Manager.h>
 
 #include "rsb/rsbexports.h"
 
@@ -207,6 +208,13 @@ public:
      */
     void setDefaultParticipantConfig(const ParticipantConfig& config);
 
+    /**
+     * Returns the plugin manager instance used by the RSB core.
+     *
+     * @return plugin manager instance
+     */
+    rsc::plugins::ManagerPtr getPluginManager() const;
+
     friend class rsc::patterns::Singleton<Factory>;
 
 private:
@@ -219,6 +227,8 @@ private:
     friend Factory& getFactory();
 
     rsc::logging::LoggerPtr logger;
+
+    rsc::plugins::ManagerPtr pluginManager;
 
     /**
      * Always acquire configMutex before reading or writing the config.
