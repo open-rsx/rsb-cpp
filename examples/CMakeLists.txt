@@ -35,10 +35,10 @@ EXAMPLE(simple-image-sender
 EXAMPLE(simple-image-sender-no-converter
         custom_converter/senderNoConverter.cpp)
 
-EXAMPLE(inter-transport-inprocess-and-spread
-        inter_transport/inprocessAndSpread.cpp)
-EXAMPLE(inter-transport-spread-only
-        inter_transport/spreadOnly.cpp)
+EXAMPLE(inter-transport-inprocess-and-socket
+        inter_transport/inprocess-and-socket.cpp)
+EXAMPLE(inter-transport-socket-only
+        inter_transport/socket-only.cpp)
 
 EXAMPLE(simple-image-pb-sender
         protobuf_converter/sender.cpp

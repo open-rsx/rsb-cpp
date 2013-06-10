@@ -55,7 +55,6 @@ SET(TOOLS info send)
 SET(RSB_TEST_NAME                rsbtest_integration)
 SET(CORE_TEST_NAME               rsbtest_core)
 SET(FACTORY_TEST_NAME            rsbtest_factory)
-SET(SPREADCONNECTOR_TEST_NAME    rsbtest_spread)
 SET(SOCKETCONNECTOR_TEST_NAME    rsbtest_socket)
 SET(INPROCESSCONNECTOR_TEST_NAME rsbtest_inprocess)
 SET(PKGCONFIG_TEST_NAME          rsbtest_pkgconfig)
@@ -79,7 +78,6 @@ ENDIF()
 
 OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
 OPTION(BUILD_EXAMPLES "Decide if the examples shall be built or not" ON)
-OPTION(BUILD_SPREAD_TRANSPORT "Decide if the spread transport shall be built or not" ON)
 OPTION(BUILD_SOCKET_TRANSPORT "Decide if the socket transport shall be built or not" ON)
 OPTION(EXPORT_TO_CMAKE_PACKAGE_REGISTRY "If set to ON, RSB will be exported to the CMake user package registry so that downstream projects automatically find the workspace location in find_package calls." OFF)
 OPTION(EXPORT_BOOST_DEPENDENCY_TO_PKGCONFIG "Decide if boost dependencies are explicitly exported in the pkg-config file" ON)
@@ -110,30 +108,10 @@ ENDIF()
 SET(RSB_PROTOCOL_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.8")
 FIND_PACKAGE(RSBProtocol ${RSB_PROTOCOL_VERSION} REQUIRED)
 
-SET(SPREAD_IGNORE_EXECUTABLE TRUE)
-IF(BUILD_SPREAD_TRANSPORT)
-    FIND_PACKAGE(Spread 4.0)
-ENDIF()
-IF(NOT SPREAD_EXECUTABLE)
-    MESSAGE(STATUS "Spread executable not found. Unit tests will not be built!")
-ENDIF()
-
 # --- based on the dependencies, find out what to really build ---
 
-SET(WITH_SPREAD_TRANSPORT FALSE)
-IF(BUILD_SPREAD_TRANSPORT AND SPREAD_FOUND)
-    SET(WITH_SPREAD_TRANSPORT TRUE)
-ENDIF()
 SET(WITH_SOCKET_TRANSPORT ${BUILD_SOCKET_TRANSPORT})
 
-IF(WITH_SPREAD_TRANSPORT)
-    MESSAGE(STATUS "Enabled spread transport")
-    ADD_DEFINITIONS(-DRSB_WITH_SPREAD_TRANSPORT=)
-ELSE()
-    MESSAGE(STATUS "Disabled spread transport")
-    SET(SPREAD_INCLUDE_DIRS "")
-    SET(SPREAD_LIBRARIES "")
-ENDIF()
 IF(WITH_SOCKET_TRANSPORT)
     MESSAGE(STATUS "Enabled socket transport")
     ADD_DEFINITIONS(-DRSB_WITH_SOCKET_TRANSPORT=)
@@ -146,8 +124,7 @@ INCLUDE_DIRECTORIES(BEFORE SYSTEM ${LIBS_INCLUDE_DIRS}
                                   ${Boost_INCLUDE_DIRS}
                                   ${BOOSTTHREADPOOL_INCLUDE_DIRS}
                                   ${BOOSTUUID_INCLUDE_DIRS}
-                                  ${PROTOBUF_INCLUDE_DIRS}
-                                  ${SPREAD_INCLUDE_DIRS})
+                                  ${PROTOBUF_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(BEFORE src "${CMAKE_BINARY_DIR}/src")
 LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
@@ -270,7 +247,6 @@ GENERATE_DOXYGEN(VERSION "${RSB_VERSION}" INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/s
 
 ENABLE_COVERAGE_REPORT(TARGETS ${RSB_NAME}
                        TESTS ${RSB_TEST_NAME} ${CORE_TEST_NAME}
-                             ${SPREADCONNECTOR_TEST_NAME}
                              ${SOCKETCONNECTOR_TEST_NAME}
                              ${INPROCESSCONNECTOR_TEST_NAME}
                        FILTER "*coverage/*" "*/test*")

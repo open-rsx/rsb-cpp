@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -34,12 +34,6 @@
 #include "inprocess/InPushConnector.h"
 #include "inprocess/OutConnector.h"
 
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-#include "spread/InPushConnector.h"
-#include "spread/InPullConnector.h"
-#include "spread/OutConnector.h"
-#endif
-
 #ifdef RSB_WITH_SOCKET_TRANSPORT
 #include "socket/InPushConnector.h"
 #include "socket/InPullConnector.h"
@@ -64,15 +58,6 @@ void registerDefaultTransports() {
     }
     registered = true;
 
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-
-    // Verify that the version of the library that we linked against
-    // is compatible with the version of the headers we compiled
-    // against.
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-#endif
-
     // In-direction, push-style connectors
     {
         InPushFactory& factory = getInPushFactory();
@@ -80,20 +65,6 @@ void registerDefaultTransports() {
                                   &inprocess::InPushConnector::create,
                                   "inprocess",
                                   false);
-
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-        {
-            set<string> options;
-            options.insert("host");
-            options.insert("port");
-
-            factory.registerConnector("spread",
-                                      &spread::InPushConnector::create,
-                                      "spread",
-                                      true,
-                                      options);
-        }
-#endif
 
 #ifdef RSB_WITH_SOCKET_TRANSPORT
         {
@@ -122,20 +93,6 @@ void registerDefaultTransports() {
                                   "inprocess",
                                   false);
 
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-        {
-            set<string> options;
-            options.insert("host");
-            options.insert("port");
-
-            factory.registerConnector("spread",
-                                      &spread::InPullConnector::create,
-                                      "spread",
-                                      true,
-                                      options);
-        }
-#endif
-
 #ifdef RSB_WITH_SOCKET_TRANSPORT
         {
             set<string> options;
@@ -161,21 +118,6 @@ void registerDefaultTransports() {
                                   &inprocess::OutConnector::create,
                                   "inprocess",
                                   false);
-
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-        {
-            set<string> options;
-            options.insert("host");
-            options.insert("port");
-            options.insert("maxfragmentsize");
-
-            factory.registerConnector("spread",
-                                      &spread::OutConnector::create,
-                                      "spread",
-                                      true,
-                                      options);
-        }
-#endif
 
 #ifdef RSB_WITH_SOCKET_TRANSPORT
         {

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -42,7 +42,7 @@ void printEvent(boost::shared_ptr<string> data) {
 }
 
 int main() {
-    // Adjust default configuration such that the inprocess and spread
+    // Adjust default configuration such that the inprocess and socket
     // transports are enabled.
     ParticipantConfig config =
             getFactory().getDefaultParticipantConfig();
@@ -53,25 +53,25 @@ int main() {
 
     // Setup a listener. This listener uses the modified default
     // configuration above which amounts to one connector for the
-    // inprocess transport and one connector for the spread
+    // inprocess transport and one connector for the socket
     // transport. These connectors cause the listener to receive all
     // events which are sent by the informer below twice.
     //
     // The expected output is therefore (modulo order of events):
-    // "received foo     [via spread]
+    // "received foo     [via socket]
     //  received foo"    [via inprocess]
-    ListenerPtr listener = getFactory().createListener(
-            Scope("/tutorial/transports"));
+    ListenerPtr listener
+        = getFactory().createListener(Scope("/tutorial/transports"));
     listener->addHandler(
             HandlerPtr(new DataFunctionHandler<string> (&printEvent)));
 
     // Setup an informer. This informer uses the same modified default
     // configuration as the listener above. It therefore broadcasts
     // events via one connector for the inprocess transport and one
-    // connector for the spread transport. The spread connector
+    // connector for the socket transport. The socket connector
     // enables participants in other processes to receive the events.
-    Informer<string>::Ptr informer = getFactory().createInformer<
-            string> (Scope("/tutorial/transports"));
+    Informer<string>::Ptr informer
+        = getFactory().createInformer<string>(Scope("/tutorial/transports"));
 
     boost::shared_ptr<string> data(new string("foo"));
     informer->publish(data);

@@ -205,31 +205,6 @@ SET(HEADERS rsb/CommException.h
 
             ${PROTO_HEADERS})
 
-IF(WITH_SPREAD_TRANSPORT)
-    LIST(APPEND SOURCES rsb/transport/spread/InPushConnector.cpp
-                        rsb/transport/spread/InPullConnector.cpp
-                        rsb/transport/spread/OutConnector.cpp
-                        rsb/transport/spread/MessageHandler.cpp
-                        rsb/transport/spread/ReceiverTask.cpp
-                        rsb/transport/spread/MembershipManager.cpp
-                        rsb/transport/spread/SpreadConnection.cpp
-                        rsb/transport/spread/SpreadConnector.cpp
-                        rsb/transport/spread/SpreadGroup.cpp
-                        rsb/transport/spread/SpreadMessage.cpp
-                        rsb/transport/spread/Assembly.cpp)
-    LIST(APPEND HEADERS rsb/transport/spread/InPushConnector.h
-                        rsb/transport/spread/InPullConnector.h
-                        rsb/transport/spread/OutConnector.h
-                        rsb/transport/spread/MessageHandler.h
-                        rsb/transport/spread/ReceiverTask.h
-                        rsb/transport/spread/MembershipManager.h
-                        rsb/transport/spread/SpreadConnection.h
-                        rsb/transport/spread/SpreadConnector.h
-                        rsb/transport/spread/SpreadGroup.h
-                        rsb/transport/spread/SpreadMessage.h
-                        rsb/transport/spread/Assembly.h)
-ENDIF()
-
 IF(WITH_SOCKET_TRANSPORT)
     LIST(APPEND SOURCES rsb/transport/socket/Types.cpp
                         rsb/transport/socket/BusConnection.cpp
@@ -262,8 +237,7 @@ ELSE()
 ENDIF()
 
 ADD_LIBRARY(${RSB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
-TARGET_LINK_LIBRARIES(${RSB_NAME} ${SPREAD_LIBRARIES}
-                                  ${PROTOBUF_LIBRARIES}
+TARGET_LINK_LIBRARIES(${RSB_NAME} ${PROTOBUF_LIBRARIES}
                                   ${RSC_LIBRARIES}
                                   ${Boost_LIBRARIES}
                                   ${CMAKE_THREAD_LIBS_INIT})

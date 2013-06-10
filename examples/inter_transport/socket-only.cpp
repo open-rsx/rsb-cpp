@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -43,14 +43,14 @@ void printEvent(boost::shared_ptr<string> data) {
 
 int main() {
     // Setup a listener. This listener uses the default configuration
-    // which usually amounts to a sole connector for the spread
+    // which usually amounts to a sole connector for the socket
     // transport. This connector enables the listener to receive
-    // events send by the inprocessAndSpread program.
+    // events send by the inprocess-and-spread program.
     //
     // The expected output is:
     // "received foo"
-    ListenerPtr listener = getFactory().createListener(
-            Scope("/tutorial/transports"));
+    ListenerPtr listener
+        = getFactory().createListener(Scope("/tutorial/transports"));
     listener->addHandler(
             HandlerPtr(new DataFunctionHandler<string> (&printEvent)));
 

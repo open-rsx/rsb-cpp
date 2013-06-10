@@ -7,12 +7,12 @@ ordering = UNORDERED
 [errorhandling]
 onhandlererror = EXIT
 
-[transport.spread]
+[transport.socket]
 host    = localhost
-port    = 4803
+port    = 55555
 enabled = 1
 
-[transport.spread.converter.cpp]
+[transport.socket.converter.cpp]
 image = IplImage # wireSchema = dataType
 
 [transport.inprocess]

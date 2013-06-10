@@ -119,7 +119,7 @@ TEST_P(RoundtripTest, testRoundtrip) {
     ParticipantConfig config;
     ParticipantConfig::Transport transport(GetParam());
     rsc::runtime::Properties p = transport.getOptions();
-    p.set<string>("port", lexical_cast<string>(SPREAD_PORT));
+    p.set<string>("port", lexical_cast<string>(SOCKET_PORT));
     transport.setOptions(p);
     config.addTransport(transport);
     config.setQualityOfServiceSpec(
@@ -200,10 +200,6 @@ TEST_P(RoundtripTest, testRoundtrip) {
 
 INSTANTIATE_TEST_CASE_P(InprocessTransport, RoundtripTest,
         ::testing::Values(string("inprocess")));
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-    INSTANTIATE_TEST_CASE_P(SpreadTransport, RoundtripTest,
-            ::testing::Values(string("spread")));
-#endif
 
 // ------ informer test ------
 
@@ -217,14 +213,6 @@ protected:
         //Factory::killInstance();
         Factory& factory = getFactory();
         ParticipantConfig config = factory.getDefaultParticipantConfig();
-
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-        {
-            ParticipantConfig::Transport& spreadTransport = config.mutableTransport("spread");
-            rsc::runtime::Properties& p = spreadTransport.mutableOptions();
-            p.set<string>("port", lexical_cast<string>(SPREAD_PORT));
-        }
-#endif
 
 #ifdef RSB_WITH_SOCKET_TRANSPORT
         {
@@ -283,7 +271,7 @@ TEST_F(InformerTest, testTypeCheck) {
     //      we need to create a mock to reenable this test
 //    ParticipantConfig config = getFactory().getDefaultParticipantConfig();
 //    config.mutableTransport("inprocess").setEnabled(false);
-//    config.mutableTransport("spread").setEnabled(true);
+//    config.mutableTransport("socket").setEnabled(true);
 //
 //    {
 //        Informer<AnyType>::Ptr informer = factory.createInformer<AnyType>(
@@ -344,7 +332,7 @@ TEST_F(InformerTest, testReturnValue) {
 
 // TODO jwienke: I am not sure whether this should be tested all the time using
 //               a mock transport?
-#ifdef RSB_WITH_SPREAD_TRANSPORT
+#ifdef RSB_WITH_SOCKET_TRANSPORT
 TEST_F(InformerTest, testConversionException) {
 
     Factory& factory = getFactory();
@@ -352,7 +340,7 @@ TEST_F(InformerTest, testConversionException) {
     ParticipantConfig config =
             getFactory().getDefaultParticipantConfig();
     config.mutableTransport("inprocess").setEnabled(false);
-    config.mutableTransport("spread").setEnabled(true);
+    config.mutableTransport("socket").setEnabled(true);
 
     const Scope scope("/damn/strange/scope");
     Informer<string>::Ptr informer = factory.createInformer<string>(scope,
@@ -377,10 +365,6 @@ int main(int argc, char* argv[]) {
     srand(time(NULL));
 
     setupLogging();
-
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-    AddGlobalTestEnvironment(new SpreadEnvironment);
-#endif
 
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();

@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -179,14 +179,14 @@ TEST(ParticipantConfigTest, testFromFile)
 
     EXPECT_EQ(config.getErrorStrategy(), ParticipantConfig::ERROR_STRATEGY_EXIT);
 
-#ifdef RSB_WITH_SPREAD_TRANSPORT
-    ParticipantConfig::Transport spread = config.getTransport("spread");
-    EXPECT_EQ(spread.getOptions().get<string>("host"), "localhost");
-    EXPECT_EQ(spread.getOptions().getAs<unsigned int>("port"), 4803u);
+#ifdef RSB_WITH_SOCKET_TRANSPORT
+    ParticipantConfig::Transport socket = config.getTransport("socket");
+    EXPECT_EQ(socket.getOptions().get<string>("host"), "localhost");
+    EXPECT_EQ(socket.getOptions().getAs<unsigned int>("port"), 55555u);
 
-    EXPECT_EQ(spread.getConverters().size(), 1u);
-    EXPECT_EQ(spread.getConverters().begin()->first, "image");
-    EXPECT_EQ(spread.getConverters().begin()->second, "IplImage");
+    EXPECT_EQ(socket.getConverters().size(), 1u);
+    EXPECT_EQ(socket.getConverters().begin()->first, "image");
+    EXPECT_EQ(socket.getConverters().begin()->second, "IplImage");
 #endif
 
     for (unsigned int i = 3; i <= 6; ++i) {
