@@ -157,7 +157,7 @@ public:
     DataFuture<O> callAsync(const std::string& methodName) {
         EventPtr request(new Event());
         request->setType(rsc::runtime::typeName<void>());
-        request->setData(VoidPtr(malloc(10)));
+        request->setData(VoidPtr());
         return DataFuture<O>(callAsync(methodName, request));
     }
 
@@ -258,6 +258,25 @@ private:
     MethodSet getMethodSet(const std::string& methodName,
                            const std::string& sendType);
 
+};
+
+template <>
+class RemoteServer::DataFuture<void> {
+public:
+    DataFuture(FuturePtr target):
+        target(target) {
+    }
+
+    bool isDone() {
+        return this->target->isDone();
+    }
+
+    boost::shared_ptr<void> get(double timeout) {
+        this->target->get(timeout)->getData();
+        return boost::shared_ptr<void>();
+    }
+private:
+    FuturePtr target;
 };
 
 typedef boost::shared_ptr<RemoteServer> RemoteServerPtr;
