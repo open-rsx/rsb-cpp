@@ -152,6 +152,23 @@ IF(WITH_SOCKET_TRANSPORT)
 
 ENDIF()
 
+# --- toplevel catch test ---
+
+
+IF(WITH_SOCKET_TRANSPORT)
+
+    SET(TOPLEVEL_CATCH_TEST_SOURCES rsbtest_toplevel_catch)
+    ADD_EXECUTABLE(${TOPLEVEL_CATCH_TEST_NAME} ${TOPLEVEL_CATCH_TEST_SOURCES})
+    TARGET_LINK_LIBRARIES(${TOPLEVEL_CATCH_TEST_NAME}
+                          ${RSB_NAME}
+                          ${Boost_LIBRARIES}
+                          ${GMOCK_LIBRARIES})
+
+    ADD_TEST(${TOPLEVEL_CATCH_TEST_NAME}
+             ${EXECUTABLE_OUTPUT_PATH}/${TOPLEVEL_CATCH_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+    LIST(APPEND AVAILABLE_TESTS ${TOPLEVEL_CATCH_TEST_NAME})
+
+ENDIF()
 
 # --- pkg-config test ---
 IF(UNIX)
