@@ -41,6 +41,7 @@
 #include "rsb/converter/StringConverter.h"
 #include "rsb/converter/Uint32Converter.h"
 #include "rsb/converter/Uint64Converter.h"
+#include "rsb/converter/Int64Converter.h"
 #include "rsb/converter/VoidConverter.h"
 
 using namespace std;
@@ -112,6 +113,27 @@ TEST_P(Uint64ConverterTest, testRoundtrip)
 
 INSTANTIATE_TEST_CASE_P(DefaultConverterTest, Uint64ConverterTest,
                         ::testing::Values<boost::uint64_t>(0, 1, 12342423439));
+
+class Int64ConverterTest: public ::testing::TestWithParam<boost::int64_t> {
+};
+
+TEST_P(Int64ConverterTest, testRoundtrip)
+{
+
+    Int64Converter c;
+    string wire;
+    boost::int64_t expected = GetParam();
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<boost::int64_t>(),
+                                boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(expected, *(boost::static_pointer_cast<boost::int64_t>(result.second)));
+
+}
+
+INSTANTIATE_TEST_CASE_P(DefaultConverterTest, Int64ConverterTest,
+                        ::testing::Values<boost::int64_t>(0, 1, 12342423439, -1, -12342423439));
 
 class Uint32ConverterTest: public ::testing::TestWithParam<boost::uint32_t> {
 };
