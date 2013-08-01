@@ -51,7 +51,7 @@ BusConnection::BusConnection(BusPtr    bus,
                              bool      client,
                              bool      tcpNoDelay) :
     logger(Logger::getLogger("rsb.transport.socket.BusConnection")),
-    socket(socket), bus(bus), disconnecting(false) {
+    socket(socket), bus(bus), disconnecting(false), activeShutdown(false) {
 
     // Enable TCPNODELAY socket option to trade decreased throughput
     // for reduced latency.
@@ -74,19 +74,33 @@ BusConnection::BusConnection(BusPtr    bus,
 }
 
 BusConnection::~BusConnection() {
-    performSafeCleanup("destructor");
+    // only a safety measure. Usually we will not be destructed as long as
+    // receiving is running.
+    performSafeCleanup("destruction");
+}
+
+void BusConnection::shutdown() {
+    RSCINFO(logger, "Shutting down");
+
+    boost::recursive_mutex::scoped_lock lock(this->mutex);
+    this->activeShutdown = true;
+
+    if (this->socket && this->socket->is_open()) {
+        this->socket->shutdown(ip::tcp::socket::shutdown_send);
+    }
+
 }
 
 void BusConnection::disconnect() {
     RSCINFO(logger, "Disconnecting");
+
+    boost::recursive_mutex::scoped_lock lock(this->mutex);
     this->disconnecting = true;
 
     if (this->socket && this->socket->is_open()) {
-        this->socket->shutdown(ip::tcp::socket::shutdown_send);
-        this->socket->shutdown(ip::tcp::socket::shutdown_receive);
-        RSCINFO(logger, "Closing");
         this->socket->close();
     }
+
 }
 
 void BusConnection::startReceiving() {
@@ -95,6 +109,8 @@ void BusConnection::startReceiving() {
 
 void BusConnection::sendEvent(EventPtr      event,
                               const string& wireSchema) {
+
+
     // Convert the event into a notification object and serialize the
     // notification object.
     // The payload already is a byte-array, since it has been
@@ -111,9 +127,19 @@ void BusConnection::sendEvent(EventPtr      event,
     this->lengthSendBuffer[2] = (length & 0x00ff0000ul) >> 16;
     this->lengthSendBuffer[3] = (length & 0xff000000ul) >> 24;
 
-    // Send the size header, followed by the actual notification data.
-    write(*this->socket, buffer(this->lengthSendBuffer));
-    write(*this->socket, buffer(this->messageSendBuffer));
+    {
+        boost::recursive_mutex::scoped_lock lock(this->mutex);
+        if (this->activeShutdown) {
+            RSCDEBUG(this->logger, "Ignoring to send a notification "
+                                   "because we are shutting down.");
+            return;
+        }
+
+        // Send the size header, followed by the actual notification data.
+        write(*this->socket, buffer(this->lengthSendBuffer));
+        write(*this->socket, buffer(this->messageSendBuffer));
+    }
+
 }
 
 void BusConnection::performSafeCleanup(const string& context) {
@@ -148,13 +174,26 @@ void BusConnection::receiveEvent() {
 
 void BusConnection::handleReadLength(const boost::system::error_code& error,
                                      size_t                    bytesTransferred) {
+
+    {
+        boost::recursive_mutex::scoped_lock lock(this->mutex);
+        if (error == boost::asio::error::eof) {
+            RSCDEBUG(logger, "Received eof");
+            if (!this->activeShutdown) {
+                shutdown();
+            }
+            performSafeCleanup("handleReadLength[eof]");
+            return;
+        }
+    }
+
     if (error || (bytesTransferred != 4)) {
         if (!disconnecting) {
             RSCDEBUG(logger, "Receive failure (error " << error << ")"
                      << " or incomplete message header (received " << bytesTransferred << " bytes)"
                      << "; closing connection");
         }
-        performSafeCleanup("handleReadLength");
+        performSafeCleanup("handleReadLength[unknown error]");
         return;
     }
 

@@ -30,6 +30,8 @@
 
 #include <boost/enable_shared_from_this.hpp>
 
+#include <boost/thread/recursive_mutex.hpp>
+
 #include <boost/asio.hpp>
 
 #include <rsc/logging/Logger.h>
@@ -81,7 +83,7 @@ public:
 
     ~BusConnection();
 
-    void disconnect();
+    void shutdown();
 
     void startReceiving();
 
@@ -97,6 +99,9 @@ private:
     WeakBusPtr              bus;
 
     volatile bool           disconnecting;
+    volatile bool           activeShutdown;
+
+    boost::recursive_mutex  mutex;
 
     // Receive buffers
     protocol::Notification  notification;
@@ -119,6 +124,9 @@ private:
                         size_t                           expected);
 
     void printContents(std::ostream& stream) const;
+
+    void disconnect();
+
 };
 
 typedef boost::shared_ptr<BusConnection> BusConnectionPtr;

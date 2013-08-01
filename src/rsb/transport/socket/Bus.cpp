@@ -64,7 +64,7 @@ Bus::~Bus() {
     for (ConnectionList::iterator it = this->connections.begin();
          it != this->connections.end(); ++it) {
         try {
-            (*it)->disconnect();
+            (*it)->shutdown();
         } catch (const std::exception& e) {
             RSCDEBUG(logger, "Failed to disconnect connection " << *it
                      << ": " << e.what());
