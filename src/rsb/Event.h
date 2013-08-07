@@ -85,9 +85,12 @@ public:
     void printContents(std::ostream& stream) const;
 
     /**
-     * @deprecated use #getEventId instead to access the sequence number.
+     * Returns the sequence which indicates the position of the event
+     * in the stream of events published by a single informer.
+     *
+     * @return sequence number of the event.
      */
-    DEPRECATED(boost::uint64_t getSequenceNumber() const);
+    boost::uint64_t getSequenceNumber() const;
 
     /**
      * Returns a UUID for the event. This is now generated using the sending
