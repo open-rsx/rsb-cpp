@@ -44,7 +44,7 @@ using namespace testing;
 TEST(SpreadConnectionTest, testErrorOnBufferSaturation)
 {
 
-    const unsigned int bufferSize = 8000;
+    const unsigned int bufferSize = 25000;
 
     SpreadConnectionPtr sendConnection(new SpreadConnection("send", "localhost", SPREAD_PORT));
     sendConnection->activate();
