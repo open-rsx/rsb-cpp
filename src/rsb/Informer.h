@@ -202,10 +202,10 @@ protected:
     std::string defaultType;
     eventprocessing::OutRouteConfiguratorPtr configurator;
 
-    boost::uint32_t currentSequenceNumber;
-    boost::mutex sequenceNumberMutex;
 private:
     rsc::logging::LoggerPtr logger;
+    boost::uint32_t currentSequenceNumber;
+    boost::mutex sequenceNumberMutex;
 };
 
 typedef boost::shared_ptr<InformerBase> InformerBasePtr;
