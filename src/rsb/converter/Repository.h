@@ -72,7 +72,7 @@ public:
     typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForSerialization(
             const ConverterSelectionMap& selection =
                     ConverterSelectionMap()) const {
-        RSCDEBUG(this->logger, "Build unambiguous map for serialization with selection "
+        RSCDEBUG(this->logger, "Building unambiguous map for serialization with selection "
                  << selection);
 
         boost::shared_ptr< UnambiguousConverterMap<WireType> >
@@ -81,10 +81,14 @@ public:
                 this->converters.begin(); it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
             std::string dataType = it->first.second;
+            RSCTRACE(this->logger, "Considering converter " << it->second);
+
             // The data-type is not mentioned in the explicit
             // selection. Try to add the converter. This may throw in
             // case of ambiguity.
             if (selection.find(dataType) == selection.end()) {
+                RSCTRACE(this->logger, "No explicit selection for data-type "
+                         << dataType);
                 try {
                     result->addConverter(dataType, it->second);
                 } catch (const std::invalid_argument& e) {
@@ -98,17 +102,26 @@ public:
                     throw std::runtime_error(
                             boost::str(
                                     boost::format(
-                                            "Ambiguous converter set for wire-type `%1%' and data-type `%2%': candidate wire-schemas are %3%; hint: add a configuration option `transport.<name>.converter.cpp.<one of %3%> = %2%' to resolve the ambiguity.")
+                                            "Ambiguous converter set for wire-type `%1%' and data-type `%2%': candidate wire-schemas are %3%; hint: add a configuration option `transport.<name>.converter.cpp.<one of %3%> = %2%' to resolve the ambiguity (%4%).")
                                             % rsc::runtime::typeName<WireType>()
-                                            % dataType % wireSchemas));
+                                    % dataType % wireSchemas % e.what()));
                 }
             }
             // There is an entry for data-type in the explicit
             // selection. Add the converter if the wire-schema matches.
             else if (wireSchema == selection.find(dataType)->second) {
-                RSCDEBUG(this->logger,
-                        "Found configured converter signature " << it->first);
+                RSCDEBUG(this->logger, "Explicit selection "
+                         << *selection.find(dataType)
+                         << " chooses data wire-schema " << wireSchema
+                         << "; adding the converter");
                 result->addConverter(dataType, it->second);
+            } else {
+                RSCDEBUG(this->logger, "Explicit selection "
+                         << *selection.find(dataType)
+                         << " chooses wire-schema "
+                         << selection.find(dataType)->second
+                         << " (not " << wireSchema
+                         << "); not adding the converter");
             }
         }
         return result;
@@ -117,7 +130,7 @@ public:
     typename ConverterSelectionStrategy<WireType>::Ptr getConvertersForDeserialization(
             const ConverterSelectionMap& selection =
                     ConverterSelectionMap()) const {
-        RSCDEBUG(this->logger, "Build unambiguous map for deserialization with selection "
+        RSCDEBUG(this->logger, "Building unambiguous map for deserialization with selection "
                  << selection);
 
         boost::shared_ptr< UnambiguousConverterMap<WireType> >
@@ -126,10 +139,14 @@ public:
                 this->converters.begin(); it != this->converters.end(); ++it) {
             std::string wireSchema = it->first.first;
             std::string dataType = it->first.second;
+            RSCTRACE(this->logger, "Considering converter " << it->second);
+
             // The wire-schema is not mentioned in the explicit
             // selection. Try to add the converter. This may throw in
             // case of ambiguity.
             if (selection.find(wireSchema) == selection.end()) {
+                RSCTRACE(this->logger, "No explicit selection for wire-schema "
+                         << wireSchema);
                 try {
                     result->addConverter(wireSchema, it->second);
                 } catch (const std::invalid_argument& e) {
@@ -141,19 +158,28 @@ public:
                             dataTypes.insert(it_->first.second);
                     }
                     throw std::runtime_error(
-                            boost::str(
-                                    boost::format(
-                                            "Ambiguous converter set for wire-type `%1%' and wire-schema `%2%': candidate data-types are %3%; hint: add a configuration option `transport.<name>.converter.cpp.\"%2%\" = <one of %3%>' to resolve the ambiguity.")
-                                            % rsc::runtime::typeName<WireType>()
-                                            % wireSchema % dataTypes));
+                        boost::str(
+                            boost::format(
+                                "Ambiguous converter set for wire-type `%1%' and wire-schema `%2%': candidate data-types are %3%; hint: add a configuration option `transport.<name>.converter.cpp.\"%2%\" = <one of %3%>' to resolve the ambiguity (%4%).")
+                            % rsc::runtime::typeName<WireType>()
+                            % wireSchema % dataTypes % e.what()));
                 }
             }
             // There is an entry for wire-schema in the explicit
             // selection. Add the converter if the data-type matches.
             else if (dataType == selection.find(wireSchema)->second) {
-                RSCDEBUG(this->logger,
-                        "Found configured converter signature " << it->first);
+                RSCDEBUG(this->logger, "Explicit selection "
+                         << *selection.find(wireSchema)
+                         << " chooses data-type " << dataType
+                         << "; adding the converter");
                 result->addConverter(wireSchema, it->second);
+            } else {
+                RSCDEBUG(this->logger, "Explicit selection "
+                         << *selection.find(wireSchema)
+                         << " chooses data-type "
+                         << selection.find(wireSchema)->second
+                         << " (not " << dataType
+                         << "); not adding the converter");
             }
         }
         return result;
