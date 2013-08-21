@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -42,7 +42,7 @@ InPushConnector::InPushConnector() :
     logger(Logger::getLogger("rsb.transport.inprocess.InPushConnector")) {
 }
 
-transport::InPushConnector* InPushConnector::create(const Properties& args) {
+transport::InPushConnector* InPushConnector::create(const Properties& /*args*/) {
     // Seems to have confused some users.
     // See https://code.cor-lab.de/issues/649
     // if (args.has("converters")) {
