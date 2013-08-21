@@ -186,20 +186,25 @@ public:
     }
 
     /**
-     * Registers the given converter in the collection.
+     * Registers @a converter in the collection.
      *
-     * @param converter the converter to register
-     * @throw std::invalid_argument if there is already a converter registered
-     *                              with the same wire type or data type
+     * @param converter The converter to register.
+     * @param replace If a converter with the same wire schema and
+     *                data type as @a converter is already registered,
+     *                should it be replaced?
+     * @throw std::invalid_argument If there is already a converter
+     *                              registered with the same wire
+     *                              schema and data type.
      */
-    void registerConverter(ConverterPtr converter) {
+    void registerConverter(ConverterPtr converter, bool replace = false) {
         RSCINFO(this->logger, "Registering converter " << converter);
 
         std::string wireSchema = converter->getWireSchema();
         std::string dataType = converter->getDataType();
         if (this->converters.find(std::make_pair(wireSchema, dataType))
-                != this->converters.end()) {
-            // TODO use RSB execption; but do we have one for invalid argument?
+            != this->converters.end()
+            && !replace) {
+            // TODO use RSB exception; but do we have one for invalid argument?
             throw std::invalid_argument(
                     boost::str(
                             boost::format(
