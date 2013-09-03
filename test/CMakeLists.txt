@@ -171,7 +171,7 @@ IF(WITH_SOCKET_TRANSPORT)
 ENDIF()
 
 # --- pkg-config test ---
-IF(UNIX)
+IF(UNIX AND WITH_PKGCONFIG_TEST)
     CONFIGURE_FILE(pkg-config-test.sh.in "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
     ADD_TEST(${PKGCONFIG_TEST_NAME} "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
 ENDIF()

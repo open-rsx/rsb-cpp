@@ -78,6 +78,7 @@ ENDIF()
 # --- user options ---
 
 OPTION(BUILD_TESTS "Decide if the test suite shall be built or not" ON)
+OPTION(WITH_PKGCONFIG_TEST "In case the tests are enabled, decide whether the pkg-config test is created or not." OFF)
 OPTION(BUILD_EXAMPLES "Decide if the examples shall be built or not" ON)
 OPTION(BUILD_SOCKET_TRANSPORT "Decide if the socket transport shall be built or not" ON)
 OPTION(EXPORT_TO_CMAKE_PACKAGE_REGISTRY "If set to ON, RSB will be exported to the CMake user package registry so that downstream projects automatically find the workspace location in find_package calls." OFF)
