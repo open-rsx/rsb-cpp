@@ -49,7 +49,7 @@ cat <<EOF > $RESULTFILE
     </testcase>
 </testsuite>
 EOF
-exit
+exit 1
 fi
 echo "[ RUN      ]"
 [ -x informer ]
@@ -72,5 +72,5 @@ cat <<EOF > $RESULTFILE
     </testcase>
 </testsuite>
 EOF
-exit
+exit 1
 fi
