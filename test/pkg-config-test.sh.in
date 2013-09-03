@@ -37,7 +37,7 @@ echo "[ BUILD    ]"
 export LD_LIBRARY_PATH=$TESTINSTALLPREFIX/lib:$LD_LIBRARY_PATH
 export DYLD_LIBRARY_PATH=$TESTINSTALLPREFIX/lib:$DYLD_LIBRARY_PATH
 export PKG_CONFIG_PATH=$TESTINSTALLPREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
-if g++ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@);
+if @CMAKE_CXX_COMPILER@ -o informer informer.cpp $(pkg-config --cflags --libs @RSB_NAME@@VERSION_SUFFIX@);
 then
 echo "[       OK ]"
 else
