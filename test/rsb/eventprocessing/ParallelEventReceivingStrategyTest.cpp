@@ -37,7 +37,7 @@
 #include <rsc/misc/langutils.h>
 
 #include "rsb/eventprocessing/ParallelEventReceivingStrategy.h"
-#include "rsb/QueuePushHandler.h"
+#include "rsb/util/QueuePushHandler.h"
 #include "rsb/filter/ScopeFilter.h"
 #include "rsb/MetaData.h"
 #include "rsb/EventId.h"
@@ -49,6 +49,7 @@ using namespace rsb::eventprocessing;
 using namespace testing;
 using namespace rsc::threading;
 using namespace rsb::filter;
+using namespace rsb::util;
 
 TEST(ParallelEventReceivingStrategyTest, testReceiving)
 {

@@ -2,7 +2,7 @@
  *
  * This file is a part of RSB project
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,8 +24,26 @@
  *
  * ============================================================ */
 
-#include "QueuePushHandler.h"
+#include <stdexcept>
 
-namespace rsb {
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+#include "rsb/util/EventQueuePushHandler.h"
+
+using namespace std;
+using namespace testing;
+using namespace rsb;
+using namespace rsb::util;
+
+TEST(EventQueuePushHandlerTest, testPush)
+{
+
+    boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > queue(
+            new rsc::threading::SynchronizedQueue<EventPtr>);
+    EventQueuePushHandler handler(queue);
+    EventPtr event(new Event);
+    handler.handle(event);
+    EXPECT_EQ(event, queue->pop());
 
 }

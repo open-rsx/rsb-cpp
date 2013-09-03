@@ -33,13 +33,14 @@
 #include <rsb/Factory.h>
 #include <rsb/Informer.h>
 #include <rsb/Listener.h>
-#include <rsb/QueuePushHandler.h>
+#include <rsb/util/QueuePushHandler.h>
 
 using namespace std;
 using namespace rsc::logging;
 using namespace rsc::misc;
 using namespace rsb;
 using namespace rsb::filter;
+using namespace rsb::util;
 
 int main(int argc, char** argv) {
 
