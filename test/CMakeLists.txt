@@ -43,7 +43,6 @@ PROTOBUF_GENERATE_CPP(TEST_PROTO_SOURCES TEST_PROTO_HEADERS
 SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/EventTest.cpp
                       rsb/EventIdTest.cpp
-                      rsb/EventQueuePushHandlerTest.cpp
                       rsb/HandlerTest.cpp
                       rsb/InformerTest.cpp
                       rsb/LocalServiceTest.cpp
@@ -61,6 +60,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/converter/TestConverter.h
                       rsb/converter/TestConverterTest.cpp
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
+                      rsb/util/EventQueuePushHandlerTest.cpp
                       rsb/util/MD5Test.cpp
                       rsb/transport/FactoryTest.cpp)
 

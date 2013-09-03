@@ -24,14 +24,30 @@
  *
  * ============================================================ */
 
-#pragma once
+#include "EventQueuePushHandler.h"
 
-#include "util/EventQueuePushHandler.h"
+using namespace std;
 
 namespace rsb {
+namespace util {
 
-#pragma message ("This version of EventQueuePushHandler is deprecated. Use the one from the util namespace")
+EventQueuePushHandler::EventQueuePushHandler(
+        boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > queue,
+        const string& method) :
+    Handler(method), queue(queue) {
+}
 
-using util::EventQueuePushHandler;
+string EventQueuePushHandler::getClassName() const {
+    return "EventQueuePushHandler";
+}
 
+void EventQueuePushHandler::printContents(ostream& stream) const {
+    stream << "queue = " << queue;
+}
+
+void EventQueuePushHandler::handle(EventPtr event) {
+    queue->push(event);
+}
+
+}
 }

@@ -28,7 +28,6 @@ CONFIGURE_FILE(rsb/Version.h.in
 SET(SOURCES rsb/CommException.cpp
             rsb/Event.cpp
             rsb/EventId.cpp
-            rsb/EventQueuePushHandler.cpp
             rsb/Exception.cpp
             rsb/Factory.cpp
             rsb/CreateFunctions.cpp
@@ -41,7 +40,6 @@ SET(SOURCES rsb/CommException.cpp
             rsb/Participant.cpp
             rsb/ParticipantConfig.cpp
             rsb/QualityOfServiceSpec.cpp
-            rsb/QueuePushHandler.cpp
             rsb/Scope.cpp
             rsb/Service.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
@@ -105,7 +103,9 @@ SET(SOURCES rsb/CommException.cpp
             rsb/transport/inprocess/InPushConnector.cpp
             rsb/transport/inprocess/OutConnector.cpp
 
+            rsb/util/EventQueuePushHandler.cpp
             rsb/util/MD5.cpp
+            rsb/util/QueuePushHandler.cpp
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
 
@@ -200,7 +200,9 @@ SET(HEADERS rsb/CommException.h
             rsb/transport/inprocess/InPushConnector.h
             rsb/transport/inprocess/OutConnector.h
 
+            rsb/util/EventQueuePushHandler.h
             rsb/util/MD5.h
+            rsb/util/QueuePushHandler.h
 
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
             ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h

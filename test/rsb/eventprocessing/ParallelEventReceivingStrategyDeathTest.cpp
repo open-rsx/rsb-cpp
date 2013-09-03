@@ -31,7 +31,7 @@
 #include <boost/thread.hpp>
 
 #include "rsb/eventprocessing/ParallelEventReceivingStrategy.h"
-#include "rsb/QueuePushHandler.h"
+#include "rsb/util/QueuePushHandler.h"
 #include "rsb/filter/ScopeFilter.h"
 
 using namespace std;
@@ -39,6 +39,7 @@ using namespace rsb;
 using namespace rsb::eventprocessing;
 using namespace rsc::threading;
 using namespace rsb::filter;
+using namespace rsb::util;
 
 using namespace std;
 

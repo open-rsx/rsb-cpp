@@ -24,28 +24,47 @@
  *
  * ============================================================ */
 
-#include "EventQueuePushHandler.h"
+#pragma once
 
-using namespace std;
+#include <boost/shared_ptr.hpp>
+
+#include <rsc/threading/SynchronizedQueue.h>
+
+#include "../Handler.h"
+#include "rsb/rsbexports.h"
 
 namespace rsb {
+namespace util {
 
-EventQueuePushHandler::EventQueuePushHandler(
-        boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > queue,
-        const string& method) :
-    Handler(method), queue(queue) {
+/**
+ * A @ref rsb::Handler for @ref rsb::Listener s that pushes all
+ * received events on a rsc::SynchronizedQueue.
+ *
+ * @author jwienke
+ */
+class RSB_EXPORT EventQueuePushHandler: public Handler {
+public:
+
+    /**
+     * Constructs a new instance.
+     *
+     * @param queue the queue to push received data on
+     * @param method method of this handler to react on, empty means all events
+     */
+    EventQueuePushHandler(
+            boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > queue,
+            const std::string& method = "");
+
+    std::string getClassName() const;
+
+    void printContents(std::ostream& stream) const;
+
+    void handle(EventPtr event);
+
+private:
+    boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > queue;
+
+};
+
 }
-
-string EventQueuePushHandler::getClassName() const {
-    return "EventQueuePushHandler";
-}
-
-void EventQueuePushHandler::printContents(ostream& stream) const {
-    stream << "queue = " << queue;
-}
-
-void EventQueuePushHandler::handle(EventPtr event) {
-    queue->push(event);
-}
-
 }
