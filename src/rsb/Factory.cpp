@@ -70,11 +70,26 @@ std::map<typename C::value_type::first_type,
 
     std::map<first_type, second_type> result;
     for (const_iterator it = container.begin(); it != container.end(); ++it) {
-        if (which == 1)
+        if (which == 1) {
             result[it->first] = it->second;
-        else
+        } else {
+            if (result.find(it->second) != result.end()) {
+                throw std::invalid_argument(
+                        boost::str(
+                        boost::format(
+                        "Multiple wire-schemas (%1%, %2%) selected for data-type %3%.\n"
+                        "Probably you wrote the lines transport.<name>.cpp.%1% = %3% "
+                        "and transport.<name>.cpp.%2% = %3% in you rsb config. One of "
+                        "these should be deleted.")
+                                % it->first
+                                % result[it->second]
+                                % it->second
+                        )
+                );
+            }
             result[it->second] = it->first;
         }
+    }
     return result;
 }
 
