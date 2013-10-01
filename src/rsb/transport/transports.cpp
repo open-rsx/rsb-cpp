@@ -139,6 +139,93 @@ void registerDefaultTransports() {
 
 }
 
+set<string> getAvailableTransports(unsigned int requiredDirections) {
+    struct intersection {
+        set<string> operator()(const set<string>& left,
+                               const set<string>& right) const {
+            set<string> result;
+            set_intersection(left.begin(), left.end(), right.begin(), right.end(),
+                             inserter(result, result.begin()));
+            return  result;
+        }
+    };
+
+    if (requiredDirections == 0) {
+        throw invalid_argument("At least one required direction has to be specified.");
+    }
+
+    set<string> result;
+    set<string> inPullTransports;
+    {
+        set<InPullFactory::ConnectorInfo> infos = getInPullFactory().getConnectorInfos();
+        for (set<InPullFactory::ConnectorInfo>::const_iterator it
+                 = infos.begin(); it != infos.end(); ++it) {
+            inPullTransports.insert(it->getName());
+            result.insert(it->getName());
+        }
+    }
+    set<string> inPushTransports;
+    {
+        set<InPushFactory::ConnectorInfo> infos = getInPushFactory().getConnectorInfos();
+        for (set<InPushFactory::ConnectorInfo>::const_iterator it
+                 = infos.begin(); it != infos.end(); ++it) {
+            inPushTransports.insert(it->getName());
+            result.insert(it->getName());
+        }
+    }
+    set<string> outTransports;
+    {
+        set<OutFactory::ConnectorInfo> infos = getOutFactory().getConnectorInfos();
+        for (set<OutFactory::ConnectorInfo>::const_iterator it
+                 = infos.begin(); it != infos.end(); ++it) {
+            outTransports.insert(it->getName());
+            result.insert(it->getName());
+        }
+    }
+
+    if (requiredDirections & IN_PULL) {
+        result = intersection()(result, inPullTransports);
+    }
+    if (requiredDirections & IN_PUSH) {
+        result = intersection()(result, inPushTransports);
+    }
+    if (requiredDirections & OUT) {
+        result = intersection()(result, outTransports);
+    }
+    return result;
+}
+
+
+bool isAvailable(const string& transportName,
+                 unsigned int  requiredDirections) {
+    if (requiredDirections == 0) {
+        throw invalid_argument("At least one required direction has to be specified.");
+    }
+
+    if (requiredDirections & IN_PULL) {
+        try {
+            getInPullFactory().getConnectorInfo(transportName);
+        } catch (const rsc::runtime::NoSuchObject&) {
+            return false;
+        }
+    }
+    if (requiredDirections & IN_PUSH) {
+        try {
+            getInPushFactory().getConnectorInfo(transportName);
+        } catch (const rsc::runtime::NoSuchObject&) {
+            return false;
+        }
+    }
+    if (requiredDirections & OUT) {
+        try {
+            getOutFactory().getConnectorInfo(transportName);
+        } catch (const rsc::runtime::NoSuchObject&) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool isRemote(const string& transportName) {
     bool remote = false;
     bool validResult = false;

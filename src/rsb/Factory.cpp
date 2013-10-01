@@ -153,33 +153,13 @@ Factory::Factory() :
 
     // Setup default participant config
     //
-    // Collect all available connector implementations from the
-    // connector factories:
+    // Collect all available connector implementations:
     // + In-push
     // + In-pull
     // + Out
     // Disable discovered connectors with the exception of the
     // socket transport.
-    set<string> availableTransports;
-    {
-        set<InPullFactory::ConnectorInfo> infos = getInPullFactory().getConnectorInfos();
-        for (set<InPullFactory::ConnectorInfo>::const_iterator it
-                 = infos.begin(); it != infos.end(); ++it) {
-            availableTransports.insert(it->getName());
-        }
-    }{
-        set<InPushFactory::ConnectorInfo> infos = getInPushFactory().getConnectorInfos();
-        for (set<InPushFactory::ConnectorInfo>::const_iterator it
-                 = infos.begin(); it != infos.end(); ++it) {
-            availableTransports.insert(it->getName());
-        }
-    }{
-        set<OutFactory::ConnectorInfo> infos = getOutFactory().getConnectorInfos();
-        for (set<OutFactory::ConnectorInfo>::const_iterator it
-                 = infos.begin(); it != infos.end(); ++it) {
-            availableTransports.insert(it->getName());
-        }
-    }
+    set<string> availableTransports = getAvailableTransports(IN_PUSH | IN_PULL | OUT);
 
     this->defaultConfig = ParticipantConfig();
     for (set<string>::const_iterator it = availableTransports.begin();

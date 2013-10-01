@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -27,6 +27,7 @@
 #pragma once
 
 #include <string>
+#include <set>
 
 #include "rsb/rsbexports.h"
 
@@ -35,6 +36,44 @@ namespace transport {
 
 RSB_EXPORT void registerDefaultTransports();
 
+/**
+ * Transport directions. Can be combined via bitwise or.
+ */
+enum Directions {
+    IN_PUSH = 0x01,
+    IN_PULL = 0x02,
+    OUT     = 0x04
+};
+
+/**
+ * Returns the names of all available transports which support @a
+ * requiredDirections.
+ *
+ * @param requiredDirections One or more of @ref Directions.
+ * @return The set of names of the available transports.
+ */
+RSB_EXPORT std::set<std::string> getAvailableTransports(unsigned int requiredDirections);
+
+/**
+ * Returns @c true if @a transportName names a transport which is
+ * available and supports @a requiredDirections .
+ *
+ * @param requiredDirections One or more of @ref Directions.
+ * @return @c true if the requested transport is available, @c false
+ *         otherwise.
+ */
+RSB_EXPORT bool isAvailable(const std::string& transportName,
+                            unsigned int       requiredDirections);
+
+/**
+ * Returns @c true if @a transportName names a remote transport.
+ *
+ * @return @c true if the transport implements remote communication,
+ *         @c false otherwise.
+ *
+ * @throw rsc::runtime::NoSuchObject If @a transportName does not name
+ *                                   an available transport.
+ */
 RSB_EXPORT bool isRemote(const std::string& transportName);
 
 }
