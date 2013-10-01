@@ -8,6 +8,8 @@ INCLUDE_DIRECTORIES(BEFORE ../src
                            ${CMAKE_CURRENT_BINARY_DIR}
                            ${CMAKE_CURRENT_SOURCE_DIR})
 
+ADD_DEFINITIONS(${GMOCK_CFLAGS})
+
 # --- setup generic test infrastructure ---
 
 SET(TEST_RESULT_DIR ${CMAKE_BINARY_DIR}/testresults)
