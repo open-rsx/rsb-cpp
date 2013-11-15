@@ -39,11 +39,10 @@ namespace rsb {
 class RSB_EXPORT Exception: public std::runtime_error {
 public:
 
-	Exception();
-	Exception(const std::string& m);
-	virtual ~Exception() throw ();
+    Exception();
+    Exception(const std::string& m);
+    virtual ~Exception() throw ();
 
 };
 
 }
-
