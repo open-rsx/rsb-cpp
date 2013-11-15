@@ -236,6 +236,27 @@ ServicePtr Factory::createService(const Scope& scope) {
     return ServicePtr(new LocalService(scope));
 }
 
+Properties
+Factory::prepareConnectorOptions(const ParticipantConfig::Transport& config) {
+    Properties options = config.getOptions();
+    RSCDEBUG(logger, "Supplied connector options " << config.getOptions());
+
+    // Take care of converters
+    if (transport::isRemote(config.getName()) && !options.has("converters")) {
+        RSCDEBUG(logger, "Converter configuration for transport `"
+                 << config.getName() << "': " << config.getConverters());
+        // TODO we should not have to know the transport's wire-type here
+        ConverterSelectionStrategy<string>::Ptr converters
+            = converterRepository<string>()
+            ->getConvertersForDeserialization(pairsToMap<1> (config.getConverters()));
+        RSCDEBUG(logger, "Selected converters for transport `"
+                 << config.getName() << "': " << converters);
+        options["converters"] = converters;
+    }
+
+    return options;
+}
+
 vector<InPullConnectorPtr>
 Factory::createInPullConnectors(const ParticipantConfig& config) {
     // Note: getTransports() only returns *enabled* transports.
@@ -246,22 +267,9 @@ Factory::createInPullConnectors(const ParticipantConfig& config) {
              != configuredTransports.end(); ++transportIt) {
         RSCDEBUG(logger, "Trying to add connector " << *transportIt);
         try {
-            Properties options = transportIt->getOptions();
-            RSCDEBUG(logger, "Supplied connector options " << transportIt->getOptions());
-
-            // Take care of converters
-            if (!options.has("converters")) {
-                RSCDEBUG(logger, "Converter configuration for transport `"
-                         << transportIt->getName() << "': " << transportIt->getConverters());
-                // TODO we should not have to know the transport's wire-type here
-                ConverterSelectionStrategy<string>::Ptr converters
-                    = converterRepository<string>()
-                    ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
-                RSCDEBUG(logger, "Selected converters for transport `"
-                         << transportIt->getName() << "': " << converters);
-                options["converters"] = converters;
-            }
-            connectors.push_back(InPullConnectorPtr(getInPullFactory().createInst(transportIt->getName(), options)));
+            connectors.push_back(InPullConnectorPtr(getInPullFactory()
+                                                    .createInst(transportIt->getName(),
+                                                                prepareConnectorOptions(*transportIt))));
         } catch (const exception& e) {
             throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', in-pull: %2%")
                                            % transportIt->getName() % e.what()));
@@ -280,22 +288,9 @@ Factory::createInPushConnectors(const ParticipantConfig& config) {
              != configuredTransports.end(); ++transportIt) {
         RSCDEBUG(logger, "Trying to add connector " << *transportIt);
         try {
-            Properties options = transportIt->getOptions();
-            RSCDEBUG(logger, "Supplied connector options " << transportIt->getOptions());
-
-            // Take care of converters
-            if (!options.has("converters")) {
-                RSCDEBUG(logger, "Converter configuration for transport `"
-                         << transportIt->getName() << "': " << transportIt->getConverters());
-                // TODO we should not have to know the transport's wire-type here
-                ConverterSelectionStrategy<string>::Ptr converters
-                    = converterRepository<string>()
-                    ->getConvertersForDeserialization(pairsToMap<1> (transportIt->getConverters()));
-                RSCDEBUG(logger, "Selected converters for transport `"
-                         << transportIt->getName() << "': " << converters);
-                options["converters"] = converters;
-            }
-            connectors.push_back(InPushConnectorPtr(getInPushFactory().createInst(transportIt->getName(), options)));
+            connectors.push_back(InPushConnectorPtr(getInPushFactory()
+                                                    .createInst(transportIt->getName(),
+                                                                prepareConnectorOptions(*transportIt))));
         } catch (const exception& e) {
             throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', in-push: %2%")
                                            % transportIt->getName() % e.what()));
@@ -314,22 +309,9 @@ Factory::createOutConnectors(const ParticipantConfig& config) {
              != configuredTransports.end(); ++transportIt) {
         RSCDEBUG(logger, "Trying to add connector " << *transportIt);
         try {
-            Properties options = transportIt->getOptions();
-            RSCDEBUG(logger, "Supplied connector options " << transportIt->getOptions());
-
-            // Take care of converters
-            if (!options.has("converters")) {
-                RSCDEBUG(logger, "Converter configuration for transport `"
-                         << transportIt->getName() << "': " << transportIt->getConverters());
-                // TODO we should not have to know the transport's wire-type here
-                ConverterSelectionStrategy<string>::Ptr converters
-                    = converterRepository<string>()
-                    ->getConvertersForSerialization(pairsToMap<2> (transportIt->getConverters()));
-                RSCDEBUG(logger, "Selected converters for transport `"
-                         << transportIt->getName() << "': " << converters);
-                options["converters"] = converters;
-            }
-            connectors.push_back(OutConnectorPtr(getOutFactory().createInst(transportIt->getName(), options)));
+            connectors.push_back(OutConnectorPtr(getOutFactory()
+                                                 .createInst(transportIt->getName(),
+                                                             prepareConnectorOptions(*transportIt))));
         } catch (const exception& e) {
             throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', out: %2%")
                                            % transportIt->getName() % e.what()));
