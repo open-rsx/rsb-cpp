@@ -58,11 +58,17 @@ using namespace rsc::runtime;
 using namespace rsb::converter;
 using namespace rsb::transport;
 
-namespace {
+namespace { // anonymous namespace for file-local helper functions.
 
-template<unsigned int which, typename C>
+enum ConverterDirection {
+    SERIALIZATION,
+    DESERIALIZATION
+};
+
+template<typename C>
 std::map<typename C::value_type::first_type,
-         typename C::value_type::second_type> pairsToMap(const C& container) {
+         typename C::value_type::second_type>
+converterSelectionToMap(const C& container, ConverterDirection direction) {
     typedef typename C::value_type::first_type first_type;
     typedef typename C::value_type::second_type second_type;
 
@@ -70,9 +76,11 @@ std::map<typename C::value_type::first_type,
 
     std::map<first_type, second_type> result;
     for (const_iterator it = container.begin(); it != container.end(); ++it) {
-        if (which == 1) {
+        switch (direction) {
+        case DESERIALIZATION:
             result[it->first] = it->second;
-        } else {
+            break;
+        case SERIALIZATION:
             if (result.find(it->second) != result.end()) {
                 throw std::invalid_argument(
                         boost::str(
@@ -88,9 +96,60 @@ std::map<typename C::value_type::first_type,
                 );
             }
             result[it->second] = it->first;
+            break;
+        default:
+            assert(false);
+            throw std::runtime_error("got unexpected serialization direction");
         }
     }
     return result;
+}
+
+Properties
+prepareConnectorOptions(const rsb::ParticipantConfig::Transport& config,
+                        ConverterDirection direction,
+                        rsc::logging::LoggerPtr logger) {
+    Properties options = config.getOptions();
+    RSCDEBUG(logger, "Supplied connector options " << options);
+
+    // For local transport, we do not mess with the converter
+    // configuration since it is not used (or even touched) anyway.
+    //
+    // For remote transports, we build a converter selection strategy
+    // - suitable for direction - and put it into the "converters"
+    // property of the transport configuration.
+    //
+    // Note that config.getConverters() only returns /converter
+    // disambiguations/.  These are used to guide the actual converter
+    // selection in converterSelectionToMap().
+    if (rsb::transport::isRemote(config.getName()) && !options.has("converters")) {
+        RSCDEBUG(logger, "Converter configuration for transport `"
+                 << config.getName() << "': " << config.getConverters());
+
+        ConverterSelectionStrategy<string>::Ptr converters; // TODO we should not have to know the transport's wire-type here
+        switch (direction) {
+        case SERIALIZATION:
+            converters
+                = converterRepository<string>() // TODO wire-type
+                ->getConvertersForSerialization
+                (converterSelectionToMap(config.getConverters(), direction));
+            break;
+        case DESERIALIZATION:
+            converters
+                = converterRepository<string>() // TODO wire-type
+                ->getConvertersForDeserialization
+                (converterSelectionToMap(config.getConverters(), direction));
+            break;
+        default:
+            assert(false);
+            throw std::runtime_error("got unexpected serialization direction");
+        }
+        RSCDEBUG(logger, "Selected converters for transport `"
+                 << config.getName() << "': " << converters);
+        options["converters"] = converters;
+    }
+
+    return options;
 }
 
 }
@@ -236,27 +295,6 @@ ServicePtr Factory::createService(const Scope& scope) {
     return ServicePtr(new LocalService(scope));
 }
 
-Properties
-Factory::prepareConnectorOptions(const ParticipantConfig::Transport& config) {
-    Properties options = config.getOptions();
-    RSCDEBUG(logger, "Supplied connector options " << config.getOptions());
-
-    // Take care of converters
-    if (transport::isRemote(config.getName()) && !options.has("converters")) {
-        RSCDEBUG(logger, "Converter configuration for transport `"
-                 << config.getName() << "': " << config.getConverters());
-        // TODO we should not have to know the transport's wire-type here
-        ConverterSelectionStrategy<string>::Ptr converters
-            = converterRepository<string>()
-            ->getConvertersForDeserialization(pairsToMap<1> (config.getConverters()));
-        RSCDEBUG(logger, "Selected converters for transport `"
-                 << config.getName() << "': " << converters);
-        options["converters"] = converters;
-    }
-
-    return options;
-}
-
 vector<InPullConnectorPtr>
 Factory::createInPullConnectors(const ParticipantConfig& config) {
     // Note: getTransports() only returns *enabled* transports.
@@ -269,7 +307,9 @@ Factory::createInPullConnectors(const ParticipantConfig& config) {
         try {
             connectors.push_back(InPullConnectorPtr(getInPullFactory()
                                                     .createInst(transportIt->getName(),
-                                                                prepareConnectorOptions(*transportIt))));
+                                                                prepareConnectorOptions(*transportIt,
+                                                                                        DESERIALIZATION,
+                                                                                        this->logger))));
         } catch (const exception& e) {
             throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', in-pull: %2%")
                                            % transportIt->getName() % e.what()));
@@ -290,7 +330,9 @@ Factory::createInPushConnectors(const ParticipantConfig& config) {
         try {
             connectors.push_back(InPushConnectorPtr(getInPushFactory()
                                                     .createInst(transportIt->getName(),
-                                                                prepareConnectorOptions(*transportIt))));
+                                                                prepareConnectorOptions(*transportIt,
+                                                                                        DESERIALIZATION,
+                                                                                        this->logger))));
         } catch (const exception& e) {
             throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', in-push: %2%")
                                            % transportIt->getName() % e.what()));
@@ -311,7 +353,9 @@ Factory::createOutConnectors(const ParticipantConfig& config) {
         try {
             connectors.push_back(OutConnectorPtr(getOutFactory()
                                                  .createInst(transportIt->getName(),
-                                                             prepareConnectorOptions(*transportIt))));
+                                                             prepareConnectorOptions(*transportIt,
+                                                                                     SERIALIZATION,
+                                                                                     this->logger))));
         } catch (const exception& e) {
             throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', out: %2%")
                                            % transportIt->getName() % e.what()));

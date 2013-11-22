@@ -236,9 +236,6 @@ private:
     ParticipantConfig defaultConfig;
     mutable boost::recursive_mutex configMutex;
 
-    rsc::runtime::Properties
-        prepareConnectorOptions(const ParticipantConfig::Transport& config);
-
     std::vector<transport::OutConnectorPtr>
         createOutConnectors(const ParticipantConfig& config);
 

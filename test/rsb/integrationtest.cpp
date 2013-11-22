@@ -360,6 +360,25 @@ TEST_F(InformerTest, testConversionException) {
 }
 #endif
 
+#ifdef RSB_WITH_SOCKET_TRANSPORT
+// Test publishing an event in a way which requires a converter to be
+// available, configured and found. The test succeeds when the datum
+// can be published without throwing an exception.
+TEST_F(InformerTest, testConversion) {
+
+    Factory& factory = getFactory();
+
+    ParticipantConfig config = getFactory().getDefaultParticipantConfig();
+    config.mutableTransport("inprocess").setEnabled(false);
+    config.mutableTransport("socket").setEnabled(true);
+
+    const Scope scope("/damn/strange/scope");
+    Informer<string>::Ptr informer
+        = factory.createInformer<string>("/scope", config);
+    informer->publish(shared_ptr<string>(new string("test")));
+}
+#endif
+
 int main(int argc, char* argv[]) {
 
     srand(time(NULL));
