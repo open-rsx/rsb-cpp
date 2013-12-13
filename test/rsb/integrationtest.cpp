@@ -375,7 +375,7 @@ TEST_F(InformerTest, testConversion) {
     const Scope scope("/damn/strange/scope");
     Informer<string>::Ptr informer
         = factory.createInformer<string>("/scope", config);
-    informer->publish(shared_ptr<string>(new string("test")));
+    informer->publish(boost::shared_ptr<string>(new string("test")));
 }
 #endif
 
