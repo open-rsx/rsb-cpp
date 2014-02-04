@@ -36,8 +36,6 @@
 
 using namespace std;
 
-using namespace boost;
-
 using namespace rsc::runtime;
 using namespace rsc::logging;
 using namespace rsc::debug;
@@ -67,14 +65,14 @@ string ParallelEventReceivingStrategy::getClassName() const {
 }
 
 void ParallelEventReceivingStrategy::printContents(ostream& stream) const {
-    shared_lock<shared_mutex> filtersLock(filtersMutex);
-    recursive_mutex::scoped_lock errorLock(errorStrategyMutex);
+    boost::shared_lock<boost::shared_mutex> filtersLock(filtersMutex);
+    boost::recursive_mutex::scoped_lock errorLock(errorStrategyMutex);
     stream << "filters = " << filters << ", errorStrategy = " << errorStrategy;
 }
 
 void ParallelEventReceivingStrategy::setHandlerErrorStrategy(
         const ParticipantConfig::ErrorStrategy& strategy) {
-    recursive_mutex::scoped_lock lock(errorStrategyMutex);
+    boost::recursive_mutex::scoped_lock lock(errorStrategyMutex);
     this->errorStrategy = strategy;
 }
 
@@ -88,7 +86,7 @@ bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e)
             return false;
         }
 
-        shared_lock<shared_mutex> lock(filtersMutex);
+        boost::shared_lock<boost::shared_mutex> lock(filtersMutex);
         for (set<filter::FilterPtr>::const_iterator filterIt = filters.begin(); filterIt
                 != filters.end(); ++filterIt) {
             if (!(*filterIt)->match(e)) {
@@ -127,7 +125,7 @@ bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e)
 
 void ParallelEventReceivingStrategy::handleDispatchError(const string& message) {
 
-    recursive_mutex::scoped_lock strategyLock(errorStrategyMutex);
+    boost::recursive_mutex::scoped_lock strategyLock(errorStrategyMutex);
     switch (errorStrategy) {
     case ParticipantConfig::ERROR_STRATEGY_LOG:
         RSCERROR(logger, message)
@@ -200,12 +198,12 @@ void ParallelEventReceivingStrategy::removeHandler(rsb::HandlerPtr handler,
 }
 
 void ParallelEventReceivingStrategy::addFilter(filter::FilterPtr filter) {
-    unique_lock<shared_mutex> lock(filtersMutex);
+    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
     filters.insert(filter);
 }
 
 void ParallelEventReceivingStrategy::removeFilter(filter::FilterPtr filter) {
-    unique_lock<shared_mutex> lock(filtersMutex);
+    boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
     filters.erase(filter);
 }
 
