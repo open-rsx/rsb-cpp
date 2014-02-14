@@ -32,7 +32,6 @@
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-#include <rsc/config/TypedValue.h>
 #include <rsc/logging/Logger.h>
 
 using namespace std;
@@ -370,7 +369,7 @@ void ParticipantConfig::handleOption(const vector<string>& key,
         // Global (participant-wide) options
     } else {
         if (key.size() == 1) {
-            this->options[key[0]] = parseTypedValue(value);
+            this->options[key[0]] = value;
         }
     }
 }
