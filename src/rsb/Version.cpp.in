@@ -66,6 +66,10 @@ string Version::buildDate() {
     return "@RSB_BUILD_DATE@";
 }
 
+string Version::buildPluginPathSuffix() {
+    return "@RSB_PLUGIN_PATH_SUFFIX@";
+}
+
 string Version::buildString() {
     ostringstream ss;
     ss << buildId() << " (DATE " << buildDate() << ")";

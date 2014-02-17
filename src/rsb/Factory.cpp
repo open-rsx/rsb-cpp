@@ -188,24 +188,22 @@ Factory::Factory() :
     // implementations for extension points.
     //
     // We use the following default plugin path:
-    // 1. $HOME/.rsb$MAJOR.$MINOR/plugins
-    // 2. $libdir/rsb$MAJOR.$MINOR/plugins
+    // 1. $HOME/.$RSB_PLUGIN_PATH_SUFFIX
+    // 2. $libdir/$RSB_PLUGIN_PATH_SUFFIX
     RSCINFO(this->logger, "Processing plugin configuration");
     {
-        string versioned = str(boost::format("rsb%1%.%2%")
-                               % RSB_VERSION_MAJOR
-                               % RSB_VERSION_MINOR);
         vector<boost::filesystem::path> defaultPath;
         // It may be impossible to determine a home directory for the
         // current user. Warn, but don't throw.
         try {
-            defaultPath.push_back(userHomeDirectory() / ("." + versioned) / "plugins");
+            defaultPath.push_back(userHomeDirectory()
+                        / ("." + Version::buildPluginPathSuffix()));
         } catch (const runtime_error& e) {
             RSCWARN(this->logger,
                     "Failed to determine user-specific plugin directory: "
                     << e.what());
         }
-        defaultPath.push_back(Version::libdir() / versioned / "plugins");
+        defaultPath.push_back(Version::libdir() / Version::buildPluginPathSuffix());
         rsc::plugins::Configurator configurator(pluginManager, defaultPath);
         configure(configurator, "rsb.conf", "RSB_", 0, 0, true, Version::installPrefix());
     }

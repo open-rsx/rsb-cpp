@@ -57,6 +57,7 @@ public:
 
     static std::string buildId();
     static std::string buildDate();
+    static std::string buildPluginPathSuffix();
 
     static std::string buildString();
 
