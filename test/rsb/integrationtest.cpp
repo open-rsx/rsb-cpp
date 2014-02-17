@@ -337,10 +337,8 @@ TEST_F(InformerTest, testConversionException) {
 
     Factory& factory = getFactory();
 
-    ParticipantConfig config =
-            getFactory().getDefaultParticipantConfig();
-    config.mutableTransport("inprocess").setEnabled(false);
-    config.mutableTransport("socket").setEnabled(true);
+    ParticipantConfig config;
+    config.addTransport(ParticipantConfig::Transport("socket"));
 
     const Scope scope("/damn/strange/scope");
     Informer<string>::Ptr informer = factory.createInformer<string>(scope,
@@ -368,9 +366,8 @@ TEST_F(InformerTest, testConversion) {
 
     Factory& factory = getFactory();
 
-    ParticipantConfig config = getFactory().getDefaultParticipantConfig();
-    config.mutableTransport("inprocess").setEnabled(false);
-    config.mutableTransport("socket").setEnabled(true);
+    ParticipantConfig config;
+    config.addTransport(ParticipantConfig::Transport("socket"));
 
     const Scope scope("/damn/strange/scope");
     Informer<string>::Ptr informer
