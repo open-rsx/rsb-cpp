@@ -33,17 +33,20 @@
 #include "rsb/ParticipantConfig.h"
 #include "rsb/patterns/Server.h"
 #include "rsb/patterns/RemoteServer.h"
+#include "rsb/util/EventQueuePushHandler.h"
 
 using namespace std;
 using namespace testing;
 using namespace rsb;
 using namespace rsb::patterns;
+using namespace rsb::util;
 
 class TestCallback: public Server::Callback<boost::uint64_t, string> {
 public:
 
     boost::shared_ptr<string> call(const string& methodName,
-            boost::shared_ptr<boost::uint64_t> input) {
+            boost::shared_ptr<boost::uint64_t> input,
+            Server::IntermediateResultHandlerPtr inter) {
 
         if (*input != 23) {
             return boost::shared_ptr<string>(new string("wrong input"));
@@ -52,6 +55,9 @@ public:
         if (methodName != "myMethod") {
             return boost::shared_ptr<string>(new string("wrong method"));
         }
+
+        // TODO improve API
+        inter->publish(boost::shared_ptr<string>(new string("intermediate")));
 
         return boost::shared_ptr<string>(new string("OK"));
     }
@@ -71,13 +77,27 @@ TEST(RpcRoundtripTest, testRoundtrip) {
 
     RemoteServer remote(scope, config, config);
 
+    boost::shared_ptr<rsc::threading::SynchronizedQueue<EventPtr> > intermediateQueue(
+            new rsc::threading::SynchronizedQueue<EventPtr>);
+
     const boost::uint64_t value = 23;
     boost::shared_ptr<string> reply =
-            remote.callAsync<string, boost::uint64_t>(methodName,
-                    boost::shared_ptr<boost::uint64_t>(
-                            new boost::uint64_t(value))).get(
-                    50000);
+    remote.callAsync<string, boost::uint64_t>(methodName,
+            boost::shared_ptr<boost::uint64_t>(
+                    new boost::uint64_t(value)),
+            ::rsb::HandlerPtr(
+                    new EventQueuePushHandler(intermediateQueue))).get(
+            50000);
 
     EXPECT_EQ("OK", *reply);
+
+    ASSERT_EQ(size_t(1), intermediateQueue->size());
+    EventPtr intermediateEvent = intermediateQueue->pop();
+    EXPECT_EQ(rsc::runtime::typeName<string>(), intermediateEvent->getType());
+    EXPECT_EQ("intermediate",
+            *boost::static_pointer_cast<string>(intermediateEvent->getData()));
+    EXPECT_FALSE(intermediateEvent->getCauses().empty())
+    << "the request event should be contained in the cause vector";
+    EXPECT_EQ("", intermediateEvent->getMethod());
 
 }

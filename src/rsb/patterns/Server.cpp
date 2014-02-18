@@ -61,7 +61,35 @@ const string& Server::CallbackBase::getReplyType() const {
     return this->replyType;
 }
 
-class RequestHandler: public Handler {
+class Server::DefaultIntermediateResultHandler: public IntermediateResultHandler {
+public:
+
+    DefaultIntermediateResultHandler(Informer<AnyType>::Ptr informer,
+            const EventId& cause) :
+            informer(informer), cause(cause) {
+    }
+
+    virtual ~DefaultIntermediateResultHandler() {
+    }
+
+    virtual void publish(const AnnotatedData& data) {
+        EventPtr event(new Event());
+        event->setScopePtr(informer->getScope());
+        event->addCause(cause);
+        event->setType(data.first);
+        event->setData(data.second);
+        // the client has to decide what to do with exceptions. We cannot know
+        informer->publish(event);
+    }
+
+private:
+
+    Informer<AnyType>::Ptr informer;
+    EventId cause;
+
+};
+
+class Server::RequestHandler: public Handler {
 private:
 
     rsc::logging::LoggerPtr logger;
@@ -99,18 +127,26 @@ public:
             return;
         }
 
+        // now let the callback execute and prepare the result event from this
         EventPtr reply(new Event());
         reply->setScopePtr(informer->getScope());
         reply->setMethod("REPLY");
         reply->addCause(event->getEventId());
         try {
-            AnnotatedData returnData
-                = callback->intlCall(methodName, event->getData());
+            CallSpec spec;
+            spec.methodName = methodName;
+            spec.data = event->getData();
+            spec.intermediateResultHandler.reset(
+                    new DefaultIntermediateResultHandler(informer,
+                            event->getEventId()));
+            AnnotatedData returnData = callback->intlCall(spec);
             reply->setType(returnData.first);
             reply->setData(returnData.second);
         } catch (const exception& e) {
             reply->setType(typeName<string>());
-            reply->setData(boost::shared_ptr<string>(new string(typeName(e) + ": " + e.what())));
+            reply->setData(
+                    boost::shared_ptr<string>(
+                            new string(typeName(e) + ": " + e.what())));
             reply->mutableMetaData().setUserInfo("rsb:error?", "");
         }
         informer->publish(reply);

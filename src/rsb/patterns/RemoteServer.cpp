@@ -51,6 +51,9 @@ using namespace rsc::threading;
 namespace rsb {
 namespace patterns {
 
+/**
+ * @author jwienke
+ */
 class WaitingEventHandler: public Handler {
 public:
     typedef boost::recursive_mutex MutexType;
@@ -59,7 +62,20 @@ private:
 
     MutexType mutex;
 
-    map<EventId, RemoteServer::FuturePtr> inprogress;
+    class RequestData {
+    public:
+        RequestData() {
+            // for map use
+        }
+        RequestData(RemoteServer::FuturePtr future,
+                ::rsb::HandlerPtr intermediateHandler) :
+                future(future), intermediateHandler(intermediateHandler) {
+        }
+        RemoteServer::FuturePtr future;
+        ::rsb::HandlerPtr intermediateHandler;
+    };
+
+    map<EventId, RequestData> inprogress;
 public:
 
     WaitingEventHandler(LoggerPtr logger) :
@@ -76,11 +92,11 @@ public:
 
     void handle(EventPtr event) {
         if (!event
-            || event->getCauses().empty()
-            || (event->getMethod() != "REPLY")) {
-            RSCTRACE(logger, "Received uninteresting event " << event);
+            || event->getCauses().empty()) {
+            RSCTRACE(logger, "Received an empty pointer or event without causes");
             return;
         }
+
         EventId requestId = *event->getCauses().begin();
         {
             MutexType::scoped_lock lock(mutex);
@@ -90,24 +106,50 @@ public:
                 return;
             }
 
-            RSCDEBUG(logger, "Received reply event " << event);
-
-            RemoteServer::FuturePtr result = this->inprogress[requestId];
-            if (event->mutableMetaData().hasUserInfo("rsb:error?")) {
-                assert(event->getType() == typeName<string>());
-                result->setError(str(format("Error calling remote method '%1%': %2%")
-                                     % "TODO: obtain method name"
-                                     % *(boost::static_pointer_cast<string>(event->getData()))));
+            if (event->getMethod() == "REPLY") {
+                handleReply(requestId, event);
+            } else if (event->getMethod().empty()) {
+                // anything without method must be an intermediate event
+                HandlerPtr intermediateHandler =
+                        this->inprogress[requestId].intermediateHandler;
+                if (intermediateHandler) {
+                    intermediateHandler->handle(event);
+                }
             } else {
-                result->set(event);
+                RSCTRACE(logger, "Don't know what to do with event " << event);
             }
-            this->inprogress.erase(requestId);
+
         }
     }
 
-    void addCall(const EventId& requestId, RemoteServer::FuturePtr result) {
+    void addCall(const EventId& requestId, RemoteServer::FuturePtr result,
+            ::rsb::HandlerPtr intermediateHandler) {
+        RSCTRACE(logger,
+                "From now on handling a method call with request event ID "
+                        << requestId);
         MutexType::scoped_lock lock(this->mutex);
-        this->inprogress.insert(make_pair(requestId, result));
+        this->inprogress.insert(
+                make_pair(requestId, RequestData(result, intermediateHandler)));
+    }
+
+private:
+
+    void handleReply(const EventId& requestId, EventPtr event) {
+        RSCDEBUG(logger, "Received reply event " << event);
+
+        RemoteServer::FuturePtr result = this->inprogress[requestId].future;
+        if (event->mutableMetaData().hasUserInfo("rsb:error?")) {
+            assert(event->getType() == typeName<string>());
+            result->setError(
+                    str(
+                            format("Error calling remote method '%1%': %2%")
+                                    % "TODO: obtain method name"
+                                    % *(boost::static_pointer_cast<string>(
+                                            event->getData()))));
+        } else {
+            result->set(event);
+        }
+        this->inprogress.erase(requestId);
     }
 
 };
@@ -171,7 +213,8 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
 
 }
 
-RemoteServer::FuturePtr RemoteServer::callAsync(const string& methodName, EventPtr data) {
+RemoteServer::FuturePtr RemoteServer::callAsync(const string& methodName,
+        EventPtr data, ::rsb::HandlerPtr intermediateHandler) {
 
     RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
@@ -186,7 +229,8 @@ RemoteServer::FuturePtr RemoteServer::callAsync(const string& methodName, EventP
         data->setMethod("REQUEST");
         methodSet.requestInformer->publish(data);
         result.reset(new Future<EventPtr>());
-        methodSet.handler->addCall(data->getEventId(), result);
+        methodSet.handler->addCall(data->getEventId(), result,
+                intermediateHandler);
     }
 
     return result;

@@ -120,7 +120,8 @@ public:
      * the result (an @ref EventPtr) of the method call can be
      * obtained at the caller's discretion.
      */
-    FuturePtr callAsync(const std::string& methodName, EventPtr data);
+    FuturePtr callAsync(const std::string& methodName, EventPtr data,
+            ::rsb::HandlerPtr intermediateHandler = ::rsb::HandlerPtr());
 
     /**
      * Call the method named @a methodName on the remote server,
@@ -138,8 +139,9 @@ public:
      */
     template <typename O, typename I>
     DataFuture<O> callAsync(const std::string&    methodName,
-                            boost::shared_ptr<I> args) {
-        return DataFuture<O>(callAsync(methodName, prepareRequestEvent(args)));
+                            boost::shared_ptr<I> args,
+                            ::rsb::HandlerPtr intermediateHandler = ::rsb::HandlerPtr()) {
+        return DataFuture<O>(callAsync(methodName, prepareRequestEvent(args), intermediateHandler));
     }
 
     /**
