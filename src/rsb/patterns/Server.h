@@ -451,11 +451,7 @@ private:
 template<>
 class RSB_EXPORT Server::Callback<void, void>: public Server::CallbackBase {
 public:
-    // typeid is due to msvc strangeness
-    Callback() :
-        Server::CallbackBase(rsc::runtime::typeName(typeid(void)),
-                             rsc::runtime::typeName(typeid(void))) {
-    }
+    Callback();
 
     /**
      * Implement this method to perform actions.
@@ -468,10 +464,7 @@ public:
      *                       automatically caught and delivered to the
      *                       remote server
      */
-    virtual void call(const std::string& /*methodName*/) {
-        throw std::logic_error(
-                "Either implement this method or the one with more parameters");
-    }
+    virtual void call(const std::string& methodName);
 
     /**
      * Implement this method to perform actions.
@@ -485,15 +478,10 @@ public:
      *                       remote server
      */
     virtual void call(const std::string& methodName,
-            IntermediateResultHandlerPtr /*intermediateResultHandler*/) {
-        call(methodName);
-    }
+            IntermediateResultHandlerPtr intermediateResultHandler);
 
 private:
-    AnnotatedData intlCall(const CallSpec& spec) {
-        call(spec.methodName);
-        return std::make_pair(getReplyType(), boost::shared_ptr<void>());
-    }
+    AnnotatedData intlCall(const CallSpec& spec);
 
 };
 

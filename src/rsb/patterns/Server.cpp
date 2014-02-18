@@ -184,5 +184,25 @@ void Server::registerMethod(const std::string& methodName, CallbackPtr callback)
 
 }
 
+Server::Callback<void, void>::Callback() :
+        Server::CallbackBase(rsc::runtime::typeName(typeid(void)),
+                rsc::runtime::typeName(typeid(void))) {
+}
+
+void Server::Callback<void, void>::call(const std::string& /*methodName*/) {
+    throw std::logic_error(
+            "Either implement this method or the one with more parameters");
+}
+
+void Server::Callback<void, void>::call(const std::string& methodName,
+        IntermediateResultHandlerPtr /*intermediateResultHandler*/) {
+    call(methodName);
+}
+
+AnnotatedData Server::Callback<void, void>::intlCall(const CallSpec& spec) {
+    call(spec.methodName);
+    return std::make_pair(getReplyType(), boost::shared_ptr<void>());
+}
+
 }
 }
