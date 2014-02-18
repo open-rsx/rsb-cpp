@@ -137,8 +137,7 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
     if (!methodSets.count(methodName)) {
 
         // start a listener to wait for the reply
-        const Scope replyScope = scope.concat(Scope("/reply")).concat(
-                Scope("/" + methodName));
+        const Scope replyScope = scope.concat(Scope("/" + methodName));
         ListenerPtr listener = getFactory().createListener(replyScope,
                 listenerConfig);
 
@@ -147,10 +146,9 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
         listener->addHandler(handler);
 
         // informer for requests
-        Informer<void>::Ptr informer = getFactory().createInformer<
-                void>(
-                scope.concat(Scope("/request")).concat(Scope("/" + methodName)),
-                informerConfig, sendType);
+        Informer<void>::Ptr informer = getFactory().createInformer<void>(
+                scope.concat(Scope("/" + methodName)), informerConfig,
+                sendType);
 
         MethodSet set;
         set.methodName = methodName;
