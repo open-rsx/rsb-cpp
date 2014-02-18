@@ -238,8 +238,10 @@ RemoteServer::FuturePtr RemoteServer::callAsync(const string& methodName,
 
 EventPtr RemoteServer::call(const string& methodName,
                             EventPtr      data,
-                            unsigned int  maxReplyWaitTime) {
-    return callAsync(methodName, data)->get(maxReplyWaitTime);
+                            unsigned int  maxReplyWaitTime,
+                            ::rsb::HandlerPtr intermediateHandler) {
+    return callAsync(methodName, data, intermediateHandler)->get(
+            maxReplyWaitTime);
 }
 
 }

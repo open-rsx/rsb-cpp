@@ -116,6 +116,8 @@ public:
      * @param methodName Name of the method that should be called.
      * @param data An @ref Event object containing the argument object
      * that should be passed to the called method.
+     * @param intermediateHandler an optional handler to be called when
+     *                            receiving intermediate results
      * @return A @ref rsc::threading::TimeoutFuture object from which
      * the result (an @ref EventPtr) of the method call can be
      * obtained at the caller's discretion.
@@ -133,6 +135,8 @@ public:
      * @param methodName Name of the method that should be called.
      * @param args The argument object that should be passed to the
      * called method.
+     * @param intermediateHandler an optional handler to be called when
+     *                            receiving intermediate results
      * @return A @ref DataFuture object from which the result (a
      * shared_ptr to an object of type @a O) of the method call can be
      * obtained at the caller's discretion.
@@ -151,16 +155,20 @@ public:
      *
      * @tparam O type of the method return value.
      * @param methodName Name of the method that should be called.
+     * @param intermediateHandler an optional handler to be called when
+     *                            receiving intermediate results
      * @return A @ref DataFuture object from which the result (a
      * shared_ptr to an object of type @a O) of the method call can be
      * obtained at the caller's discretion.
      */
     template <typename O>
-    DataFuture<O> callAsync(const std::string& methodName) {
+    DataFuture<O> callAsync(const std::string& methodName,
+            ::rsb::HandlerPtr intermediateHandler = ::rsb::HandlerPtr()) {
         EventPtr request(new Event());
         request->setType(rsc::runtime::typeName<void>());
         request->setData(VoidPtr());
-        return DataFuture<O>(callAsync(methodName, request));
+        return DataFuture<O>(
+                callAsync(methodName, request, intermediateHandler));
     }
 
     /**
@@ -176,6 +184,8 @@ public:
      * that should be passed to the called method.
      * @param maxReplyWaitTime Maximum number of seconds to wait for a
      * reply from the server when calling a method.
+     * @param intermediateHandler an optional handler to be called when
+     *                            receiving intermediate results
      * @return An @ref Event object containing the result of the
      * method call.
      * @throw rsc::threading::FutureTimeoutException if the method
@@ -185,7 +195,8 @@ public:
      */
     EventPtr call(const std::string& methodName,
                   EventPtr          data,
-                  unsigned int      maxReplyWaitTime = 25);
+                  unsigned int      maxReplyWaitTime = 25,
+                  ::rsb::HandlerPtr intermediateHandler = ::rsb::HandlerPtr());
 
     /**
      * Call the method named @a methodName on the remote server,
@@ -202,6 +213,8 @@ public:
      * called method.
      * @param maxReplyWaitTime Maximum number of seconds to wait for a
      * reply from the server when calling a method.
+     * @param intermediateHandler an optional handler to be called when
+     *                            receiving intermediate results
      * @return The result of the method call.
      * @throw rsc::threading::FutureTimeoutException if the method
      * call is not completed within the maximum waiting time.
@@ -211,8 +224,10 @@ public:
     template <typename O, typename I>
     boost::shared_ptr<O> call(const std::string&    methodName,
                               boost::shared_ptr<I> args,
-                              unsigned int         maxReplyWaitTime = 25) {
-        return callAsync<O>(methodName, args).get(maxReplyWaitTime);
+                              unsigned int         maxReplyWaitTime = 25,
+                              ::rsb::HandlerPtr intermediateHandler = ::rsb::HandlerPtr()) {
+        return callAsync<O>(methodName, args, intermediateHandler).get(
+                maxReplyWaitTime);
     }
 
     /**
@@ -227,6 +242,8 @@ public:
      * @param methodName Name of the method that should be called.
      * @param maxReplyWaitTime Maximum number of seconds to wait for a
      * reply from the server when calling a method.
+     * @param intermediateHandler an optional handler to be called when
+     *                            receiving intermediate results
      * @return The result of the method call.
      * @throw rsc::threading::FutureTimeoutException if the method
      * call is not completed within the maximum waiting time.
@@ -235,8 +252,10 @@ public:
      */
     template <typename O>
     boost::shared_ptr<O> call(const std::string& methodName,
-                              unsigned int       maxReplyWaitTime = 25) {
-        return callAsync<O>(methodName).get(maxReplyWaitTime);
+                              unsigned int       maxReplyWaitTime = 25,
+                              ::rsb::HandlerPtr intermediateHandler = ::rsb::HandlerPtr()) {
+        return callAsync<O>(methodName, intermediateHandler).get(
+                maxReplyWaitTime);
     }
 private:
     rsc::logging::LoggerPtr logger;
