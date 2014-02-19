@@ -27,8 +27,10 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include <boost/type_traits.hpp>
 
 #include <rsc/threading/SynchronizedQueue.h>
+#include <rsc/misc/langutils.h>
 
 #include "../Handler.h"
 
@@ -44,12 +46,19 @@ namespace util {
  * @tparam T data type received by the handler. All data is handeled as a shared
  *           pointer of this type
  */
-template<class T>
+template<class T, class DisableEventWarning = void>
 class QueuePushHandler: public Handler {
 private:
     boost::shared_ptr<rsc::threading::SynchronizedQueue<boost::shared_ptr<T> > >
             queue;
 public:
+
+    // Catch the common error that people use this class to receive complete events
+    STATIC_ASSERT_WARN_TEMPLATE(QUEUE_PUSH_HANDLER_EVENT_WARNING,
+            (boost::is_same<DisableEventWarning, Event>::value || !boost::is_same<T, Event>::value),
+            "You probably do not want to use QueuePushHandler with type Event. \
+If you want to receive complete Event instances inside a queue, you need to use EventQueuePushHandler. \
+If you really want to use this class and want to get rid of this warning, define the second template parameter of this class to Event, too.");
 
     /**
      * Constructs a new instance.

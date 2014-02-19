@@ -64,6 +64,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
                       rsb/util/EventQueuePushHandlerTest.cpp
                       rsb/util/MD5Test.cpp
+                      rsb/util/QueuePushHandlerTest.cpp
                       rsb/transport/FactoryTest.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES} ${TEST_PROTO_SOURCES} ${TEST_PROTO_HEADERS})
