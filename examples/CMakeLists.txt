@@ -10,7 +10,7 @@ MACRO(EXAMPLE NAME)
     LIST(APPEND EXAMPLES ${BINARY})
     SET(BINARY "example-${NAME}")
     ADD_EXECUTABLE(${BINARY} ${ARGN})
-    TARGET_LINK_LIBRARIES(${BINARY} ${RSB_NAME})
+    TARGET_LINK_LIBRARIES(${BINARY} ${LIB_NAME})
 ENDMACRO()
 
 EXAMPLE(informer
@@ -61,4 +61,4 @@ EXAMPLE(client server/client.cpp)
 EXAMPLE(doublecheck doublecheck.cpp)
 
 ADD_LIBRARY(exampleplugin SHARED plugin/Plugin.cpp)
-TARGET_LINK_LIBRARIES(exampleplugin ${RSB_NAME})
+TARGET_LINK_LIBRARIES(exampleplugin ${LIB_NAME})

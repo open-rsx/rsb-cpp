@@ -5,13 +5,13 @@ ADD_EXECUTABLE("${BINARY_PREFIX}${INFO_NAME}${BINARY_SUFFIX}"
                info/main.cpp)
 TARGET_LINK_LIBRARIES("${BINARY_PREFIX}${INFO_NAME}${BINARY_SUFFIX}"
                       ${CMAKE_THREAD_LIBS_INIT}
-                      ${RSB_NAME})
+                      ${LIB_NAME})
 
 ADD_EXECUTABLE("${BINARY_PREFIX}${SEND_NAME}${BINARY_SUFFIX}"
                send/main.cpp)
 TARGET_LINK_LIBRARIES("${BINARY_PREFIX}${SEND_NAME}${BINARY_SUFFIX}"
                       ${CMAKE_THREAD_LIBS_INIT}
-                      ${RSB_NAME})
+                      ${LIB_NAME})
 
 INSTALL(TARGETS "${BINARY_PREFIX}${INFO_NAME}${BINARY_SUFFIX}"
         RUNTIME DESTINATION bin)

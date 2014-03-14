@@ -29,7 +29,7 @@ SET(RSB_TEST_SOURCES rsb/integrationtest.cpp
 
 ADD_EXECUTABLE(${RSB_TEST_NAME} ${RSB_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${RSB_TEST_NAME}
-                      ${RSB_NAME}
+                      ${LIB_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARIES})
 
@@ -69,7 +69,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES} ${TEST_PROTO_SOURCES} ${TEST_PROTO_HEADERS})
 TARGET_LINK_LIBRARIES(${CORE_TEST_NAME}
-                      ${RSB_NAME}
+                      ${LIB_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARIES})
 
@@ -83,7 +83,7 @@ SET(FACTORY_TEST_SOURCES rsb/FactoryTest.cpp)
 
 ADD_EXECUTABLE(${FACTORY_TEST_NAME} ${FACTORY_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(${FACTORY_TEST_NAME}
-                      ${RSB_NAME}
+                      ${LIB_NAME}
                       ${Boost_LIBRARIES}
                       ${GMOCK_LIBRARIES})
 
@@ -96,7 +96,7 @@ SET(CORE_DEAT_TEST_SOURCES rsb/eventprocessing/ParallelEventReceivingStrategyDea
 
 ADD_EXECUTABLE(parallelStrategyDeathTest ${CORE_DEAT_TEST_SOURCES})
 TARGET_LINK_LIBRARIES(parallelStrategyDeathTest
-                      ${RSB_NAME}
+                      ${LIB_NAME}
                       ${Boost_LIBRARIES})
 
 FIND_PACKAGE(PythonInterp)
@@ -123,7 +123,7 @@ ADD_LIBRARY(${CONNECTOR_TEST_NAME} STATIC rsb/transport/ConnectorTest.cpp
                                           rsb/transport/ConnectorTest.h
                                           rsb/InformerTask.cpp
                                           rsb/InformerTask.h)
-TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${RSB_NAME}
+TARGET_LINK_LIBRARIES(${CONNECTOR_TEST_NAME} ${LIB_NAME}
                                              ${GMOCK_LIBRARIES})
 
 # --- inprocess connector test ---
@@ -163,7 +163,7 @@ IF(WITH_SOCKET_TRANSPORT)
     SET(TOPLEVEL_CATCH_TEST_SOURCES rsbtest_toplevel_catch)
     ADD_EXECUTABLE(${TOPLEVEL_CATCH_TEST_NAME} ${TOPLEVEL_CATCH_TEST_SOURCES})
     TARGET_LINK_LIBRARIES(${TOPLEVEL_CATCH_TEST_NAME}
-                          ${RSB_NAME}
+                          ${LIB_NAME}
                           ${Boost_LIBRARIES}
                           ${GMOCK_LIBRARIES})
 
