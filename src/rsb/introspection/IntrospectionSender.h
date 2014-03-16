@@ -27,6 +27,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include <boost/shared_ptr.hpp>
 
@@ -37,6 +38,10 @@
 #include "../Participant.h"
 #include "../Listener.h"
 #include "../Informer.h"
+
+#include "../patterns/Server.h"
+
+#include "Model.h"
 
 namespace rsb {
 namespace introspection {
@@ -56,7 +61,13 @@ public:
 
     bool removeParticipant(const Participant& participant);
 private:
+    typedef std::vector<ParticipantInfo> ParticipantList;
+
     rsc::logging::LoggerPtr logger;
+
+    ParticipantList         participants;
+    ProcessInfo             process;
+    HostInfo                host;
 
     ListenerPtr             listener;
     InformerBasePtr         informer;

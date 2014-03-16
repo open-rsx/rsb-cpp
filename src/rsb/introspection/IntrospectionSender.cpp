@@ -26,10 +26,6 @@
 
 #include "IntrospectionSender.h"
 
-#include <unistd.h> // TODO build abstraction into rsc? does boost have something?
-
-#include <fstream>
-
 #include <boost/format.hpp>
 
 #include <rsb/protocol/operatingsystem/Process.pb.h>
@@ -37,8 +33,7 @@
 #include "../Factory.h"
 
 #include "Types.h"
-
-using namespace boost;
+#include "Model.h"
 
 namespace rsb {
 namespace introspection {
@@ -52,6 +47,12 @@ IntrospectionSender::IntrospectionSender()
 void IntrospectionSender::addParticipant(ParticipantPtr participant) {
     RSCDEBUG(this->logger, boost::format("Adding participant %1%") % participant);
 
+    ParticipantInfo info(participant->getKind(),
+                         participant->getId(),
+                         *participant->getScope(),
+                         "TODO"); // TODO type
+    this->participants.push_back(info);
+
     boost::shared_ptr<rsb::protocol::introspection::Hello> hello(
         new rsb::protocol::introspection::Hello());
 
@@ -64,21 +65,20 @@ void IntrospectionSender::addParticipant(ParticipantPtr participant) {
     // Add host information.
     rsb::protocol::operatingsystem::Host* host
         = hello->mutable_host();
-    char buffer[1024];
-    gethostname(buffer, 1024); // what could possibly go wrong?
-    host->set_id(buffer);
-    host->set_hostname(buffer);
+    host->set_id(this->host.getId());
+    host->set_hostname(this->host.getHostname());
 
     // Add process information.
     rsb::protocol::operatingsystem::Process* process
         = hello->mutable_process();
 
-    process->set_id(boost::lexical_cast<std::string>(getpid()));
-
-    std::ifstream self("/proc/self/cmdline");
-    std::string program;
-    self >> program;
-    process->set_program_name(program);
+    process->set_id(boost::lexical_cast<std::string>(this->process.getPid()));
+    process->set_program_name(this->process.getProgramName());
+    std::vector<std::string> arguments = this->process.getArguments();
+    for (std::vector<std::string>::const_iterator it = arguments.begin();
+         it != arguments.end(); ++it) {
+        process->add_commandline_arguments(*it);
+    }
 
     this->informer->publish(hello);
 }
@@ -86,7 +86,19 @@ void IntrospectionSender::addParticipant(ParticipantPtr participant) {
 bool IntrospectionSender::removeParticipant(const Participant& participant) {
     RSCDEBUG(this->logger, boost::format("Removing participant %1%") % participant);
 
-    this->informer->publish(boost::shared_ptr<std::string>(new std::string("bye")));
+    ParticipantList::iterator it;
+    for (it = this->participants.begin(); it != this->participants.end(); ++it) {
+        if (it->getId() == participant.getId()) {
+            break;
+        }
+    }
+    if (it == this->participants.end()) {
+        RSCWARN(this->logger, boost::format("Trying to remove unknown participant %1%")
+                % participant);
+    } else {
+        this->informer->publish(boost::shared_ptr<std::string>(new std::string("bye")));
+        this->participants.erase(it);
+    }
 
     return false;
 }

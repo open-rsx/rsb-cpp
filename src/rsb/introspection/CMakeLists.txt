@@ -2,6 +2,7 @@
 SET(PLUGIN_NAME rsbintrospection)
 ADD_LIBRARY(${PLUGIN_NAME} SHARED "Plugin.cpp"
                                   "Types.cpp"
+                                  "Model.cpp"
                                   "IntrospectionSender.cpp")
 
 TARGET_LINK_LIBRARIES(${PLUGIN_NAME} ${RSC_LIBRARIES}
