@@ -91,28 +91,34 @@ public:
         if (event->getMethod() != "REQUEST") {
             return;
         }
-        if (event->getType() != callback->getRequestType()) {
-            RSCERROR(logger, "Request type '" << event->getType()
-                    << "' does not match expected request type '"
-                    << callback->getRequestType() << "' of method '"
-                    << methodName << "'");
-            return;
+
+        Server::CallbackBase* callbackWithReturnType
+            = dynamic_cast<Server::CallbackBase*>(this->callback.get());
+        if (callbackWithReturnType) {
+            if (event->getType() != callbackWithReturnType->getRequestType()) {
+                RSCERROR(logger, boost::format("Request type '%1%' "
+                                               "does not match expected request type '%2%' "
+                                               "of method '%3%'")
+                         % event->getType()
+                         % callbackWithReturnType->getRequestType()
+                         % methodName);
+                return;
+            }
         }
 
-        EventPtr reply(new Event());
-        reply->setScopePtr(informer->getScope());
-        reply->setMethod("REPLY");
-        reply->addCause(event->getEventId());
+        EventPtr reply;
         try {
-            AnnotatedData returnData
-                = callback->intlCall(methodName, event->getData());
-            reply->setType(returnData.first);
-            reply->setData(returnData.second);
+            reply = callback->intlCall(methodName, event);
+            assert(reply);
         } catch (const exception& e) {
+            reply.reset(new Event());
             reply->setType(typeName<string>());
             reply->setData(boost::shared_ptr<string>(new string(typeName(e) + ": " + e.what())));
             reply->mutableMetaData().setUserInfo("rsb:error?", "");
         }
+        reply->setScopePtr(informer->getScope());
+        reply->setMethod("REPLY");
+        reply->addCause(event->getEventId());
         informer->publish(reply);
     }
 

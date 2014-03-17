@@ -41,6 +41,7 @@
 #include "../Listener.h"
 #include "../ParticipantConfig.h"
 #include "../Scope.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -61,15 +62,10 @@ public:
      */
     class RSB_EXPORT IntlCallback {
     public:
-
         virtual ~IntlCallback();
 
-        virtual const std::string& getRequestType() const = 0;
-
-        virtual AnnotatedData
-                intlCall(const std::string& methodName,
-                        boost::shared_ptr<void> input) = 0;
-
+        virtual EventPtr intlCall(const std::string& methodName,
+                                  EventPtr request) = 0;
     };
 
     /**
@@ -118,10 +114,14 @@ public:
         virtual AnnotatedData call(const std::string& methodName,
                 boost::shared_ptr<RequestType> input) = 0;
     private:
-        AnnotatedData intlCall(const std::string& methodName,
-                boost::shared_ptr<void> input) {
-            return call(methodName,
-                    boost::static_pointer_cast<RequestType>(input));
+        EventPtr intlCall(const std::string& methodName, EventPtr request) {
+            boost::shared_ptr<RequestType> argument
+                = boost::static_pointer_cast<RequestType>(request->getData());
+            AnnotatedData result = call(methodName, argument);
+            EventPtr reply(new Event());
+            reply->setType(result.first);
+            reply->setData(result.second);
+            return reply;
         }
 
     };
@@ -158,10 +158,14 @@ public:
         virtual boost::shared_ptr<ReplyType> call(const std::string& methodName,
                                                   boost::shared_ptr<RequestType> input) = 0;
     private:
-        AnnotatedData intlCall(const std::string& methodName,
-                boost::shared_ptr<void> input) {
-            return std::make_pair(getReplyType(), call(methodName,
-                        boost::static_pointer_cast<RequestType>(input)));
+        EventPtr intlCall(const std::string& methodName, EventPtr request) {
+            boost::shared_ptr<RequestType> argument
+                = boost::static_pointer_cast<RequestType>(request->getData());
+            boost::shared_ptr<ReplyType> result = call(methodName, argument);
+            EventPtr reply(new Event());
+            reply->setType(getReplyType());
+            reply->setData(result);
+            return reply;
         }
     };
 
@@ -188,10 +192,14 @@ public:
         virtual void call(const std::string& methodName,
                           boost::shared_ptr<RequestType> input) = 0;
     private:
-        AnnotatedData intlCall(const std::string& methodName,
-                boost::shared_ptr<void> input) {
-            call(methodName, boost::static_pointer_cast<RequestType>(input));
-            return make_pair(getReplyType(), boost::shared_ptr<void>());
+        EventPtr intlCall(const std::string& methodName, EventPtr request) {
+            boost::shared_ptr<RequestType> argument
+                = boost::static_pointer_cast<RequestType>(request->getData());
+            call(methodName, argument);
+            EventPtr reply(new Event());
+            reply->setType(getReplyType());
+            reply->setData(boost::shared_ptr<void>());
+            return reply;
         }
 
     };
@@ -219,9 +227,11 @@ public:
         virtual boost::shared_ptr<ReplyType> call(
                 const std::string& methodName) = 0;
     private:
-        AnnotatedData intlCall(const std::string& methodName,
-                               boost::shared_ptr<void> /*input*/) {
-            return std::make_pair(getReplyType(), call(methodName));
+        EventPtr intlCall(const std::string& methodName, EventPtr /*request*/) {
+            EventPtr reply(new Event());
+            reply->setType(getReplyType());
+            reply->setData(call(methodName));
+            return reply;
         }
 
     };
@@ -282,10 +292,12 @@ class RSB_EXPORT Server::Callback<void, void>: public Server::CallbackBase {
      */
     virtual void call(const std::string& methodName) = 0;
  private:
-    AnnotatedData intlCall(const std::string& methodName,
-                           boost::shared_ptr<void> /*input*/) {
+    EventPtr intlCall(const std::string& methodName, EventPtr /*request*/) {
         call(methodName);
-        return std::make_pair(getReplyType(), boost::shared_ptr<void>());
+        EventPtr reply(new Event());
+        reply->setType(getReplyType());
+        reply->setData(boost::shared_ptr<void>());
+        return reply;
     }
 
 };
