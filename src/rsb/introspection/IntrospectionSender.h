@@ -31,9 +31,9 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <rsc/logging/Logger.h>
+#include <boost/thread/mutex.hpp>
 
-#include <rsb/protocol/introspection/Hello.pb.h>
+#include <rsc/logging/Logger.h>
 
 #include "../Participant.h"
 #include "../Listener.h"
@@ -54,6 +54,7 @@ namespace introspection {
  * @author jmoringe
  */
 class IntrospectionSender {
+friend class QueryHandler;
 public:
     IntrospectionSender();
 
@@ -64,6 +65,8 @@ private:
     typedef std::vector<ParticipantInfo> ParticipantList;
 
     rsc::logging::LoggerPtr logger;
+
+    boost::mutex            mutex;
 
     ParticipantList         participants;
     ProcessInfo             process;
