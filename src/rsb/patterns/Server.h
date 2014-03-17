@@ -69,6 +69,18 @@ public:
     };
 
     /**
+     * Callback class with receives and returns events.
+     *
+     * @author jmoringe
+     */
+    class RSB_EXPORT EventCallback : public IntlCallback {
+    public:
+        virtual EventPtr call(const std::string& methodName, EventPtr request) = 0;
+    private:
+        EventPtr intlCall(const std::string& methodName, EventPtr request);
+    };
+
+    /**
      * Base class for callback classes.
      *
      * @author jmoringe

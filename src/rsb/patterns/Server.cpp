@@ -61,6 +61,14 @@ const string& Server::CallbackBase::getReplyType() const {
     return this->replyType;
 }
 
+// EventCallback
+
+EventPtr Server::EventCallback::intlCall(const string& methodName, EventPtr request) {
+    return call(methodName, request);
+}
+
+// RequestHandler
+
 class RequestHandler: public Handler {
 private:
 
