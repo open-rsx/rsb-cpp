@@ -113,11 +113,29 @@ struct QueryHandler : public Handler {
     IntrospectionSender& sender;
 };
 
+// Internal
+// @author jmoringe
+struct EchoCallback : public patterns::LocalServer::EventCallback {
+    EventPtr call(const std::string& /*methodName*/, EventPtr request) {
+        request->mutableMetaData()
+            .setUserTime("request.send",
+                         request->getMetaData().getSendTime());
+        request->mutableMetaData()
+            .setUserTime("request.receive",
+                         request->getMetaData().getReceiveTime());
+        return request;
+    }
+};
+
 IntrospectionSender::IntrospectionSender()
     : logger(rsc::logging::Logger::getLogger("rsb.introspection.IntrospectionSender")),
       listener(getFactory().createListener(INTROSPECTION_PARTICIPANTS_SCOPE)),
-      informer(getFactory().createInformerBase(INTROSPECTION_PARTICIPANTS_SCOPE)) {
+      informer(getFactory().createInformerBase(INTROSPECTION_PARTICIPANTS_SCOPE)),
+      server(getFactory().createLocalServer(INTROSPECTION_HOSTS_SCOPE
+                                            .concat(boost::str(boost::format("/%1%/%2%")
+                                                               % host.getId() % process.getPid())))) {
     listener->addHandler(HandlerPtr(new QueryHandler(*this)));
+    server->registerMethod("echo", patterns::LocalServer::CallbackPtr(new EchoCallback()));
 }
 
 void IntrospectionSender::addParticipant(ParticipantPtr participant) {

@@ -39,7 +39,7 @@
 #include "../Listener.h"
 #include "../Informer.h"
 
-#include "../patterns/Server.h"
+#include "../patterns/LocalServer.h"
 
 #include "Model.h"
 
@@ -64,16 +64,18 @@ public:
 private:
     typedef std::vector<ParticipantInfo> ParticipantList;
 
-    rsc::logging::LoggerPtr logger;
+    rsc::logging::LoggerPtr       logger;
 
-    boost::mutex            mutex;
+    boost::mutex                  mutex;
 
-    ParticipantList         participants;
-    ProcessInfo             process;
-    HostInfo                host;
+    ParticipantList               participants;
+    ProcessInfo                   process;
+    HostInfo                      host;
 
-    ListenerPtr             listener;
-    InformerBasePtr         informer;
+    ListenerPtr                   listener;
+    InformerBasePtr               informer;
+
+    rsb::patterns::LocalServerPtr server;
 };
 
 typedef boost::shared_ptr<IntrospectionSender> IntrospectionSenderPtr;
