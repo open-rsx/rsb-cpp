@@ -70,7 +70,7 @@ protected:
      * @param method the accepted method of this handler or empty string for
      *               all methods
      */
-    explicit                                  Handler(const std::string& method = "");
+    explicit Handler(const std::string& method = "");
 
     /**
      * Creates a new handler that only accepts events with the specified
@@ -78,7 +78,7 @@ protected:
      *
      * @param methods set of desired methods, empty for all methods
      */
-    explicit                                  Handler(const std::set<std::string>& methods);
+    explicit Handler(const std::set<std::string>& methods);
 
     virtual ~Handler();
 
@@ -86,10 +86,10 @@ protected:
         return rsc::runtime::typeName(typeid(*this));
     }
 private:
-    std::set<std::string>                     methods;
+    std::set<std::string> methods;
 };
 
-typedef boost::shared_ptr<Handler>            HandlerPtr;
+typedef boost::shared_ptr<Handler>      HandlerPtr;
 
 typedef boost::function<void(EventPtr)> EventFunction;
 
