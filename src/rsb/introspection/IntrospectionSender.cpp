@@ -74,7 +74,7 @@ struct QueryHandler : public Handler {
                  = this->sender.participants.begin();
              it != this->sender.participants.end();
              ++it) {
-            // TODO this->sender.sendHello(*it, query);
+            this->sender.sendHello(*it, query);
         }
     }
 
@@ -87,7 +87,7 @@ struct QueryHandler : public Handler {
                  = this->sender.participants.begin();
              it != this->sender.participants.end(); ++it) {
             if (it->getId() == id) {
-                // TODO this->sender.sendHello(*it, query);
+                this->sender.sendHello(*it, query);
                 break;
             }
         }
@@ -149,33 +149,7 @@ void IntrospectionSender::addParticipant(ParticipantPtr participant) {
                          "TODO"); // TODO type
     this->participants.push_back(info);
 
-    boost::shared_ptr<rsb::protocol::introspection::Hello> hello(
-        new rsb::protocol::introspection::Hello());
-
-    // Add participant information.
-    hello->set_id(participant->getId().getId().data,
-                  participant->getId().getId().size());
-    hello->set_kind("INFORMER");
-    hello->set_scope(participant->getScope()->toString());
-
-    // Add host information.
-    rsb::protocol::operatingsystem::Host* host
-        = hello->mutable_host();
-    host->set_id(this->host.getId());
-    host->set_hostname(this->host.getHostname());
-
-    // Add process information.
-    rsb::protocol::operatingsystem::Process* process
-        = hello->mutable_process();
-    process->set_id(boost::lexical_cast<std::string>(this->process.getPid()));
-    process->set_program_name(this->process.getProgramName());
-    std::vector<std::string> arguments = this->process.getArguments();
-    for (std::vector<std::string>::const_iterator it = arguments.begin();
-         it != arguments.end(); ++it) {
-        process->add_commandline_arguments(*it);
-    }
-
-    this->informer->publish(hello);
+    sendHello(info);
 }
 
 bool IntrospectionSender::removeParticipant(const Participant& participant) {
@@ -193,11 +167,71 @@ bool IntrospectionSender::removeParticipant(const Participant& participant) {
         RSCWARN(this->logger, boost::format("Trying to remove unknown participant %1%")
                 % participant);
     } else {
-        this->informer->publish(boost::shared_ptr<std::string>(new std::string("bye")));
+        sendBye(*it);
+
         this->participants.erase(it);
     }
 
-    return false;
+    RSCDEBUG(this->logger, boost::format("%1% participant(s) remain(s)")
+             % this->participants.size());
+
+    return !this->participants.empty();
+}
+
+void IntrospectionSender::sendHello(const ParticipantInfo& participant,
+                                    EventPtr               query) {
+    boost::shared_ptr<rsb::protocol::introspection::Hello> hello(
+        new rsb::protocol::introspection::Hello());
+
+    // Add participant information.
+    hello->set_id(participant.getId().getId().data,
+                  participant.getId().getId().size());
+    hello->set_kind(participant.getKind());
+    hello->set_scope(participant.getScope().toString());
+
+    // Add process information.
+    rsb::protocol::operatingsystem::Process* process
+        = hello->mutable_process();
+    process->set_id(boost::lexical_cast<std::string>(this->process.getPid()));
+    process->set_program_name(this->process.getProgramName());
+    std::vector<std::string> arguments = this->process.getArguments();
+    for (std::vector<std::string>::const_iterator it = arguments.begin();
+         it != arguments.end(); ++it) {
+        process->add_commandline_arguments(*it);
+    }
+
+    // Add host information.
+    rsb::protocol::operatingsystem::Host* host = hello->mutable_host();
+    if (!this->host.getId().empty()) {
+        host->set_id(this->host.getId());
+    }
+    host->set_hostname(this->host.getHostname());
+
+    // Construct event.
+    EventPtr helloEvent(new Event());
+    helloEvent->setScope(this->informer->getScope()->concat(boost::str(boost::format("/%1%")
+                                                                       % participant.getId().getIdAsString())));
+    helloEvent->setData(hello);
+    helloEvent->setType(rsc::runtime::typeName(*hello.get()));
+    if (query) {
+        helloEvent->addCause(query->getEventId());
+    }
+
+    this->informer->publish(helloEvent);
+}
+
+void IntrospectionSender::sendBye(const ParticipantInfo& participant) {
+    boost::shared_ptr<rsb::protocol::introspection::Bye> bye(
+        new rsb::protocol::introspection::Bye());
+    bye->set_id(participant.getId().getId().data,
+                participant.getId().getId().size());
+    EventPtr byeEvent(new Event());
+    byeEvent->setScope(this->informer->getScope()
+                       ->concat(boost::str(boost::format("/%1%")
+                                           % participant.getId().getIdAsString())));
+    byeEvent->setData(bye);
+    byeEvent->setType(rsc::runtime::typeName(*bye.get()));
+    this->informer->publish(byeEvent);
 }
 
 }
