@@ -59,6 +59,10 @@ void InformerBase::printContents(ostream& stream) const {
     stream << ", type = " << defaultType;
 }
 
+std::string InformerBase::getKind() const {
+    return "informer";
+}
+
 string InformerBase::getType() const {
     return this->defaultType;
 }

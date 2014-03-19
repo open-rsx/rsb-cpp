@@ -97,6 +97,9 @@ public:
                      const ParticipantConfig& informerConfig);
         virtual ~RemoteMethod();
 
+        // Overrides method in Participant.
+        virtual std::string getKind() const;
+
         FuturePtr call(const std::string& methodName, EventPtr request);
     private:
         typedef boost::mutex MutexType;
@@ -124,6 +127,9 @@ public:
                  const ParticipantConfig &listenerConfig,
                  const ParticipantConfig &informerConfig);
     virtual ~RemoteServer();
+
+    // Overrides method in Participant.
+    virtual std::string getKind() const;
 
     /**
      * Prepares an Event which can be used for a request based on typed data.

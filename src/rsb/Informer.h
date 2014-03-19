@@ -107,6 +107,9 @@ public:
 
     void printContents(std::ostream& stream) const;
 
+    // Overrides method in Participant.
+    virtual std::string getKind() const;
+
     /**
      * Return the event payload type of this Informer.
      *

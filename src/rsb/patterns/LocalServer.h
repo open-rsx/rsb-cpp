@@ -266,6 +266,9 @@ public:
                     const ParticipantConfig& informerConfig,
                     CallbackPtr              callback);
         virtual ~LocalMethod();
+
+        // Overrides method in Participant.
+        virtual std::string getKind() const;
     private:
         rsc::logging::LoggerPtr logger;
 
@@ -282,6 +285,9 @@ public:
                 const ParticipantConfig &listenerConfig,
                 const ParticipantConfig &informerConfig);
     virtual ~LocalServer();
+
+    // Overrides method in Participant.
+    virtual std::string getKind() const;
 
     /**
      * Register a new method with the given name.

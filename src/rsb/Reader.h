@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -76,6 +76,9 @@ public:
            const Scope&                                  scope,
            const ParticipantConfig&                      config);
 
+    // Overrides method in Participant.
+    virtual std::string getKind() const;
+
     /**
      * Reads one event from the bus. If @a block is true, blocks until
      * an event is available. If @a block is false and no event is
@@ -94,8 +97,6 @@ private:
     rsc::logging::LoggerPtr logger;
 
     eventprocessing::InRouteConfiguratorPtr configurator;
-
-    std::string getClassName() const;
 };
 
 typedef boost::shared_ptr<Reader> ReaderPtr;

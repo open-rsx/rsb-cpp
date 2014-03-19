@@ -82,6 +82,10 @@ LocalServer::LocalMethod::LocalMethod(const Scope&             scope,
 LocalServer::LocalMethod::~LocalMethod() {
 }
 
+std::string LocalServer::LocalMethod::getKind() const {
+    return "local-method";
+}
+
 ListenerPtr LocalServer::LocalMethod::makeListener() {
     ListenerPtr listener = Method::makeListener();
     listener->addFilter(filter::FilterPtr(new filter::MethodFilter("REQUEST")));
@@ -135,6 +139,10 @@ LocalServer::~LocalServer() {
              = this->methods.begin(); it != this->methods.end(); ++it) {
         it->second->deactivate();
     }
+}
+
+std::string LocalServer::getKind() const {
+    return "local-server";
 }
 
 void LocalServer::registerMethod(const std::string& name, CallbackPtr callback) {

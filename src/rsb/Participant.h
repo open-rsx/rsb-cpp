@@ -63,6 +63,15 @@ public:
     void printContents(std::ostream& stream) const;
 
     /**
+     * Return the kind of the participant.
+     *
+     * Examples include @c "informer", @c "listener" and @c "reader".
+     *
+     * @return a string describing the kind of the participant.
+     */
+    virtual std::string getKind() const = 0;
+
+    /**
      * Returns the unique id of the participant.
      *
      * @return unique id

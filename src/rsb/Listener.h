@@ -97,7 +97,8 @@ public:
 
     virtual ~Listener();
 
-    std::string getClassName() const;
+    // Overrides method in Participant.
+    virtual std::string getKind() const;
 
     /**
      * Adds a filter that will be applied after some time (but not immediately

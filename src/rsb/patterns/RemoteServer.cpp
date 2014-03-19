@@ -62,6 +62,10 @@ RemoteServer::RemoteMethod::RemoteMethod(const Scope&             scope,
 RemoteServer::RemoteMethod::~RemoteMethod() {
 }
 
+std::string RemoteServer::RemoteMethod::getKind() const {
+    return "remote-method";
+}
+
 ListenerPtr RemoteServer::RemoteMethod::makeListener() {
     ListenerPtr listener = Method::makeListener();
     listener->addFilter(filter::FilterPtr(new filter::MethodFilter("REPLY")));
@@ -139,6 +143,10 @@ RemoteServer::~RemoteServer() {
              = this->methods.begin(); it != this->methods.end(); ++it) {
         it->second->deactivate();
     }
+}
+
+std::string RemoteServer::getKind() const {
+    return "remote-server";
 }
 
 RemoteServer::RemoteMethodPtr RemoteServer::getMethod(const string& name) {

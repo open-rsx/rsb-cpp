@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -50,15 +50,15 @@ Reader::Reader(const vector<InPullConnectorPtr>& connectors,
     this->configurator->activate();
 }
 
+std::string Reader::getKind() const {
+    return "reader";
+}
+
 EventPtr Reader::read(bool block) {
     PullEventReceivingStrategyPtr strategy
         = dynamic_pointer_cast<PullEventReceivingStrategy>(this->configurator->getEventReceivingStrategy());
     assert(strategy);
     return strategy->raiseEvent(block);
-}
-
-string Reader::getClassName() const {
-    return "Reader";
 }
 
 }

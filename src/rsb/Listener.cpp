@@ -55,8 +55,8 @@ Listener::Listener(const vector<InPushConnectorPtr>& connectors,
 Listener::~Listener() {
 }
 
-string Listener::getClassName() const {
-    return "Listener";
+std::string Listener::getKind() const {
+    return "listener";
 }
 
 void Listener::initialize(const vector<InPushConnectorPtr>& connectors,
