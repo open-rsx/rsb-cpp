@@ -35,13 +35,11 @@ SET(SOURCES rsb/CommException.cpp
             rsb/Informer.cpp
             rsb/Reader.cpp
             rsb/Listener.cpp
-            rsb/LocalService.cpp
             rsb/MetaData.cpp
             rsb/Participant.cpp
             rsb/ParticipantConfig.cpp
             rsb/QualityOfServiceSpec.cpp
             rsb/Scope.cpp
-            rsb/Service.cpp
             rsb/UnsupportedQualityOfServiceException.cpp
 
             rsb/converter/BoolConverter.cpp
@@ -125,14 +123,12 @@ SET(HEADERS rsb/CommException.h
             rsb/Informer.h
             rsb/Reader.h
             rsb/Listener.h
-            rsb/LocalService.h
             rsb/MetaData.h
             rsb/Participant.h
             rsb/ParticipantConfig.h
             rsb/QualityOfServiceSpec.h
             rsb/QueuePushHandler.h
             rsb/Scope.h
-            rsb/Service.h
             rsb/UnsupportedQualityOfServiceException.h
 
             rsb/converter/BoolConverter.h

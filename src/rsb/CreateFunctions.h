@@ -112,15 +112,6 @@ RSB_EXPORT ReaderPtr createReader(const Scope& scope,
                                   = getFactory().getDefaultParticipantConfig());
 
 /**
- * Creates and returns a Service instance operating on @ref Scope @a
- * scope.
- *
- * @param scope Parent-scope of the new service.
- * @return pointer to the new @ref Service instance.
- */
-RSB_EXPORT ServicePtr createService(const Scope& scope);
-
-/**
  * Creates and returns a @ref Server object that exposes methods under
  * the @ref Scope @a scope.
  *

@@ -31,7 +31,6 @@
 
 #include "rsb/ParticipantConfig.h"
 #include "rsb/Factory.h"
-#include "rsb/LocalService.h"
 
 using namespace std;
 using namespace testing;
@@ -48,28 +47,6 @@ TEST(FactoryTest, testDefaultParticipantConfig)
 
     f.setDefaultParticipantConfig(config);
     EXPECT_EQ(size_t(2), f.getDefaultParticipantConfig().getTransports().size());
-
-}
-
-TEST(FactoryTest, testCreateService)
-{
-
-    Factory& f = getFactory();
-
-    Scope scopeA("/a");
-    Scope scopeB("/b/with/sub");
-
-    ServicePtr sA = f.createService(scopeA);
-    ServicePtr sB = f.createService(scopeB);
-
-    EXPECT_TRUE(sA);
-    EXPECT_TRUE(sB);
-
-    EXPECT_EQ(scopeA, *sA->getScope());
-    EXPECT_EQ(scopeB, *sB->getScope());
-
-    EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sA));
-    EXPECT_TRUE(boost::dynamic_pointer_cast<LocalService>(sB));
 
 }
 

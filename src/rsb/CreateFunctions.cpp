@@ -46,10 +46,6 @@ ReaderPtr createReader(const Scope&             scope,
     return getFactory().createReader(scope, config);
 }
 
-ServicePtr createService(const Scope& scope) {
-    return getFactory().createService(scope);
-}
-
 patterns::LocalServerPtr createLocalServer(const Scope& scope) {
     return getFactory().createLocalServer(scope);
 }

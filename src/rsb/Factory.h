@@ -45,7 +45,6 @@
 #include "Reader.h"
 #include "Listener.h"
 #include "Informer.h"
-#include "Service.h"
 
 #include "transport/Connector.h"
 #include "transport/Factory.h"
@@ -151,14 +150,6 @@ public:
     ReaderPtr createReader(const Scope& scope,
                            const ParticipantConfig& config =
                            getFactory().getDefaultParticipantConfig());
-
-    /**
-     * Creates a Service instance operating on the given scope.
-     *
-     * @param scope parent-scope of the new service
-     * @return new service instance
-     */
-    ServicePtr createService(const Scope& scope);
 
     /**
      * Creates a @ref Server object that exposes methods under the
