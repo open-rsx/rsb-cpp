@@ -318,6 +318,24 @@ public:
     const EventProcessingStrategy& getEventSendingStrategy() const;
 
     /**
+     * Indicates whether introspection should be enabled for the
+     * participant.
+     *
+     * @return @c true if introspection should be enabled for the
+     *         participant, @c false otherwise.
+     */
+    bool isIntrospectionEnabled() const;
+
+    /**
+     * Controls whether introspection should be enabled for the
+     * participant.
+     *
+     * @param newValue If @c true, introspection should be enabled for
+     *                 the participant.
+     */
+    void setIsIntrospectionEnabled(bool newValue);
+
+    /**
      * Returns additional options besides the transport-specific ones.
      *
      * @return copy of additional options
@@ -346,6 +364,7 @@ private:
     std::map<std::string, Transport> transports;
     EventProcessingStrategy          eventReceivingStrategy;
     EventProcessingStrategy          eventSendingStrategy;
+    bool                             introspection;
     rsc::runtime::Properties         options;
 
     void handleOption(const std::vector<std::string>& key,
