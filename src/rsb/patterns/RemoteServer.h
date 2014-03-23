@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -59,7 +59,7 @@ class WaitingEventHandler;
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT RemoteServer: public boost::noncopyable {
+class RSB_EXPORT RemoteServer: public Participant {
 public:
     typedef rsc::threading::Future<EventPtr> FutureType;
     typedef boost::shared_ptr<FutureType> FuturePtr;
@@ -89,8 +89,9 @@ public:
      * @param scope The base scope of the server the methods of which
      * will be called.
      */
-    RemoteServer(const Scope& scope, const ParticipantConfig &listenerConfig,
-            const ParticipantConfig &informerConfig);
+    RemoteServer(const Scope& scope,
+                 const ParticipantConfig &listenerConfig,
+                 const ParticipantConfig &informerConfig);
     virtual ~RemoteServer();
 
     /**
@@ -239,7 +240,6 @@ public:
 private:
     rsc::logging::LoggerPtr logger;
 
-    Scope scope;
     ParticipantConfig listenerConfig;
     ParticipantConfig informerConfig;
 

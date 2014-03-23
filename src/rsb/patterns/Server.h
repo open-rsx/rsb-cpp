@@ -51,8 +51,9 @@ namespace patterns {
  * The server side of a request-reply-based communication channel.
  *
  * @author jwienke
+ * @author jmoringe
  */
-class RSB_EXPORT Server: public boost::noncopyable {
+class RSB_EXPORT Server: public Participant {
 public:
 
     /**
@@ -250,8 +251,9 @@ public:
 
     typedef boost::shared_ptr<IntlCallback> CallbackPtr;
 
-    Server(const Scope& scope, const ParticipantConfig &listenerConfig,
-            const ParticipantConfig &informerConfig);
+    Server(const Scope&             scope,
+           const ParticipantConfig &listenerConfig,
+           const ParticipantConfig &informerConfig);
     virtual ~Server();
 
     /**
@@ -265,7 +267,6 @@ public:
 
 private:
 
-    Scope scope;
     ParticipantConfig listenerConfig;
     ParticipantConfig informerConfig;
 

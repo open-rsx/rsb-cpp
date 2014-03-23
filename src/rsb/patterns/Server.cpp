@@ -132,10 +132,12 @@ public:
 
 };
 
-Server::Server(const Scope& scope, const ParticipantConfig &listenerConfig,
-        const ParticipantConfig &informerConfig) :
-        scope(scope), listenerConfig(listenerConfig), informerConfig(
-                informerConfig) {
+Server::Server(const Scope&             scope,
+               const ParticipantConfig &listenerConfig,
+               const ParticipantConfig &informerConfig)
+    : Participant(scope, listenerConfig), // TODO do this properly
+      listenerConfig(listenerConfig),
+      informerConfig(informerConfig) {
 }
 
 Server::~Server() {
@@ -145,17 +147,21 @@ void Server::registerMethod(const std::string& methodName, CallbackPtr callback)
 
     // check that method does not exist
     if (methods.count(methodName)) {
-        throw MethodExistsException(methodName, scope.toString());
+        throw MethodExistsException(methodName, getScope()->toString());
     }
 
-    const Scope methodScope = scope.concat(Scope("/" + methodName));
+    const Scope methodScope = getScope()->concat(Scope("/" + methodName));
 
     // TODO check that the reply type is convertible
+
     Informer<AnyType>::Ptr informer
-        = getFactory().createInformer<AnyType>(methodScope, informerConfig, "");
+        = getFactory().createInformer<AnyType>(methodScope,
+                                               this->informerConfig,
+                                               "");
 
     ListenerPtr listener
-        = getFactory().createListener(methodScope, listenerConfig);
+        = getFactory().createListener(methodScope,
+                                      this->listenerConfig);
     listener->addHandler(
             HandlerPtr(new RequestHandler(methodName, callback, informer)));
     this->requestListeners.insert(listener);

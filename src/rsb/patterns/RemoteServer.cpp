@@ -112,15 +112,13 @@ public:
 
 };
 
-RemoteServer::RemoteServer(const Scope& scope,
-        const ParticipantConfig &listenerConfig,
-        const ParticipantConfig &informerConfig) :
-        logger(
-                Logger::getLogger(
-                        str(
-                                format("rsb.patterns.RemoteServer[%1%]")
-                                        % scope.toString()))), scope(scope), listenerConfig(
-                listenerConfig), informerConfig(informerConfig) {
+RemoteServer::RemoteServer(const Scope&            scope,
+                           const ParticipantConfig &listenerConfig,
+                           const ParticipantConfig &informerConfig)
+    : Participant(scope, listenerConfig), // TODO do this properly
+      logger(Logger::getLogger(str(format("rsb.patterns.RemoteServer[%1%]")
+                                   % scope.toString()))),
+      listenerConfig(listenerConfig), informerConfig(informerConfig) {
     // TODO check that this server is alive...
     // TODO probably it would be a good idea to request some method infos from
     //      the server, e.g. for type checking
@@ -136,12 +134,13 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
 
     if (!methodSets.count(methodName)) {
 
-        const Scope methodScope = scope.concat(Scope("/" + methodName));
+        const Scope methodScope = getScope()->concat(Scope("/" + methodName));
 
         // start a listener to wait for the reply
 
         ListenerPtr listener
-            = getFactory().createListener(methodScope, listenerConfig);
+            = getFactory().createListener(methodScope,
+                                          this->listenerConfig);
 
         boost::shared_ptr<WaitingEventHandler> handler(
                 new WaitingEventHandler(logger));
@@ -149,7 +148,9 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
 
         // informer for requests
         Informer<void>::Ptr informer
-            = getFactory().createInformer<void>(methodScope, informerConfig, sendType);
+            = getFactory().createInformer<void>(methodScope,
+                                                this->informerConfig,
+                                                sendType);
 
         MethodSet set;
         set.methodName = methodName;
