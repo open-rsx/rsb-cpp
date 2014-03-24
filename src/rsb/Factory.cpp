@@ -158,8 +158,14 @@ Factory& Factory::getInstance() {
     return getFactory();
 }
 
+Factory* factoryWhileLoadingPlugins = NULL;
+
 Factory& getFactory() {
-    return Factory::getInstanceBase();
+    if (factoryWhileLoadingPlugins) {
+        return *factoryWhileLoadingPlugins;
+    } else {
+        return Factory::getInstanceBase();
+    }
 }
 
 Factory& Factory::getInstanceBase() {
@@ -190,6 +196,8 @@ Factory::Factory() :
     // 2. $libdir/$RSB_PLUGIN_PATH_SUFFIX
     RSCINFO(this->logger, "Processing plugin configuration");
     {
+        factoryWhileLoadingPlugins = this;
+
         vector<boost::filesystem::path> defaultPath;
         // It may be impossible to determine a home directory for the
         // current user. Warn, but don't throw.
@@ -205,6 +213,7 @@ Factory::Factory() :
         rsc::plugins::Configurator configurator(pluginManager, defaultPath);
         configure(configurator, "rsb.conf", "RSB_", 0, 0, true, Version::installPrefix());
     }
+    factoryWhileLoadingPlugins = NULL; // TODO unwind-protect
 
     // Setup default participant config
     //
