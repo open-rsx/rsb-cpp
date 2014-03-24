@@ -27,28 +27,27 @@
 
 #pragma once
 
-#include <stdexcept>
 #include <string>
+#include <map>
 
-#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/mutex.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/Future.h>
 
-#include "../Event.h"
 #include "../Exception.h"
-#include "../Informer.h"
-#include "../Listener.h"
-#include "../ParticipantConfig.h"
-#include "../Scope.h"
+#include "../Event.h"
+#include "../Handler.h"
+
+#include "Server.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace patterns {
-
-class WaitingEventHandler;
 
 /**
  * The client side of a request-reply-based communication channel.
@@ -65,7 +64,7 @@ public:
     typedef boost::shared_ptr<FutureType> FuturePtr;
 
     template <typename O>
-    class DataFuture  {
+    class DataFuture {
     public:
         DataFuture(FuturePtr target):
             target(target) {
@@ -81,6 +80,38 @@ public:
     private:
         FuturePtr target;
     };
+
+    /**
+     * A derived @ref Method class which can be used to invoke methods
+     * on a remote @ref LocalServer object.
+     *
+     * @author jmoringe
+     */
+    class RemoteMethod: public Method,
+                        public Handler,
+                        public boost::enable_shared_from_this<RemoteMethod> {
+    public:
+        RemoteMethod(const Scope&             scope,
+                     const std::string&       name,
+                     const ParticipantConfig& listenerConfig,
+                     const ParticipantConfig& informerConfig);
+        virtual ~RemoteMethod();
+
+        FuturePtr call(const std::string& methodName, EventPtr request);
+    private:
+        typedef boost::mutex MutexType;
+
+        rsc::logging::LoggerPtr      logger;
+
+        MutexType                    inprogressMutex;
+        std::map<EventId, FuturePtr> inprogress;
+
+        ListenerPtr makeListener();
+
+        void handle(EventPtr event);
+    };
+
+    typedef boost::shared_ptr<RemoteMethod> RemoteMethodPtr;
 
     /**
      * Construct a new @c RemoteServer object which can be used to
@@ -138,7 +169,7 @@ public:
      * obtained at the caller's discretion.
      */
     template <typename O, typename I>
-    DataFuture<O> callAsync(const std::string&    methodName,
+    DataFuture<O> callAsync(const std::string&   methodName,
                             boost::shared_ptr<I> args) {
         return DataFuture<O>(callAsync(methodName, prepareRequestEvent(args)));
     }
@@ -183,8 +214,8 @@ public:
      * method call fails.
      */
     EventPtr call(const std::string& methodName,
-                  EventPtr          data,
-                  unsigned int      maxReplyWaitTime = 25);
+                  EventPtr           data,
+                  unsigned int       maxReplyWaitTime = 25);
 
     /**
      * Call the method named @a methodName on the remote server,
@@ -238,23 +269,16 @@ public:
         return callAsync<O>(methodName).get(maxReplyWaitTime);
     }
 private:
-    rsc::logging::LoggerPtr logger;
 
-    ParticipantConfig listenerConfig;
-    ParticipantConfig informerConfig;
+    rsc::logging::LoggerPtr                logger;
 
-    class MethodSet {
-    public:
-        std::string methodName;
-        boost::shared_ptr<WaitingEventHandler> handler;
-        ListenerPtr replyListener;
-        InformerBasePtr requestInformer;
-    };
+    ParticipantConfig                      listenerConfig;
+    ParticipantConfig                      informerConfig;
 
-    boost::mutex methodSetMutex;
-    std::map<std::string, MethodSet> methodSets;
+    boost::mutex                           methodsMutex;
+    std::map<std::string, RemoteMethodPtr> methods;
 
-    MethodSet getMethodSet(const std::string& methodName);
+    RemoteMethodPtr getMethod(const std::string& name);
 
 };
 

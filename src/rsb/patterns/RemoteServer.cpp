@@ -27,18 +27,13 @@
 
 #include "RemoteServer.h"
 
-#include <stdexcept>
-
 #include <boost/format.hpp>
-#include <boost/thread/mutex.hpp>
 
-#include <rsc/runtime/TypeStringTools.h>
 #include <rsc/misc/UUID.h>
 
-#include "../Factory.h"
-#include "../Handler.h"
-#include "../MetaData.h"
 #include "../EventId.h"
+#include "../MetaData.h"
+#include "../Factory.h"
 
 using namespace std;
 
@@ -51,66 +46,80 @@ using namespace rsc::threading;
 namespace rsb {
 namespace patterns {
 
-class WaitingEventHandler: public Handler {
-public:
-    typedef boost::recursive_mutex MutexType;
-private:
-    LoggerPtr logger;
+// RemoteMethod
 
-    MutexType mutex;
+RemoteServer::RemoteMethod::RemoteMethod(const Scope&             scope,
+                                         const std::string&       name,
+                                         const ParticipantConfig& listenerConfig,
+                                         const ParticipantConfig& informerConfig)
+    : Method(scope, name, listenerConfig, informerConfig),
+      logger(Logger::getLogger(boost::str(boost::format("rsb.patterns.RemoteMethod[%1%]")
+                                          % name))) {
+}
 
-    map<EventId, RemoteServer::FuturePtr> inprogress;
-public:
+RemoteServer::RemoteMethod::~RemoteMethod() {
+}
 
-    WaitingEventHandler(LoggerPtr logger) :
-        logger(logger) {
+ListenerPtr RemoteServer::RemoteMethod::makeListener() {
+    ListenerPtr listener = Method::makeListener();
+    listener->addHandler(shared_from_this());
+    return listener;
+}
+
+RemoteServer::FuturePtr RemoteServer::RemoteMethod::call(const std::string& /*methodName*/,
+                                                         EventPtr           request) {
+    FuturePtr result(new Future<EventPtr>());
+
+    {
+        MutexType::scoped_lock lock(this->inprogressMutex);
+
+        request->setScopePtr(getInformer()->getScope());
+        request->setMethod("REQUEST");
+        getInformer()->publish(request);
+
+        this->inprogress.insert(std::make_pair(request->getEventId(), result));
     }
 
-    string getClassName() const {
-        return "WaitingEventHandler";
+    return result;
+}
+
+void RemoteServer::RemoteMethod::handle(EventPtr event) {
+    if (!event
+        || event->getCauses().empty()
+        || (event->getMethod() != "REPLY")) {
+        RSCTRACE(logger, "Received uninteresting event " << event);
+        return;
     }
 
-    MutexType& getMutex() {
-        return this->mutex;
-    }
-
-    void handle(EventPtr event) {
-        if (!event
-            || event->getCauses().empty()
-            || (event->getMethod() != "REPLY")) {
-            RSCTRACE(logger, "Received uninteresting event " << event);
-            return;
-        }
-        EventId requestId = *event->getCauses().begin();
-        {
-            MutexType::scoped_lock lock(mutex);
-
-            if (!this->inprogress.count(requestId)) {
-                RSCTRACE(logger, "Received uninteresting event " << event);
-                return;
-            }
-
-            RSCDEBUG(logger, "Received reply event " << event);
-
-            RemoteServer::FuturePtr result = this->inprogress[requestId];
-            if (event->mutableMetaData().hasUserInfo("rsb:error?")) {
-                assert(event->getType() == typeName<string>());
-                result->setError(str(format("Error calling remote method '%1%': %2%")
-                                     % "TODO: obtain method name"
-                                     % *(boost::static_pointer_cast<string>(event->getData()))));
-            } else {
-                result->set(event);
-            }
+    EventId requestId = *event->getCauses().begin();
+    RemoteServer::FuturePtr result;
+    {
+        MutexType::scoped_lock lock(this->inprogressMutex);
+        map<EventId, FuturePtr>::const_iterator it
+            = this->inprogress.find(requestId);
+        if (it != this->inprogress.end()) {
+            result = it->second;
             this->inprogress.erase(requestId);
         }
     }
 
-    void addCall(const EventId& requestId, RemoteServer::FuturePtr result) {
-        MutexType::scoped_lock lock(this->mutex);
-        this->inprogress.insert(make_pair(requestId, result));
+    if (!result) {
+        RSCTRACE(this->logger, "Received uninteresting event " << event);
+        return;
     }
+    RSCDEBUG(this->logger, "Received reply event " << event);
 
-};
+    if (event->mutableMetaData().hasUserInfo("rsb:error?")) {
+        assert(event->getType() == typeName<std::string>());
+        result->setError(boost::str(boost::format("Error calling remote method '%1%': %2%")
+                                    % "TODO: obtain method name"
+                                    % *(boost::static_pointer_cast<string>(event->getData()))));
+    } else {
+        result->set(event);
+    }
+}
+
+// RemoteServer
 
 RemoteServer::RemoteServer(const Scope&            scope,
                            const ParticipantConfig &listenerConfig,
@@ -125,71 +134,42 @@ RemoteServer::RemoteServer(const Scope&            scope,
 }
 
 RemoteServer::~RemoteServer() {
+    for (std::map<std::string, RemoteMethodPtr>::iterator it
+             = this->methods.begin(); it != this->methods.end(); ++it) {
+        it->second->deactivate();
+    }
 }
 
-RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName) {
+RemoteServer::RemoteMethodPtr RemoteServer::getMethod(const string& name) {
 
-    boost::mutex::scoped_lock lock(methodSetMutex);
+    boost::mutex::scoped_lock lock(this->methodsMutex);
 
-    if (!methodSets.count(methodName)) {
-
-        const Scope methodScope = getScope()->concat(Scope("/" + methodName));
-
-        // start a listener to wait for the reply
-
-        ListenerPtr listener
-            = getFactory().createListener(methodScope,
-                                          this->listenerConfig);
-
-        boost::shared_ptr<WaitingEventHandler> handler(
-                new WaitingEventHandler(logger));
-        listener->addHandler(handler);
-
-        // informer for requests
-        InformerBasePtr informer
-            = getFactory().createInformerBase(methodScope,
-                                              "",
-                                              this->informerConfig);
-
-        MethodSet set;
-        set.methodName = methodName;
-        set.handler = handler;
-        set.replyListener = listener;
-        set.requestInformer = informer;
-
-        methodSets[methodName] = set;
-
+    if (!this->methods.count(name)) {
+        RemoteMethodPtr method
+            (new RemoteMethod(getScope()->concat(Scope("/" + name)),
+                              name,
+                              this->listenerConfig,
+                              this->informerConfig));
+        method->activate();
+        this->methods[name] = method;
     }
 
-    return methodSets[methodName];
+    return this->methods[name];
 
 }
 
-RemoteServer::FuturePtr RemoteServer::callAsync(const string& methodName, EventPtr data) {
+RemoteServer::FuturePtr RemoteServer::callAsync(const std::string& methodName,
+                                                EventPtr           request) {
+    RSCDEBUG(this->logger, "Calling method " << methodName << " with request " << request);
 
-    RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
-
-    // TODO check that the desired method exists
-    MethodSet methodSet = getMethodSet(methodName);
-    FuturePtr result;
-    {
-        WaitingEventHandler::MutexType::scoped_lock
-            lock(methodSet.handler->getMutex());
-
-        data->setScopePtr(methodSet.requestInformer->getScope());
-        data->setMethod("REQUEST");
-        methodSet.requestInformer->publish(data);
-        result.reset(new Future<EventPtr>());
-        methodSet.handler->addCall(data->getEventId(), result);
-    }
-
-    return result;
+    // TODO check that the requested method exists
+    return getMethod(methodName)->call(methodName, request);
 }
 
 EventPtr RemoteServer::call(const string& methodName,
-                            EventPtr      data,
+                            EventPtr      request,
                             unsigned int  maxReplyWaitTime) {
-    return callAsync(methodName, data)->get(maxReplyWaitTime);
+    return callAsync(methodName, request)->get(maxReplyWaitTime);
 }
 
 }

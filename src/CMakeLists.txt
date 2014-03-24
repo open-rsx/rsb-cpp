@@ -82,6 +82,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/filter/OriginFilter.cpp
 
             rsb/patterns/MethodExistsException.cpp
+            rsb/patterns/Server.cpp
             rsb/patterns/RemoteServer.cpp
             rsb/patterns/LocalServer.cpp
 
@@ -178,6 +179,7 @@ SET(HEADERS rsb/CommException.h
             rsb/filter/OriginFilter.h
 
             rsb/patterns/MethodExistsException.h
+            rsb/patterns/Server.h
             rsb/patterns/RemoteServer.h
             rsb/patterns/LocalServer.h
 

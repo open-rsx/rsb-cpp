@@ -27,20 +27,18 @@
 
 #pragma once
 
-#include <set>
-#include <map>
 #include <string>
+#include <map>
 
-#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
 
-#include "../Informer.h"
-#include "../Listener.h"
-#include "../ParticipantConfig.h"
-#include "../Scope.h"
+#include "../Handler.h"
+
+#include "Server.h"
 
 #include "rsb/rsbexports.h"
 
@@ -68,6 +66,8 @@ public:
         virtual EventPtr intlCall(const std::string& methodName,
                                   EventPtr request) = 0;
     };
+
+    typedef boost::shared_ptr<IntlCallback> CallbackPtr;
 
     /**
      * Callback class with receives and returns events.
@@ -249,7 +249,34 @@ public:
 
     };
 
-    typedef boost::shared_ptr<IntlCallback> CallbackPtr;
+    /**
+     * A derived @ref Method class which can be called from the remote
+     * side and implements its behavior by invoking a client-supplied
+     * callback.
+     *
+     * @author jmoringe
+     */
+    class LocalMethod: public Method,
+                       public Handler,
+                       public boost::enable_shared_from_this<LocalMethod> {
+    public:
+        LocalMethod(const Scope&             scope,
+                    const std::string&       name,
+                    const ParticipantConfig& listenerConfig,
+                    const ParticipantConfig& informerConfig,
+                    CallbackPtr              callback);
+        virtual ~LocalMethod();
+    private:
+        rsc::logging::LoggerPtr logger;
+
+        CallbackPtr             callback;
+
+        ListenerPtr makeListener();
+
+        void handle(EventPtr event);
+    };
+
+    typedef boost::shared_ptr<LocalMethod> LocalMethodPtr;
 
     LocalServer(const Scope&             scope,
                 const ParticipantConfig &listenerConfig,
@@ -259,21 +286,17 @@ public:
     /**
      * Register a new method with the given name.
      *
-     * @param methodName method name
+     * @param name Name of the new method. Has to be a legal scope component string.
      * @param callback callback to execute for the method
      * @throw MethodExistsException thrown if a method with this name already exists
      */
-    void registerMethod(const std::string& methodName, CallbackPtr callback);
+    void registerMethod(const std::string& name, CallbackPtr callback);
 
 private:
+    ParticipantConfig                     listenerConfig;
+    ParticipantConfig                     informerConfig;
 
-    ParticipantConfig listenerConfig;
-    ParticipantConfig informerConfig;
-
-    std::set<ListenerPtr> requestListeners;
-
-    std::map<std::string, Informer<AnyType>::Ptr> methods;
-
+    std::map<std::string, LocalMethodPtr> methods;
 };
 
 // Since this is a complete specialization of Server::Callback, it

@@ -29,13 +29,9 @@
 
 #include <stdexcept>
 
-#include <rsc/runtime/TypeStringTools.h>
-#include <rsc/logging/Logger.h>
-
 #include "../EventId.h"
-#include "../Factory.h"
 #include "../MetaData.h"
-#include "../Handler.h"
+#include "../Factory.h"
 
 #include "MethodExistsException.h"
 
@@ -45,6 +41,8 @@ using namespace rsc::runtime;
 
 namespace rsb {
 namespace patterns {
+
+// Callbacks
 
 LocalServer::IntlCallback::~IntlCallback() {
 }
@@ -62,76 +60,68 @@ const string& LocalServer::CallbackBase::getReplyType() const {
     return this->replyType;
 }
 
-// EventCallback
-
 EventPtr LocalServer::EventCallback::intlCall(const string& methodName, EventPtr request) {
     return call(methodName, request);
 }
 
-// RequestHandler
+// LocalMethod
 
-class RequestHandler: public Handler {
-private:
+LocalServer::LocalMethod::LocalMethod(const Scope&             scope,
+                                      const std::string&       name,
+                                      const ParticipantConfig& listenerConfig,
+                                      const ParticipantConfig& informerConfig,
+                                      CallbackPtr              callback)
+    : Method(scope, name, listenerConfig, informerConfig),
+      logger(rsc::logging::Logger::getLogger(boost::str(boost::format("rsb.patterns.LocalMethod[%1%]")
+                                                        % name))),
+      callback(callback) {
+}
 
-    rsc::logging::LoggerPtr logger;
+LocalServer::LocalMethod::~LocalMethod() {
+}
 
-    string methodName;
-    LocalServer::CallbackPtr callback;
-    Informer<AnyType>::Ptr informer;
+ListenerPtr LocalServer::LocalMethod::makeListener() {
+    ListenerPtr listener = Method::makeListener();
+    listener->addHandler(HandlerPtr(shared_from_this()));
+    return listener;
+}
 
-public:
-
-    RequestHandler(const string& methodName, LocalServer::CallbackPtr callback,
-            Informer<AnyType>::Ptr informer) :
-        logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
-                + methodName)), methodName(methodName), callback(callback),
-                informer(informer) {
+void LocalServer::LocalMethod::handle(EventPtr event) {
+    if (event->getMethod() != "REQUEST") {
+        return;
     }
 
-    string getClassName() const {
-        return "RequestHandler";
-    }
-
-    void printContents(ostream& stream) const {
-        stream << "methodName = " << methodName;
-    }
-
-    void handle(EventPtr event) {
-        if (event->getMethod() != "REQUEST") {
+    LocalServer::CallbackBase* callbackWithReturnType
+        = dynamic_cast<LocalServer::CallbackBase*>(this->callback.get());
+    if (callbackWithReturnType) {
+        if (event->getType() != callbackWithReturnType->getRequestType()) {
+            RSCERROR(this->logger, boost::format("Request type '%1%' "
+                                                 "does not match expected request type '%2%' "
+                                                 "of method '%3%'")
+                     % event->getType()
+                     % callbackWithReturnType->getRequestType()
+                     % getName());
             return;
         }
-
-        LocalServer::CallbackBase* callbackWithReturnType
-            = dynamic_cast<LocalServer::CallbackBase*>(this->callback.get());
-        if (callbackWithReturnType) {
-            if (event->getType() != callbackWithReturnType->getRequestType()) {
-                RSCERROR(logger, boost::format("Request type '%1%' "
-                                               "does not match expected request type '%2%' "
-                                               "of method '%3%'")
-                         % event->getType()
-                         % callbackWithReturnType->getRequestType()
-                         % methodName);
-                return;
-            }
-        }
-
-        EventPtr reply;
-        try {
-            reply = callback->intlCall(methodName, event);
-            assert(reply);
-        } catch (const exception& e) {
-            reply.reset(new Event());
-            reply->setType(typeName<string>());
-            reply->setData(boost::shared_ptr<string>(new string(typeName(e) + ": " + e.what())));
-            reply->mutableMetaData().setUserInfo("rsb:error?", "");
-        }
-        reply->setScopePtr(informer->getScope());
-        reply->setMethod("REPLY");
-        reply->addCause(event->getEventId());
-        informer->publish(reply);
     }
 
-};
+    EventPtr reply;
+    try {
+        reply = this->callback->intlCall(getName(), event);
+        assert(reply);
+    } catch (const exception& e) {
+        reply.reset(new Event());
+        reply->setType(typeName<string>());
+        reply->setData(boost::shared_ptr<string>(new string(typeName(e) + ": " + e.what())));
+        reply->mutableMetaData().setUserInfo("rsb:error?", "");
+    }
+    reply->setScopePtr(getInformer()->getScope());
+    reply->setMethod("REPLY");
+    reply->addCause(event->getEventId());
+    getInformer()->publish(reply);
+}
+
+// LocalServer
 
 LocalServer::LocalServer(const Scope&             scope,
                          const ParticipantConfig &listenerConfig,
@@ -142,32 +132,30 @@ LocalServer::LocalServer(const Scope&             scope,
 }
 
 LocalServer::~LocalServer() {
+    for (std::map<std::string, LocalMethodPtr>::iterator it
+             = this->methods.begin(); it != this->methods.end(); ++it) {
+        it->second->deactivate();
+    }
 }
 
-void LocalServer::registerMethod(const std::string& methodName, CallbackPtr callback) {
+void LocalServer::registerMethod(const std::string& name, CallbackPtr callback) {
+
+    // TODO locking?
 
     // check that method does not exist
-    if (methods.count(methodName)) {
-        throw MethodExistsException(methodName, getScope()->toString());
+    if (this->methods.count(name)) {
+        throw MethodExistsException(name, getScope()->toString());
     }
 
-    const Scope methodScope = getScope()->concat(Scope("/" + methodName));
-
     // TODO check that the reply type is convertible
-
-    Informer<AnyType>::Ptr informer
-        = getFactory().createInformer<AnyType>(methodScope,
-                                               this->informerConfig,
-                                               "");
-
-    ListenerPtr listener
-        = getFactory().createListener(methodScope,
-                                      this->listenerConfig);
-    listener->addHandler(
-            HandlerPtr(new RequestHandler(methodName, callback, informer)));
-    this->requestListeners.insert(listener);
-
-    methods[methodName] = informer;
+    LocalMethodPtr method = LocalMethodPtr
+        (new LocalMethod(getScope()->concat(Scope("/" + name)),
+                         name,
+                         this->listenerConfig,
+                         this->informerConfig,
+                         callback));
+    method->activate();
+    this->methods[name] = method;
 
 }
 
