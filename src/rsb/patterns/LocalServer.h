@@ -53,7 +53,7 @@ namespace patterns {
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT Server: public Participant {
+class RSB_EXPORT LocalServer: public Participant {
 public:
 
     /**
@@ -251,10 +251,10 @@ public:
 
     typedef boost::shared_ptr<IntlCallback> CallbackPtr;
 
-    Server(const Scope&             scope,
-           const ParticipantConfig &listenerConfig,
-           const ParticipantConfig &informerConfig);
-    virtual ~Server();
+    LocalServer(const Scope&             scope,
+                const ParticipantConfig &listenerConfig,
+                const ParticipantConfig &informerConfig);
+    virtual ~LocalServer();
 
     /**
      * Register a new method with the given name.
@@ -287,12 +287,12 @@ private:
  * @author jmoringe.
  */
 template<>
-class RSB_EXPORT Server::Callback<void, void>: public Server::CallbackBase {
- public:
+class RSB_EXPORT LocalServer::Callback<void, void>: public LocalServer::CallbackBase {
+public:
     // typeid is due to msvc strangeness
     Callback() :
-        Server::CallbackBase(rsc::runtime::typeName(typeid(void)),
-                             rsc::runtime::typeName(typeid(void))) {
+        LocalServer::CallbackBase(rsc::runtime::typeName(typeid(void)),
+                                  rsc::runtime::typeName(typeid(void))) {
     }
 
     /**
@@ -304,7 +304,7 @@ class RSB_EXPORT Server::Callback<void, void>: public Server::CallbackBase {
      *                       remote server
      */
     virtual void call(const std::string& methodName) = 0;
- private:
+private:
     EventPtr intlCall(const std::string& methodName, EventPtr /*request*/) {
         call(methodName);
         EventPtr reply(new Event());
@@ -315,7 +315,10 @@ class RSB_EXPORT Server::Callback<void, void>: public Server::CallbackBase {
 
 };
 
-typedef boost::shared_ptr<Server> ServerPtr;
+typedef boost::shared_ptr<LocalServer> LocalServerPtr;
+
+typedef LocalServer    Server; // TODO deprecated; remove at some point
+typedef LocalServerPtr ServerPtr;
 
 }
 }

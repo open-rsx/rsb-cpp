@@ -33,7 +33,7 @@
 using namespace rsb;
 using namespace rsb::patterns;
 
-class EchoCallback: public Server::Callback<std::string, std::string> {
+class EchoCallback: public LocalServer::Callback<std::string, std::string> {
 public:
     boost::shared_ptr<std::string> call(const std::string& /*methodName*/,
                                         boost::shared_ptr<std::string> input) {
@@ -41,7 +41,7 @@ public:
     }
 };
 
-class VoidVoidCallback: public Server::Callback<void, void> {
+class VoidVoidCallback: public LocalServer::Callback<void, void> {
     void call(const std::string& /*methodName*/) {
         std::cout << "void-void method called" << std::endl;
     }
@@ -51,11 +51,11 @@ int main(int /*argc*/, char** /*argv*/) {
     // Use the RSB factory to create a Server instance that provides
     // callable methods under the scope /example/server.
     Factory& factory = getFactory();
-    ServerPtr server = factory.createServer("/example/server");
+    LocalServerPtr server = factory.createLocalServer("/example/server");
 
     // Register method with name and implementing callback object.
-    server->registerMethod("echo", Server::CallbackPtr(new EchoCallback()));
-    server->registerMethod("void", Server::CallbackPtr(new VoidVoidCallback()));
+    server->registerMethod("echo", LocalServer::CallbackPtr(new EchoCallback()));
+    server->registerMethod("void", LocalServer::CallbackPtr(new VoidVoidCallback()));
 
     // Wait here so incoming method calls can be processed.
     boost::this_thread::sleep(boost::posix_time::seconds(1000));

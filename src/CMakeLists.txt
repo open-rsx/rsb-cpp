@@ -83,7 +83,7 @@ SET(SOURCES rsb/CommException.cpp
 
             rsb/patterns/MethodExistsException.cpp
             rsb/patterns/RemoteServer.cpp
-            rsb/patterns/Server.cpp
+            rsb/patterns/LocalServer.cpp
 
             rsb/protocol/FragmentedNotification.cpp
             rsb/protocol/Notification.cpp
@@ -179,7 +179,7 @@ SET(HEADERS rsb/CommException.h
 
             rsb/patterns/MethodExistsException.h
             rsb/patterns/RemoteServer.h
-            rsb/patterns/Server.h
+            rsb/patterns/LocalServer.h
 
             rsb/protocol/FragmentedNotification.h
             rsb/protocol/Notification.h

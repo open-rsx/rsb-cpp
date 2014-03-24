@@ -25,7 +25,7 @@
  *
  * ============================================================ */
 
-#include "Server.h"
+#include "LocalServer.h"
 
 #include <stdexcept>
 
@@ -36,6 +36,7 @@
 #include "../Factory.h"
 #include "../MetaData.h"
 #include "../Handler.h"
+
 #include "MethodExistsException.h"
 
 using namespace std;
@@ -45,25 +46,25 @@ using namespace rsc::runtime;
 namespace rsb {
 namespace patterns {
 
-Server::IntlCallback::~IntlCallback() {
+LocalServer::IntlCallback::~IntlCallback() {
 }
 
-Server::CallbackBase::CallbackBase(const string& requestType,
+LocalServer::CallbackBase::CallbackBase(const string& requestType,
                                    const string& replyType)
     : requestType(requestType), replyType(replyType) {
 }
 
-const string& Server::CallbackBase::getRequestType() const {
+const string& LocalServer::CallbackBase::getRequestType() const {
     return this->requestType;
 }
 
-const string& Server::CallbackBase::getReplyType() const {
+const string& LocalServer::CallbackBase::getReplyType() const {
     return this->replyType;
 }
 
 // EventCallback
 
-EventPtr Server::EventCallback::intlCall(const string& methodName, EventPtr request) {
+EventPtr LocalServer::EventCallback::intlCall(const string& methodName, EventPtr request) {
     return call(methodName, request);
 }
 
@@ -75,12 +76,12 @@ private:
     rsc::logging::LoggerPtr logger;
 
     string methodName;
-    Server::CallbackPtr callback;
+    LocalServer::CallbackPtr callback;
     Informer<AnyType>::Ptr informer;
 
 public:
 
-    RequestHandler(const string& methodName, Server::CallbackPtr callback,
+    RequestHandler(const string& methodName, LocalServer::CallbackPtr callback,
             Informer<AnyType>::Ptr informer) :
         logger(rsc::logging::Logger::getLogger("rsb.patterns.RequestHandler."
                 + methodName)), methodName(methodName), callback(callback),
@@ -100,8 +101,8 @@ public:
             return;
         }
 
-        Server::CallbackBase* callbackWithReturnType
-            = dynamic_cast<Server::CallbackBase*>(this->callback.get());
+        LocalServer::CallbackBase* callbackWithReturnType
+            = dynamic_cast<LocalServer::CallbackBase*>(this->callback.get());
         if (callbackWithReturnType) {
             if (event->getType() != callbackWithReturnType->getRequestType()) {
                 RSCERROR(logger, boost::format("Request type '%1%' "
@@ -132,18 +133,18 @@ public:
 
 };
 
-Server::Server(const Scope&             scope,
-               const ParticipantConfig &listenerConfig,
-               const ParticipantConfig &informerConfig)
+LocalServer::LocalServer(const Scope&             scope,
+                         const ParticipantConfig &listenerConfig,
+                         const ParticipantConfig &informerConfig)
     : Participant(scope, listenerConfig), // TODO do this properly
       listenerConfig(listenerConfig),
       informerConfig(informerConfig) {
 }
 
-Server::~Server() {
+LocalServer::~LocalServer() {
 }
 
-void Server::registerMethod(const std::string& methodName, CallbackPtr callback) {
+void LocalServer::registerMethod(const std::string& methodName, CallbackPtr callback) {
 
     // check that method does not exist
     if (methods.count(methodName)) {

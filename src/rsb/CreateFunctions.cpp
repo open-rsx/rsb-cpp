@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -50,9 +50,13 @@ ServicePtr createService(const Scope& scope) {
     return getFactory().createService(scope);
 }
 
-patterns::ServerPtr createServer(const Scope& scope) {
-    return getFactory().createServer(scope);
+patterns::LocalServerPtr createLocalServer(const Scope& scope) {
+    return getFactory().createLocalServer(scope);
 }
+
+patterns::ServerPtr createServer(const Scope& scope) {
+    return createLocalServer(scope);
+} // TODO deprecated; remove
 
 patterns::RemoteServerPtr createRemoteServer(const Scope& scope) {
     return getFactory().createRemoteServer(scope);

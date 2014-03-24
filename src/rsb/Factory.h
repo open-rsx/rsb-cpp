@@ -32,6 +32,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+#include <rsc/misc/langutils.h>
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/patterns/Singleton.h>
@@ -49,7 +50,7 @@
 #include "transport/Connector.h"
 #include "transport/Factory.h"
 
-#include "patterns/Server.h"
+#include "patterns/LocalServer.h"
 #include "patterns/RemoteServer.h"
 
 namespace rsb {
@@ -169,12 +170,32 @@ public:
      * @param informerConfig configuration to use for all reply informers
      * @return A shared_ptr to the new @ref Server object.
      */
-    patterns::ServerPtr createServer(
+    patterns::LocalServerPtr createLocalServer(
             const Scope& scope,
             const ParticipantConfig &listenerConfig =
                     getFactory().getDefaultParticipantConfig(),
             const ParticipantConfig &informerConfig =
                     getFactory().getDefaultParticipantConfig());
+
+    /**
+     * Creates a @ref Server object that exposes methods under the
+     * scope @a scope.
+     *
+     * @param scope The scope under which the new server exposes its
+     * methods.
+     * @param listenerConfig configuration to use for all request listeners
+     * @param informerConfig configuration to use for all reply informers
+     * @return A shared_ptr to the new @ref Server object.
+     *
+     * @deprecated Use @ref createLocalServer
+     */
+    DEPRECATED_MSG(patterns::ServerPtr createServer(
+        const Scope& scope,
+        const ParticipantConfig &listenerConfig =
+        getFactory().getDefaultParticipantConfig(),
+        const ParticipantConfig &informerConfig =
+        getFactory().getDefaultParticipantConfig()),
+                   "Use Factory::createLocalServer() instead"); // TODO deprecated; remove
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
