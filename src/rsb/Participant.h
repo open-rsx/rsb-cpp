@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -32,12 +32,18 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
+#include <boost/signal.hpp>
+
 #include <rsc/misc/UUID.h>
 #include <rsc/runtime/Printable.h>
 
 #include "rsb/rsbexports.h"
 
 namespace rsb {
+
+class Participant;
+
+typedef boost::signal1<void, Participant*> SignalParticipantDestroyed;
 
 class ParticipantConfig;
 class Scope;
@@ -56,6 +62,7 @@ typedef boost::shared_ptr<Scope> ScopePtr;
  */
 class RSB_EXPORT Participant: public virtual rsc::runtime::Printable,
         public boost::noncopyable {
+    friend class Factory;
 public:
 
     virtual ~Participant();
@@ -100,6 +107,8 @@ private:
 
     class Impl;
     boost::scoped_ptr<Impl> d;
+
+    void setSignalParticipantDestroyed(SignalParticipantDestroyed* signal);
 
 };
 

@@ -155,11 +155,12 @@ RemoteServer::RemoteMethodPtr RemoteServer::getMethod(const string& name) {
 
     if (!this->methods.count(name)) {
         RemoteMethodPtr method
-            (new RemoteMethod(getScope()->concat(Scope("/" + name)),
-                              name,
-                              this->listenerConfig,
-                              this->informerConfig));
+            = getFactory().createRemoteMethod(getScope()->concat(Scope("/" + name)),
+                                              this->listenerConfig,
+                                              this->informerConfig);
+
         method->activate();
+
         this->methods[name] = method;
     }
 

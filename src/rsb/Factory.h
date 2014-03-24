@@ -30,6 +30,9 @@
 #include <vector>
 
 #include <boost/shared_ptr.hpp>
+
+#include <boost/signal.hpp>
+
 #include <boost/thread/recursive_mutex.hpp>
 
 #include <rsc/misc/langutils.h>
@@ -54,6 +57,8 @@
 
 namespace rsb {
 
+typedef boost::signal1<void, ParticipantPtr> SignalParticipantCreated;
+
 class Factory;
 
 /**
@@ -67,6 +72,7 @@ RSB_EXPORT Factory& getFactory();
  * Factory for RSB user-level domain objects for communication patterns.
  *
  * @author jwienke
+ * @author jmoringe
  */
 class RSB_EXPORT Factory: private rsc::patterns::Singleton<Factory> {
 public:
@@ -79,6 +85,10 @@ public:
     DEPRECATED(static Factory& getInstance());
 
     virtual ~Factory();
+
+    SignalParticipantCreated& getSignalParticipantCreated();
+
+    SignalParticipantDestroyed& getSignalParticipantDestroyed();
 
     /**
      * Creates and returns a new @ref Informer that publishes @ref
@@ -101,8 +111,12 @@ public:
                    = getFactory().getDefaultParticipantConfig(),
                    const std::string& dataType
                    = detail::TypeName<DataType>()()) {
-        return typename Informer<DataType>::Ptr(new Informer<DataType> (
-            createOutConnectors(config), scope, config, dataType));
+        typename Informer<DataType>::Ptr informer(
+            new Informer<DataType>(createOutConnectors(config), scope,
+                                   config, dataType));
+        informer->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
+        this->signalParticipantCreated(informer);
+        return informer;
     }
 
     /**
@@ -152,6 +166,29 @@ public:
                            getFactory().getDefaultParticipantConfig());
 
     /**
+     * Creates a @ref patterns::LocalServer::LocalMethod.
+     *
+     * @param scope The scope, including the method name as its final
+     *              component, on which the new method should be
+     *              available.
+     * @param callback The callback that should be executed to
+     *                 implement the behavior of the method when it is
+     *                 called.
+     * @param listenerConfig configuration to use for the request listener
+     * @param informerConfig configuration to use for the reply informer
+     *
+     * @return A shared_ptr to the new @ref
+     *         patterns::LocalServer::LocalMethod object.
+     */
+    patterns::LocalServer::LocalMethodPtr createLocalMethod(
+        const Scope& scope,
+        patterns::LocalServer::CallbackPtr callback,
+        const ParticipantConfig& listenerConfig
+        = getFactory().getDefaultParticipantConfig(),
+        const ParticipantConfig& informerConfig
+        = getFactory().getDefaultParticipantConfig());
+
+    /**
      * Creates a @ref Server object that exposes methods under the
      * scope @a scope.
      *
@@ -187,6 +224,24 @@ public:
         const ParticipantConfig &informerConfig =
         getFactory().getDefaultParticipantConfig()),
                    "Use Factory::createLocalServer() instead"); // TODO deprecated; remove
+
+    /**
+     * Creates a @ref patterns::RemoteServer::RemoteMethod.
+     *
+     * @param scope The scope, including the method name as its final
+     *              component, on which the new method should operate.
+     * @param listenerConfig configuration to use for the request listener
+     * @param informerConfig configuration to use for the reply informer
+     *
+     * @return A shared_ptr to the new @ref
+     *         patterns::RemoteServer::RemoteMethod object.
+     */
+    patterns::RemoteServer::RemoteMethodPtr createRemoteMethod(
+        const Scope& scope,
+        const ParticipantConfig& listenerConfig
+        = getFactory().getDefaultParticipantConfig(),
+        const ParticipantConfig& informerConfig
+        = getFactory().getDefaultParticipantConfig());
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
@@ -247,6 +302,9 @@ private:
      */
     ParticipantConfig defaultConfig;
     mutable boost::recursive_mutex configMutex;
+
+    SignalParticipantCreated signalParticipantCreated;
+    SignalParticipantDestroyed signalParticipantDestroyed;
 
     std::vector<transport::OutConnectorPtr>
         createOutConnectors(const ParticipantConfig& config);

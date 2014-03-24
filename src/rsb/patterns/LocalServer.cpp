@@ -155,13 +155,12 @@ void LocalServer::registerMethod(const std::string& name, CallbackPtr callback) 
     }
 
     // TODO check that the reply type is convertible
-    LocalMethodPtr method = LocalMethodPtr
-        (new LocalMethod(getScope()->concat(Scope("/" + name)),
-                         name,
-                         this->listenerConfig,
-                         this->informerConfig,
-                         callback));
+    LocalMethodPtr method
+        = getFactory().createLocalMethod(getScope()->concat(Scope("/" + name)),
+                                         callback,
+                                         this->listenerConfig, this->informerConfig);
     method->activate();
+
     this->methods[name] = method;
 
 }

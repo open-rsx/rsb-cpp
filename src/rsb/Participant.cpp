@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -35,9 +35,14 @@ namespace rsb {
 
 class Participant::Impl {
 public:
+    Impl()
+        : signalParticipantDestroyed(NULL) {
+    }
+
     rsc::misc::UUID id;
     ScopePtr scope;
     ParticipantConfig config;
+    SignalParticipantDestroyed* signalParticipantDestroyed;
 };
 
 Participant::Participant(const Scope& scope, const ParticipantConfig& config) :
@@ -47,6 +52,9 @@ Participant::Participant(const Scope& scope, const ParticipantConfig& config) :
 }
 
 Participant::~Participant() {
+    if (this->d->signalParticipantDestroyed) {
+        (*this->d->signalParticipantDestroyed)(this);
+    }
 }
 
 rsc::misc::UUID Participant::getId() const {
@@ -64,5 +72,10 @@ ParticipantConfig Participant::getConfig() const {
 void Participant::printContents(ostream& stream) const {
     stream << "id = " << d->id << ", scope = " << *d->scope;
 }
+
+void Participant::setSignalParticipantDestroyed(SignalParticipantDestroyed* signal) {
+    this->d->signalParticipantDestroyed = signal;
+}
+
 
 }
