@@ -35,6 +35,8 @@
 #include "../MetaData.h"
 #include "../Factory.h"
 
+#include "../filter/MethodFilter.h"
+
 using namespace std;
 
 using namespace boost;
@@ -62,6 +64,7 @@ RemoteServer::RemoteMethod::~RemoteMethod() {
 
 ListenerPtr RemoteServer::RemoteMethod::makeListener() {
     ListenerPtr listener = Method::makeListener();
+    listener->addFilter(filter::FilterPtr(new filter::MethodFilter("REPLY")));
     listener->addHandler(shared_from_this());
     return listener;
 }
@@ -84,9 +87,7 @@ RemoteServer::FuturePtr RemoteServer::RemoteMethod::call(const std::string& /*me
 }
 
 void RemoteServer::RemoteMethod::handle(EventPtr event) {
-    if (!event
-        || event->getCauses().empty()
-        || (event->getMethod() != "REPLY")) {
+    if (!event || event->getCauses().empty()) {
         RSCTRACE(logger, "Received uninteresting event " << event);
         return;
     }

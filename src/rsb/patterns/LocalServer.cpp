@@ -33,6 +33,8 @@
 #include "../MetaData.h"
 #include "../Factory.h"
 
+#include "../filter/MethodFilter.h"
+
 #include "MethodExistsException.h"
 
 using namespace std;
@@ -82,15 +84,12 @@ LocalServer::LocalMethod::~LocalMethod() {
 
 ListenerPtr LocalServer::LocalMethod::makeListener() {
     ListenerPtr listener = Method::makeListener();
+    listener->addFilter(filter::FilterPtr(new filter::MethodFilter("REQUEST")));
     listener->addHandler(HandlerPtr(shared_from_this()));
     return listener;
 }
 
 void LocalServer::LocalMethod::handle(EventPtr event) {
-    if (event->getMethod() != "REQUEST") {
-        return;
-    }
-
     LocalServer::CallbackBase* callbackWithReturnType
         = dynamic_cast<LocalServer::CallbackBase*>(this->callback.get());
     if (callbackWithReturnType) {
