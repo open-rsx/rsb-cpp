@@ -37,7 +37,7 @@ Filter::~Filter() {
 }
 
 void Filter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {
-	fo->notify(this,at);
+    fo->notify(this, at);
 }
 
 }

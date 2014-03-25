@@ -25,6 +25,7 @@
  * ============================================================ */
 
 #include "ScopeFilter.h"
+
 #include "FilterObserver.h"
 
 using namespace std;
@@ -39,21 +40,13 @@ ScopeFilter::ScopeFilter(const Scope& scope) :
 ScopeFilter::~ScopeFilter() {
 }
 
-string ScopeFilter::getClassName() const {
-    return "ScopeFilter";
-}
-
 void ScopeFilter::printContents(ostream& stream) const {
     stream << "scope = " << scope;
 }
 
 bool ScopeFilter::match(EventPtr e) {
-    if ((*e->getScopePtr() == this->scope) || e->getScopePtr()->isSubScopeOf(
-            this->scope)) {
-        return true;
-    } else {
-        return false;
-    }
+    return ((*e->getScopePtr() == this->scope)
+            || e->getScopePtr()->isSubScopeOf(this->scope));
 }
 
 void ScopeFilter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {

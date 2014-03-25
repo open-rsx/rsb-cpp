@@ -37,20 +37,20 @@ namespace rsb {
 namespace filter {
 
 FilterObserver::FilterObserver() :
-	logger(rsc::logging::Logger::getLogger("rsb.filter.FilterObserver")) {
+    logger(rsc::logging::Logger::getLogger("rsb.filter.FilterObserver")) {
 }
 
 FilterObserver::~FilterObserver() {
 }
 
 void FilterObserver::notify(Filter* /*filter*/,
-		const FilterAction::Types& /*at*/) {
-	RSCDEBUG(logger, "FilterObserver::notify(FilterPtr a)");
+                            const FilterAction::Types& /*at*/) {
+    RSCDEBUG(this->logger, "FilterObserver::notify(FilterPtr a)");
 }
 
 void FilterObserver::notify(ScopeFilter* /*filter*/,
-		const FilterAction::Types& /*at*/) {
-	RSCDEBUG(logger, "FilterObserver::notify(ScopeFilterPtr a)");
+                            const FilterAction::Types& /*at*/) {
+    RSCDEBUG(this->logger, "FilterObserver::notify(ScopeFilterPtr a)");
 }
 
 }

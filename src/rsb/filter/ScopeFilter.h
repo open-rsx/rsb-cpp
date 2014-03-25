@@ -26,8 +26,10 @@
 
 #pragma once
 
-#include "Filter.h"
 #include "../Scope.h"
+
+#include "Filter.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -41,7 +43,6 @@ public:
     ScopeFilter(const Scope& scope);
     virtual ~ScopeFilter();
 
-    std::string getClassName() const;
     void printContents(std::ostream& stream) const;
 
     bool match(EventPtr e);
@@ -57,4 +58,3 @@ private:
 }
 
 }
-
