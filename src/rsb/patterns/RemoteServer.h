@@ -246,17 +246,15 @@ private:
     class MethodSet {
     public:
         std::string methodName;
-        std::string sendType;
         boost::shared_ptr<WaitingEventHandler> handler;
         ListenerPtr replyListener;
-        Informer<void>::Ptr requestInformer;
+        InformerBasePtr requestInformer;
     };
 
     boost::mutex methodSetMutex;
     std::map<std::string, MethodSet> methodSets;
 
-    MethodSet getMethodSet(const std::string& methodName,
-                           const std::string& sendType);
+    MethodSet getMethodSet(const std::string& methodName);
 
 };
 

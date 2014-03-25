@@ -127,8 +127,7 @@ RemoteServer::RemoteServer(const Scope&            scope,
 RemoteServer::~RemoteServer() {
 }
 
-RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
-        const string& sendType) {
+RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName) {
 
     boost::mutex::scoped_lock lock(methodSetMutex);
 
@@ -147,26 +146,19 @@ RemoteServer::MethodSet RemoteServer::getMethodSet(const string& methodName,
         listener->addHandler(handler);
 
         // informer for requests
-        Informer<void>::Ptr informer
-            = getFactory().createInformer<void>(methodScope,
-                                                this->informerConfig,
-                                                sendType);
+        InformerBasePtr informer
+            = getFactory().createInformerBase(methodScope,
+                                              "",
+                                              this->informerConfig);
 
         MethodSet set;
         set.methodName = methodName;
-        set.sendType = sendType;
         set.handler = handler;
         set.replyListener = listener;
         set.requestInformer = informer;
 
         methodSets[methodName] = set;
 
-    }
-
-    if (methodSets[methodName].sendType != sendType) {
-        throw runtime_error("Illegal send type. Method previously accepted "
-                + methodSets[methodName].sendType + " but now " + sendType
-                + " was requested");
     }
 
     return methodSets[methodName];
@@ -178,7 +170,7 @@ RemoteServer::FuturePtr RemoteServer::callAsync(const string& methodName, EventP
     RSCDEBUG(logger, "Calling method " << methodName << " with data " << data);
 
     // TODO check that the desired method exists
-    MethodSet methodSet = getMethodSet(methodName, data->getType());
+    MethodSet methodSet = getMethodSet(methodName);
     FuturePtr result;
     {
         WaitingEventHandler::MutexType::scoped_lock
