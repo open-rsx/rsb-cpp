@@ -115,3 +115,6 @@ typedef boost::shared_ptr<Method> MethodPtr;
 
 }
 }
+
+// TODO deprecated; remove later
+#include "LocalServer.h"
