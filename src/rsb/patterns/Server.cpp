@@ -74,7 +74,8 @@ const ParticipantConfig& Method::getListenerConfig() const {
 }
 
 ListenerPtr Method::makeListener() {
-    return getFactory().createListener(*getScope(), getListenerConfig());
+    return getFactory().createListener(*getScope(), getListenerConfig(),
+                                       shared_from_this());
 }
 
 InformerBasePtr Method::getInformer() {
@@ -91,8 +92,9 @@ const ParticipantConfig& Method::getInformerConfig() const {
 
 InformerBasePtr Method::makeInformer() {
     return getFactory().createInformerBase(*getScope(),
-                                           "",
-                                           getInformerConfig());
+                                           "", // TODO
+                                           getInformerConfig(),
+                                           shared_from_this());
 }
 
 }

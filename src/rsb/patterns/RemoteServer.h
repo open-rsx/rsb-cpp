@@ -38,9 +38,7 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/threading/Future.h>
 
-#include "../Exception.h"
 #include "../Event.h"
-#include "../Handler.h"
 
 #include "Server.h"
 
@@ -58,7 +56,8 @@ namespace patterns {
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT RemoteServer: public Participant {
+class RSB_EXPORT RemoteServer: public Participant,
+                               public boost::enable_shared_from_this<RemoteServer> {
 public:
     typedef rsc::threading::Future<EventPtr> FutureType;
     typedef boost::shared_ptr<FutureType> FuturePtr;
@@ -87,9 +86,7 @@ public:
      *
      * @author jmoringe
      */
-    class RemoteMethod: public Method,
-                        public Handler,
-                        public boost::enable_shared_from_this<RemoteMethod> {
+    class RemoteMethod: public Method {
     public:
         RemoteMethod(const Scope&             scope,
                      const std::string&       name,

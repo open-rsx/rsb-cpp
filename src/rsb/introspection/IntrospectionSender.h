@@ -58,7 +58,8 @@ friend class QueryHandler;
 public:
     IntrospectionSender();
 
-    void addParticipant(ParticipantPtr participant);
+    void addParticipant(ParticipantPtr participant,
+                        ParticipantPtr parent);
 
     bool removeParticipant(const Participant& participant);
 private:

@@ -46,7 +46,8 @@ rsc::logging::LoggerPtr logger
 
 rsb::introspection::IntrospectionSenderPtr sender;
 
-void handleParticipantCreated(rsb::ParticipantPtr participant) {
+void handleParticipantCreated(rsb::ParticipantPtr participant,
+                              rsb::ParticipantPtr parent) {
     RSCDEBUG(logger, "Was notified of created participant " << participant);
 
     if (participant->getScope()->isSubScopeOf("/__rsb/introspection")
@@ -60,7 +61,7 @@ void handleParticipantCreated(rsb::ParticipantPtr participant) {
         sender.reset(new rsb::introspection::IntrospectionSender());
     }
 
-    sender->addParticipant(participant);
+    sender->addParticipant(participant, parent);
 }
 
 

@@ -51,7 +51,8 @@ namespace patterns {
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT LocalServer: public Participant {
+class RSB_EXPORT LocalServer: public Participant,
+                              public boost::enable_shared_from_this<LocalServer> {
 public:
 
     /**
@@ -256,9 +257,7 @@ public:
      *
      * @author jmoringe
      */
-    class LocalMethod: public Method,
-                       public Handler,
-                       public boost::enable_shared_from_this<LocalMethod> {
+    class LocalMethod: public Method {
     public:
         LocalMethod(const Scope&             scope,
                     const std::string&       name,

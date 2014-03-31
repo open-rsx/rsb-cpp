@@ -158,7 +158,8 @@ void LocalServer::registerMethod(const std::string& name, CallbackPtr callback) 
     LocalMethodPtr method
         = getFactory().createLocalMethod(getScope()->concat(Scope("/" + name)),
                                          callback,
-                                         this->listenerConfig, this->informerConfig);
+                                         this->listenerConfig, this->informerConfig,
+                                         shared_from_this());
     method->activate();
 
     this->methods[name] = method;

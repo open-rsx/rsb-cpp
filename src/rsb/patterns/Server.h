@@ -27,12 +27,14 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include "../Scope.h"
 #include "../Participant.h"
 #include "../ParticipantConfig.h"
 #include "../Listener.h"
 #include "../Informer.h"
+#include "../Handler.h"
 
 #include "rsb/rsbexports.h"
 
@@ -47,7 +49,9 @@ namespace patterns {
  *
  * @author jmoringe
  */
-class Method : public Participant {
+class Method : public Participant,
+               public Handler,
+               public boost::enable_shared_from_this<Method> {
 public:
     Method(const Scope&             scope,
            const std::string&       name,

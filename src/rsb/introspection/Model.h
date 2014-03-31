@@ -50,6 +50,7 @@ class ParticipantInfo {
 public:
     ParticipantInfo(const std::string&     kind,
                     const rsc::misc::UUID& id,
+                    const rsc::misc::UUID& parentId,
                     const Scope&           scope,
                     const std::string&     type);
     virtual ~ParticipantInfo();
@@ -58,12 +59,15 @@ public:
 
     const rsc::misc::UUID& getId() const;
 
+    const rsc::misc::UUID& getParentId() const;
+
     const Scope& getScope() const;
 
     const std::string& getType() const;
 private:
     std::string     kind;
     rsc::misc::UUID id;
+    rsc::misc::UUID parentId;
     Scope           scope;
     std::string     type;
 };

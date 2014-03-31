@@ -28,6 +28,8 @@
 
 #include <boost/format.hpp>
 
+#include <rsc/misc/UUID.h>
+
 #include <rsb/protocol/introspection/Hello.pb.h>
 #include <rsb/protocol/introspection/Bye.pb.h>
 
@@ -138,13 +140,15 @@ IntrospectionSender::IntrospectionSender()
     server->registerMethod("echo", patterns::LocalServer::CallbackPtr(new EchoCallback()));
 }
 
-void IntrospectionSender::addParticipant(ParticipantPtr participant) {
+void IntrospectionSender::addParticipant(ParticipantPtr participant,
+                                         ParticipantPtr parent) {
     RSCDEBUG(this->logger, boost::format("Adding participant %1%") % participant);
 
     boost::mutex::scoped_lock lock(this->mutex);
 
     ParticipantInfo info(participant->getKind(),
                          participant->getId(),
+                         (parent ? parent->getId() : rsc::misc::UUID(false)),
                          *participant->getScope(),
                          "TODO"); // TODO type
     this->participants.push_back(info);
@@ -186,6 +190,10 @@ void IntrospectionSender::sendHello(const ParticipantInfo& participant,
     // Add participant information.
     hello->set_id(participant.getId().getId().data,
                   participant.getId().getId().size());
+    if (participant.getParentId() != rsc::misc::UUID(false)) {
+        hello->set_parent(participant.getParentId().getId().data,
+                          participant.getParentId().getId().size());
+    }
     hello->set_kind(participant.getKind());
     hello->set_scope(participant.getScope().toString());
 

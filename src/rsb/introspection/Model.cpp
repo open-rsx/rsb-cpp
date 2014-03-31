@@ -46,9 +46,10 @@ namespace introspection {
 
 ParticipantInfo::ParticipantInfo(const std::string&     kind,
                                  const rsc::misc::UUID& id,
+                                 const rsc::misc::UUID& parentId,
                                  const Scope&           scope,
                                  const std::string&     type)
-    : kind(kind), id(id), scope(scope), type(type) {
+    : kind(kind), id(id), parentId(parentId), scope(scope), type(type) {
 }
 
 ParticipantInfo::~ParticipantInfo() {
@@ -60,6 +61,10 @@ const std::string& ParticipantInfo::getKind() const {
 
 const rsc::misc::UUID& ParticipantInfo::getId() const {
     return this->id;
+}
+
+const rsc::misc::UUID& ParticipantInfo::getParentId() const {
+    return this->parentId;
 }
 
 const Scope& ParticipantInfo::getScope() const {

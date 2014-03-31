@@ -57,7 +57,7 @@
 
 namespace rsb {
 
-typedef boost::signal1<void, ParticipantPtr> SignalParticipantCreated;
+typedef boost::signal2<void, ParticipantPtr, ParticipantPtr> SignalParticipantCreated;
 
 class Factory;
 
@@ -100,22 +100,29 @@ public:
      *               general config held in this factory.
      * @param dataType A string representation of the type of data
      *                 sent via the new @ref Informer
+     * @param parent Optional. A @ref Participant that should be
+     *               considered to be the parent of the new
+     *               @ref Informer.
+     *
      * @return a shared_ptr pointing to the new @ref Informer
      *         instance.
+     *
      * @throw RSBError If the requested informer cannot be created.
      */
     template<class DataType>
     typename Informer<DataType>::Ptr
-    createInformer(const Scope& scope,
+    createInformer(const Scope&             scope,
                    const ParticipantConfig& config
                    = getFactory().getDefaultParticipantConfig(),
-                   const std::string& dataType
-                   = detail::TypeName<DataType>()()) {
+                   const std::string&       dataType
+                   = detail::TypeName<DataType>()(),
+                   ParticipantPtr           parent
+                   = ParticipantPtr()) {
         typename Informer<DataType>::Ptr informer(
             new Informer<DataType>(createOutConnectors(config), scope,
                                    config, dataType));
         informer->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-        this->signalParticipantCreated(informer);
+        this->signalParticipantCreated(informer, parent);
         return informer;
     }
 
@@ -128,27 +135,38 @@ public:
      *                 sent via the new @ref Informer.
      * @param config The configuration for the informer to use, defaults to the
      *               general config held in this factory.
+     * @param parent Optional. A @ref Participant which should be
+     *               considered the parent of the new @ref Informer.
+     *
      * @return A shared_ptr pointing to the a @ref InformerBase
      *         instance.
+     *
      * @throw RSBError If the requested informer cannot be created.
      */
     InformerBasePtr createInformerBase(const Scope&             scope,
                                        const std::string&       dataType
                                        = "",
                                        const ParticipantConfig& config
-                                       = getFactory().getDefaultParticipantConfig());
+                                       = getFactory().getDefaultParticipantConfig(),
+                                       ParticipantPtr           parent
+                                       = ParticipantPtr());
 
     /**
      * Creates a new listener for the specified scope.
      *
      * @param scope the scope of the new listener
      * @param config the configuration for the LISTENER to use, defaults to the
-     *               general config held in this factory.f
-     * @return new listener instance
+     *               general config held in this factory.
+     * @param parent Optional. A @ref Participant which should be
+     *               considered the parent of the new @ref Listener.
+     *
+     * @return a shared_ptr pointing to the new @ref Listener instance.
      */
-    ListenerPtr createListener(const Scope& scope,
-            const ParticipantConfig& config =
-                    getFactory().getDefaultParticipantConfig());
+    ListenerPtr createListener(const Scope&             scope,
+                               const ParticipantConfig& config
+                               = getFactory().getDefaultParticipantConfig(),
+                               ParticipantPtr           parent
+                               = ParticipantPtr());
 
     /**
      * Creates a new @ref Reader object for the specified scope.
@@ -157,13 +175,22 @@ public:
      * by calls to @ref Reader::read.
      *
      * @param scope the scope of the new receiver
-     * @throw RSBError when the requested connection cannot be
-     * established.
+     * @param config The configuration the new @ref Reader should
+     *               use. Defaults to the global default configuration
+     *               of the factory.
+     * @param parent Optional. A @ref Participant which should be
+     *               considered the parent of the new @ref Reader.
+     *
      * @return A shared_ptr to the new @ref Reader object.
+     *
+     * @throw RSBError when the requested connection cannot be
+     *                 established.
      **/
-    ReaderPtr createReader(const Scope& scope,
-                           const ParticipantConfig& config =
-                           getFactory().getDefaultParticipantConfig());
+    ReaderPtr createReader(const Scope&             scope,
+                           const ParticipantConfig& config
+                           = getFactory().getDefaultParticipantConfig(),
+                           ParticipantPtr           parent
+                           = ParticipantPtr());
 
     /**
      * Creates a @ref patterns::LocalServer::LocalMethod.
@@ -176,17 +203,22 @@ public:
      *                 called.
      * @param listenerConfig configuration to use for the request listener
      * @param informerConfig configuration to use for the reply informer
+     * @param parent Optional. A @ref Participant that should be
+     *               considered to be the parent of the newly created
+     *               method.
      *
      * @return A shared_ptr to the new @ref
      *         patterns::LocalServer::LocalMethod object.
      */
     patterns::LocalServer::LocalMethodPtr createLocalMethod(
-        const Scope& scope,
+        const Scope&                       scope,
         patterns::LocalServer::CallbackPtr callback,
-        const ParticipantConfig& listenerConfig
+        const ParticipantConfig&           listenerConfig
         = getFactory().getDefaultParticipantConfig(),
-        const ParticipantConfig& informerConfig
-        = getFactory().getDefaultParticipantConfig());
+        const ParticipantConfig&           informerConfig
+        = getFactory().getDefaultParticipantConfig(),
+        ParticipantPtr                     parent
+        = ParticipantPtr());
 
     /**
      * Creates a @ref Server object that exposes methods under the
@@ -196,14 +228,19 @@ public:
      * methods.
      * @param listenerConfig configuration to use for all request listeners
      * @param informerConfig configuration to use for all reply informers
+     * @param parent Optional. A @ref Participant which should be
+     *               considered the parent of the new server.
+     *
      * @return A shared_ptr to the new @ref Server object.
      */
     patterns::LocalServerPtr createLocalServer(
-            const Scope& scope,
-            const ParticipantConfig &listenerConfig =
-                    getFactory().getDefaultParticipantConfig(),
-            const ParticipantConfig &informerConfig =
-                    getFactory().getDefaultParticipantConfig());
+            const Scope&             scope,
+            const ParticipantConfig& listenerConfig
+            = getFactory().getDefaultParticipantConfig(),
+            const ParticipantConfig& informerConfig
+            = getFactory().getDefaultParticipantConfig(),
+            ParticipantPtr           parent
+            = ParticipantPtr());
 
     /**
      * Creates a @ref Server object that exposes methods under the
@@ -213,16 +250,21 @@ public:
      * methods.
      * @param listenerConfig configuration to use for all request listeners
      * @param informerConfig configuration to use for all reply informers
+     * @param parent Optional. A @ref Participant which should be
+     *               considered the parent of the new server.
+     *
      * @return A shared_ptr to the new @ref Server object.
      *
      * @deprecated Use @ref createLocalServer
      */
     DEPRECATED_MSG(patterns::ServerPtr createServer(
-        const Scope& scope,
-        const ParticipantConfig &listenerConfig =
-        getFactory().getDefaultParticipantConfig(),
-        const ParticipantConfig &informerConfig =
-        getFactory().getDefaultParticipantConfig()),
+        const Scope&             scope,
+        const ParticipantConfig& listenerConfig
+        = getFactory().getDefaultParticipantConfig(),
+        const ParticipantConfig& informerConfig
+        = getFactory().getDefaultParticipantConfig(),
+        ParticipantPtr           parent
+        = ParticipantPtr()),
                    "Use Factory::createLocalServer() instead"); // TODO deprecated; remove
 
     /**
@@ -232,16 +274,20 @@ public:
      *              component, on which the new method should operate.
      * @param listenerConfig configuration to use for the request listener
      * @param informerConfig configuration to use for the reply informer
+     * @param parent Optional. A @ref Participant that should be
+     *               considered to be the parent of the new method.
      *
      * @return A shared_ptr to the new @ref
      *         patterns::RemoteServer::RemoteMethod object.
      */
     patterns::RemoteServer::RemoteMethodPtr createRemoteMethod(
-        const Scope& scope,
+        const Scope&             scope,
         const ParticipantConfig& listenerConfig
         = getFactory().getDefaultParticipantConfig(),
         const ParticipantConfig& informerConfig
-        = getFactory().getDefaultParticipantConfig());
+        = getFactory().getDefaultParticipantConfig(),
+        ParticipantPtr           parent
+        = ParticipantPtr());
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
@@ -251,14 +297,19 @@ public:
      * exposes itself.
      * @param listenerConfig configuration to use for all reply listeners
      * @param informerConfig configuration to use for all request informers
+     * @param parent Optional. A @ref Participant which should be
+     *               considered the parent of the new server.
+     *
      * @return A shared_ptr to the new @ref RemoteServer object.
      */
     patterns::RemoteServerPtr createRemoteServer(
-            const Scope& scope,
-            const ParticipantConfig &listenerConfig =
-                    getFactory().getDefaultParticipantConfig(),
-            const ParticipantConfig &informerConfig =
-                    getFactory().getDefaultParticipantConfig());
+            const Scope&             scope,
+            const ParticipantConfig& listenerConfig
+            = getFactory().getDefaultParticipantConfig(),
+            const ParticipantConfig& informerConfig
+            = getFactory().getDefaultParticipantConfig(),
+            ParticipantPtr           parent
+            = ParticipantPtr());
 
     /**
      * Returns the default configuration for new participants.
