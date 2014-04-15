@@ -29,6 +29,8 @@
 #include <vector>
 #include <string>
 
+#include <boost/date_time/posix_time/ptime.hpp>
+
 #include <rsc/misc/UUID.h>
 #include <rsc/os/ProcessInfo.h>
 #include <rsc/os/HostInfo.h>
@@ -93,7 +95,9 @@ public:
                 const std::string&              programName
                 = tryCurrentProgramName(),
                 const std::vector<std::string>& arguments
-                = tryCurrentCommandlineArguments());
+                = tryCurrentCommandlineArguments(),
+                const boost::posix_time::ptime& startTime
+                = tryCurrentProcessStartTime());
     virtual ~ProcessInfo();
 
     unsigned int getPid() const;
@@ -101,10 +105,13 @@ public:
     const std::string& getProgramName() const;
 
     const std::vector<std::string>& getArguments() const;
+
+    const boost::posix_time::ptime& getStartTime() const;
 private:
     unsigned int             pid;
     std::string              programName;
     std::vector<std::string> arguments;
+    boost::posix_time::ptime startTime;
 };
 
 // HostInfo

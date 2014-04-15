@@ -182,6 +182,9 @@ bool IntrospectionSender::removeParticipant(const Participant& participant) {
     return !this->participants.empty();
 }
 
+const boost::posix_time::ptime UNIX_EPOCH
+  = boost::posix_time::ptime(boost::gregorian::date(1970, boost::date_time::Jan, 1));
+
 void IntrospectionSender::sendHello(const ParticipantInfo& participant,
                                     EventPtr               query) {
     boost::shared_ptr<rsb::protocol::introspection::Hello> hello(
@@ -207,6 +210,8 @@ void IntrospectionSender::sendHello(const ParticipantInfo& participant,
          it != arguments.end(); ++it) {
         process->add_commandline_arguments(*it);
     }
+    process->set_start_time((this->process.getStartTime() - UNIX_EPOCH)
+                            .total_microseconds());
 
     // Add host information.
     rsb::protocol::operatingsystem::Host* host = hello->mutable_host();

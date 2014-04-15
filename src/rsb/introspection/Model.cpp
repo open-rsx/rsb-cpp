@@ -111,8 +111,10 @@ boost::posix_time::ptime tryCurrentProcessStartTime() {
 
 ProcessInfo::ProcessInfo(unsigned int                    pid,
                          const std::string&              programName,
-                         const std::vector<std::string>& arguments)
-    : pid(pid), programName(programName), arguments(arguments) {
+                         const std::vector<std::string>& arguments,
+                         const boost::posix_time::ptime& startTime)
+    : pid(pid), programName(programName), arguments(arguments),
+      startTime(startTime) {
 }
 
 ProcessInfo::~ProcessInfo() {
@@ -128,6 +130,10 @@ const std::string& ProcessInfo::getProgramName() const {
 
 const std::vector<std::string>& ProcessInfo::getArguments() const {
     return this->arguments;
+}
+
+const boost::posix_time::ptime& ProcessInfo::getStartTime() const {
+    return this->startTime;
 }
 
 // HostInfo
