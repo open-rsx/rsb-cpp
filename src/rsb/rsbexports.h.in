@@ -30,7 +30,7 @@
 #include <string>
 
 #if defined (_WIN32) 
-    #if defined(@RSB_NAME@_EXPORTS)
+    #if defined(@RSB_EXPORTS_NAME@_EXPORTS)
         #define RSB_EXPORT __declspec(dllexport)
         #define RSB_EXPIMP
     #else

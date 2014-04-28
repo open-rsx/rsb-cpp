@@ -8,6 +8,7 @@ PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
                       EXPORT_MACRO RSB_PROTOCOL_EXPORT
                       OUTPATH      ${CMAKE_CURRENT_BINARY_DIR})
 
+STRING(REPLACE "." "_" RSB_EXPORTS_NAME ${LIB_NAME})
 CONFIGURE_FILE(rsb/rsbexports.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h
                @ONLY)
