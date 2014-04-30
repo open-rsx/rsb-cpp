@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -180,7 +180,11 @@ void BusConnection::handleReadLength(const boost::system::error_code& error,
         if (error == boost::asio::error::eof) {
             RSCDEBUG(logger, "Received eof");
             if (!this->activeShutdown) {
-                shutdown();
+                try {
+                    shutdown();
+                } catch (const std::exception& e) {
+                    RSCWARN(this->logger, "Failed to shut down socket: " << e.what());
+                }
             }
             performSafeCleanup("handleReadLength[eof]");
             return;
