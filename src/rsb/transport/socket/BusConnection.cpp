@@ -46,6 +46,16 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
+// Return the exception's what() string falling back to a replacement
+// string in case what() throws an exception.
+std::string safeSocketExceptionString(const std::exception& exception) {
+    try {
+        return exception.what();
+    } catch (...) {
+        return "<failed to determine exception message>";
+    }
+}
+
 BusConnection::BusConnection(BusPtr    bus,
                              SocketPtr socket,
                              bool      client,
@@ -158,8 +168,10 @@ void BusConnection::performSafeCleanup(const string& context) {
         try {
             disconnect();
         } catch (const std::exception& e) {
-            RSCDEBUG(logger, "Failed to disconnect (in " << context << "): "
-                     << e.what())
+            // Use safeSocketExceptionString to avoid exceptions
+            // potentially thrown when printing Boost.Asio exceptions.
+            RSCDEBUG(this->logger, "Failed to disconnect (in " << context << "): "
+                     << safeSocketExceptionString(e));
         }
     }
 }
@@ -183,7 +195,11 @@ void BusConnection::handleReadLength(const boost::system::error_code& error,
                 try {
                     shutdown();
                 } catch (const std::exception& e) {
-                    RSCWARN(this->logger, "Failed to shut down socket: " << e.what());
+                    // Use safeSocketExceptionString to avoid
+                    // exceptions potentially thrown when printing
+                    // Boost.Asio exceptions.
+                    RSCWARN(this->logger, "Failed to shut down socket: "
+                            << safeSocketExceptionString(e));
                 }
             }
             performSafeCleanup("handleReadLength[eof]");
