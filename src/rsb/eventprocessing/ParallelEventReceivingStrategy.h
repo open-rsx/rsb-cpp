@@ -63,7 +63,8 @@ class RSB_EXPORT ParallelEventReceivingStrategy: public PushEventReceivingStrate
 public:
     static EventReceivingStrategy* create(const rsc::runtime::Properties& props);
 
-    ParallelEventReceivingStrategy(unsigned int numThreads = 5);
+    ParallelEventReceivingStrategy(unsigned int numThreads   = 5,
+                                   bool parallelHandlerCalls = false);
     virtual ~ParallelEventReceivingStrategy();
 
     std::string getClassName() const;

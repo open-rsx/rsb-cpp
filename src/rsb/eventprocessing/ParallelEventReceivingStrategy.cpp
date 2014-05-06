@@ -44,15 +44,18 @@ namespace rsb {
 namespace eventprocessing {
 
 EventReceivingStrategy* ParallelEventReceivingStrategy::create(const Properties& props) {
-    return new ParallelEventReceivingStrategy(props.getAs<unsigned int>("threads", 5));
+    return new ParallelEventReceivingStrategy(props.getAs<unsigned int>("threads", 5),
+                                              props.getAs<bool>("parallelhandlercalls", false));
 }
 
-ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(unsigned int numThreads) :
+ParallelEventReceivingStrategy::ParallelEventReceivingStrategy(unsigned int numThreads,
+        bool parallelHandlerCalls) :
     logger(Logger::getLogger("rsb.eventprocessing.ParallelEventReceivingStrategy")),
     pool(numThreads,
          boost::bind(&ParallelEventReceivingStrategy::deliver, this, _1, _2),
          boost::bind(&ParallelEventReceivingStrategy::filter, this, _1, _2)),
     errorStrategy(ParticipantConfig::ERROR_STRATEGY_LOG) {
+    pool.setParallelCalls(parallelHandlerCalls);
     pool.start();
 }
 
