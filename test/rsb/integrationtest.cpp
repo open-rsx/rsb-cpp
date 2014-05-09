@@ -339,6 +339,8 @@ TEST_F(InformerTest, testConversionException) {
 
     ParticipantConfig config;
     config.addTransport(ParticipantConfig::Transport("socket"));
+    config.mutableTransport("socket").mutableOptions()["port"] =
+            boost::str(boost::format("%1%") % SOCKET_PORT);
 
     const Scope scope("/damn/strange/scope");
     Informer<string>::Ptr informer = factory.createInformer<string>(scope,
@@ -368,6 +370,8 @@ TEST_F(InformerTest, testConversion) {
 
     ParticipantConfig config;
     config.addTransport(ParticipantConfig::Transport("socket"));
+    config.mutableTransport("socket").mutableOptions()["port"] =
+            boost::str(boost::format("%1%") % SOCKET_PORT);
 
     const Scope scope("/damn/strange/scope");
     Informer<string>::Ptr informer
