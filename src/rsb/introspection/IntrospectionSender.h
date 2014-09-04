@@ -54,7 +54,7 @@ namespace introspection {
  * @author jmoringe
  */
 class IntrospectionSender {
-friend class QueryHandler;
+friend struct QueryHandler;
 public:
     IntrospectionSender();
 
