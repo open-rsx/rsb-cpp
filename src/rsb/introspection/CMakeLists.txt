@@ -6,7 +6,7 @@ ADD_LIBRARY(${PLUGIN_NAME} SHARED "Plugin.cpp"
                                   "IntrospectionSender.cpp")
 
 TARGET_LINK_LIBRARIES(${PLUGIN_NAME} ${RSC_LIBRARIES}
-                                     ${RSB_LIBRARIES})
+                                     ${LIB_NAME})
 SET_TARGET_PROPERTIES(${PLUGIN_NAME}
                       PROPERTIES
                       VERSION ${SO_VERSION})
