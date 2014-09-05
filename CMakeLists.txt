@@ -134,19 +134,23 @@ LINK_DIRECTORIES(${RSC_LIBRARY_DIRS} ${LIBS_LIBRARY_DIRS})
 
 # --- source code ---
 
-# first, we need to export the protocol files
-IF(WIN32)
-    ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
-ELSE()
+# pre-declare compile flags for using the protocol on windows
+SET(PROTOCOL_EXPORT "RSB_PROTOCOL_EXPORT=__declspec(dllexport)")
+SET(PROTOCOL_IMPORT "RSB_PROTOCOL_EXPORT=__declspec(dllimport)")
+
+# in case we are on linux, we never need to take care of exporting or importing
+# symbols. So make it easy by one defining a compile flag for everything.
+# Special handling in other CMake parts now only needs to take care of windows.
+IF(NOT WIN32)
     ADD_DEFINITIONS("-DRSB_PROTOCOL_EXPORT=")
 ENDIF()
 
 ADD_SUBDIRECTORY(src)
 
-# for everything else, we now import the protocol files
+# for everything we are doing after the main library, we need to import the
+# protocol classes
 IF(WIN32)
-    REMOVE_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
-    ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllimport)")
+    ADD_DEFINITIONS("/D${PROTOCOL_IMPORT}")
 ENDIF()
 
 IF(BUILD_EXAMPLES)
@@ -179,7 +183,7 @@ INCLUDE(ProvideFlexibleCPack)
 # --- decide on export macros for config files ---
 
 IF(WIN32)
-    SET(RSB_PROTOCOL_CFLAGS "/DRSB_PROTOCOL_EXPORT=__declspec(dllimport)")
+    SET(RSB_PROTOCOL_CFLAGS "/D${PROTOCOL_IMPORT}")
 ELSE()
     SET(RSB_PROTOCOL_CFLAGS "-DRSB_PROTOCOL_EXPORT=")
 ENDIF()

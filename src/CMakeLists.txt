@@ -235,12 +235,6 @@ IF(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/Serialization.h)
 ENDIF()
 
-IF(WIN32)
-    ADD_DEFINITIONS("/DRSB_PROTOCOL_EXPORT=__declspec(dllexport)")
-ELSE()
-    ADD_DEFINITIONS("-DRSB_PROTOCOL_EXPORT=")
-ENDIF()
-
 ADD_LIBRARY(${LIB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
 TARGET_LINK_LIBRARIES(${LIB_NAME} ${PROTOBUF_LIBRARIES}
                                   ${RSC_LIBRARIES}
@@ -249,6 +243,14 @@ TARGET_LINK_LIBRARIES(${LIB_NAME} ${PROTOBUF_LIBRARIES}
 SET_TARGET_PROPERTIES(${LIB_NAME}
                       PROPERTIES
                       VERSION ${SO_VERSION})
+
+# export the protocol classes on windows
+IF(WIN32)
+    SET_TARGET_PROPERTIES(${LIB_NAME}
+                          PROPERTIES
+                          COMPILE_DEFINITIONS "${PROTOCOL_EXPORT}")
+ENDIF()
+
 # TODO why do we have to open sockets???
 IF(WIN32)
     TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)
