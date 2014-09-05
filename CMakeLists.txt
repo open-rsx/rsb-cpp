@@ -92,7 +92,7 @@ OPTION(EXPORT_BOOST_DEPENDENCY_TO_PKGCONFIG "Decide if boost dependencies are ex
 SET(Boost_USE_MULTITHREADED ON)
 SET(Boost_USE_STATIC_LIBS OFF)
 ADD_DEFINITIONS(-DBOOST_ALL_DYN_LINK)
-SET(BOOST_COMPONENTS regex date_time program_options system)
+SET(BOOST_COMPONENTS regex date_time program_options system signals)
 SET(Boost_USE_VERSION 1.38)
 FIND_PACKAGE(Boost ${Boost_USE_VERSION} REQUIRED ${BOOST_COMPONENTS})
 
