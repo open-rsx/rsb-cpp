@@ -229,8 +229,8 @@ SET(LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
 IF(CMAKE_LINK_LIBRARY_SUFFIX)
     SET(LIB_SUFFIX ${CMAKE_LINK_LIBRARY_SUFFIX})
 ENDIF()
-# converte paths passed into the config files to native cmake syntax to avoid
-# invalid string escape sequences on windows (backshlashes for path separation)
+# convert paths passed into the config files to native cmake syntax to avoid
+# invalid string escape sequences on windows (backslashes for path separation)
 FILE(TO_CMAKE_PATH ${RSC_DIR} RSC_DIR_FOR_CONFIG)
 CONFIGURE_FILE(RSBConfig.cmake.in
                ${CMAKE_BINARY_DIR}/RSBConfig.cmake
