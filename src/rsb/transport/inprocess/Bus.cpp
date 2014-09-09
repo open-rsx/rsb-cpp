@@ -105,6 +105,7 @@ void Bus::removeSink(InConnector* sink) {
     vector<Scope> scopes = sink->getScope().superScopes(true);
     RSCDEBUG(logger, "Removing sink " << sink);
 
+    set<Scope> emptyScopes;
     for (SinkMap::iterator it = this->sinks.begin(); it != this->sinks.end(); ++it) {
         SinkList& connectors = it->second;
         RSCDEBUG(
@@ -130,9 +131,15 @@ void Bus::removeSink(InConnector* sink) {
                 "Scope " << it->first << " has " << connectors.size()
                         << " connectors");
         if (connectors.empty()) {
-            RSCDEBUG(logger, "Removing empty scope " << it->first);
-            //this->sinks.erase(it);
+            RSCDEBUG(logger, "Marking empty scope " << it->first
+                             << " for removal");
+            emptyScopes.insert(it->first);
         }
+    }
+    // delete scopes that became empty
+    for (set<Scope>::iterator scopeIt = emptyScopes.begin();
+            scopeIt != emptyScopes.end(); ++scopeIt) {
+        this->sinks.erase(*scopeIt);
     }
 }
 
