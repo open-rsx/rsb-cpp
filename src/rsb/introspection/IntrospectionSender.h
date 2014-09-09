@@ -38,6 +38,7 @@
 #include "../Participant.h"
 #include "../Listener.h"
 #include "../Informer.h"
+#include "../Factory.h"
 
 #include "../patterns/LocalServer.h"
 
@@ -56,7 +57,10 @@ namespace introspection {
 class IntrospectionSender {
 friend struct QueryHandler;
 public:
-    IntrospectionSender();
+    IntrospectionSender(const ParticipantConfig& listenerConfig
+                        = getFactory().getDefaultParticipantConfig(),
+                        const ParticipantConfig& informerConfig
+                        = getFactory().getDefaultParticipantConfig());
 
     void addParticipant(ParticipantPtr participant,
                         ParticipantPtr parent);

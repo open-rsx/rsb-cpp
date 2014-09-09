@@ -129,13 +129,17 @@ struct EchoCallback : public patterns::LocalServer::EventCallback {
     }
 };
 
-IntrospectionSender::IntrospectionSender()
+IntrospectionSender::IntrospectionSender(const ParticipantConfig& listenerConfig,
+                                         const ParticipantConfig& informerConfig)
     : logger(rsc::logging::Logger::getLogger("rsb.introspection.IntrospectionSender")),
-      listener(getFactory().createListener(INTROSPECTION_PARTICIPANTS_SCOPE)),
-      informer(getFactory().createInformerBase(INTROSPECTION_PARTICIPANTS_SCOPE)),
+      listener(getFactory().createListener(INTROSPECTION_PARTICIPANTS_SCOPE,
+                                           listenerConfig)),
+      informer(getFactory().createInformerBase(INTROSPECTION_PARTICIPANTS_SCOPE,
+                                               "", informerConfig)),
       server(getFactory().createLocalServer(INTROSPECTION_HOSTS_SCOPE
                                             .concat(boost::str(boost::format("/%1%/%2%")
-                                                               % host.getId() % process.getPid())))) {
+                                                               % host.getId() % process.getPid())),
+                                            listenerConfig, informerConfig)) {
     listener->addHandler(HandlerPtr(new QueryHandler(*this)));
     server->registerMethod("echo", patterns::LocalServer::CallbackPtr(new EchoCallback()));
 }

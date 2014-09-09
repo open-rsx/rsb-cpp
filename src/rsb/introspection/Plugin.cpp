@@ -27,9 +27,12 @@
 #include <rsc/logging/Logger.h>
 #include <rsc/plugins/Provider.h>
 
+#include <../ParticipantConfig.h>
 #include <../Factory.h>
 
 #include <../converter/Repository.h>
+#include <../converter/VoidConverter.h>
+#include <../converter/StringConverter.h>
 #include <../converter/ProtocolBufferConverter.h>
 
 #include <rsb/protocol/introspection/Hello.pb.h>
@@ -44,7 +47,55 @@ namespace {
 rsc::logging::LoggerPtr logger
     = rsc::logging::Logger::getLogger("rsb.introspection");
 
+rsb::ParticipantConfig configSerialization;
+rsb::ParticipantConfig configDeserialization;
+
 rsb::introspection::IntrospectionSenderPtr sender;
+
+template <typename WireType>
+void addConverter
+(rsb::converter::UnambiguousConverterMap<WireType>& selection,
+ rsb::converter::Converter<WireType>*               converter,
+ bool                                               forSerialization) {
+    if (forSerialization) {
+        selection.addConverter(converter->getDataType(),
+                               typename rsb::converter::Converter<WireType>::Ptr(converter));
+    } else {
+        selection.addConverter(converter->getWireSchema(),
+                               typename rsb::converter::Converter<WireType>::Ptr(converter));
+    }
+}
+
+rsb::ParticipantConfig createConfig(const rsb::ParticipantConfig& defaultConfig,
+                                    bool forSerialization) {
+    rsb::ParticipantConfig config = defaultConfig;
+
+    boost::shared_ptr< rsb::converter::UnambiguousConverterMap<std::string> > converterSelection
+        (new rsb::converter::UnambiguousConverterMap<std::string>());
+    addConverter(*converterSelection, new rsb::converter::VoidConverter(),
+                 forSerialization);
+    addConverter(*converterSelection, new rsb::converter::StringConverter(),
+                 forSerialization);
+    addConverter(*converterSelection,
+                 new rsb::converter::ProtocolBufferConverter<rsb::protocol::introspection::Hello>(),
+                 forSerialization);
+    addConverter(*converterSelection,
+                 new rsb::converter::ProtocolBufferConverter<rsb::protocol::introspection::Bye>(),
+                 forSerialization);
+
+    std::set<rsb::ParticipantConfig::Transport> transports
+        = config.getTransports();
+    for (std::set<rsb::ParticipantConfig::Transport>::const_iterator it
+             = transports.begin(); it != transports.end(); ++it) {
+        rsb::ParticipantConfig::Transport& transport
+            = config.mutableTransport(it->getName());
+        rsc::runtime::Properties options = transport.getOptions();
+        options["converters"] = rsb::converter::ConverterSelectionStrategy<std::string>::Ptr(converterSelection);
+        transport.setOptions(options);
+    }
+
+    return config;
+}
 
 void handleParticipantCreated(rsb::ParticipantPtr participant,
                               rsb::ParticipantPtr parent) {
@@ -58,7 +109,9 @@ void handleParticipantCreated(rsb::ParticipantPtr participant,
 
     if (!sender) {
         RSCDEBUG(logger, "Creating introspection sender");
-        sender.reset(new rsb::introspection::IntrospectionSender());
+        configSerialization   = createConfig(rsb::getFactory().getDefaultParticipantConfig(), true);
+        configDeserialization = createConfig(rsb::getFactory().getDefaultParticipantConfig(), false);
+        sender.reset(new rsb::introspection::IntrospectionSender(configDeserialization, configSerialization));
     }
 
     sender->addParticipant(participant, parent);
