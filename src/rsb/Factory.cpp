@@ -174,7 +174,9 @@ Factory& Factory::getInstanceBase() {
 
 Factory::Factory() :
     logger(Logger::getLogger("rsb.Factory")),
-    pluginManager(new rsc::plugins::Manager()) {
+    pluginManager(new rsc::plugins::Manager()),
+    signalParticipantCreated(new SignalParticipantCreated),
+    signalParticipantDestroyed(new SignalParticipantDestroyed) {
 
     // Configure RSC-based logging.
     {
@@ -255,11 +257,11 @@ Factory::Factory() :
 Factory::~Factory() {
 }
 
-SignalParticipantCreated& Factory::getSignalParticipantCreated() {
+SignalParticipantCreatedPtr Factory::getSignalParticipantCreated() {
     return this->signalParticipantCreated;
 }
 
-SignalParticipantDestroyed& Factory::getSignalParticipantDestroyed() {
+SignalParticipantDestroyedPtr Factory::getSignalParticipantDestroyed() {
     return this->signalParticipantDestroyed;
 }
 
@@ -269,8 +271,8 @@ InformerBasePtr Factory::createInformerBase(const Scope&             scope,
                                             ParticipantPtr           parent) {
     InformerBasePtr informer(
         new InformerBase(createOutConnectors(config), scope, config, dataType));
-    informer->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-    this->signalParticipantCreated(informer, parent);
+    informer->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+    (*this->signalParticipantCreated)(informer, parent);
     return informer;
 }
 
@@ -280,8 +282,8 @@ ListenerPtr Factory::createListener(const Scope&             scope,
                                     ParticipantPtr           parent) {
     ListenerPtr listener(
         new Listener(createInPushConnectors(config), scope, config));
-    listener->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-    this->signalParticipantCreated(listener, parent);
+    listener->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+    (*this->signalParticipantCreated)(listener, parent);
     return listener;
 }
 
@@ -290,8 +292,8 @@ ReaderPtr Factory::createReader(const Scope&             scope,
                                 ParticipantPtr           parent) {
     ReaderPtr reader(
         new Reader(createInPullConnectors(config), scope, config));
-    reader->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-    this->signalParticipantCreated(reader, parent);
+    reader->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+    (*this->signalParticipantCreated)(reader, parent);
     return reader;
 }
 
@@ -305,8 +307,8 @@ patterns::LocalServer::LocalMethodPtr Factory::createLocalMethod
         (new patterns::LocalServer::LocalMethod
          (scope, scope.getComponents()[scope.getComponents().size() -1],
           listenerConfig, informerConfig, callback));
-    method->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-    this->signalParticipantCreated(method, parent);
+    method->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+    (*this->signalParticipantCreated)(method, parent);
     return method;
 }
 
@@ -316,8 +318,8 @@ patterns::LocalServerPtr Factory::createLocalServer(const Scope& scope,
                                                     ParticipantPtr          parent) {
     patterns::LocalServerPtr server(
         new patterns::LocalServer(scope, listenerConfig, informerConfig));
-    server->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-    this->signalParticipantCreated(server, parent);
+    server->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+    (*this->signalParticipantCreated)(server, parent);
     return server;
 }
 
@@ -337,8 +339,8 @@ patterns::RemoteServer::RemoteMethodPtr Factory::createRemoteMethod
         (new patterns::RemoteServer::RemoteMethod
          (scope, scope.getComponents()[scope.getComponents().size() -1],
           listenerConfig, informerConfig));
-    method->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-    this->signalParticipantCreated(method, parent);
+    method->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+    (*this->signalParticipantCreated)(method, parent);
     return method;
 }
 
@@ -348,8 +350,8 @@ patterns::RemoteServerPtr Factory::createRemoteServer(const Scope&             s
                                                       ParticipantPtr           parent) {
     patterns::RemoteServerPtr server(
         new patterns::RemoteServer(scope, listenerConfig, informerConfig));
-    server->setSignalParticipantDestroyed(&this->signalParticipantDestroyed); // TODO what could possibly go wrong? more instances above
-    this->signalParticipantCreated(server, parent);
+    server->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+    (*this->signalParticipantCreated)(server, parent);
     return server;
 }
 

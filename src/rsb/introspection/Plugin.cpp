@@ -103,10 +103,10 @@ extern "C" {
 
         participantCreatedConnection
             = rsb::getFactory().getSignalParticipantCreated()
-            .connect(&handleParticipantCreated);
+            ->connect(&handleParticipantCreated);
         participantDestroyedConnection
             = rsb::getFactory().getSignalParticipantDestroyed()
-            .connect(&handleParticipantDestroyed);
+            ->connect(&handleParticipantDestroyed);
     }
 
     void RSC_PLUGIN_SHUTDOWN_SYMBOL() {

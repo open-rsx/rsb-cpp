@@ -58,6 +58,7 @@
 namespace rsb {
 
 typedef boost::signal2<void, ParticipantPtr, ParticipantPtr> SignalParticipantCreated;
+typedef boost::shared_ptr<SignalParticipantCreated> SignalParticipantCreatedPtr;
 
 class Factory;
 
@@ -86,9 +87,9 @@ public:
 
     virtual ~Factory();
 
-    SignalParticipantCreated& getSignalParticipantCreated();
+    SignalParticipantCreatedPtr getSignalParticipantCreated();
 
-    SignalParticipantDestroyed& getSignalParticipantDestroyed();
+    SignalParticipantDestroyedPtr getSignalParticipantDestroyed();
 
     /**
      * Creates and returns a new @ref Informer that publishes @ref
@@ -121,8 +122,8 @@ public:
         typename Informer<DataType>::Ptr informer(
             new Informer<DataType>(createOutConnectors(config), scope,
                                    config, dataType));
-        informer->setSignalParticipantDestroyed(&this->signalParticipantDestroyed);
-        this->signalParticipantCreated(informer, parent);
+        informer->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
+        (*this->signalParticipantCreated)(informer, parent);
         return informer;
     }
 
@@ -354,8 +355,8 @@ private:
     ParticipantConfig defaultConfig;
     mutable boost::recursive_mutex configMutex;
 
-    SignalParticipantCreated signalParticipantCreated;
-    SignalParticipantDestroyed signalParticipantDestroyed;
+    SignalParticipantCreatedPtr signalParticipantCreated;
+    SignalParticipantDestroyedPtr signalParticipantDestroyed;
 
     std::vector<transport::OutConnectorPtr>
         createOutConnectors(const ParticipantConfig& config);

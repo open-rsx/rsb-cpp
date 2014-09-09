@@ -35,14 +35,10 @@ namespace rsb {
 
 class Participant::Impl {
 public:
-    Impl()
-        : signalParticipantDestroyed(NULL) {
-    }
-
     rsc::misc::UUID id;
     ScopePtr scope;
     ParticipantConfig config;
-    SignalParticipantDestroyed* signalParticipantDestroyed;
+    SignalParticipantDestroyedPtr signalParticipantDestroyed;
 };
 
 Participant::Participant(const Scope& scope, const ParticipantConfig& config) :
@@ -73,9 +69,8 @@ void Participant::printContents(ostream& stream) const {
     stream << "id = " << d->id << ", scope = " << *d->scope;
 }
 
-void Participant::setSignalParticipantDestroyed(SignalParticipantDestroyed* signal) {
+void Participant::setSignalParticipantDestroyed(SignalParticipantDestroyedPtr signal) {
     this->d->signalParticipantDestroyed = signal;
 }
-
 
 }

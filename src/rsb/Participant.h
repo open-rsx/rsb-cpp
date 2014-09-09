@@ -44,6 +44,7 @@ namespace rsb {
 class Participant;
 
 typedef boost::signal1<void, Participant*> SignalParticipantDestroyed;
+typedef boost::shared_ptr<SignalParticipantDestroyed> SignalParticipantDestroyedPtr;
 
 class ParticipantConfig;
 class Scope;
@@ -108,7 +109,7 @@ private:
     class Impl;
     boost::scoped_ptr<Impl> d;
 
-    void setSignalParticipantDestroyed(SignalParticipantDestroyed* signal);
+    void setSignalParticipantDestroyed(SignalParticipantDestroyedPtr signal);
 
 };
 
