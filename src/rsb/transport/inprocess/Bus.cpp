@@ -26,6 +26,8 @@
 
 #include "Bus.h"
 
+#include <rsc/runtime/ContainerIO.h>
+
 using namespace std;
 
 using namespace rsc::logging;
@@ -45,7 +47,7 @@ Bus::~Bus() {
         RSCWARN(
                 logger,
                 "" << this->sinks.size()
-                        << " non-empty scopes when destructing");
+                        << " non-empty scopes when destructing: " << this->sinks);
     }
 }
 
