@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -51,7 +51,7 @@ int main() {
         // processing.
         boost::uint64_t processingStart = rsc::misc::currentTimeMicros();
         boost::this_thread::sleep(boost::posix_time::seconds(1));
-	string data = "result of processing";
+        string data = "result of processing";
         boost::uint64_t processingDone = rsc::misc::currentTimeMicros();
 
         // We manually create a new Event object and add the desired
@@ -59,7 +59,7 @@ int main() {
         // + processing-start timestamp
         // + processing-done timestamp
         // + creator meta-info item
-	EventPtr event(new Event(Scope("/example/metadata"),
+        EventPtr event(new Event(Scope("/example/metadata"),
                                  Informer<string>::DataPtr(new string(data)),
                                  "std::string"));
 
