@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2013, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,6 +28,8 @@
 
 #include <boost/thread.hpp>
 
+#include <rsc/misc/SignalWaiter.h>
+
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
 
@@ -42,6 +44,9 @@ void printEvent(boost::shared_ptr<string> data) {
 }
 
 int main() {
+
+    rsc::misc::initSignalWaiter();
+
     // Setup a listener. This listener uses the default configuration
     // which usually amounts to a sole connector for the socket
     // transport. This connector enables the listener to receive
@@ -54,7 +59,7 @@ int main() {
     listener->addHandler(
             HandlerPtr(new DataFunctionHandler<string> (&printEvent)));
 
-    boost::this_thread::sleep(boost::posix_time::seconds(10));
 
-    return EXIT_SUCCESS;
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
+
 }

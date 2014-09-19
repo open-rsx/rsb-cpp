@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,7 +29,7 @@
 
 #include <iostream>
 
-#include <boost/thread.hpp>
+#include <rsc/misc/SignalWaiter.h>
 
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
@@ -52,6 +52,9 @@ void printImage(boost::shared_ptr<SimpleImage> image) {
 }
 
 int main() {
+
+    rsc::misc::initSignalWaiter();
+
     // Register a specific template instanciation of the
     // ProtocolBufferConverter for our SimpleImage protocol buffer
     // message.
@@ -65,8 +68,7 @@ int main() {
         = getFactory().createListener("/example/converter");
     listener->addHandler(HandlerPtr(new DataFunctionHandler<SimpleImage>(&printImage)));
 
-    boost::this_thread::sleep(boost::posix_time::seconds(20));
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
 
-    return EXIT_SUCCESS;
 }
 // mark-end::body

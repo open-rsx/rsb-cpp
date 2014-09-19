@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,7 +24,7 @@
  *
  * ============================================================ */
 
-#include <boost/thread/thread.hpp>
+#include <rsc/misc/SignalWaiter.h>
 
 #include <rsb/Event.h>
 #include <rsb/Listener.h>
@@ -61,6 +61,9 @@ void printEvent(EventPtr event) {
 }
 
 int main() {
+
+    rsc::misc::initSignalWaiter();
+
     // Create a Listener object for the channel of this example and
     // connect the printEvent() function using an EventFunctionHandler
     // adapter.
@@ -70,9 +73,6 @@ int main() {
 
     // Wait here, while the Listener object asynchronously receives
     // and processes events.
-    while (true) {
-        boost::this_thread::sleep(boost::posix_time::seconds(1000));
-    };
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
 
-    return EXIT_SUCCESS;
 }

@@ -28,6 +28,8 @@
 
 #include <stdlib.h>
 
+#include <rsc/misc/SignalWaiter.h>
+
 #include <rsc/threading/SynchronizedQueue.h>
 
 #include <rsb/Factory.h>
@@ -43,6 +45,8 @@ using namespace rsb::filter;
 using namespace rsb::util;
 
 int main(int argc, char** argv) {
+
+    rsc::misc::initSignalWaiter();
 
     // first get a factory instance that is used to create RSB domain objects
     Factory& factory = getFactory();
@@ -95,7 +99,7 @@ int main(int argc, char** argv) {
             outputScope);
 
     // Now we start the (endless) main loop that processes the data
-    while (true) {
+    while (!rsc::misc::hasSignalArrived()) {
 
         // receive new data. This operation blocks until new data is available
         // if the queue was empty

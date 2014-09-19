@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -30,11 +30,16 @@
 
 #include <iostream>
 
+#include <rsc/misc/SignalWaiter.h>
+
 #include <rsb/Factory.h>
 
 using namespace rsb;
 
 int main(int argc, char** argv) {
+
+    rsc::misc::initSignalWaiter();
+
     // Set up the scope to receive on either from the command line
     // argument or use the default scope of the informer example.
     Scope scope(argc > 1 ? argv[1] : "/example/informer");
@@ -45,7 +50,7 @@ int main(int argc, char** argv) {
     ReaderPtr reader = factory.createReader(scope);
 
     // Print events as they are received.
-    while (true) {
+    while (!rsc::misc::hasSignalArrived()) {
         EventPtr event = reader->read();
         std::cout << event << std::endl;
     }

@@ -36,6 +36,8 @@
 #include <boost/timer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include <rsc/misc/SignalWaiter.h>
+
 #include <rsc/logging/Logger.h>
 
 #include <rsb/Listener.h>
@@ -91,6 +93,8 @@ public:
 
 int main(int argc, char** argv) {
 
+    rsc::misc::initSignalWaiter();
+
     Factory& factory = getFactory();
 
     LoggerPtr l = Logger::getLogger("receiver");
@@ -108,9 +112,7 @@ int main(int argc, char** argv) {
 
     cout << "Listener setup finished. Waiting for messages on scope " << scope
             << endl;
-    while (true) {
-        boost::this_thread::sleep(boost::posix_time::seconds(1000));
-    }
 
-    return EXIT_SUCCESS;
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
+
 }

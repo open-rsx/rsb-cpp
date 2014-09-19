@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -30,6 +30,8 @@
 
 #include <iostream>
 
+#include <rsc/misc/SignalWaiter.h>
+
 #include <rsb/Handler.h>
 #include <rsb/Listener.h>
 #include <rsb/Factory.h>
@@ -41,6 +43,8 @@ void printData(boost::shared_ptr<std::string> e) {
 }
 
 int main(int argc, char** argv) {
+
+    rsc::misc::initSignalWaiter();
 
     // First get a factory instance that is used to create RSB
     // objects.
@@ -65,10 +69,7 @@ int main(int argc, char** argv) {
 
     // As events are received asynchronously we have to wait here for
     // them.
-    while (true) {
-        boost::this_thread::sleep(boost::posix_time::seconds(1000));
-    }
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
 
-    return EXIT_SUCCESS;
 }
 // mark-end::body

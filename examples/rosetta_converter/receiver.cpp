@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -27,7 +27,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/thread.hpp>
+#include <rsc/misc/SignalWaiter.h>
 
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
@@ -55,6 +55,9 @@ void printImage(boost::shared_ptr<SimpleImage> image) {
 }
 
 int main() {
+
+    rsc::misc::initSignalWaiter();
+
     // Register a specific template instanciation of the
     // RosettaConverter for our SimpleImage data type.
     boost::shared_ptr< RosettaConverter<rosetta::MechanismBottle, SimpleImage> >
@@ -73,7 +76,6 @@ int main() {
     ListenerPtr listener = getFactory().createListener(Scope("/tutorial/converter"));
     listener->addHandler(HandlerPtr(new DataFunctionHandler<SimpleImage> (&printImage)));
 
-    boost::this_thread::sleep(boost::posix_time::seconds(20));
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
 
-    return EXIT_SUCCESS;
 }

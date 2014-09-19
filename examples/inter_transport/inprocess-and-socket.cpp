@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2013, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,6 +28,8 @@
 
 #include <boost/thread.hpp>
 
+#include <rsc/misc/SignalWaiter.h>
+
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
 
@@ -42,6 +44,9 @@ void printEvent(boost::shared_ptr<string> data) {
 }
 
 int main() {
+
+    rsc::misc::initSignalWaiter();
+
     // Adjust default configuration such that the inprocess and socket
     // transports are enabled.
     ParticipantConfig config =
@@ -76,7 +81,6 @@ int main() {
     boost::shared_ptr<string> data(new string("foo"));
     informer->publish(data);
 
-    boost::this_thread::sleep(boost::posix_time::seconds(1));
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
 
-    return EXIT_SUCCESS;
 }
