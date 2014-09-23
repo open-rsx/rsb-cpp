@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -34,24 +35,28 @@
 #include <gmock/gmock.h>
 
 #include <rsc/runtime/TypeStringTools.h>
-#include <rsc/subprocess/Subprocess.h>
+
 #include <rsc/threading/ThreadedTaskExecutor.h>
 #include <rsc/threading/RepetitiveTask.h>
 
+#include "rsb/converter/converters.h"
+
+#include "rsb/filter/Filter.h"
+
 #include "rsb/eventprocessing/InRouteConfigurator.h"
 #include "rsb/eventprocessing/OutRouteConfigurator.h"
+
 #include "rsb/transport/Factory.h"
 #include "rsb/transport/Connector.h"
 #include "rsb/transport/transports.h"
-#include "InformerTask.h"
+
 #include "rsb/Handler.h"
-#include "rsb/filter/Filter.h"
-#include "rsb/filter/ScopeFilter.h"
-#include "rsb/converter/converters.h"
 #include "rsb/Factory.h"
 #include "rsb/Informer.h"
 
 #include "testhelpers.h"
+
+#include "InformerTask.h"
 
 using namespace std;
 
@@ -59,7 +64,6 @@ using namespace boost;
 
 using namespace testing;
 
-using namespace rsc::subprocess;
 using namespace rsc::threading;
 using namespace rsc::runtime;
 
