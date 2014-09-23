@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     ReaderPtr reader = factory.createReader(scope);
 
     // Print events as they are received.
-    while (!rsc::misc::hasSignalArrived()) {
+    while (rsc::misc::lastArrivedSignal() == rsc::misc::NO_SIGNAL) {
         EventPtr event = reader->read();
         std::cout << event << std::endl;
     }

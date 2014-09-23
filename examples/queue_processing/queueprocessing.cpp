@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
             outputScope);
 
     // Now we start the (endless) main loop that processes the data
-    while (!rsc::misc::hasSignalArrived()) {
+    while (rsc::misc::lastArrivedSignal() == rsc::misc::NO_SIGNAL) {
 
         // receive new data. This operation blocks until new data is available
         // if the queue was empty
