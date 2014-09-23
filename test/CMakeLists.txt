@@ -51,6 +51,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/ParticipantConfigTest.cpp
                       rsb/QualityOfServiceSpecTest.cpp
                       rsb/ScopeTest.cpp
+
                       rsb/converter/DefaultConverterTest.cpp
                       rsb/converter/EventCollectionsConverterTest.cpp
                       rsb/converter/RegexConverterPredicateTest.cpp
@@ -60,10 +61,15 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/converter/TestConverter.cpp
                       rsb/converter/TestConverter.h
                       rsb/converter/TestConverterTest.cpp
+
+                      rsb/filter/TypeFilterTest.cpp
+
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
+
                       rsb/util/EventQueuePushHandlerTest.cpp
                       rsb/util/MD5Test.cpp
                       rsb/util/QueuePushHandlerTest.cpp
+
                       rsb/transport/FactoryTest.cpp)
 
 ADD_EXECUTABLE(${CORE_TEST_NAME} ${CORE_TEST_SOURCES} ${TEST_PROTO_SOURCES} ${TEST_PROTO_HEADERS})

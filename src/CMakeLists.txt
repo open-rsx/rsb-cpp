@@ -80,6 +80,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/filter/ScopeFilter.cpp
             rsb/filter/OriginFilter.cpp
             rsb/filter/MethodFilter.cpp
+            rsb/filter/TypeFilter.cpp
 
             rsb/patterns/MethodExistsException.cpp
             rsb/patterns/Server.cpp
