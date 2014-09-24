@@ -42,18 +42,27 @@ namespace filter {
  */
 class RSB_EXPORT TypeFilter: public Filter {
 public:
+    /**
+     * Creates a new type filter that matches events whose payload is
+     * of type @c T.
+     *
+     * @tparam T The type matching event payloads must have.
+     * @param invert If true, events match if their type fields do
+     *               @b not match @a type.
+     * @return A pointer to the newly created object.
+     */
     template <typename T>
     static TypeFilter* createForType(bool invert = false) {
         return new TypeFilter(rsc::runtime::typeName<T>(), invert);
     }
 
     /**
-     * Creates a new type filter that matches events whose type
-     * fields have the value @a type.
+     * Creates a new type filter that matches events whose payload is
+     * of the type designated by @a type.
      *
-     * @param type String value that the type field of matched
-     *               events has to have.
-     * @param invert If true, events match if their type fields do
+     * @param type String designating the which the payload of
+     *             matching events has to have.
+     * @param invert If true, events match if their payload type does
      *               @b not match @a type.
      */
     TypeFilter(const std::string& type,
