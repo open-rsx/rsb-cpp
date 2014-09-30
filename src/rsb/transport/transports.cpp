@@ -24,6 +24,8 @@
  *
  * ============================================================ */
 
+#include "transports.h"
+
 #include "Factory.h"
 
 #include <stdexcept>
@@ -39,8 +41,6 @@
 #include "socket/InPullConnector.h"
 #include "socket/OutConnector.h"
 #endif
-
-#include "transports.h"
 
 using namespace std;
 
@@ -183,13 +183,13 @@ set<string> getAvailableTransports(unsigned int requiredDirections) {
         }
     }
 
-    if (requiredDirections & IN_PULL) {
+    if (requiredDirections & DIRECTION_IN_PULL) {
         result = intersection()(result, inPullTransports);
     }
-    if (requiredDirections & IN_PUSH) {
+    if (requiredDirections & DIRECTION_IN_PUSH) {
         result = intersection()(result, inPushTransports);
     }
-    if (requiredDirections & OUT) {
+    if (requiredDirections & DIRECTION_OUT) {
         result = intersection()(result, outTransports);
     }
     return result;
@@ -202,21 +202,21 @@ bool isAvailable(const string& transportName,
         throw invalid_argument("At least one required direction has to be specified.");
     }
 
-    if (requiredDirections & IN_PULL) {
+    if (requiredDirections & DIRECTION_IN_PULL) {
         try {
             getInPullFactory().getConnectorInfo(transportName);
         } catch (const rsc::runtime::NoSuchObject&) {
             return false;
         }
     }
-    if (requiredDirections & IN_PUSH) {
+    if (requiredDirections & DIRECTION_IN_PUSH) {
         try {
             getInPushFactory().getConnectorInfo(transportName);
         } catch (const rsc::runtime::NoSuchObject&) {
             return false;
         }
     }
-    if (requiredDirections & OUT) {
+    if (requiredDirections & DIRECTION_OUT) {
         try {
             getOutFactory().getConnectorInfo(transportName);
         } catch (const rsc::runtime::NoSuchObject&) {

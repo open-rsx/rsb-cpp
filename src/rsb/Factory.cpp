@@ -225,7 +225,7 @@ Factory::Factory() :
     // + Out
     // Disable discovered connectors with the exception of the
     // socket transport.
-    set<string> availableTransports = getAvailableTransports(IN_PUSH | IN_PULL | OUT);
+    set<string> availableTransports = getAvailableTransports(DIRECTION_IN_PUSH | DIRECTION_IN_PULL | DIRECTION_OUT);
 
     this->defaultConfig = ParticipantConfig();
     for (set<string>::const_iterator it = availableTransports.begin();

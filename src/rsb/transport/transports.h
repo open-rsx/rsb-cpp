@@ -40,9 +40,9 @@ RSB_EXPORT void registerDefaultTransports();
  * Transport directions. Can be combined via bitwise or.
  */
 enum Directions {
-    IN_PUSH = 0x01,
-    IN_PULL = 0x02,
-    OUT     = 0x04
+    DIRECTION_IN_PUSH = 0x01,
+    DIRECTION_IN_PULL = 0x02,
+    DIRECTION_OUT     = 0x04
 };
 
 /**
