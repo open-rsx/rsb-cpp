@@ -41,7 +41,7 @@ namespace inprocess {
  */
 class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {
 public:
-    OutConnector();
+    OutConnector(BusPtr bus = getDefaultBus());
 
     void setScope(const Scope& scope);
 
@@ -54,7 +54,7 @@ public:
 
     static rsb::transport::OutConnector* create(const rsc::runtime::Properties& args);
 private:
-    Bus& bus;
+    BusPtr bus;
 };
 
 }

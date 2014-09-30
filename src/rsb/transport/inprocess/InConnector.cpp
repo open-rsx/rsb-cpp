@@ -26,8 +26,6 @@
 
 #include "InConnector.h"
 
-#include "Bus.h"
-
 using namespace std;
 
 using namespace rsc::logging;
@@ -36,8 +34,9 @@ namespace rsb {
 namespace transport{
 namespace inprocess {
 
-InConnector::InConnector() :
+InConnector::InConnector(BusPtr bus) :
     logger(Logger::getLogger("rsb.transport.inprocess.InConnector")),
+    bus(bus),
     active(false) {
 }
 
@@ -66,7 +65,7 @@ void InConnector::setScope(const Scope& scope) {
 void InConnector::activate() {
     RSCDEBUG(logger, "Activating");
 
-    Bus::getInstance().addSink(boost::dynamic_pointer_cast<InConnector>(shared_from_this()));
+    bus->addSink(boost::dynamic_pointer_cast<InConnector>(shared_from_this()));
 
     this->active = true;
 }
@@ -76,7 +75,7 @@ void InConnector::deactivate() {
 
     this->active = false;
 
-    Bus::getInstance().removeSink(this);
+    bus->removeSink(this);
 }
 
 }

@@ -28,6 +28,8 @@
 
 #include <rsc/runtime/ContainerIO.h>
 
+#include "InConnector.h"
+
 using namespace std;
 
 using namespace rsc::logging;
@@ -202,6 +204,16 @@ void Bus::handleNoLock(EventPtr event) {
             connector->handle(event);
         }
     }
+}
+
+BusPtr getDefaultBus() {
+    static boost::mutex mutex;
+    static BusPtr defaultBus;
+    boost::mutex::scoped_lock lock(mutex);
+    if (!defaultBus) {
+        defaultBus.reset(new Bus);
+    }
+    return defaultBus;
 }
 
 }

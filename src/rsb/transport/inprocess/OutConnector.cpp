@@ -37,8 +37,8 @@ namespace rsb {
 namespace transport{
 namespace inprocess {
 
-OutConnector::OutConnector() :
-    bus(Bus::getInstance()) {
+OutConnector::OutConnector(BusPtr bus) :
+    bus(bus) {
 }
 
 rsb::transport::OutConnector* OutConnector::create(const Properties& /*args*/) {
@@ -64,7 +64,7 @@ void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*
 
 void OutConnector::handle(EventPtr event) {
     event->mutableMetaData().setSendTime();
-    this->bus.handle(event);
+    this->bus->handle(event);
 }
 
 }

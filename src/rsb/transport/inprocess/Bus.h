@@ -29,6 +29,7 @@
 #include <map>
 #include <list>
 
+#include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
 #include <rsc/logging/Logger.h>
@@ -39,20 +40,20 @@
 
 #include "../../eventprocessing/Handler.h"
 
-#include "InConnector.h"
-
 #include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport{
 namespace inprocess {
 
+class InConnector;
+typedef boost::shared_ptr<InConnector> InConnectorPtr;
+
 /**
  *
  * @author jmoringe
  */
-class RSB_EXPORT Bus: public rsc::patterns::Singleton<Bus>,
-        public eventprocessing::Handler {
+class RSB_EXPORT Bus: public eventprocessing::Handler {
 public:
     Bus();
     virtual ~Bus();
@@ -76,6 +77,10 @@ private:
 
     bool singleThreaded;
 };
+
+typedef boost::shared_ptr<Bus> BusPtr;
+
+RSB_EXPORT BusPtr getDefaultBus();
 
 }
 }
