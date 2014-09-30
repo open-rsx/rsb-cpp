@@ -28,6 +28,8 @@
 
 #include <rsc/runtime/ContainerIO.h>
 
+#include "InConnector.h"
+
 using namespace std;
 
 using namespace rsc::logging;
@@ -43,11 +45,13 @@ Bus::Bus() :
 }
 
 Bus::~Bus() {
-    if (!this->sinks.empty()) {
-        RSCWARN(
-                logger,
-                "" << this->sinks.size()
-                        << " non-empty scopes when destructing: " << this->sinks);
+    RSCDEBUG(logger, "Starting destruction");
+    for (SinkMap::iterator sinkIt = this->sinks.begin();
+            sinkIt != this->sinks.end(); ++sinkIt) {
+        if (!sinkIt->second.empty()) {
+            RSCWARN(logger,
+                    "non-empty scope " << sinkIt->first << " when destructing: " << sinkIt->second);
+        }
     }
 }
 
@@ -162,6 +166,10 @@ void Bus::handleNoLock(EventPtr event) {
         RSCDEBUG(logger,
                 "No entry in sink map for event scope " << *event->getScopePtr());
 
+        // we have not received an event on this scope before. Therefore the
+        // internal map of sinks needs to be populated from all existing sinks
+        // that will receive events from this scope
+
         set<boost::weak_ptr<InConnector> > connectors;
         for (SinkMap::iterator it_ = this->sinks.begin(); it_
                 != this->sinks.end(); ++it_) {
@@ -196,6 +204,16 @@ void Bus::handleNoLock(EventPtr event) {
             connector->handle(event);
         }
     }
+}
+
+BusPtr getDefaultBus() {
+    static boost::mutex mutex;
+    static BusPtr defaultBus;
+    boost::mutex::scoped_lock lock(mutex);
+    if (!defaultBus) {
+        defaultBus.reset(new Bus);
+    }
+    return defaultBus;
 }
 
 }

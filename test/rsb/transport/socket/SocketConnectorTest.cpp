@@ -45,6 +45,7 @@ static int dummy = pullInConnectorTest();
 rsb::transport::InPullConnectorPtr createSocketInPullConnector() {
     return rsb::transport::InPullConnectorPtr(
             new rsb::transport::socket::InPullConnector(
+                    rsb::transport::socket::getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT,
                     rsb::transport::socket::SERVER_AUTO, true));
@@ -53,6 +54,7 @@ rsb::transport::InPullConnectorPtr createSocketInPullConnector() {
 rsb::transport::InPushConnectorPtr createSocketInPushConnector() {
     return rsb::transport::InPushConnectorPtr(
             new rsb::transport::socket::InPushConnector(
+                    rsb::transport::socket::getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT,
                     rsb::transport::socket::SERVER_AUTO, true));
@@ -61,6 +63,7 @@ rsb::transport::InPushConnectorPtr createSocketInPushConnector() {
 rsb::transport::OutConnectorPtr createSocketOutConnector() {
     return rsb::transport::OutConnectorPtr(
             new rsb::transport::socket::OutConnector(
+                    rsb::transport::socket::getDefaultFactory(),
                     converterRepository<string>()->getConvertersForSerialization(),
                     "localhost", SOCKET_PORT,
                     rsb::transport::socket::SERVER_AUTO, true));

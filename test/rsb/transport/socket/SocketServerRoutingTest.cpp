@@ -51,24 +51,28 @@ TEST(SocketServerRoutingTest, testEventRouting) {
 
     rsb::transport::OutConnectorPtr sender(
             new rsb::transport::socket::OutConnector(
+                    getDefaultFactory(),
                     converterRepository<string>()->getConvertersForSerialization(),
                     "localhost", SOCKET_PORT, rsb::transport::socket::SERVER_YES,
                     true));
 
     rsb::transport::InPullConnectorPtr clientReceiver(
             new rsb::transport::socket::InPullConnector(
+                    getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT, rsb::transport::socket::SERVER_NO,
                     true));
 
     rsb::transport::InPushConnectorPtr serverPushReceiver(
             new rsb::transport::socket::InPushConnector(
+                    getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT, rsb::transport::socket::SERVER_YES,
                     true));
 
     rsb::transport::InPullConnectorPtr serverPullReceiver(
             new rsb::transport::socket::InPullConnector(
+                    getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT,
                     rsb::transport::socket::SERVER_YES, true));

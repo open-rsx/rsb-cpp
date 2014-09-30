@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014 Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -26,62 +26,43 @@
 
 #pragma once
 
-#include <map>
-#include <list>
-
+#include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread.hpp>
 
 #include <rsc/logging/Logger.h>
-#include <rsc/patterns/Singleton.h>
-
-#include "../../Event.h"
-#include "../../Scope.h"
-
-#include "../../eventprocessing/Handler.h"
 
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-namespace transport{
-namespace inprocess {
-
-class InConnector;
-typedef boost::shared_ptr<InConnector> InConnectorPtr;
+namespace transport {
 
 /**
+ * A class that keeps a boost asio service alive as long as this class lives.
+ * So it is best maintained in shared_ptr instances
+ * (@ref AsioServiceContextPtr).
  *
- * @author jmoringe
+ * @author jwienke
  */
-class RSB_EXPORT Bus: public eventprocessing::Handler {
+class RSB_EXPORT AsioServiceContext {
 public:
-    Bus();
-    virtual ~Bus();
+    AsioServiceContext();
+    virtual ~AsioServiceContext();
 
-    //void printContents(std::ostream& stream) const;
+    typedef boost::shared_ptr<boost::asio::io_service> ServicePtr;
 
-    void addSink(InConnectorPtr sink);
-    void removeSink(InConnector* sink);
+    ServicePtr getService();
 
-    void handle(EventPtr event);
 private:
-    void handleNoLock(EventPtr event);
-
-    typedef std::list< boost::weak_ptr<InConnector> > SinkList;
-    typedef std::map<Scope, SinkList> SinkMap;
+    typedef boost::shared_ptr<boost::asio::io_service::work> WorkPtr;
 
     rsc::logging::LoggerPtr logger;
-
-    SinkMap sinks;
-    boost::recursive_mutex mutex;
-
-    bool singleThreaded;
+    ServicePtr service;
+    WorkPtr keepAlive;
+    boost::thread thread;
 };
 
-typedef boost::shared_ptr<Bus> BusPtr;
+typedef boost::shared_ptr<AsioServiceContext> AsioServiceContextPtr;
 
-RSB_EXPORT BusPtr getDefaultBus();
-
-}
 }
 }

@@ -36,6 +36,8 @@
 
 #include "../InConnector.h"
 
+#include "Bus.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -60,9 +62,11 @@ public:
     virtual Scope getScope() const;
     virtual void setScope(const Scope& scope);
 protected:
-    InConnector();
+    InConnector(BusPtr bus = getDefaultBus());
 private:
     rsc::logging::LoggerPtr logger;
+
+    BusPtr bus;
 
     Scope scope;
 

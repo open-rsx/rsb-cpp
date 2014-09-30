@@ -41,12 +41,13 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-InConnector::InConnector(ConverterSelectionStrategyPtr converters,
+InConnector::InConnector(FactoryPtr                    factory,
+                         ConverterSelectionStrategyPtr converters,
                          const string&                 host,
                          unsigned int                  port,
                          Server                        server,
                          bool                          tcpnodelay) :
-    ConnectorBase(converters, host, port, server, tcpnodelay),
+    ConnectorBase(factory, converters, host, port, server, tcpnodelay),
     logger(Logger::getLogger("rsb.transport.socket.InConnector")) {
 }
 

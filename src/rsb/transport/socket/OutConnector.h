@@ -52,7 +52,8 @@ public:
     /**
      * @copydoc ConnectorBase::ConnectorBase()
      */
-    OutConnector(ConverterSelectionStrategyPtr converters,
+    OutConnector(FactoryPtr                    factory,
+                 ConverterSelectionStrategyPtr converters,
                  const std::string&            host,
                  unsigned int                  port,
                  Server                        server,

@@ -35,6 +35,7 @@ namespace rsb {
 
 class Participant::Impl {
 public:
+    rsc::logging::LoggerPtr logger;
     rsc::misc::UUID id;
     ScopePtr scope;
     ParticipantConfig config;
@@ -43,11 +44,14 @@ public:
 
 Participant::Participant(const Scope& scope, const ParticipantConfig& config) :
     d(new Impl) {
+    d->logger = rsc::logging::Logger::getLogger("rsb.Participant");
     d->scope.reset(new Scope(scope));
     d->config = config;
+    RSCDEBUG(d->logger, "Participant created for scope " << *d->scope);
 }
 
 Participant::~Participant() {
+    RSCDEBUG(d->logger, "Destructing");
     if (this->d->signalParticipantDestroyed) {
         (*this->d->signalParticipantDestroyed)(this);
     }

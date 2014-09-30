@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014 Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,49 +24,32 @@
  *
  * ============================================================ */
 
-#include "OutConnector.h"
-
-#include "../../MetaData.h"
+#include "AsioServiceContext.h"
 
 using namespace std;
-
+using namespace boost::asio;
 using namespace rsc::logging;
-using namespace rsc::runtime;
 
 namespace rsb {
-namespace transport{
-namespace inprocess {
+namespace transport {
 
-OutConnector::OutConnector(BusPtr bus) :
-    bus(bus) {
+AsioServiceContext::AsioServiceContext() :
+        logger(Logger::getLogger("rsb.transport.socket.AsioServiceContext")), service(
+                new io_service), keepAlive(new io_service::work(*service)), thread(
+                boost::bind(&boost::asio::io_service::run, service)) {
+    RSCINFO(logger, "Started service thread");
 }
 
-rsb::transport::OutConnector* OutConnector::create(const Properties& /*args*/) {
-    // Seems to have confused some users.
-    // See https://code.cor-lab.de/issues/649
-    // if (args.has("converters")) {
-    //     RSCWARN(logger, "`converters' property found when constructing inprocess::OutConnector. This connector does not support (or require) converters.");
-    // }
-    return new OutConnector();
+AsioServiceContext::~AsioServiceContext() {
+    RSCINFO(logger, "Stopping service thread");
+    this->keepAlive.reset();
+    this->thread.join();
+    RSCINFO(logger, "Stopped service thread");
 }
 
-void OutConnector::setScope(const Scope& /*scope*/) {
+AsioServiceContext::ServicePtr AsioServiceContext::getService() {
+    return service;
 }
 
-void OutConnector::activate() {
-}
-
-void OutConnector::deactivate() {
-}
-
-void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
-}
-
-void OutConnector::handle(EventPtr event) {
-    event->mutableMetaData().setSendTime();
-    this->bus->handle(event);
-}
-
-}
 }
 }

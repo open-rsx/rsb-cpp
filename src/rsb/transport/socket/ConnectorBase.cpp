@@ -41,20 +41,24 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-ConnectorBase::ConnectorBase(ConverterSelectionStrategyPtr converters,
+ConnectorBase::ConnectorBase(FactoryPtr                    factory,
+                             ConverterSelectionStrategyPtr converters,
                              const string&                 host,
                              unsigned int                  port,
                              Server                        server,
                              bool                          tcpnodelay) :
     ConverterSelectingConnector<string>(converters),
     active(false), logger(Logger::getLogger("rsb.transport.socket.ConnectorBase")),
-    host(host), port(port), server(server), tcpnodelay(tcpnodelay) {
+    factory(factory), host(host), port(port), server(server),
+    tcpnodelay(tcpnodelay) {
 }
 
 ConnectorBase::~ConnectorBase() {
+    RSCDEBUG(logger, "Destructing");
     if (this->active) {
         deactivate();
     }
+    RSCDEBUG(logger, "Destruction finished");
 }
 
 Scope ConnectorBase::getScope() const {
@@ -74,9 +78,8 @@ void ConnectorBase::activate() {
     // This connector is added to the connector list of the bus returned by
     // getBus
     RSCINFO(logger, "Server mode: " << this->server);
-    Factory& factory = Factory::getInstance();
-    this->bus = factory.getBus(this->server, this->host, this->port,
-            this->tcpnodelay, this);
+    this->bus = this->factory->getBus(this->server, this->host, this->port,
+            this->tcpnodelay);
 
     this->active = true;
 
@@ -89,11 +92,6 @@ void ConnectorBase::deactivate() {
     this->active = false;
 
     BusPtr bus = getBus();
-    if (bus) {
-        RSCDEBUG(logger, "Removing ourselves from connector list of bus " << bus);
-        bus->removeConnector(this);
-    }
-
     this->bus.reset();
 }
 

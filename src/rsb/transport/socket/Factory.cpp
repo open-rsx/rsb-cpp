@@ -32,6 +32,11 @@
 
 #include <boost/format.hpp>
 
+#include <rsc/runtime/ContainerIO.h>
+
+#include "BusServerImpl.h"
+#include "LifecycledBusServer.h"
+
 using namespace std;
 
 using namespace boost;
@@ -48,30 +53,37 @@ namespace socket {
 // Create and start an io_service. This service will be shared between
 // all bus providers created by this factory.
 Factory::Factory() :
-    logger(Logger::getLogger("rsb.transport.socket.Factory")),
-    keepAlive(new io_service::work(service)),
-    thread(boost::bind(&boost::asio::io_service::run, &service)) {
-    RSCINFO(logger, "Started service thread");
+        logger(Logger::getLogger("rsb.transport.socket.Factory")), asioService(
+                new AsioServiceContext) {
+    RSCDEBUG(logger, "Constructed and asio service created");
 }
 
 Factory::~Factory() {
-    if (!this->busClients.empty()) {
-        RSCWARN(logger, "Remaining bus clients: " << this->busClients);
-    }
-    if (!this->busServers.empty()) {
-        RSCWARN(logger, "Remaining bus servers: " << this->busServers);
-    }
+    RSCDEBUG(logger, "Destructing");
+}
 
-    RSCINFO(logger, "Stopping service thread");
-    this->keepAlive.reset();
-    this->thread.join();
-    RSCINFO(logger, "Stopped service thread");
+template<class BusType>
+boost::shared_ptr<BusType> Factory::searchInMap(const Endpoint& endpoint,
+        bool tcpnodelay, map<Endpoint, boost::weak_ptr<BusType> >& map) {
+    typename std::map<Endpoint, boost::weak_ptr<BusType> >::const_iterator it;
+    if ((it = map.find(endpoint)) != map.end()) {
+        boost::shared_ptr<BusType> result = it->second.lock();
+        if (result) {
+            checkOptions(result, tcpnodelay);
+            RSCDEBUG(logger,
+                    "Found existing bus client " << result
+                            << " without resolving");
+            return result;
+        } else {
+            map.erase(endpoint);
+        }
+    }
+    return boost::shared_ptr<BusType>();
 }
 
 BusPtr Factory::getBusClientFor(const string&  host,
                                 uint16_t       port,
-                                bool           tcpnodelay,
-                                ConnectorBase* connector) {
+                                bool           tcpnodelay) {
     RSCDEBUG(logger, "Was asked for a bus client for " << host << ":" << port);
 
     // Try to find an entry for the exact specified endpoint. If this
@@ -79,13 +91,8 @@ BusPtr Factory::getBusClientFor(const string&  host,
     Endpoint endpoint(host, port);
 
     {
-        BusClientMap::const_iterator it;
-        if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
-            BusPtr result = it->second;
-            checkOptions(result, tcpnodelay);
-            result->addConnector(connector);
-            RSCDEBUG(logger, "Found existing bus client "
-                     << result << " without resolving");
+        BusPtr result = searchInMap(endpoint, tcpnodelay, busClients);
+        if (result) {
             return result;
         }
 
@@ -98,22 +105,16 @@ BusPtr Factory::getBusClientFor(const string&  host,
     // TODO(jmoringe): avoid this useless socket connection just for
     // the lookup
     RSCDEBUG(logger, "Resolving endpoint")
-    tcp::resolver resolver(this->service);
+    tcp::resolver resolver(*this->asioService->getService());
     tcp::resolver::query query(host, lexical_cast<string>(port),
                                tcp::resolver::query::numeric_service);
     for (tcp::resolver::iterator endpointIterator = resolver.resolve(query);
          endpointIterator != tcp::resolver::iterator();
          ++endpointIterator) {
         endpoint = Endpoint(endpointIterator->host_name(), port);
-        // When we have a working endpoint, repeat the lookup. Create
-        // a new bus client, if there still is no entry.
-        BusClientMap::const_iterator it;
-        if ((it = this->busClients.find(endpoint)) != this->busClients.end()) {
-            BusPtr result = it->second;
-            checkOptions(result, tcpnodelay);
-            result->addConnector(connector);
-            RSCDEBUG(logger, "Found existing bus client "
-                     << it->second << " after resolving");
+        // When we have a working endpoint, repeat the lookup.
+        BusPtr result = searchInMap(endpoint, tcpnodelay, busClients);
+        if (result) {
             return result;
         }
     }
@@ -125,7 +126,7 @@ BusPtr Factory::getBusClientFor(const string&  host,
          ++endpointIterator) {
         endpoint = Endpoint(endpointIterator->host_name(), port);
         RSCDEBUG(logger, "Trying endpoint " << endpointIterator->endpoint());
-        socket.reset(new tcp::socket(this->service));
+        socket.reset(new tcp::socket(*this->asioService->getService()));
         boost::system::error_code error;
         socket->connect(endpointIterator->endpoint(), error);
         if (!error) {
@@ -144,103 +145,67 @@ BusPtr Factory::getBusClientFor(const string&  host,
     // worked. Create a new bus client.
     RSCDEBUG(logger, "Did not find bus client after resolving; creating a new one");
 
-    BusPtr result(new Bus(this->service, tcpnodelay));
+    BusPtr result(new Bus(this->asioService, tcpnodelay));
     this->busClients[endpoint] = result;
 
     BusConnectionPtr connection(new BusConnection(result, socket, true, tcpnodelay));
     result->addConnection(connection);
     connection->startReceiving();
 
-    result->addConnector(connector);
-
     RSCDEBUG(logger, "Created new bus client " << result);
 
     return result;
 }
 
-void Factory::removeBusClient(BusPtr bus) {
-    RSCDEBUG(logger, "Removing client bus " << bus);
-
-    boost::mutex::scoped_lock lock(this->busMutex);
-
-    for (BusClientMap::iterator it = this->busClients.begin();
-         it != this->busClients.end(); ++it) {
-        if (it->second == bus) {
-            this->busClients.erase(it);
-            RSCDEBUG(logger, "Removed");
-            return;
-        }
-    }
-}
-
 BusServerPtr Factory::getBusServerFor(const string&  host,
                                       uint16_t       port,
-                                      bool           tcpnodelay,
-                                      ConnectorBase* connector) {
+                                      bool           tcpnodelay) {
     RSCDEBUG(logger, "Was asked for a bus server for " << host << ":" << port);
 
     // Try to find an existing entry for the specified endpoint.
     Endpoint endpoint(host, port);
 
-    BusServerMap::const_iterator it;
-    if ((it = this->busServers.find(endpoint)) != this->busServers.end()) {
-        RSCDEBUG(logger, "Found existing bus server " << it->second);
-        checkOptions(it->second, tcpnodelay);
-        it->second->addConnector(connector);
-        return it->second;
+    BusServerPtr result = searchInMap(endpoint, tcpnodelay, busServers);
+    if (result) {
+        return result;
     }
 
     // If there is no entry, create a new bus server and put it into
     // the map.
     RSCDEBUG(logger, "Did not find bus server; creating a new one");
 
-    BusServerPtr result(new BusServer(port, tcpnodelay, this->service));
+    result = BusServerPtr(
+            new LifecycledBusServer(
+                    BusServerPtr(
+                            new BusServerImpl(this->asioService, port,
+                                    tcpnodelay))));
     result->activate();
     this->busServers[endpoint] = result;
 
-    result->addConnector(connector);
-
-    RSCDEBUG(logger, "Created new bus client " << result);
+    RSCDEBUG(logger, "Created new bus server " << result);
 
     return result;
-}
-
-void Factory::removeBusServer(BusPtr bus) {
-    RSCDEBUG(logger, "Removing server bus " << bus);
-
-    boost::mutex::scoped_lock lock(this->busMutex);
-
-    for (BusServerMap::iterator it = this->busServers.begin();
-         it != this->busServers.end(); ++it) {
-        if (it->second == bus) {
-            boost::dynamic_pointer_cast<BusServer>(bus)->deactivate();
-            this->busServers.erase(it);
-            RSCDEBUG(logger, "Removed");
-            return;
-        }
-    }
 }
 
 BusPtr Factory::getBus(const Server&          serverMode,
                        const std::string&     host,
                        const boost::uint16_t& port,
-                       bool                   tcpnodelay,
-                       ConnectorBase*         connector) {
+                       bool                   tcpnodelay) {
 
     boost::mutex::scoped_lock lock(this->busMutex);
 
     switch (serverMode) {
     case SERVER_NO:
-        return getBusClientFor(host, port, tcpnodelay, connector);
+        return getBusClientFor(host, port, tcpnodelay);
     case SERVER_YES:
-        return getBusServerFor(host, port, tcpnodelay, connector);
+        return getBusServerFor(host, port, tcpnodelay);
     case SERVER_AUTO:
         try {
-            return getBusServerFor(host, port, tcpnodelay, connector);
+            return getBusServerFor(host, port, tcpnodelay);
         } catch (const std::exception& e) {
             RSCINFO(logger,
                     "Could not create server for bus: " << e.what() << "; trying to access bus as client");
-            return getBusClientFor(host, port, tcpnodelay, connector);
+            return getBusClientFor(host, port, tcpnodelay);
         }
     default:
         assert(false);
@@ -254,6 +219,16 @@ void Factory::checkOptions(BusPtr bus, bool tcpnodelay) {
         throw invalid_argument(str(format("Requested tcpnodelay option %1% does not match existing option %2%")
                                    % tcpnodelay % bus->isTcpnodelay()));
     }
+}
+
+FactoryPtr getDefaultFactory() {
+    static boost::mutex mutex;
+    static FactoryPtr defaultFactory;
+    boost::mutex::scoped_lock lock(mutex);
+    if (!defaultFactory) {
+        defaultFactory.reset(new Factory);
+    }
+    return defaultFactory;
 }
 
 }

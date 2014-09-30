@@ -26,131 +26,16 @@
 
 #include "BusServer.h"
 
-#include <list>
-
-#include <boost/bind.hpp>
-
-#include <boost/thread/thread_time.hpp>
-
-#include "../../MetaData.h"
-#include "Factory.h"
-
-using namespace std;
-
-using namespace boost::asio;
-using boost::asio::ip::tcp;
-
-using namespace rsc::logging;
-
 namespace rsb {
 namespace transport {
 namespace socket {
 
-BusServer::BusServer(boost::uint16_t port,
-                     bool            tcpnodelay,
-                     io_service&     service)
-    : Bus(service, tcpnodelay),
-      logger(Logger::getLogger("rsb.transport.socket.BusServer")),
-      acceptor(service, tcp::endpoint(tcp::v4(), port)),
-      service(service),
-      active(false), shutdown(false) {
-}
+BusServer::BusServer(AsioServiceContextPtr asioService, bool tcpnodelay) :
+        Bus(asioService, tcpnodelay) {
 
+}
 
 BusServer::~BusServer() {
-    if (this->active) {
-        deactivate();
-    }
-}
-
-void BusServer::activate() {
-    acceptOne(boost::dynamic_pointer_cast<BusServer>(shared_from_this()));
-
-    this->active = true;
-}
-
-void BusServer::deactivate() {
-    // Initiate shutdown squence, cancel acceptor and wait until the
-    // asynchronous callbacks signal completion of the shutdown
-    // sequence (see handleAccept()).
-    this->shutdown = true;
-    this->acceptor.cancel();
-    while (this->shutdown);
-
-    this->active =  false;
-}
-
-void BusServer::acceptOne(BusServerPtr ref) {
-    SocketPtr socket(new tcp::socket(this->service));
-
-    RSCINFO(logger, "Listening on " << this->acceptor.local_endpoint());
-    acceptor.async_accept(*socket,
-                          boost::bind(&BusServer::handleAccept, this, ref, socket,
-                                      boost::asio::placeholders::error));
-}
-
-void BusServer::handleAccept(BusServerPtr                     ref,
-                             SocketPtr                        socket,
-                             const boost::system::error_code& error) {
-    if (!error) {
-        RSCINFO(logger, "Got connection from " << socket->remote_endpoint());
-
-        BusConnectionPtr connection(new BusConnection(ref, socket, false, isTcpnodelay()));
-        addConnection(connection);
-        connection->startReceiving();
-    } else if (!this->shutdown){
-        RSCWARN(logger, "Accept failure, trying to continue");
-    }
-
-    // Maybe continue accepting connections. If not, a shutdown has
-    // been requested from another thread. In that case, we reset
-    // this->shutdown to false to indicate that the shutdown sequence
-    // is complete. The other thread can just busy-wait until
-    // this->shutdown == false.
-    if (!this->shutdown) {
-        acceptOne(ref);
-    } else {
-        this->shutdown = false;
-    }
-}
-
-void BusServer::handleIncoming(EventPtr         event,
-                               BusConnectionPtr connection) {
-    Bus::handleIncoming(event, connection);
-
-    RSCDEBUG(logger, "Delivering received event to connections " << event);
-    {
-        boost::recursive_mutex::scoped_lock lock(getConnectionLock());
-
-        ConnectionList connections = getConnections();
-        list<BusConnectionPtr> failing;
-        for (ConnectionList::iterator it = connections.begin();
-             it != connections.end(); ++it) {
-            if (*it != connection) {
-                RSCDEBUG(logger, "Delivering to connection " << *it);
-                try {
-                    (*it)->sendEvent(event, event->getMetaData().getUserInfo("rsb.wire-schema"));
-                } catch (const std::exception& e) {
-                    RSCWARN(logger, "Send failure (" << e.what() << "); will close connection later");
-                    // We record failing connections instead of
-                    // closing them immediately to avoid invalidating
-                    // the iterator.
-                    failing.push_back(*it);
-                }
-            }
-        }
-
-        // This should remove all references to the connection
-        // objects.
-        for (list<BusConnectionPtr>::const_iterator it = failing.begin();
-        it != failing.end(); ++it) {
-            removeConnection(*it);
-        }
-    }
-}
-
-void BusServer::suicide() {
-    Factory::getInstance().removeBusServer(shared_from_this());
 }
 
 }

@@ -91,6 +91,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/protocol/Notification.cpp
             rsb/protocol/ProtocolException.cpp
 
+            rsb/transport/AsioServiceContext.cpp
             rsb/transport/Connector.cpp
             rsb/transport/Factory.cpp
             rsb/transport/OutConnector.cpp
@@ -187,6 +188,7 @@ SET(HEADERS rsb/CommException.h
             rsb/protocol/Notification.h
             rsb/protocol/ProtocolException.h
 
+            rsb/transport/AsioServiceContext.h
             rsb/transport/Connector.h
             rsb/transport/InConnector.h
             rsb/transport/InPullConnector.h
@@ -216,22 +218,26 @@ IF(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/BusConnection.cpp
                         rsb/transport/socket/Bus.cpp
                         rsb/transport/socket/BusServer.cpp
+                        rsb/transport/socket/BusServerImpl.cpp
                         rsb/transport/socket/Factory.cpp
                         rsb/transport/socket/ConnectorBase.cpp
                         rsb/transport/socket/InConnector.cpp
                         rsb/transport/socket/InPushConnector.cpp
                         rsb/transport/socket/InPullConnector.cpp
+                        rsb/transport/socket/LifecycledBusServer.cpp
                         rsb/transport/socket/OutConnector.cpp
                         rsb/transport/socket/Serialization.cpp)
     LIST(APPEND HEADERS rsb/transport/socket/Types.h
                         rsb/transport/socket/BusConnection.h
                         rsb/transport/socket/Bus.h
                         rsb/transport/socket/BusServer.h
+                        rsb/transport/socket/BusServerImpl.h
                         rsb/transport/socket/Factory.h
                         rsb/transport/socket/ConnectorBase.h
                         rsb/transport/socket/InConnector.h
                         rsb/transport/socket/InPushConnector.h
                         rsb/transport/socket/InPullConnector.h
+                        rsb/transport/socket/LifecycledBusServer.h
                         rsb/transport/socket/OutConnector.h
                         rsb/transport/socket/Serialization.h)
 ENDIF()

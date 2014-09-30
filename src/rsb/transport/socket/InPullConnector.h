@@ -70,7 +70,8 @@ public:
     /**
      * @copydoc InConnector::InConnector()
      */
-    InPullConnector(ConverterSelectionStrategyPtr converters,
+    InPullConnector(FactoryPtr                    factory,
+                    ConverterSelectionStrategyPtr converters,
                     const std::string&            host,
                     unsigned int                  port,
                     Server                        server,

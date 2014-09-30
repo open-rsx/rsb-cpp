@@ -35,6 +35,7 @@
 #include <boost/asio/ip/tcp.hpp>
 
 #include "Factory.h"
+#include "InConnector.h"
 #include "../../MetaData.h"
 
 using namespace std;
@@ -48,12 +49,14 @@ namespace rsb {
 namespace transport {
 namespace socket {
 
-Bus::Bus(io_service& service, bool tcpnodelay) :
+Bus::Bus(AsioServiceContextPtr asioService, bool tcpnodelay) :
     logger(Logger::getLogger("rsb.transport.socket.Bus")),
-    service(service), tcpnodelay(tcpnodelay) {
+    asioService(asioService), tcpnodelay(tcpnodelay) {
 }
 
 Bus::~Bus() {
+    RSCDEBUG(logger, "Destructing bus instance");
+
     // Sinks should be empty.
     if (!this->sinks.empty()) {
         RSCWARN(logger, "" << this->sinks.size() << " non-empty scopes when destructing");
@@ -70,6 +73,12 @@ Bus::~Bus() {
                      << ": " << e.what());
         }
     }
+
+    RSCDEBUG(logger, "Bus destruction finished");
+}
+
+AsioServiceContextPtr Bus::getService() const {
+    return this->asioService;
 }
 
 bool Bus::isTcpnodelay() const {
@@ -119,26 +128,6 @@ void Bus::removeSink(InConnector* sink) {
     if (connectors.empty()) {
         RSCDEBUG(logger, "Removing empty scope " << scope);
         this->sinks.erase(scope);
-    }
-}
-
-void Bus::addConnector(ConnectorBase* connector) {
-    boost::recursive_mutex::scoped_lock lock(this->connectorLock);
-
-    RSCDEBUG(logger, "Adding connector " << connector);
-    this->connectors.push_back(connector);
-}
-
-void Bus::removeConnector(ConnectorBase* connector) {
-    boost::recursive_mutex::scoped_lock lock(this->connectorLock);
-
-    RSCDEBUG(logger, "Removing connector " << connector);
-    this->connectors.remove(connector);
-
-    // If no connectors remain, destroy the bus.
-    if (this->connectors.empty()) {
-        RSCINFO(logger, "No more connectors; suiciding");
-        suicide();
     }
 }
 
@@ -240,10 +229,6 @@ void Bus::handle(EventPtr event) {
             removeConnection(*it);
         }
     }
-}
-
-void Bus::suicide() {
-    Factory::getInstance().removeBusClient(shared_from_this());
 }
 
 void Bus::printContents(ostream& stream) const {
