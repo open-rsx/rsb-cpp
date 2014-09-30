@@ -54,6 +54,8 @@ Bus::Bus(io_service& service, bool tcpnodelay) :
 }
 
 Bus::~Bus() {
+    RSCDEBUG(logger, "Destructing bus instance");
+
     // Sinks should be empty.
     if (!this->sinks.empty()) {
         RSCWARN(logger, "" << this->sinks.size() << " non-empty scopes when destructing");
@@ -70,6 +72,8 @@ Bus::~Bus() {
                      << ": " << e.what());
         }
     }
+
+    RSCDEBUG(logger, "Bus destruction finished");
 }
 
 bool Bus::isTcpnodelay() const {

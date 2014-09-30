@@ -52,9 +52,11 @@ ConnectorBase::ConnectorBase(ConverterSelectionStrategyPtr converters,
 }
 
 ConnectorBase::~ConnectorBase() {
+    RSCDEBUG(logger, "Destructing");
     if (this->active) {
         deactivate();
     }
+    RSCDEBUG(logger, "Destruction finished");
 }
 
 Scope ConnectorBase::getScope() const {

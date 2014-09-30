@@ -200,7 +200,7 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
 
     result->addConnector(connector);
 
-    RSCDEBUG(logger, "Created new bus client " << result);
+    RSCDEBUG(logger, "Created new bus server " << result);
 
     return result;
 }
