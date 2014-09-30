@@ -26,12 +26,7 @@
 
 #pragma once
 
-#include <boost/cstdint.hpp>
-
 #include <boost/shared_ptr.hpp>
-
-#include <boost/asio.hpp>
-#include <boost/asio/ip/tcp.hpp>
 
 #include <rsc/logging/Logger.h>
 
@@ -56,50 +51,17 @@ namespace socket {
  *
  * @author jmoringe
  */
-class RSB_EXPORT BusServer : public Bus {
+class RSB_EXPORT BusServer : public virtual Bus {
 public:
-    BusServer(boost::uint16_t          port,
-              bool                     tcpnodelay,
-              boost::asio::io_service& service);
-
+    BusServer(AsioServiceContextPtr asioService, bool tcpnodelay);
     virtual ~BusServer();
 
-    /**
-     * Activate the object.
-     *
-     * @note This member function can only be called when a @ref
-     *       boost::shared_ptr owning the object exists.
-     */
-    void activate();
+    virtual void activate() = 0;
 
-    void deactivate();
+    virtual void deactivate() = 0;
 
-    void handleIncoming(EventPtr         event,
-                        BusConnectionPtr connection);
-
-private:
-    typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
-
-    rsc::logging::LoggerPtr         logger;
-
-    boost::asio::ip::tcp::acceptor  acceptor;
-    boost::asio::io_service&        service;
-
-    volatile bool                   active;
-    volatile bool                   shutdown;
-
-    // These two member functions have the additional ref parameter to
-    // ensure that the BusServer object cannot be destroyed while
-    // callbacks are executed. This also means that
-    // BusServer::activate only when there is a shared_ptr owning the
-    // BusServer object. See BusServer::activate().
-    void acceptOne(boost::shared_ptr<BusServer> ref);
-
-    void handleAccept(boost::shared_ptr<BusServer>     ref,
-                      SocketPtr                        socket,
-                      const boost::system::error_code& error);
-
-    void suicide();
+    virtual void handleIncoming(EventPtr         event,
+                                BusConnectionPtr connection) = 0;
 };
 
 typedef boost::shared_ptr<BusServer> BusServerPtr;

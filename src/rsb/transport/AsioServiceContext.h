@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014 Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,20 +24,45 @@
  *
  * ============================================================ */
 
-#include "BusServer.h"
+#pragma once
+
+#include <boost/asio.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+
+#include <rsc/logging/Logger.h>
+
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 namespace transport {
-namespace socket {
 
-BusServer::BusServer(AsioServiceContextPtr asioService, bool tcpnodelay) :
-        Bus(asioService, tcpnodelay) {
+/**
+ * A class that keeps a boost asio service alive as long as this class lives.
+ * So it is best maintained in shared_ptr instances
+ * (@ref AsioServiceContextPtr).
+ *
+ * @author jwienke
+ */
+class RSB_EXPORT AsioServiceContext {
+public:
+    AsioServiceContext();
+    virtual ~AsioServiceContext();
 
-}
+    typedef boost::shared_ptr<boost::asio::io_service> ServicePtr;
 
-BusServer::~BusServer() {
-}
+    ServicePtr getService();
 
-}
+private:
+    typedef boost::shared_ptr<boost::asio::io_service::work> WorkPtr;
+
+    rsc::logging::LoggerPtr logger;
+    ServicePtr service;
+    WorkPtr keepAlive;
+    boost::thread thread;
+};
+
+typedef boost::shared_ptr<AsioServiceContext> AsioServiceContextPtr;
+
 }
 }

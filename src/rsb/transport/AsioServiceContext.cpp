@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014 Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -24,20 +24,32 @@
  *
  * ============================================================ */
 
-#include "BusServer.h"
+#include "AsioServiceContext.h"
+
+using namespace std;
+using namespace boost::asio;
+using namespace rsc::logging;
 
 namespace rsb {
 namespace transport {
-namespace socket {
 
-BusServer::BusServer(AsioServiceContextPtr asioService, bool tcpnodelay) :
-        Bus(asioService, tcpnodelay) {
-
+AsioServiceContext::AsioServiceContext() :
+        logger(Logger::getLogger("rsb.transport.socket.AsioServiceContext")), service(
+                new io_service), keepAlive(new io_service::work(*service)), thread(
+                boost::bind(&boost::asio::io_service::run, service)) {
+    RSCINFO(logger, "Started service thread");
 }
 
-BusServer::~BusServer() {
+AsioServiceContext::~AsioServiceContext() {
+    RSCINFO(logger, "Stopping service thread");
+    this->keepAlive.reset();
+    this->thread.join();
+    RSCINFO(logger, "Stopped service thread");
 }
 
+AsioServiceContext::ServicePtr AsioServiceContext::getService() {
+    return service;
 }
+
 }
 }

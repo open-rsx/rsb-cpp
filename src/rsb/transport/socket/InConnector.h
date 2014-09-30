@@ -38,6 +38,7 @@
 #include "../InConnector.h"
 
 #include "ConnectorBase.h"
+#include "Factory.h"
 
 #include "rsb/rsbexports.h"
 
@@ -64,7 +65,8 @@ public:
     /**
      * @copydoc ConnectorBase::ConnectorBase()
      */
-    InConnector(ConverterSelectionStrategyPtr converters,
+    InConnector(FactoryPtr                    factory,
+                ConverterSelectionStrategyPtr converters,
                 const std::string&            host,
                 unsigned int                  port,
                 Server                        server,

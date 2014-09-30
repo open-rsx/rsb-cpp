@@ -28,6 +28,7 @@
 
 #include <map>
 
+#include <boost/shared_ptr.hpp>
 #include <boost/thread/thread.hpp>
 
 #include <boost/asio.hpp>
@@ -37,8 +38,10 @@
 
 #include <rsc/patterns/Singleton.h>
 
+#include "../AsioServiceContext.h"
 #include "Bus.h"
 #include "BusServer.h"
+#include "Types.h"
 
 namespace rsb {
 namespace transport {
@@ -56,11 +59,9 @@ namespace socket {
  *
  * @author jmoringe
  */
-class RSB_EXPORT Factory : public rsc::patterns::Singleton<Factory> {
-    friend class rsc::patterns::Singleton<Factory>;
-    friend class Bus;       // for private member function removeBusClient
-    friend class BusServer; // for private member function removeBusServer
+class RSB_EXPORT Factory {
 public:
+    Factory();
     ~Factory();
 
     /**
@@ -70,17 +71,16 @@ public:
     BusPtr getBus(const Server&          serverMode,
                   const std::string&     host,
                   const boost::uint16_t& port,
-                  bool                   tcpnodelay,
-                  ConnectorBase*         connector);
+                  bool                   tcpnodelay);
 
 private:
-    typedef std::pair<std::string, boost::uint16_t>	     Endpoint;
+    typedef std::pair<std::string, boost::uint16_t>	         Endpoint;
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket>  SocketPtr;
 
     typedef boost::shared_ptr<boost::asio::io_service::work> WorkPtr;
 
-    typedef std::map<Endpoint, BusPtr>			     BusClientMap;
-    typedef std::map<Endpoint, BusServerPtr>		     BusServerMap;
+    typedef std::map<Endpoint, boost::weak_ptr<Bus> >	     BusClientMap;
+    typedef std::map<Endpoint, boost::weak_ptr<BusServer> >  BusServerMap;
 
     rsc::logging::LoggerPtr logger;
 
@@ -88,28 +88,31 @@ private:
     BusServerMap            busServers;
     boost::mutex            busMutex;
 
-    boost::asio::io_service service;
-    WorkPtr                 keepAlive;
-    boost::thread           thread;
-
-    Factory();
+    AsioServiceContextPtr   asioService;
 
     BusPtr getBusClientFor(const std::string& host,
                            boost::uint16_t    port,
-                           bool               tcpnodelay,
-                           ConnectorBase*     connector);
+                           bool               tcpnodelay);
 
     BusServerPtr getBusServerFor(const std::string& host,
                                  boost::uint16_t    port,
-                                 bool               tcpnodelay,
-                                 ConnectorBase*     connector);
-
-    void removeBusClient(BusPtr bus);
-
-    void removeBusServer(BusPtr bus);
+                                 bool               tcpnodelay);
 
     static void checkOptions(BusPtr bus, bool tcpnodelay);
+
+    /**
+     * Searches inside a given map for an active pointer to a Bus instance
+     * matching the given query
+     */
+    template<class BusType>
+    boost::shared_ptr<BusType> searchInMap(const Endpoint& endpoint,
+            bool tcpnodelay,
+            std::map<Endpoint, boost::weak_ptr<BusType> >& map);
 };
+
+typedef boost::shared_ptr<Factory> FactoryPtr;
+
+RSB_EXPORT FactoryPtr getDefaultFactory();
 
 }
 }

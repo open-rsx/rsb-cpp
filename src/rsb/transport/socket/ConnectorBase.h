@@ -35,6 +35,7 @@
 #include "../ConverterSelectingConnector.h"
 
 #include "Types.h"
+#include "Factory.h"
 
 #include "rsb/rsbexports.h"
 
@@ -80,7 +81,8 @@ public:
      *                   created connector. Setting this option trades
      *                   decreased latency for decreased throughput.
      */
-    ConnectorBase(ConverterSelectionStrategyPtr converters,
+    ConnectorBase(FactoryPtr                    factory,
+                  ConverterSelectionStrategyPtr converters,
                   const std::string&            host,
                   unsigned int                  port,
                   Server                        server,
@@ -110,6 +112,8 @@ private:
     Scope                   scope;
 
     BusPtr                  bus;
+
+    FactoryPtr              factory;
 
     std::string             host;
     unsigned int            port;
