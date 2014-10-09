@@ -46,9 +46,9 @@ string ByteArrayConverter::serialize(const AnnotatedData& /*data*/, string& /*wi
     throw runtime_error("This converter should only be used for *de*serialization.");
 }
 
-AnnotatedData ByteArrayConverter::deserialize(const std::string& /*wireType*/,
+AnnotatedData ByteArrayConverter::deserialize(const std::string& /*wireSchema*/,
                                               const string& wire) {
-    return make_pair(getDataType(), boost::shared_ptr<string>(new string(wire.c_str(), wire.length())));
+    return make_pair(getDataType(), boost::shared_ptr<string>(new string(wire)));
 }
 
 }

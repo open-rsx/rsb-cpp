@@ -38,6 +38,7 @@
 #include <gmock/gmock.h>
 
 #include "rsb/converter/BoolConverter.h"
+#include "rsb/converter/ByteArrayConverter.h"
 #include "rsb/converter/StringConverter.h"
 #include "rsb/converter/Uint32Converter.h"
 #include "rsb/converter/Uint64Converter.h"
@@ -167,5 +168,35 @@ TEST(VoidConverterTest, testRoundtrip)
                       wire);
     AnnotatedData result = c.deserialize(schema, wire);
     EXPECT_EQ(rsc::runtime::typeName<void>(), result.first);
+
+}
+
+TEST(ByteArrayConverterTest, testDeserializeEmpty)
+{
+
+    ByteArrayConverter c;
+    string wire;
+    AnnotatedData result = c.deserialize("", wire);
+    EXPECT_EQ(wire, *(boost::static_pointer_cast<string>(result.second)));
+
+}
+
+TEST(ByteArrayConverterTest, testDeserializeSimpleString)
+{
+
+    ByteArrayConverter c;
+    string wire = "hallo welt!\nnew line\r\nfoo";
+    AnnotatedData result = c.deserialize("", wire);
+    EXPECT_EQ(wire, *(boost::static_pointer_cast<string>(result.second)));
+
+}
+
+TEST(ByteArrayConverterTest, testDeserializeNullBytes)
+{
+
+    ByteArrayConverter c;
+    string wire = "hallo welt!\nnew line\r\nfoo\0withnull";
+    AnnotatedData result = c.deserialize("", wire);
+    EXPECT_EQ(wire, *(boost::static_pointer_cast<string>(result.second)));
 
 }
