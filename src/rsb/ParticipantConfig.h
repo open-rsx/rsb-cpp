@@ -37,6 +37,7 @@
 #include <rsc/config/OptionHandler.h>
 #include <rsc/runtime/Properties.h>
 #include <rsc/runtime/Printable.h>
+#include <rsc/misc/uri.h>
 
 #include "QualityOfServiceSpec.h"
 #include "rsb/rsbexports.h"
@@ -129,6 +130,12 @@ public:
 
         void handleOption(const std::vector<std::string>& key,
                 const std::string& value);
+
+        /**
+         * Merge in options from uri: host, port, and query's key=value pairs.
+         */
+        void mergeOptions (const rsc::misc::uri& uri);
+
     private:
         std::string name;
         ConverterNames converters;
@@ -309,6 +316,28 @@ public:
      * @param transports set of transports
      */
     void setTransports(const std::set<Transport>& transports);
+
+    /**
+     * Configures existing or new transport from uri.
+     *
+     * If transport is not specified (empty uri scheme), configure
+     * all existing transports with the provided options.
+     *
+     * @param uri uri instance describing transport.
+     * @param disableOthers decides whether all other existing transports (except the requested one) should be disabled, i.e. turning addTransport into setTransport.
+     */
+    void addTransport (const rsc::misc::uri& uri, bool disableOthers=false);
+
+    /**
+     * Configures the set of transports according to the given set of uris.
+     *
+     * An empty uri scheme is not allowed and throws an invalid_argument exception.
+     * Override existing transport configurations with specified values.
+     * Removes all other existing transports.
+     *
+     * @param uris set of uri instances describing the desired transport parameters.
+     */
+    void setTransports (const std::set<rsc::misc::uri>& uris);
 
     const EventProcessingStrategy& getEventReceivingStrategy() const;
 
