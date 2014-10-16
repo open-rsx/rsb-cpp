@@ -178,6 +178,7 @@ SET(HEADERS rsb/CommException.h
             rsb/filter/ScopeFilter.h
             rsb/filter/OriginFilter.h
             rsb/filter/MethodFilter.h
+            rsb/filter/TypeFilter.h
 
             rsb/patterns/MethodExistsException.h
             rsb/patterns/Server.h
