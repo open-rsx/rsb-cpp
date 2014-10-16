@@ -47,7 +47,7 @@ public:
 
     bool match(EventPtr e);
 
-    Scope getScope();
+    Scope getScope() const;
 
     void notifyObserver(FilterObserverPtr fo, FilterAction::Types at);
 

@@ -53,7 +53,7 @@ void ScopeFilter::notifyObserver(FilterObserverPtr fo, FilterAction::Types at) {
     fo->notify(this, at);
 }
 
-Scope ScopeFilter::getScope() {
+Scope ScopeFilter::getScope() const {
     return scope;
 }
 
