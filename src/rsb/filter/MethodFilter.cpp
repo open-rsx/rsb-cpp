@@ -26,8 +26,6 @@
 
 #include "MethodFilter.h"
 
-#include "../MetaData.h"
-
 #include "FilterObserver.h"
 
 namespace rsb {
