@@ -105,7 +105,7 @@ bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e)
         s << "Exception matching event " << e << " for handler " << handler
                 << ":" << endl;
         s << ex.what() << endl;
-        s << DebugTools::newInstance()->exceptionInfo(ex);
+        s << exceptionInfo(ex);
 
         handleDispatchError(s.str());
 
@@ -114,9 +114,7 @@ bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e)
         stringstream s;
         s << "Catch-all handler called matching event " << e << " for handler "
                 << handler << endl;
-        DebugToolsPtr tool = DebugTools::newInstance();
-        vector<string> trace = tool->createBacktrace();
-        s << tool->formatBacktrace(trace);
+        s << formatBacktrace();
 
         handleDispatchError(s.str());
 
@@ -164,7 +162,7 @@ void ParallelEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e
         s << "Exception dispatching event " << e << " to handler " << handler
                 << ":" << endl;
         s << ex.what() << endl;
-        s << DebugTools::newInstance()->exceptionInfo(ex);
+        s << exceptionInfo(ex);
 
         handleDispatchError(s.str());
 
@@ -173,9 +171,7 @@ void ParallelEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e
         stringstream s;
         s << "Catch-all handler called dispatching event " << e
                 << " to handler " << handler << endl;
-        DebugToolsPtr tool = DebugTools::newInstance();
-        vector<string> trace = tool->createBacktrace();
-        s << tool->formatBacktrace(trace);
+        s << formatBacktrace();
 
         handleDispatchError(s.str());
 
