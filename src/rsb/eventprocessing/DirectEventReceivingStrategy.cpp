@@ -88,7 +88,7 @@ bool DirectEventReceivingStrategy::filter(EventPtr e) {
         stringstream s;
         s << "Exception matching event " << e << ":" << endl;
         s << ex.what() << endl;
-        s << rsc::debug::DebugTools::newInstance()->exceptionInfo(ex);
+        s << rsc::debug::exceptionInfo(ex);
 
         handleDispatchError(s.str());
 
@@ -96,9 +96,7 @@ bool DirectEventReceivingStrategy::filter(EventPtr e) {
 
         stringstream s;
         s << "Catch-all handler called matching event " << endl;
-        rsc::debug::DebugToolsPtr tool = rsc::debug::DebugTools::newInstance();
-        vector<string> trace = tool->createBacktrace();
-        s << tool->formatBacktrace(trace);
+        s << rsc::debug::formatBacktrace();
 
         handleDispatchError(s.str());
 
@@ -153,7 +151,7 @@ void DirectEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e) 
         s << "Exception dispatching event " << e << " to handler " << handler
                 << ":" << endl;
         s << ex.what() << endl;
-        s << rsc::debug::DebugTools::newInstance()->exceptionInfo(ex);
+        s << rsc::debug::exceptionInfo(ex);
 
         handleDispatchError(s.str());
 
@@ -162,9 +160,7 @@ void DirectEventReceivingStrategy::deliver(rsb::HandlerPtr handler, EventPtr e) 
         stringstream s;
         s << "Catch-all handler called dispatching event " << e
                 << " to handler " << handler << endl;
-        rsc::debug::DebugToolsPtr tool = rsc::debug::DebugTools::newInstance();
-        vector<string> trace = tool->createBacktrace();
-        s << tool->formatBacktrace(trace);
+        s << rsc::debug::formatBacktrace();
 
         handleDispatchError(s.str());
 
