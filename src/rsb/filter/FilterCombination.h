@@ -38,20 +38,20 @@ namespace filter {
  *  MatchAny: any sub filter may match for a final match (OR combination)
  */
 class FilterCombination :
-		public rsb::filter::Filter,
-		public std::vector<rsb::filter::FilterPtr>
+        public rsb::filter::Filter,
+        public std::vector<rsb::filter::FilterPtr>
 {
 public:
-	enum CombinationStrategy {MatchAll, MatchAny};
-	FilterCombination(CombinationStrategy strategy = MatchAll);
+    enum CombinationStrategy {MatchAll, MatchAny};
+    FilterCombination(CombinationStrategy strategy = MatchAll);
 
-	void setStrategy(CombinationStrategy strategy) {this->strategy = strategy;}
-	CombinationStrategy getStrategy() const {return this->strategy;}
+    void setStrategy(CombinationStrategy strategy) {this->strategy = strategy;}
+    CombinationStrategy getStrategy() const {return this->strategy;}
 
-	bool match(EventPtr e);
+    bool match(EventPtr e);
 
 private:
-	CombinationStrategy strategy;
+    CombinationStrategy strategy;
 };
 
 typedef boost::shared_ptr<FilterCombination> FilterCombinationPtr;

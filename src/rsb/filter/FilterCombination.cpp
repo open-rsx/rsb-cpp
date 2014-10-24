@@ -30,31 +30,33 @@ namespace rsb {
 namespace filter {
 
 FilterCombination::FilterCombination(
-	FilterCombination::CombinationStrategy strategy) :
-	strategy(strategy)
+    FilterCombination::CombinationStrategy strategy) :
+    strategy(strategy)
 {
 }
 
 bool FilterCombination::match(EventPtr e)
 {
-	switch (strategy) {
-	case MatchAll:
-		for(auto it=this->begin(), end=this->end(); it!=end; ++it) {
-			if (!(*it)->match(e)) return false;
-		}
-		return true;
-		break;
+    switch (strategy) {
+    case MatchAll:
+        for(std::vector<rsb::filter::FilterPtr>::const_iterator
+               it=this->begin(), end=this->end(); it!=end; ++it) {
+            if (!(*it)->match(e)) return false;
+        }
+        return true;
+        break;
 
-	case MatchAny:
-		for(auto it=this->begin(), end=this->end(); it!=end; ++it) {
-			if ((*it)->match(e)) return true;
-		}
-		return false;
-		break;
+    case MatchAny:
+        for(std::vector<rsb::filter::FilterPtr>::const_iterator
+               it=this->begin(), end=this->end(); it!=end; ++it) {
+            if ((*it)->match(e)) return true;
+        }
+        return false;
+        break;
 
-	default:
-		return false; // never reached
-	}
+    default:
+        return false; // never reached
+    }
 }
 
 }
