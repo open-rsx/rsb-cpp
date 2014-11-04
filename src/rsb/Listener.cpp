@@ -69,6 +69,8 @@ void Listener::initialize(const vector<InPushConnectorPtr>& connectors,
         d->configurator->addConnector(*it);
     }
 
+    d->configurator->setQualityOfServiceSpecs(config.getQualityOfServiceSpec());
+
     d->configurator->activate();
 }
 

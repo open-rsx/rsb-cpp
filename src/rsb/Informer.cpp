@@ -30,6 +30,7 @@
 #include <boost/format.hpp>
 
 #include "Scope.h"
+#include "ParticipantConfig.h"
 
 using namespace std;
 
@@ -47,6 +48,8 @@ InformerBase::InformerBase(const vector<transport::OutConnectorPtr>& connectors,
             connectors.begin(); it != connectors.end(); ++it) {
         this->configurator->addConnector(*it);
     }
+
+    this->configurator->setQualityOfServiceSpecs(config.getQualityOfServiceSpec());
 
     this->configurator->activate();
 }
