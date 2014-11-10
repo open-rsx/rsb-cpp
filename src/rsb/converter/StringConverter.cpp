@@ -42,19 +42,19 @@ StringConverter::StringConverter() :
 StringConverter::~StringConverter() {
 }
 
-string StringConverter::serialize(const AnnotatedData& data, string& wire) {
+string StringConverter::serialize(const AnnotatedData& data,
+                                  string&              wire) {
     assert(data.first == this->getDataType());
 
-    boost::shared_ptr<string> s = boost::static_pointer_cast<string>(
-        data.second);
-    // essentially return the contained string to the serialization medium
-    wire = *s;
+    // Essentially return the contained string to the serialization
+    // medium.
+    wire = *boost::static_pointer_cast<string>(data.second);
     return WIRE_SCHEMA;
 }
 
-AnnotatedData StringConverter::deserialize(const std::string& wireType,
-                                           const string& wire) {
-    assert(wireType == WIRE_SCHEMA);
+AnnotatedData StringConverter::deserialize(const std::string& wireSchema,
+                                           const string&      wire) {
+    assert(wireSchema == WIRE_SCHEMA);
 
     return make_pair(getDataType(), boost::shared_ptr<string>(new string(wire)));
 }
