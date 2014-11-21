@@ -35,6 +35,7 @@
 #include <rsc/os/ProcessInfo.h>
 #include <rsc/os/HostInfo.h>
 
+#include <rsb/Version.h>
 #include <rsb/Scope.h>
 
 namespace rsb {
@@ -84,7 +85,8 @@ std::vector<std::string> tryCurrentCommandlineArguments();
 boost::posix_time::ptime tryCurrentProcessStartTime();
 
 /**
- * Instances of this class store information about the local host.
+ * Instances of this class store information about the current
+ * process.
  *
  * @author jmoringe
  */
@@ -97,7 +99,9 @@ public:
                 const std::vector<std::string>& arguments
                 = tryCurrentCommandlineArguments(),
                 const boost::posix_time::ptime& startTime
-                = tryCurrentProcessStartTime());
+                = tryCurrentProcessStartTime(),
+                const std::string&              rsbVersion
+                = rsb::Version::string() + "-" + rsb::Version::buildId());
     virtual ~ProcessInfo();
 
     unsigned int getPid() const;
@@ -107,11 +111,14 @@ public:
     const std::vector<std::string>& getArguments() const;
 
     const boost::posix_time::ptime& getStartTime() const;
+
+    const std::string& getRSBVersion() const;
 private:
     unsigned int             pid;
     std::string              programName;
     std::vector<std::string> arguments;
     boost::posix_time::ptime startTime;
+    std::string              rsbVersion;
 };
 
 // HostInfo
