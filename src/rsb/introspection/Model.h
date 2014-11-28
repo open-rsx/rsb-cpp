@@ -84,6 +84,8 @@ std::vector<std::string> tryCurrentCommandlineArguments();
 
 boost::posix_time::ptime tryCurrentProcessStartTime();
 
+std::string tryCurrentExecutingUser();
+
 /**
  * Instances of this class store information about the current
  * process.
@@ -101,7 +103,9 @@ public:
                 const boost::posix_time::ptime& startTime
                 = tryCurrentProcessStartTime(),
                 const std::string&              rsbVersion
-                = rsb::Version::string() + "-" + rsb::Version::buildId());
+                = rsb::Version::string() + "-" + rsb::Version::buildId(),
+                const std::string&              executingUser
+                = tryCurrentExecutingUser());
     virtual ~ProcessInfo();
 
     unsigned int getPid() const;
@@ -113,12 +117,15 @@ public:
     const boost::posix_time::ptime& getStartTime() const;
 
     const std::string& getRSBVersion() const;
+
+    const std::string& getExecutingUser() const;
 private:
     unsigned int             pid;
     std::string              programName;
     std::vector<std::string> arguments;
     boost::posix_time::ptime startTime;
     std::string              rsbVersion;
+    std::string              executingUser;
 };
 
 // HostInfo

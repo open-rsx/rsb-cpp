@@ -109,13 +109,25 @@ boost::posix_time::ptime tryCurrentProcessStartTime() {
     }
 }
 
+std::string tryCurrentExecutingUser() {
+    try {
+        return rsc::os::currentExecutingUser();
+    } catch (const std::exception& e) {
+        RSCERROR(logger, boost::str(boost::format("tryCurrentExecutingUser failed: %1%")
+                                    % e.what()));
+        return "";
+    }
+}
+
 ProcessInfo::ProcessInfo(unsigned int                    pid,
                          const std::string&              programName,
                          const std::vector<std::string>& arguments,
                          const boost::posix_time::ptime& startTime,
-                         const std::string&              rsbVersion)
+                         const std::string&              rsbVersion,
+                         const std::string&              executingUser)
     : pid(pid), programName(programName), arguments(arguments),
-      startTime(startTime), rsbVersion(rsbVersion) {
+      startTime(startTime), rsbVersion(rsbVersion),
+      executingUser(executingUser) {
 }
 
 ProcessInfo::~ProcessInfo() {
@@ -139,6 +151,10 @@ const boost::posix_time::ptime& ProcessInfo::getStartTime() const {
 
 const std::string& ProcessInfo::getRSBVersion() const {
     return this->rsbVersion;
+}
+
+const std::string& ProcessInfo::getExecutingUser() const {
+    return this->executingUser;
 }
 
 // HostInfo

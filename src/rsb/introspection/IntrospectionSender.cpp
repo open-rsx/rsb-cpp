@@ -217,6 +217,9 @@ void IntrospectionSender::sendHello(const ParticipantInfo& participant,
     process->set_start_time((this->process.getStartTime() - UNIX_EPOCH)
                             .total_microseconds());
     process->set_rsb_version(this->process.getRSBVersion());
+    if (!this->process.getExecutingUser().empty()) {
+        process->set_executing_user(this->process.getExecutingUser());
+    }
 
     // Add host information.
     rsb::protocol::operatingsystem::Host* host = hello->mutable_host();
