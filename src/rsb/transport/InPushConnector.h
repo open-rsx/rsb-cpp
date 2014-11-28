@@ -31,6 +31,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "../eventprocessing/Handler.h"
+#include "../ParticipantConfig.h"
 #include "InConnector.h"
 #include "rsb/rsbexports.h"
 
@@ -52,6 +53,17 @@ public:
 
     virtual void addHandler(eventprocessing::HandlerPtr handler);
     virtual void removeHandler(eventprocessing::HandlerPtr handler);
+
+    /**
+     * A temporary hack to pass an ErrorStrategy to in push connectors so that
+     * they can be instructed by clients on what to do in case of asynchronous
+     * receive errors. The current convention is that @c ERROR_STRATEGY_LOG and
+     * @c ERROR_STRATEGY_PRINT shall use the declared channel for displaying the
+     * error once and afterwards connectors should stop processing.
+     *
+     * @param strategy the new error strategy to use
+     */
+    virtual void setErrorStrategy(ParticipantConfig::ErrorStrategy strategy);
 protected:
     typedef std::list<eventprocessing::HandlerPtr> HandlerList;
 
