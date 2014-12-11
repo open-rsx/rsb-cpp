@@ -227,6 +227,18 @@ void IntrospectionSender::sendHello(const ParticipantInfo& participant,
         host->set_id(this->host.getId());
     }
     host->set_hostname(this->host.getHostname());
+    if (!this->host.getMachineType().empty()) {
+        host->set_machine_type(this->host.getMachineType());
+    }
+    if (!this->host.getMachineVersion().empty()) {
+        host->set_machine_version(this->host.getMachineVersion());
+    }
+    if (!this->host.getSoftwareType().empty()) {
+        host->set_software_type(this->host.getSoftwareType());
+    }
+    if (!this->host.getSoftwareVersion().empty()) {
+        host->set_software_version(this->host.getSoftwareVersion());
+    }
 
     // Construct event.
     EventPtr helloEvent(new Event());

@@ -134,6 +134,14 @@ std::string tryCurrentHostId();
 
 std::string tryCurrentHostname();
 
+std::string tryCurrentMachineType();
+
+std::string tryCurrentMachineVersion();
+
+std::string tryCurrentSoftwareType();
+
+std::string tryCurrentSoftwareVersion();
+
 /**
  * Instances of this class store information about the local host.
  *
@@ -141,16 +149,32 @@ std::string tryCurrentHostname();
  */
 class HostInfo {
 public:
-    HostInfo(const std::string& id       = tryCurrentHostId(),
-             const std::string& hostname = tryCurrentHostname());
+    HostInfo(const std::string& id              = tryCurrentHostId(),
+             const std::string& hostname        = tryCurrentHostname(),
+             const std::string& machineType     = tryCurrentMachineType(),
+             const std::string& machineVersion  = tryCurrentMachineVersion(),
+             const std::string& softwareType    = tryCurrentSoftwareType(),
+             const std::string& softwareVersion = tryCurrentSoftwareVersion());
     virtual ~HostInfo();
 
     const std::string& getId() const;
 
     const std::string& getHostname() const;
+
+    const std::string& getMachineType() const;
+
+    const std::string& getMachineVersion() const;
+
+    const std::string& getSoftwareType() const;
+
+    const std::string& getSoftwareVersion() const;
 private:
     std::string id;
     std::string hostname;
+    std::string machineType;
+    std::string machineVersion;
+    std::string softwareType;
+    std::string softwareVersion;
 };
 
 }
