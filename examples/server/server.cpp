@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,6 +28,8 @@
 // mark-start::body
 #include <boost/thread.hpp>
 
+#include <rsc/misc/SignalWaiter.h>
+
 #include <rsb/Factory.h>
 
 using namespace rsb;
@@ -48,6 +50,9 @@ class VoidVoidCallback: public LocalServer::Callback<void, void> {
 };
 
 int main(int /*argc*/, char** /*argv*/) {
+
+    rsc::misc::initSignalWaiter();
+
     // Use the RSB factory to create a Server instance that provides
     // callable methods under the scope /example/server.
     Factory& factory = getFactory();
@@ -58,8 +63,7 @@ int main(int /*argc*/, char** /*argv*/) {
     server->registerMethod("void", LocalServer::CallbackPtr(new VoidVoidCallback()));
 
     // Wait here so incoming method calls can be processed.
-    boost::this_thread::sleep(boost::posix_time::seconds(1000));
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
 
-    return EXIT_SUCCESS;
 }
 // mark-end::body

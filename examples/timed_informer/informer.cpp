@@ -32,6 +32,7 @@
 #include <boost/format.hpp>
 #include <boost/program_options.hpp>
 
+#include <rsc/misc/SignalWaiter.h>
 #include <rsc/threading/PeriodicTask.h>
 #include <rsc/threading/ThreadedTaskExecutor.h>
 
@@ -74,6 +75,8 @@ private:
 
 int main(int argc, char* argv[]) {
 
+    rsc::misc::initSignalWaiter();
+
     po::options_description desc("Allowed options");
     desc.add_options()("int,i", po::value<unsigned int>(), "interval in ms")(
             "scope,s", po::value<string>(), "destination scope")("help,h",
@@ -112,10 +115,6 @@ int main(int argc, char* argv[]) {
     exec.schedule(
             rsc::threading::TaskPtr(new FloodingTask(informer, intervalMs, payload)));
 
-    while (true) {
-        boost::this_thread::sleep(boost::posix_time::seconds(1000));
-    }
-
-    return EXIT_SUCCESS;
+    return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());
 
 }

@@ -55,6 +55,7 @@ int main(int argc, char** argv) {
         std::cout << event << std::endl;
     }
 
-    return EXIT_SUCCESS;
+    return rsc::misc::suggestedExitCode(rsc::misc::lastArrivedSignal());
+
 }
 // mark-end::body

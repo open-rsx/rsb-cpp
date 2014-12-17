@@ -118,5 +118,5 @@ int main(int argc, char** argv) {
 
     }
 
-    return EXIT_SUCCESS;
+    return rsc::misc::suggestedExitCode(rsc::misc::lastArrivedSignal());
 }
