@@ -78,7 +78,7 @@ void InConnector::deactivate() {
 }
 
 void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
-    RSCWARN(logger, "Quality of service not implemented");
+    RSCDEBUG(logger, "Quality of service not implemented");
 }
 
 void InConnector::printContents(ostream& stream) const {

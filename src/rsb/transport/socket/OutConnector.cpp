@@ -80,7 +80,7 @@ void OutConnector::deactivate() {
 }
 
 void OutConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
-    RSCWARN(logger, "Quality of service not implemented");
+    RSCDEBUG(logger, "Quality of service not implemented");
 }
 
 void OutConnector::handle(EventPtr event) {
