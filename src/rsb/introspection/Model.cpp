@@ -109,12 +109,25 @@ boost::posix_time::ptime tryCurrentProcessStartTime() {
     }
 }
 
+std::string tryCurrentExecutingUser() {
+    try {
+        return rsc::os::currentExecutingUser();
+    } catch (const std::exception& e) {
+        RSCERROR(logger, boost::str(boost::format("tryCurrentExecutingUser failed: %1%")
+                                    % e.what()));
+        return "";
+    }
+}
+
 ProcessInfo::ProcessInfo(unsigned int                    pid,
                          const std::string&              programName,
                          const std::vector<std::string>& arguments,
-                         const boost::posix_time::ptime& startTime)
+                         const boost::posix_time::ptime& startTime,
+                         const std::string&              rsbVersion,
+                         const std::string&              executingUser)
     : pid(pid), programName(programName), arguments(arguments),
-      startTime(startTime) {
+      startTime(startTime), rsbVersion(rsbVersion),
+      executingUser(executingUser) {
 }
 
 ProcessInfo::~ProcessInfo() {
@@ -134,6 +147,14 @@ const std::vector<std::string>& ProcessInfo::getArguments() const {
 
 const boost::posix_time::ptime& ProcessInfo::getStartTime() const {
     return this->startTime;
+}
+
+const std::string& ProcessInfo::getRSBVersion() const {
+    return this->rsbVersion;
+}
+
+const std::string& ProcessInfo::getExecutingUser() const {
+    return this->executingUser;
 }
 
 // HostInfo
@@ -158,9 +179,55 @@ std::string tryCurrentHostname() {
     }
 }
 
+std::string tryCurrentMachineType() {
+    try {
+        return rsc::os::currentMachineType();
+    } catch (const std::exception& e) {
+        RSCERROR(logger, boost::str(boost::format("tryCurrent failed: %1%")
+                                    % e.what()));
+        return "";
+    }
+}
+
+std::string tryCurrentMachineVersion() {
+    try {
+        return rsc::os::currentMachineVersion();
+    } catch (const std::exception& e) {
+        RSCERROR(logger, boost::str(boost::format("tryCurrentMachineVersion failed: %1%")
+                                    % e.what()));
+        return "";
+    }
+}
+
+std::string tryCurrentSoftwareType() {
+    try {
+        return rsc::os::currentSoftwareType();
+    } catch (const std::exception& e) {
+        RSCERROR(logger, boost::str(boost::format("tryCurrentSoftwareType failed: %1%")
+                                    % e.what()));
+        return "";
+    }
+}
+
+std::string tryCurrentSoftwareVersion() {
+    try {
+        return rsc::os::currentSoftwareVersion();
+    } catch (const std::exception& e) {
+        RSCERROR(logger, boost::str(boost::format("tryCurrentSoftwareVersion failed: %1%")
+                                    % e.what()));
+        return "";
+    }
+}
+
 HostInfo::HostInfo(const std::string& id,
-                   const std::string& hostname)
-    : id(id), hostname(hostname) {
+                   const std::string& hostname,
+                   const std::string& machineType,
+                   const std::string& machineVersion,
+                   const std::string& softwareType,
+                   const std::string& softwareVersion)
+    : id(id), hostname(hostname),
+      machineType(machineType), machineVersion(machineVersion),
+      softwareType(softwareType), softwareVersion(softwareVersion) {
 }
 
 HostInfo::~HostInfo() {
@@ -172,6 +239,22 @@ const std::string& HostInfo::getId() const {
 
 const std::string& HostInfo::getHostname() const {
     return this->hostname;
+}
+
+const std::string& HostInfo::getMachineType() const {
+    return this->machineType;
+}
+
+const std::string& HostInfo::getMachineVersion() const {
+    return this->machineVersion;
+}
+
+const std::string& HostInfo::getSoftwareType() const {
+    return this->softwareType;
+}
+
+const std::string& HostInfo::getSoftwareVersion() const {
+    return this->softwareVersion;
 }
 
 }

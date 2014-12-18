@@ -79,6 +79,7 @@ void PushInRouteConfigurator::activate() {
         InPushConnectorPtr connector = dynamic_pointer_cast<InPushConnector>(
                 *it);
         assert(connector);
+        connector->setErrorStrategy(this->errorStrategy);
         connector->addHandler(
                 HandlerPtr(
                         new EventFunctionHandler(
@@ -98,6 +99,14 @@ void PushInRouteConfigurator::handlerRemoved(rsb::HandlerPtr handler, const bool
 void PushInRouteConfigurator::setErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy) {
     if (this->eventReceivingStrategy) {
         this->eventReceivingStrategy->setHandlerErrorStrategy(strategy);
+    }
+    InRouteConfigurator::ConnectorSet connectors = getConnectors();
+    for (InRouteConfigurator::ConnectorSet::const_iterator it =
+            connectors.begin(); it != connectors.end(); ++it) {
+        InPushConnectorPtr connector = dynamic_pointer_cast<InPushConnector>(
+                *it);
+        assert(connector);
+        connector->setErrorStrategy(this->errorStrategy);
     }
     this->errorStrategy = strategy;
 }

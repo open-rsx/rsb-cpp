@@ -35,6 +35,7 @@
 #include <rsc/os/ProcessInfo.h>
 #include <rsc/os/HostInfo.h>
 
+#include <rsb/Version.h>
 #include <rsb/Scope.h>
 
 namespace rsb {
@@ -83,8 +84,11 @@ std::vector<std::string> tryCurrentCommandlineArguments();
 
 boost::posix_time::ptime tryCurrentProcessStartTime();
 
+std::string tryCurrentExecutingUser();
+
 /**
- * Instances of this class store information about the local host.
+ * Instances of this class store information about the current
+ * process.
  *
  * @author jmoringe
  */
@@ -97,7 +101,11 @@ public:
                 const std::vector<std::string>& arguments
                 = tryCurrentCommandlineArguments(),
                 const boost::posix_time::ptime& startTime
-                = tryCurrentProcessStartTime());
+                = tryCurrentProcessStartTime(),
+                const std::string&              rsbVersion
+                = rsb::Version::string() + "-" + rsb::Version::buildId(),
+                const std::string&              executingUser
+                = tryCurrentExecutingUser());
     virtual ~ProcessInfo();
 
     unsigned int getPid() const;
@@ -107,11 +115,17 @@ public:
     const std::vector<std::string>& getArguments() const;
 
     const boost::posix_time::ptime& getStartTime() const;
+
+    const std::string& getRSBVersion() const;
+
+    const std::string& getExecutingUser() const;
 private:
     unsigned int             pid;
     std::string              programName;
     std::vector<std::string> arguments;
     boost::posix_time::ptime startTime;
+    std::string              rsbVersion;
+    std::string              executingUser;
 };
 
 // HostInfo
@@ -120,6 +134,14 @@ std::string tryCurrentHostId();
 
 std::string tryCurrentHostname();
 
+std::string tryCurrentMachineType();
+
+std::string tryCurrentMachineVersion();
+
+std::string tryCurrentSoftwareType();
+
+std::string tryCurrentSoftwareVersion();
+
 /**
  * Instances of this class store information about the local host.
  *
@@ -127,16 +149,32 @@ std::string tryCurrentHostname();
  */
 class HostInfo {
 public:
-    HostInfo(const std::string& id       = tryCurrentHostId(),
-             const std::string& hostname = tryCurrentHostname());
+    HostInfo(const std::string& id              = tryCurrentHostId(),
+             const std::string& hostname        = tryCurrentHostname(),
+             const std::string& machineType     = tryCurrentMachineType(),
+             const std::string& machineVersion  = tryCurrentMachineVersion(),
+             const std::string& softwareType    = tryCurrentSoftwareType(),
+             const std::string& softwareVersion = tryCurrentSoftwareVersion());
     virtual ~HostInfo();
 
     const std::string& getId() const;
 
     const std::string& getHostname() const;
+
+    const std::string& getMachineType() const;
+
+    const std::string& getMachineVersion() const;
+
+    const std::string& getSoftwareType() const;
+
+    const std::string& getSoftwareVersion() const;
 private:
     std::string id;
     std::string hostname;
+    std::string machineType;
+    std::string machineVersion;
+    std::string softwareType;
+    std::string softwareVersion;
 };
 
 }

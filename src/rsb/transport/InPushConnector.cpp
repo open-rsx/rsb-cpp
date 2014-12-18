@@ -42,5 +42,10 @@ void InPushConnector::removeHandler(HandlerPtr handler) {
     this->handlers.remove(handler);
 }
 
+void InPushConnector::setErrorStrategy(
+        ParticipantConfig::ErrorStrategy /*strategy*/) {
+    // empty implementation to preserve the API
+}
+
 }
 }

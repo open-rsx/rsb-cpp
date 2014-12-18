@@ -47,6 +47,9 @@ Reader::Reader(const vector<InPullConnectorPtr>& connectors,
              != connectors.end(); ++it) {
         this->configurator->addConnector(*it);
     }
+
+    this->configurator->setQualityOfServiceSpecs(config.getQualityOfServiceSpec());
+
     this->configurator->activate();
 }
 
