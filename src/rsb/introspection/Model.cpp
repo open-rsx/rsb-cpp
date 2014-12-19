@@ -183,7 +183,7 @@ std::string tryCurrentMachineType() {
     try {
         return rsc::os::currentMachineType();
     } catch (const std::exception& e) {
-        RSCERROR(logger, boost::str(boost::format("tryCurrent failed: %1%")
+        RSCERROR(logger, boost::str(boost::format("tryCurrentMachineType failed: %1%")
                                     % e.what()));
         return "";
     }
