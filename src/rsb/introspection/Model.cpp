@@ -169,6 +169,18 @@ std::string tryCurrentHostId() {
     }
 }
 
+std::string currentCompatibleHostId() {
+    // For compatibility with languages that have no easy way of
+    // calling C API functions, use hostname instead of calling a host
+    // id C function provided by respective operating system.
+    std::string softwareType = tryCurrentSoftwareType();
+    if (softwareType == "win32" || softwareType == "darwin") {
+        return tryCurrentHostname();
+    } else {
+        return tryCurrentHostId();
+    }
+}
+
 std::string tryCurrentHostname() {
     try {
         return rsc::os::currentHostname();
@@ -183,7 +195,7 @@ std::string tryCurrentMachineType() {
     try {
         return rsc::os::currentMachineType();
     } catch (const std::exception& e) {
-        RSCERROR(logger, boost::str(boost::format("tryCurrent failed: %1%")
+        RSCERROR(logger, boost::str(boost::format("tryCurrentMachineType failed: %1%")
                                     % e.what()));
         return "";
     }

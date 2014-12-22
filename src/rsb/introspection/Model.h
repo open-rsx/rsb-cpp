@@ -132,6 +132,8 @@ private:
 
 std::string tryCurrentHostId();
 
+std::string currentCompatibleHostId();
+
 std::string tryCurrentHostname();
 
 std::string tryCurrentMachineType();
@@ -149,7 +151,7 @@ std::string tryCurrentSoftwareVersion();
  */
 class HostInfo {
 public:
-    HostInfo(const std::string& id              = tryCurrentHostId(),
+    HostInfo(const std::string& id              = currentCompatibleHostId(),
              const std::string& hostname        = tryCurrentHostname(),
              const std::string& machineType     = tryCurrentMachineType(),
              const std::string& machineVersion  = tryCurrentMachineVersion(),
