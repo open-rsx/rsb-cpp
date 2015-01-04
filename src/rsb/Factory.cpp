@@ -85,7 +85,7 @@ converterSelectionToMap(const C& container, ConverterDirection direction) {
                         boost::format(
                         "Multiple wire-schemas (%1%, %2%) selected for data-type %3%.\n"
                         "Probably you wrote the lines transport.<name>.cpp.%1% = %3% "
-                        "and transport.<name>.cpp.%2% = %3% in you rsb config. One of "
+                        "and transport.<name>.cpp.%2% = %3% in your rsb config. One of "
                         "these should be deleted.")
                                 % it->first
                                 % result[it->second]
