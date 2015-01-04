@@ -68,6 +68,16 @@ ParticipantConfig::Transport::ConverterNames ParticipantConfig::Transport::getCo
     return this->converters;
 }
 
+void ParticipantConfig::Transport::addConverter(const string &wireschema, const string &datatype)
+{
+    this->converters.insert(make_pair(wireschema, datatype));
+}
+
+void ParticipantConfig::Transport::addConverters(const ParticipantConfig::Transport::ConverterNames &converters)
+{
+    this->converters.insert(converters.begin(), converters.end());
+}
+
 rsc::runtime::Properties ParticipantConfig::Transport::getOptions() const {
     return this->options;
 }
@@ -103,7 +113,7 @@ void ParticipantConfig::Transport::handleOption(const vector<string>& key,
                                     "Option key `%1%' has invalid number of components; converter-related keys for transports has to have three components")
                                     % key));
         }
-        this->converters.insert(make_pair(key[2], value));
+        this->addConverter(key[2], value);
     } else if ((key.size() >= 2) && (key[0] == "converter")) {
         // ignore converters for other languages
     } else {

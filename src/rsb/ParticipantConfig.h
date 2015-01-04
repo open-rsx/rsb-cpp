@@ -74,6 +74,9 @@ public:
             public rsc::config::OptionHandler,
             public rsc::runtime::Printable {
     public:
+        /**
+         * The set of preferred converters lists (wire-schema, data-type) pairs.
+         */
         typedef std::set<std::pair<std::string, std::string> > ConverterNames;
 
         /**
@@ -95,7 +98,21 @@ public:
          */
         std::string getName() const;
 
+        /**
+         * Return the set of preferred converters.
+         * This list is typically initialized from options. See @a handleOption().
+         */
         ConverterNames getConverters() const;
+
+        /**
+         * add a preferred converter
+         */
+        void addConverter(const std::string &wireschema, const std::string &datatype);
+
+        /**
+         * add preferred converters
+         */
+        void addConverters(const ConverterNames& converters);
 
         /**
          * Returns the specified options for the transport.
