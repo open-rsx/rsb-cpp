@@ -402,6 +402,14 @@ public:
      * @param options new options replacing all old ones
      */
     void setOptions(const rsc::runtime::Properties& options);
+
+    /**
+     * Adds converters to the list of preferred converters for all currently
+     * configurred transports.
+     * @param converters: set of (wire-schema, data-type) pairs (as strings).
+     */
+    void addPreferredConverters (const Transport::ConverterNames &converters);
+
 private:
     rsc::logging::LoggerPtr logger;
 

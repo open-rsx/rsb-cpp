@@ -354,6 +354,15 @@ void ParticipantConfig::setOptions(const Properties& options) {
     this->options = options;
 }
 
+void ParticipantConfig::addPreferredConverters(const ParticipantConfig::Transport::ConverterNames &converters)
+{
+    for (map<string, Transport>::iterator
+         it = this->transports.begin(), end = this->transports.end();
+         it != end; ++it) {
+        it->second.addConverters(converters);
+    }
+}
+
 void ParticipantConfig::handleOption(const vector<string>& key,
         const string& value) {
     // Quality of Service
