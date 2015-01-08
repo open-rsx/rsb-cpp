@@ -61,7 +61,8 @@ int main(int /*argc*/, char** /*argv*/) {
     // We could do something else here while the server processes the
     // call.
 
-    std::cout << "Server replied: " << *future.get(10) << std::endl;
+    std::cout << "Server replied: " << *future.get(10.0) << std::endl;
+    // Note: timeout is in seconds.
 
     remoteServer->call<void>("void");
 
