@@ -198,7 +198,7 @@ ParticipantConfig::ParticipantConfig() :
     errorStrategy(ERROR_STRATEGY_LOG),
     eventReceivingStrategy("parallel"),
     eventSendingStrategy("direct"),
-    introspection(false) {
+    introspection(true) {
 }
 
 ParticipantConfig::~ParticipantConfig() {

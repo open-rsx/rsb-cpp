@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2013, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -48,6 +48,21 @@ int main(int /*argc*/, char** /*argv*/) {
     boost::shared_ptr<std::string> result
         = remoteServer->call<std::string>("echo", request);
     std::cout << "Server replied: " << *result << std::endl;
+
+    // Call the method "echo" without waiting for the call to return a
+    // result: instead of a result, a "future" object is returned,
+    // from which the actual result can be obtained at a later point
+    // in time. In this example, the future.get(10) call may block for
+    // up to 10 seconds and throw an exception if a result is not
+    // received within that time.
+    RemoteServer::DataFuture<std::string> future
+        = remoteServer->callAsync<std::string>("echo", request);
+
+    // We could do something else here while the server processes the
+    // call.
+
+    std::cout << "Server replied: " << *future.get(10.0) << std::endl;
+    // Note: timeout is in seconds.
 
     remoteServer->call<void>("void");
 
