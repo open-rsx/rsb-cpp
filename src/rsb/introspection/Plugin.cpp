@@ -99,7 +99,11 @@ rsb::ParticipantConfig createConfig(const rsb::ParticipantConfig& defaultConfig,
 
 void handleParticipantCreated(rsb::ParticipantPtr participant,
                               rsb::ParticipantPtr parent) {
-    RSCDEBUG(logger, "Was notified of created participant " << participant);
+    // Do not print out the participant directly since parts of might not be
+    // constructed, which could be accessed by the participan's printing method
+    RSCDEBUG(logger,
+            "Was notified of created participant " << participant->getId() <<
+            " at scope " << participant->getScope());
 
     if (participant->getScope()->isSubScopeOf("/__rsb/introspection")
         || !participant->getConfig().isIntrospectionEnabled()) {
@@ -119,7 +123,11 @@ void handleParticipantCreated(rsb::ParticipantPtr participant,
 
 
 void handleParticipantDestroyed(rsb::Participant* participant) {
-    RSCDEBUG(logger, "Was notified of destroyed participant " << participant);
+    // Do not print out the participant directly since parts of it are already
+    // destroyed, which could be accessed by the participan's printing method
+    RSCDEBUG(logger,
+            "Was notified of destroyed participant " << participant->getId() <<
+            " at scope " << participant->getScope());
 
     if (participant->getScope()->isSubScopeOf("/__rsb/introspection")
         || !participant->getConfig().isIntrospectionEnabled()
