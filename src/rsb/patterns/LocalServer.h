@@ -251,6 +251,112 @@ public:
     };
 
     /**
+     * An adapter to use boost functions for callbacks. You can use any existing
+     * method via implicit conversion to a boost function or via boost bind as
+     * long as the types match.
+     *
+     * @author jwienke
+     */
+    template<class RequestType, class ReplyType>
+    class FunctionCallback: public CallbackBase {
+    public:
+        /**
+         * Type of functions that can be accepted.
+         */
+        typedef boost::function<
+                typename boost::shared_ptr<ReplyType>(
+                        typename boost::shared_ptr<RequestType>)> FunctionType;
+
+        explicit FunctionCallback(FunctionType function,
+                const std::string& requestType = rsc::runtime::typeName(
+                        typeid(RequestType)), const std::string& replyType =
+                        rsc::runtime::typeName(typeid(ReplyType))) :
+                CallbackBase(requestType, replyType), function(function) {
+        }
+
+    private:
+        EventPtr intlCall(const std::string& /*methodName*/, EventPtr request) {
+            boost::shared_ptr<RequestType> argument
+                = boost::static_pointer_cast<RequestType>(request->getData());
+            boost::shared_ptr<ReplyType> result = function(argument);
+            EventPtr reply(new Event());
+            reply->setType(getReplyType());
+            reply->setData(result);
+            return reply;
+        }
+
+        FunctionType function;
+    };
+
+    /**
+     * An adapter to use boost functions without out return values as calblacks.
+     *
+     * @author jwienke
+     */
+    template<class RequestType>
+    class FunctionCallback<RequestType, void>: public CallbackBase {
+    public:
+        /**
+         * Type of functions that can be accepted.
+         */
+        typedef boost::function<void(typename boost::shared_ptr<RequestType>)> FunctionType;
+
+        explicit FunctionCallback(FunctionType function,
+                const std::string& requestType = rsc::runtime::typeName(
+                        typeid(RequestType)), const std::string& replyType =
+                        rsc::runtime::typeName(typeid(void))) :
+                CallbackBase(requestType, replyType), function(function) {
+        }
+
+    private:
+        EventPtr intlCall(const std::string& /*methodName*/, EventPtr request) {
+            boost::shared_ptr<RequestType> argument =
+                    boost::static_pointer_cast<RequestType>(request->getData());
+            function(argument);
+            EventPtr reply(new Event());
+            reply->setType(getReplyType());
+            reply->setData(boost::shared_ptr<void>());
+            return reply;
+        }
+
+        FunctionType function;
+    };
+
+    /**
+     * An adapter to use boost functions without a call argument for callbacks.
+     *
+     * @author jwienke
+     */
+    template<class ReplyType>
+    class FunctionCallback<void, ReplyType>: public CallbackBase {
+    public:
+        /**
+         * Type of functions that can be accepted.
+         */
+        typedef boost::function<
+                typename boost::shared_ptr<ReplyType>(void)> FunctionType;
+
+        explicit FunctionCallback(FunctionType function,
+                const std::string& requestType = rsc::runtime::typeName(
+                        typeid(void)), const std::string& replyType =
+                        rsc::runtime::typeName(typeid(ReplyType))) :
+                CallbackBase(requestType, replyType), function(function) {
+        }
+
+    private:
+        EventPtr intlCall(const std::string& /*methodName*/,
+                EventPtr /*request*/) {
+            boost::shared_ptr<ReplyType> result = function();
+            EventPtr reply(new Event());
+            reply->setType(getReplyType());
+            reply->setData(result);
+            return reply;
+        }
+
+        FunctionType function;
+    };
+
+    /**
      * A derived @ref Method class which can be called from the remote
      * side and implements its behavior by invoking a client-supplied
      * callback.
@@ -304,7 +410,7 @@ private:
     std::map<std::string, LocalMethodPtr> methods;
 };
 
-// Since this is a complete specialization of Server::Callback, it
+// Since these are complete specializations, they
 // cannot be declared inline in Server like the partial
 // specializations (see C++03, §14.7.3/2:).
 
@@ -341,6 +447,40 @@ private:
         return reply;
     }
 
+};
+
+/**
+ * An adapter to use boost functions without a call argument and without return
+ * values for callbacks.
+ *
+ * @author jwienke
+ */
+template<>
+class RSB_EXPORT LocalServer::FunctionCallback<void, void>: public LocalServer::CallbackBase {
+public:
+    /**
+     * Type of functions that can be accepted.
+     */
+    typedef boost::function<void(void)> FunctionType;
+
+    explicit FunctionCallback(FunctionType function,
+            const std::string& requestType = rsc::runtime::typeName(
+                    typeid(void)), const std::string& replyType =
+                    rsc::runtime::typeName(typeid(void))) :
+            LocalServer::CallbackBase(requestType, replyType), function(
+                    function) {
+    }
+
+private:
+    EventPtr intlCall(const std::string& /*methodName*/, EventPtr /*request*/) {
+        function();
+        EventPtr reply(new Event());
+        reply->setType(getReplyType());
+        reply->setData(boost::shared_ptr<void>());
+        return reply;
+    }
+
+    FunctionType function;
 };
 
 typedef boost::shared_ptr<LocalServer> LocalServerPtr;
