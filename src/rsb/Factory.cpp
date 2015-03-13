@@ -206,7 +206,7 @@ Factory::Factory() :
         }
         defaultPath.push_back(Version::libdir() / Version::buildPluginPathSuffix());
         rsc::plugins::Configurator configurator(pluginManager, defaultPath);
-        configure(configurator, "rsb.conf", "RSB_", 0, 0, true, Version::installPrefix());
+        provideConfigOptions(configurator);
     }
     factoryWhileLoadingPlugins = NULL; // TODO unwind-protect
 
@@ -235,7 +235,7 @@ Factory::Factory() :
 
     // Merge with user configuration (configuration files, environment
     // variables)
-    configure(this->defaultConfig, "rsb.conf", "RSB_", 0, 0, true, Version::installPrefix());
+    provideConfigOptions(this->defaultConfig);
 
     // Issue a warning if the combination of available transport
     // implementations and user configuration leads to no enabled
@@ -248,6 +248,11 @@ Factory::Factory() :
 }
 
 Factory::~Factory() {
+}
+
+void Factory::provideConfigOptions(OptionHandler& handler) {
+    configure(handler, "rsb.conf", "RSB_", 0, 0, true,
+            Version::installPrefix());
 }
 
 SignalParticipantCreatedPtr Factory::getSignalParticipantCreated() {
