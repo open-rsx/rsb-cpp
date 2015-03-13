@@ -154,22 +154,15 @@ prepareConnectorOptions(const rsb::ParticipantConfig::Transport& config,
 
 namespace rsb {
 
-Factory& Factory::getInstance() {
-    return getFactory();
-}
-
 Factory* factoryWhileLoadingPlugins = NULL;
 
 Factory& getFactory() {
     if (factoryWhileLoadingPlugins) {
         return *factoryWhileLoadingPlugins;
     } else {
-        return Factory::getInstanceBase();
+        static Factory factory;
+        return factory;
     }
-}
-
-Factory& Factory::getInstanceBase() {
-    return rsc::patterns::Singleton<Factory>::getInstance();
 }
 
 Factory::Factory() :

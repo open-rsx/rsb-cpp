@@ -30,15 +30,18 @@ namespace rsb {
 namespace transport {
 
 InPullFactory& getInPullFactory() {
-    return InPullFactory::getInstanceBase();
+    static InPullFactory factory;
+    return factory;
 }
 
 InPushFactory& getInPushFactory() {
-    return InPushFactory::getInstanceBase();
+    static InPushFactory factory;
+    return factory;
 }
 
 OutFactory& getOutFactory() {
-    return OutFactory::getInstanceBase();
+    static OutFactory factory;
+    return factory;
 }
 
 }

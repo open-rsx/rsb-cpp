@@ -38,7 +38,6 @@
 #include <rsc/misc/langutils.h>
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/TypeStringTools.h>
-#include <rsc/patterns/Singleton.h>
 #include <rsc/config/OptionHandler.h>
 #include <rsc/plugins/Manager.h>
 
@@ -75,15 +74,8 @@ RSB_EXPORT Factory& getFactory();
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT Factory: private rsc::patterns::Singleton<Factory> {
+class RSB_EXPORT Factory {
 public:
-
-    /**
-     * @deprecated Singletons will be removed from RSB (see bug 1245). Please
-     *             use #getFactory instead.
-     * @todo Remove this after the 0.8 release.
-     */
-    DEPRECATED(static Factory& getInstance());
 
     virtual ~Factory();
 
@@ -309,15 +301,12 @@ public:
      */
     rsc::plugins::ManagerPtr getPluginManager() const;
 
-    friend class rsc::patterns::Singleton<Factory>;
-
 private:
     /**
      * Singleton constructor.
      */
     Factory();
 
-    static Factory& getInstanceBase();
     friend Factory& getFactory();
 
     rsc::logging::LoggerPtr logger;
