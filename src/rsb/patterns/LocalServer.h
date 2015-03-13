@@ -485,8 +485,5 @@ private:
 
 typedef boost::shared_ptr<LocalServer> LocalServerPtr;
 
-typedef LocalServer    Server; // TODO deprecated; remove at some point
-typedef LocalServerPtr ServerPtr;
-
 }
 }

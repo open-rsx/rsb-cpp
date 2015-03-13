@@ -323,13 +323,6 @@ patterns::LocalServerPtr Factory::createLocalServer(const Scope& scope,
     return server;
 }
 
-patterns::ServerPtr Factory::createServer(const Scope&             scope,
-                                          const ParticipantConfig& listenerConfig,
-                                          const ParticipantConfig& informerConfig,
-                                          ParticipantPtr           parent) {
-    return createLocalServer(scope, listenerConfig, informerConfig, parent);
-} // TODO deprecated; remove
-
 patterns::RemoteServer::RemoteMethodPtr Factory::createRemoteMethod
 (const Scope&             scope,
  const ParticipantConfig& listenerConfig,

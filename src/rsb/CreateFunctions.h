@@ -122,20 +122,6 @@ RSB_EXPORT ReaderPtr createReader(const Scope& scope,
 RSB_EXPORT patterns::LocalServerPtr createLocalServer(const Scope& scope);
 
 /**
- * Creates and returns a @ref Server object that exposes methods under
- * the @ref Scope @a scope.
- *
- * @param scope The scope under which the new server exposes its
- *              methods.
- * @return A shared_ptr to the new @ref Server object.
- *
- * @deprecated Use @ref createLocalServer
- */
-RSB_EXPORT
-DEPRECATED_MSG(patterns::ServerPtr createServer(const Scope& scope),
-               "Use createLocalServer() instead"); // TODO deprecated; remove
-
-/**
  * Creates and returns a @ref RemoteServer object for the server at
  * @ref Scope @a scope.
  *

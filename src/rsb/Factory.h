@@ -244,31 +244,6 @@ public:
             = ParticipantPtr());
 
     /**
-     * Creates a @ref Server object that exposes methods under the
-     * scope @a scope.
-     *
-     * @param scope The scope under which the new server exposes its
-     * methods.
-     * @param listenerConfig configuration to use for all request listeners
-     * @param informerConfig configuration to use for all reply informers
-     * @param parent Optional. A @ref Participant which should be
-     *               considered the parent of the new server.
-     *
-     * @return A shared_ptr to the new @ref Server object.
-     *
-     * @deprecated Use @ref createLocalServer
-     */
-    DEPRECATED_MSG(patterns::ServerPtr createServer(
-        const Scope&             scope,
-        const ParticipantConfig& listenerConfig
-        = getFactory().getDefaultParticipantConfig(),
-        const ParticipantConfig& informerConfig
-        = getFactory().getDefaultParticipantConfig(),
-        ParticipantPtr           parent
-        = ParticipantPtr()),
-                   "Use Factory::createLocalServer() instead"); // TODO deprecated; remove
-
-    /**
      * Creates a @ref patterns::RemoteServer::RemoteMethod.
      *
      * @param scope The scope, including the method name as its final
