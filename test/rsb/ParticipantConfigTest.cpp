@@ -189,7 +189,7 @@ TEST(ParticipantConfigTest, testFromFile)
     EXPECT_EQ(socket.getConverters().begin()->second, "IplImage");
 #endif
 
-    for (unsigned int i = 3; i <= 6; ++i) {
+    for (unsigned int i = 3; i <= 5; ++i) {
         ifstream stream(str(format("%1%/rsb.conf-semantic-errors-%2%") % TEST_ROOT % i).c_str());
         rsc::config::ConfigFileSource source(stream);
         ParticipantConfig config;
