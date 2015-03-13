@@ -141,8 +141,8 @@ void handleParticipantDestroyed(rsb::Participant* participant) {
     }
 }
 
-boost::signals::connection participantCreatedConnection;
-boost::signals::connection participantDestroyedConnection;
+boost::signals2::connection participantCreatedConnection;
+boost::signals2::connection participantDestroyedConnection;
 
 // External plugin interface
 

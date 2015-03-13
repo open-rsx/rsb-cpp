@@ -31,7 +31,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 
 #include <boost/thread/recursive_mutex.hpp>
 
@@ -57,7 +57,7 @@
 
 namespace rsb {
 
-typedef boost::signal2<void, ParticipantPtr, ParticipantPtr> SignalParticipantCreated;
+typedef boost::signals2::signal<void(ParticipantPtr, ParticipantPtr)> SignalParticipantCreated;
 typedef boost::shared_ptr<SignalParticipantCreated> SignalParticipantCreatedPtr;
 
 class Factory;

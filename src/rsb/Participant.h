@@ -32,7 +32,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 
 #include <rsc/misc/UUID.h>
 #include <rsc/runtime/Printable.h>
@@ -43,7 +43,7 @@ namespace rsb {
 
 class Participant;
 
-typedef boost::signal1<void, Participant*> SignalParticipantDestroyed;
+typedef boost::signals2::signal<void(Participant*)> SignalParticipantDestroyed;
 typedef boost::shared_ptr<SignalParticipantDestroyed> SignalParticipantDestroyedPtr;
 
 class ParticipantConfig;
