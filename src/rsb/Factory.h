@@ -31,14 +31,13 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 
 #include <boost/thread/recursive_mutex.hpp>
 
 #include <rsc/misc/langutils.h>
 #include <rsc/logging/Logger.h>
 #include <rsc/runtime/TypeStringTools.h>
-#include <rsc/patterns/Singleton.h>
 #include <rsc/config/OptionHandler.h>
 #include <rsc/plugins/Manager.h>
 
@@ -57,7 +56,7 @@
 
 namespace rsb {
 
-typedef boost::signal2<void, ParticipantPtr, ParticipantPtr> SignalParticipantCreated;
+typedef boost::signals2::signal<void(ParticipantPtr, ParticipantPtr)> SignalParticipantCreated;
 typedef boost::shared_ptr<SignalParticipantCreated> SignalParticipantCreatedPtr;
 
 class Factory;
@@ -75,15 +74,8 @@ RSB_EXPORT Factory& getFactory();
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT Factory: private rsc::patterns::Singleton<Factory> {
+class RSB_EXPORT Factory {
 public:
-
-    /**
-     * @deprecated Singletons will be removed from RSB (see bug 1245). Please
-     *             use #getFactory instead.
-     * @todo Remove this after the 0.8 release.
-     */
-    DEPRECATED(static Factory& getInstance());
 
     virtual ~Factory();
 
@@ -244,31 +236,6 @@ public:
             = ParticipantPtr());
 
     /**
-     * Creates a @ref Server object that exposes methods under the
-     * scope @a scope.
-     *
-     * @param scope The scope under which the new server exposes its
-     * methods.
-     * @param listenerConfig configuration to use for all request listeners
-     * @param informerConfig configuration to use for all reply informers
-     * @param parent Optional. A @ref Participant which should be
-     *               considered the parent of the new server.
-     *
-     * @return A shared_ptr to the new @ref Server object.
-     *
-     * @deprecated Use @ref createLocalServer
-     */
-    DEPRECATED_MSG(patterns::ServerPtr createServer(
-        const Scope&             scope,
-        const ParticipantConfig& listenerConfig
-        = getFactory().getDefaultParticipantConfig(),
-        const ParticipantConfig& informerConfig
-        = getFactory().getDefaultParticipantConfig(),
-        ParticipantPtr           parent
-        = ParticipantPtr()),
-                   "Use Factory::createLocalServer() instead"); // TODO deprecated; remove
-
-    /**
      * Creates a @ref patterns::RemoteServer::RemoteMethod.
      *
      * @param scope The scope, including the method name as its final
@@ -334,15 +301,12 @@ public:
      */
     rsc::plugins::ManagerPtr getPluginManager() const;
 
-    friend class rsc::patterns::Singleton<Factory>;
-
 private:
     /**
      * Singleton constructor.
      */
     Factory();
 
-    static Factory& getInstanceBase();
     friend Factory& getFactory();
 
     rsc::logging::LoggerPtr logger;

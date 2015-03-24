@@ -49,6 +49,23 @@ class VoidVoidCallback: public LocalServer::Callback<void, void> {
     }
 };
 
+boost::shared_ptr<std::string> echoFunction(
+        boost::shared_ptr<std::string> input) {
+    return input;
+}
+
+void voidReturnFunction(boost::shared_ptr<std::string> input) {
+    std::cout << "void function called: " << *input << std::endl;
+}
+
+boost::shared_ptr<std::string> voidArgFunction() {
+    return boost::shared_ptr<std::string>(new std::string("test"));
+}
+
+void voidVoidFunction() {
+    std::cout << "void-void function called" << std::endl;
+}
+
 int main(int /*argc*/, char** /*argv*/) {
 
     rsc::misc::initSignalWaiter();
@@ -61,6 +78,24 @@ int main(int /*argc*/, char** /*argv*/) {
     // Register method with name and implementing callback object.
     server->registerMethod("echo", LocalServer::CallbackPtr(new EchoCallback()));
     server->registerMethod("void", LocalServer::CallbackPtr(new VoidVoidCallback()));
+
+    // The same is also possible by binding functions
+    server->registerMethod("echo2",
+            LocalServer::CallbackPtr(
+                    new LocalServer::FunctionCallback<std::string, std::string>(
+                            &echoFunction)));
+    server->registerMethod("voidArg",
+            LocalServer::CallbackPtr(
+                    new LocalServer::FunctionCallback<void, std::string>(
+                            &voidArgFunction)));
+    server->registerMethod("voidReturn",
+            LocalServer::CallbackPtr(
+                    new LocalServer::FunctionCallback<std::string, void>(
+                            &voidReturnFunction)));
+    server->registerMethod("void2",
+            LocalServer::CallbackPtr(
+                    new LocalServer::FunctionCallback<void, void>(
+                            &voidVoidFunction)));
 
     // Wait here so incoming method calls can be processed.
     return rsc::misc::suggestedExitCode(rsc::misc::waitForSignal());

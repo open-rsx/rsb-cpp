@@ -70,9 +70,3 @@ TEST(ConnectorFactoryTest, testRegister)
     factory.registerConnector("bla", &TestConnector::create, "bla");
     factory.getConnectorInfo("bla");
 }
-
-TEST(ConnectorFactoryTest, testLegacyInstantiation) {
-    EXPECT_EQ((void*) &getInPullFactory(), (void*) &(InPullFactory::getInstance()));
-    EXPECT_EQ((void*) &getInPushFactory(), (void*) &(InPushFactory::getInstance()));
-    EXPECT_EQ((void*) &getOutFactory(), (void*) &(OutFactory::getInstance()));
-}

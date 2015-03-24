@@ -120,7 +120,6 @@ SET(HEADERS rsb/CommException.h
             rsb/Event.h
             rsb/EventCollections.h
             rsb/EventId.h
-            rsb/EventQueuePushHandler.h
             rsb/Exception.h
             rsb/Factory.h
             rsb/CreateFunctions.h
@@ -132,7 +131,6 @@ SET(HEADERS rsb/CommException.h
             rsb/Participant.h
             rsb/ParticipantConfig.h
             rsb/QualityOfServiceSpec.h
-            rsb/QueuePushHandler.h
             rsb/Scope.h
             rsb/UnsupportedQualityOfServiceException.h
 

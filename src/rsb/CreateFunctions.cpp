@@ -50,10 +50,6 @@ patterns::LocalServerPtr createLocalServer(const Scope& scope) {
     return getFactory().createLocalServer(scope);
 }
 
-patterns::ServerPtr createServer(const Scope& scope) {
-    return createLocalServer(scope);
-} // TODO deprecated; remove
-
 patterns::RemoteServerPtr createRemoteServer(const Scope& scope) {
     return getFactory().createRemoteServer(scope);
 }

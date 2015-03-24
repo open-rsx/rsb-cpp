@@ -154,22 +154,15 @@ prepareConnectorOptions(const rsb::ParticipantConfig::Transport& config,
 
 namespace rsb {
 
-Factory& Factory::getInstance() {
-    return getFactory();
-}
-
 Factory* factoryWhileLoadingPlugins = NULL;
 
 Factory& getFactory() {
     if (factoryWhileLoadingPlugins) {
         return *factoryWhileLoadingPlugins;
     } else {
-        return Factory::getInstanceBase();
+        static Factory factory;
+        return factory;
     }
-}
-
-Factory& Factory::getInstanceBase() {
-    return rsc::patterns::Singleton<Factory>::getInstance();
 }
 
 Factory::Factory() :
@@ -322,13 +315,6 @@ patterns::LocalServerPtr Factory::createLocalServer(const Scope& scope,
     (*this->signalParticipantCreated)(server, parent);
     return server;
 }
-
-patterns::ServerPtr Factory::createServer(const Scope&             scope,
-                                          const ParticipantConfig& listenerConfig,
-                                          const ParticipantConfig& informerConfig,
-                                          ParticipantPtr           parent) {
-    return createLocalServer(scope, listenerConfig, informerConfig, parent);
-} // TODO deprecated; remove
 
 patterns::RemoteServer::RemoteMethodPtr Factory::createRemoteMethod
 (const Scope&             scope,

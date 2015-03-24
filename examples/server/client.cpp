@@ -64,7 +64,24 @@ int main(int /*argc*/, char** /*argv*/) {
     std::cout << "Server replied: " << *future.get(10.0) << std::endl;
     // Note: timeout is in seconds.
 
+    // Also call all the other methods once
     remoteServer->call<void>("void");
+    remoteServer->call<void>("void2");
+    {
+        boost::shared_ptr<std::string> request(new std::string("bla"));
+        boost::shared_ptr<std::string> result = remoteServer->call<std::string>(
+                "echo2", request);
+        std::cout << "Server replied: " << *result << std::endl;
+    }
+    {
+        boost::shared_ptr<std::string> result = remoteServer->call<std::string>(
+                "voidArg");
+        std::cout << "Server replied: " << *result << std::endl;
+    }
+    {
+        boost::shared_ptr<std::string> request(new std::string("bla"));
+        remoteServer->call<void>("voidReturn", request);
+    }
 
     return EXIT_SUCCESS;
 }

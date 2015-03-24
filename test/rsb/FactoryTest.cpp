@@ -50,10 +50,6 @@ TEST(FactoryTest, testDefaultParticipantConfig)
 
 }
 
-TEST(FactoryTest, testLegacyInstantiation) {
-    EXPECT_EQ((void*) &getFactory(), (void*) &(Factory::getInstance()));
-}
-
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
