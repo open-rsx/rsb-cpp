@@ -129,9 +129,11 @@ struct EchoCallback : public patterns::LocalServer::EventCallback {
     }
 };
 
-IntrospectionSender::IntrospectionSender(const ParticipantConfig& listenerConfig,
+IntrospectionSender::IntrospectionSender(boost::shared_ptr<std::string> processDisplayName,
+                                         const ParticipantConfig& listenerConfig,
                                          const ParticipantConfig& informerConfig)
     : logger(rsc::logging::Logger::getLogger("rsb.introspection.IntrospectionSender")),
+      processDisplayName(processDisplayName),
       listener(getFactory().createListener(INTROSPECTION_PARTICIPANTS_SCOPE,
                                            listenerConfig)),
       informer(getFactory().createInformerBase(INTROSPECTION_PARTICIPANTS_SCOPE,
@@ -219,6 +221,9 @@ void IntrospectionSender::sendHello(const ParticipantInfo& participant,
     process->set_rsb_version(this->process.getRSBVersion());
     if (!this->process.getExecutingUser().empty()) {
         process->set_executing_user(this->process.getExecutingUser());
+    }
+    if (this->processDisplayName) {
+        process->set_display_name(*this->processDisplayName);
     }
 
     // Add host information.
