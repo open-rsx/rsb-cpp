@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -23,6 +23,8 @@
  *     Bielefeld University
  *
  * ============================================================  */
+
+#include <boost/thread/mutex.hpp>
 
 #include <rsc/logging/Logger.h>
 #include <rsc/plugins/Provider.h>
@@ -73,6 +75,7 @@ rsb::ParticipantConfig configDeserialization;
 DisplayNameOptionHandler displayNameHandler;
 
 rsb::introspection::IntrospectionSenderPtr sender;
+boost::mutex senderMutex;
 
 template <typename WireType>
 void addConverter
@@ -133,17 +136,21 @@ void handleParticipantCreated(rsb::ParticipantPtr participant,
         return;
     }
 
-    if (!sender) {
-        RSCDEBUG(logger, "Creating introspection sender");
-        configSerialization   = createConfig(rsb::getFactory().getDefaultParticipantConfig(), true);
-        configDeserialization = createConfig(rsb::getFactory().getDefaultParticipantConfig(), false);
-        sender.reset(
-                new rsb::introspection::IntrospectionSender(
-                        displayNameHandler.processDisplayName,
-                        configDeserialization, configSerialization));
-    }
+    {
+        boost::mutex::scoped_lock lock(senderMutex);
 
-    sender->addParticipant(participant, parent);
+        if (!sender) {
+            RSCDEBUG(logger, "Creating introspection sender");
+            configSerialization   = createConfig(rsb::getFactory().getDefaultParticipantConfig(), true);
+            configDeserialization = createConfig(rsb::getFactory().getDefaultParticipantConfig(), false);
+            sender.reset(
+                new rsb::introspection::IntrospectionSender(
+                    displayNameHandler.processDisplayName,
+                    configDeserialization, configSerialization));
+        }
+
+        sender->addParticipant(participant, parent);
+    }
 }
 
 
@@ -154,15 +161,33 @@ void handleParticipantDestroyed(rsb::Participant* participant) {
             "Was notified of destroyed participant " << participant->getId() <<
             " at scope " << participant->getScope());
 
+    // Exit early for "uninteresting" participants (e.g. disabled
+    // introspection or internal to the introspection machinery).
     if (participant->getScope()->isSubScopeOf("/__rsb/introspection")
-        || !participant->getConfig().isIntrospectionEnabled()
-        || !sender) {
+        || !participant->getConfig().isIntrospectionEnabled()) {
         RSCDEBUG(logger, "Ignoring destroyed participant " << participant);
         return;
     }
 
-    if (!sender->removeParticipant(*participant)) {
-        sender.reset();
+    // "Ordinary" participant: not internal and introspection is
+    // enabled. Remove the participant from the introspection sender,
+    // but only if the sender exists.
+    //
+    // The following lock must not extend to the conditional exit
+    // above since otherwise sender.reset() would cause recursive
+    // entry into handleParticipantDestroyed and thus a recursive lock
+    // attempt.
+    {
+        boost::mutex::scoped_lock lock(senderMutex);
+
+        if (!sender) {
+            RSCDEBUG(logger, "Ignoring destroyed participant " << participant);
+            return;
+        }
+
+        if (!sender->removeParticipant(*participant)) {
+            sender.reset();
+        }
     }
 }
 
