@@ -315,10 +315,6 @@ void ParticipantConfig::handleOption(const vector<string>& key,
                 throw invalid_argument(str(format(
                         "The value `%1%' is invalid for the key `%2%'.")
                         % value % key));
-        } else {
-            throw invalid_argument(
-                    str(format("`%2%' is not a valid sub-key of `%1%'.")
-                            % key[0] % key[1]));
         }
         // Error handling
     } else if (key[0] == "errorhandling") {
@@ -334,10 +330,6 @@ void ParticipantConfig::handleOption(const vector<string>& key,
                         "The value `%1%' is invalid for the key `%2%'.")
                         % value % key));
             }
-        } else {
-            throw invalid_argument(
-                    str(format("`%2%' is not a valid sub-key of `%1%'.")
-                            % key[0] % key[1]));
         }
         // Event processing
     } else if (key[0] == "eventprocessing") {
@@ -363,9 +355,6 @@ void ParticipantConfig::handleOption(const vector<string>& key,
     } else if (key[0] == "introspection") {
         if ((key.size() == 2) && (key[1] == "enabled")) {
             this->introspection = lexical_cast<bool>(value);
-        } else {
-            throw invalid_argument(str(format("`%2%' is not a valid sub-key of `%1%'.")
-                                       % key[0] % key[1]));
         }
 
     // Transports

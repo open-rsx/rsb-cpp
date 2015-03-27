@@ -44,11 +44,33 @@
 
 namespace {
 
+/**
+ * An option handler to fetch the introspection display name from the RSB
+ * configuration.
+ *
+ * @author jwienke
+ */
+class DisplayNameOptionHandler: public rsc::config::OptionHandler {
+public:
+
+    boost::shared_ptr<std::string> processDisplayName;
+
+    void handleOption(const std::vector<std::string>& key,
+                      const std::string& value) {
+        if (key.size() == 2 && key[0] == "introspection"
+            && key[1] == "displayname") {
+            processDisplayName.reset(new std::string(value));
+        }
+    }
+};
+
 rsc::logging::LoggerPtr logger
     = rsc::logging::Logger::getLogger("rsb.introspection");
 
 rsb::ParticipantConfig configSerialization;
 rsb::ParticipantConfig configDeserialization;
+
+DisplayNameOptionHandler displayNameHandler;
 
 rsb::introspection::IntrospectionSenderPtr sender;
 
@@ -115,7 +137,10 @@ void handleParticipantCreated(rsb::ParticipantPtr participant,
         RSCDEBUG(logger, "Creating introspection sender");
         configSerialization   = createConfig(rsb::getFactory().getDefaultParticipantConfig(), true);
         configDeserialization = createConfig(rsb::getFactory().getDefaultParticipantConfig(), false);
-        sender.reset(new rsb::introspection::IntrospectionSender(configDeserialization, configSerialization));
+        sender.reset(
+                new rsb::introspection::IntrospectionSender(
+                        displayNameHandler.processDisplayName,
+                        configDeserialization, configSerialization));
     }
 
     sender->addParticipant(participant, parent);
@@ -158,6 +183,10 @@ extern "C" {
         rsb::converter::converterRepository<std::string>()
             ->registerConverter(rsb::converter::ProtocolBufferConverter<rsb::protocol::introspection::Bye>::Ptr
                                 (new rsb::converter::ProtocolBufferConverter<rsb::protocol::introspection::Bye>()));
+
+        // Process configuration to obtain value of the
+        // introspection.displayname option.
+        rsb::Factory::provideConfigOptions(displayNameHandler);
 
         // Register participant creation hook.
         RSCDEBUG(logger, "Registering participant creation and destruction hooks");
