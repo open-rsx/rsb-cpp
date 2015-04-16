@@ -43,7 +43,9 @@ AsioServiceContext::AsioServiceContext() :
 AsioServiceContext::~AsioServiceContext() {
     RSCINFO(logger, "Stopping service thread");
     this->keepAlive.reset();
-    this->thread.join();
+    if (boost::this_thread::get_id() != this->thread.get_id()) {
+        this->thread.join();
+    }
     RSCINFO(logger, "Stopped service thread");
 }
 
