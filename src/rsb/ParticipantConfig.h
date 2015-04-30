@@ -289,7 +289,9 @@ public:
     Transport& mutableTransport(const std::string& name);
 
     /**
-     * Adds a transport to the list of desired transport mechanisms.
+     * Adds a transport to the list of desired transport mechanisms. It will
+     * replace a potentially existing transport configuration for the same
+     * transport name.
      *
      * @param transport config of the transport
      */
@@ -304,7 +306,7 @@ public:
     void removeTransport(const Transport& transport);
 
     /**
-     * Sets all desired transports in this configuration.
+     * Replaces all existing transports with the ones given here.
      *
      * @param transports set of transports
      */

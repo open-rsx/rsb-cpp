@@ -247,6 +247,7 @@ void ParticipantConfig::removeTransport(const Transport& transport) {
 }
 
 void ParticipantConfig::setTransports(const set<Transport>& transports) {
+    this->transports.clear();
     for (set<Transport>::const_iterator it = transports.begin(); it
             != transports.end(); ++it) {
         this->transports.insert(make_pair(it->getName(), *it));
