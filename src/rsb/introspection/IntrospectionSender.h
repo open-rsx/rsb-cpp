@@ -57,7 +57,8 @@ namespace introspection {
 class IntrospectionSender {
 friend struct QueryHandler;
 public:
-    IntrospectionSender(const ParticipantConfig& listenerConfig
+    IntrospectionSender(boost::shared_ptr<std::string> processDisplayName,
+                        const ParticipantConfig& listenerConfig
                         = getFactory().getDefaultParticipantConfig(),
                         const ParticipantConfig& informerConfig
                         = getFactory().getDefaultParticipantConfig());
@@ -69,16 +70,18 @@ public:
 private:
     typedef std::vector<ParticipantInfo> ParticipantList;
 
-    rsc::logging::LoggerPtr       logger;
+    rsc::logging::LoggerPtr        logger;
 
-    boost::mutex                  mutex;
+    boost::mutex                   mutex;
 
-    ParticipantList               participants;
-    ProcessInfo                   process;
-    HostInfo                      host;
+    boost::shared_ptr<std::string> processDisplayName;
 
-    ListenerPtr                   listener;
-    InformerBasePtr               informer;
+    ParticipantList                participants;
+    ProcessInfo                    process;
+    HostInfo                       host;
+
+    ListenerPtr                    listener;
+    InformerBasePtr                informer;
 
     rsb::patterns::LocalServerPtr server;
 

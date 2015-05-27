@@ -301,6 +301,19 @@ public:
      */
     rsc::plugins::ManagerPtr getPluginManager() const;
 
+    /**
+     * Provides the default configuration options for RSB to the specified
+     * handler. This method can e.g. be used by plugins to get options from the
+     * default configuration system. Options are presented to the handler
+     * without any prefix like "rsb".
+     *
+     * @note that the option processing performed by this method can
+     *       be expensive.
+     *
+     * @param handler the handler to inform about options
+     */
+    static void provideConfigOptions(rsc::config::OptionHandler& handler);
+
 private:
     /**
      * Singleton constructor.

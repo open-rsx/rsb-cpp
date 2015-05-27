@@ -120,10 +120,42 @@ TEST(ParticipantConfigTest, testTransports)
     config.removeTransport(ParticipantConfig::Transport(t2));
     EXPECT_EQ(size_t(0), config.getTransports().size());
 
+}
+
+TEST(ParticipantConfigTest, testSetTransports)
+{
+    ParticipantConfig config;
     set<ParticipantConfig::Transport> newSet;
     newSet.insert(ParticipantConfig::Transport("foo"));
     config.setTransports(newSet);
     EXPECT_EQ(newSet, config.getTransports());
+}
+
+TEST(ParticipantConfigTest, testSetTransportsReplaces)
+{
+    ParticipantConfig config;
+
+    // prepare a config which already contains transports
+    {
+        ParticipantConfig::Transport t1("t1");
+        t1.setEnabled(false);
+        config.addTransport(t1);
+
+        ParticipantConfig::Transport t2("t2");
+        t2.setEnabled(false);
+        config.addTransport(t2);
+    }
+
+    // create a new set of transports
+    set<ParticipantConfig::Transport> newSet;
+    ParticipantConfig::Transport t1New("foo");
+    t1New.setEnabled(true);
+    newSet.insert(t1New);
+    config.setTransports(newSet);
+
+    // ensure that we replaced everything
+    EXPECT_EQ(newSet, config.getTransports(true))
+            << "setTransports did not replace existing transports";
 
 }
 
@@ -189,7 +221,7 @@ TEST(ParticipantConfigTest, testFromFile)
     EXPECT_EQ(socket.getConverters().begin()->second, "IplImage");
 #endif
 
-    for (unsigned int i = 3; i <= 6; ++i) {
+    for (unsigned int i = 3; i <= 5; ++i) {
         ifstream stream(str(format("%1%/rsb.conf-semantic-errors-%2%") % TEST_ROOT % i).c_str());
         rsc::config::ConfigFileSource source(stream);
         ParticipantConfig config;
