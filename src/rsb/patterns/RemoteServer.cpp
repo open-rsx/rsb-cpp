@@ -84,7 +84,7 @@ RemoteServer::FuturePtr RemoteServer::RemoteMethod::call(const std::string& /*me
         request->setMethod("REQUEST");
         getInformer()->publish(request);
 
-        this->inprogress.insert(std::make_pair(request->getEventId(), result));
+        this->inprogress.insert(std::make_pair(request->getId(), result));
     }
 
     return result;

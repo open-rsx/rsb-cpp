@@ -130,7 +130,7 @@ void InformerBase::checkedPublish(EventPtr event) {
 }
 
 void InformerBase::uncheckedPublish(EventPtr event) {
-    event->setEventId(getId(), nextSequenceNumber());
+    event->setId(getId(), nextSequenceNumber());
     configurator->publish(event);
 }
 

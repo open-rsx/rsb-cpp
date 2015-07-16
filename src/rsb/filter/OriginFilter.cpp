@@ -26,6 +26,7 @@
 
 #include "OriginFilter.h"
 
+#include "../EventId.h"
 #include "../MetaData.h"
 
 #include "FilterObserver.h"
@@ -49,7 +50,7 @@ bool OriginFilter::isInverted() const {
 }
 
 bool OriginFilter::match(EventPtr e) {
-    bool result = this->origin == e->getMetaData().getSenderId();
+    bool result = this->origin == e->getId().getParticipantId();
     return this->invert ? !result : result;
 }
 

@@ -89,21 +89,10 @@ public:
      * in the stream of events published by a single informer.
      *
      * @return sequence number of the event.
+     * @deprecated Use #getId instead
      */
-    boost::uint64_t getSequenceNumber() const;
+    DEPRECATED(boost::uint64_t getSequenceNumber() const);
 
-    /**
-     * Returns a UUID for the event. This is now generated using the sending
-     * participant and a sequence ID. Hence, it is not defined before the event
-     * is sent.
-     *
-     * @return UUID of the event
-     * @throw rsc::misc::IllegalStateException if there cannot be an id because
-     *                                         the event was not sent so far.
-     * @deprecated Use #getEventId instead. This operation is expensive as it
-     *             generates a UUID.
-     */
-    DEPRECATED(rsc::misc::UUID getId() const);
     /**
      * Returns the id of this event. The id is not defined until the event is
      * sent by an informer.
@@ -112,16 +101,38 @@ public:
      * @throw rsc::misc::IllegalStateException if there cannot be an id because
      *                                         the event was not sent so far.
      */
-    EventId getEventId() const;
+    EventId getId() const;
+
     /**
-     * Sets all information necessary to generate an id for this event. The
-     * senderId will also be set in the meta data of the event.
+     * Sets all information necessary to generate an id for this event.
      *
      * @param senderId id of the sender of this event
      * @param sequenceNumber the unique number per sender this event was sent
      *                       with
      */
-    void setEventId(const rsc::misc::UUID& senderId, const boost::uint32_t& sequenceNumber);
+    void setId(const rsc::misc::UUID& senderId, const boost::uint32_t& sequenceNumber);
+
+    /**
+     * Returns the id of this event. The id is not defined until the event is
+     * sent by an informer.
+     *
+     * @return id of the event
+     * @throw rsc::misc::IllegalStateException if there cannot be an id because
+     *                                         the event was not sent so far.
+     * @deprecated Use #getId instead for consistent naming across
+     *             implementations
+     */
+    DEPRECATED(EventId getEventId() const);
+
+    /**
+     * Sets all information necessary to generate an id for this event.
+     *
+     * @param senderId id of the sender of this event
+     * @param sequenceNumber the unique number per sender this event was sent
+     *                       with
+     */
+    DEPRECATED(void setEventId(const rsc::misc::UUID& senderId,
+                const boost::uint32_t& sequenceNumber));
 
     /**
      * @name scope access

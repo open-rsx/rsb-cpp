@@ -120,7 +120,7 @@ void LocalServer::LocalMethod::handle(EventPtr event) {
     }
     reply->setScopePtr(getInformer()->getScope());
     reply->setMethod("REPLY");
-    reply->addCause(event->getEventId());
+    reply->addCause(event->getId());
     getInformer()->publish(reply);
 }
 

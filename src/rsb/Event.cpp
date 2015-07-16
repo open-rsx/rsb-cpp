@@ -112,14 +112,10 @@ void Event::printContents(ostream& stream) const {
 }
 
 boost::uint64_t Event::getSequenceNumber() const {
-    return getEventId().getSequenceNumber();
+    return getId().getSequenceNumber();
 }
 
-rsc::misc::UUID Event::getId() const {
-    return getEventId().getAsUUID();
-}
-
-EventId Event::getEventId() const {
+EventId Event::getId() const {
     if (!d->id) {
         throw rsc::misc::IllegalStateException(
                 "The event does not contain id information.");
@@ -127,10 +123,21 @@ EventId Event::getEventId() const {
     return *d->id;
 }
 
-void Event::setEventId(const rsc::misc::UUID& senderId,
+EventId Event::getEventId() const {
+    return getId();
+}
+
+void Event::setId(const rsc::misc::UUID& senderId,
         const boost::uint32_t& sequenceNumber) {
     d->id.reset(new EventId(senderId, sequenceNumber));
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     d->metaData.setSenderId(senderId);
+#pragma GCC diagnostic pop
+}
+
+void Event::setEventId(const rsc::misc::UUID& senderId,
+        const boost::uint32_t& sequenceNumber) {
+    setId(senderId, sequenceNumber);
 }
 
 void Event::setScopePtr(ScopePtr s) {

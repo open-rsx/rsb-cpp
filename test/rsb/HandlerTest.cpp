@@ -61,7 +61,6 @@ TEST(HandlerTest, testDispatch)
     e->setData(boost::shared_ptr<string>(new string("blub")));
     e->setScope(Scope("/blah"));
     e->setType("string");
-    e->mutableMetaData().setSenderId(rsc::misc::UUID());
 
     eh->handle(e);
     dh->handle(e);

@@ -47,7 +47,7 @@ EventPtr notificationToEvent(protocol::Notification& notification,
     metaData.setSendTime((boost::uint64_t) notification.meta_data().send_time());
     metaData.setReceiveTime();
 
-    event->setEventId(
+    event->setId(
         rsc::misc::UUID(
             (boost::uint8_t*) notification.event_id().sender_id().c_str()),
         notification.event_id().sequence_number());
@@ -83,10 +83,10 @@ void eventToNotification(protocol::Notification& notification,
                          const string&           wireSchema,
                          const string&           data) {
     notification.mutable_event_id()->set_sender_id(
-        event->getMetaData().getSenderId().getId().data,
-        event->getMetaData().getSenderId().getId().size());
+        event->getId().getParticipantId().getId().data,
+        event->getId().getParticipantId().getId().size());
     notification.mutable_event_id()->set_sequence_number(
-        event->getEventId().getSequenceNumber());
+        event->getId().getSequenceNumber());
     notification.set_scope(event->getScopePtr()->toString());
     if (!event->getMethod().empty()) {
         notification.set_method(event->getMethod());

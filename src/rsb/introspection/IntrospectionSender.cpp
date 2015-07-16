@@ -252,7 +252,7 @@ void IntrospectionSender::sendHello(const ParticipantInfo& participant,
     helloEvent->setData(hello);
     helloEvent->setType(rsc::runtime::typeName(*hello.get()));
     if (query) {
-        helloEvent->addCause(query->getEventId());
+        helloEvent->addCause(query->getId());
     }
 
     this->informer->publish(helloEvent);

@@ -49,12 +49,14 @@ TEST(MetaDataTest, testConstruction) {
 
 }
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 TEST(MetaDataTest, testSenderId) {
     const rsc::misc::UUID id;
     MetaData meta;
     meta.setSenderId(id);
     EXPECT_EQ(id, meta.getSenderId());
 }
+#pragma GCC diagnostic pop
 
 TEST(MetaDataTest, testTimesDouble) {
 
@@ -171,6 +173,7 @@ TEST(MetaDataTest, testUserInfos) {
 
 }
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 TEST(MetaDataTest, testComparison) {
 
     MetaData meta1;
@@ -199,3 +202,4 @@ TEST(MetaDataTest, testComparison) {
     EXPECT_EQ(meta1, meta2);
 
 }
+#pragma GCC diagnostic pop

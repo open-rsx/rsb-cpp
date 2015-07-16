@@ -35,6 +35,7 @@
 #include <boost/date_time.hpp>
 
 #include <rsc/runtime/Printable.h>
+#include <rsc/misc/langutils.h>
 #include <rsc/misc/UUID.h>
 
 #include "rsb/rsbexports.h"
@@ -65,15 +66,17 @@ public:
      * Returns the ID (a UUID) of the sending participant.
      *
      * @return A copy of the sender id UUID object.
+     * @deprecated Can be obtained from an @ref EventId instance
      */
-    rsc::misc::UUID getSenderId() const;
+    DEPRECATED(rsc::misc::UUID getSenderId() const);
 
     /**
      * Sets the ID (a UUID) of the sending participant.
      *
      * @param senderId id of the sending participant
+     * @deprecated Can be set in an @ref EventId instance
      */
-    void setSenderId(const rsc::misc::UUID& senderId);
+    DEPRECATED(void setSenderId(const rsc::misc::UUID& senderId));
 
     /**
      * @name framework timestamps

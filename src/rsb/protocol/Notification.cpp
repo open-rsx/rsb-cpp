@@ -44,7 +44,7 @@ void fillEventId(protocol::EventId& id, const rsb::EventId& realId) {
 
 void fillNotificationId(protocol::Notification& notification,
         const EventPtr& event) {
-    fillEventId(*(notification.mutable_event_id()), event->getEventId());
+    fillEventId(*(notification.mutable_event_id()), event->getId());
 }
 
 void fillNotificationHeader(protocol::Notification& notification,
@@ -99,7 +99,7 @@ void fillEvent(EventPtr event, const protocol::Notification& notification,
             (boost::uint64_t) notification.meta_data().receive_time());
     event->mutableMetaData().setDeliverTime(
             (boost::uint64_t) notification.meta_data().deliver_time());
-    event->setEventId(
+    event->setId(
             rsc::misc::UUID(
                     (boost::uint8_t*) notification.event_id().sender_id().c_str()),
             notification.event_id().sequence_number());

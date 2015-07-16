@@ -58,7 +58,7 @@ EventPtr createRandomEvent(const Scope& scope) {
                         new string(rsc::misc::randAlnumStr(30))));
     }
 
-    event->setEventId(rsc::misc::UUID(), rand());
+    event->setId(rsc::misc::UUID(), rand());
     event->setMethod(rsc::misc::randAlnumStr(5));
     event->mutableMetaData().setCreateTime(boost::uint64_t(rand()));
     event->mutableMetaData().setSendTime(boost::uint64_t(rand()));
@@ -122,8 +122,8 @@ TEST(EventsByScopeMapConverterTest, testRoundtrip) {
             EventPtr convertedEvent = *convertedIt;
 
             EXPECT_EQ(originalEvent->getCauses(), convertedEvent->getCauses());
-            EXPECT_EQ(originalEvent->getEventId(),
-                    convertedEvent->getEventId());
+            EXPECT_EQ(originalEvent->getId(),
+                    convertedEvent->getId());
             EXPECT_EQ(originalEvent->getMetaData(),
                     convertedEvent->getMetaData());
             EXPECT_EQ(originalEvent->getMethod(), convertedEvent->getMethod());

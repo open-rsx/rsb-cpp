@@ -85,7 +85,7 @@ TEST(SocketServerRoutingTest, testEventRouting) {
     serverPushReceiver->activate();
 
     EventPtr event(new Event);
-    event->setEventId(rsc::misc::UUID(), 42);
+    event->setId(rsc::misc::UUID(), 42);
     event->setType(rsc::runtime::typeName<boost::uint64_t>());
     event->setData(VoidPtr(new boost::uint64_t(123123)));
     event->setScope(scope);
