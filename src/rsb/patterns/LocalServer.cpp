@@ -145,6 +145,10 @@ std::string LocalServer::getKind() const {
     return "local-server";
 }
 
+const std::set<std::string> LocalServer::getTransportURLs() const {
+    return std::set<std::string>();
+}
+
 void LocalServer::registerMethod(const std::string& name, CallbackPtr callback) {
 
     // TODO locking?

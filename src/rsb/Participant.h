@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -27,6 +27,7 @@
 #pragma once
 
 #include <ostream>
+#include <set>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -99,6 +100,11 @@ public:
      * @return copy of this participant's config
      */
     ParticipantConfig getConfig() const;
+
+    /**
+     * TODO
+     */
+    virtual const std::set<std::string> getTransportURLs() const = 0;
 
 protected:
 

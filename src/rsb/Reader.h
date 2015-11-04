@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -27,6 +27,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 
 #include <boost/shared_ptr.hpp>
 
@@ -78,6 +79,9 @@ public:
 
     // Overrides method in Participant.
     virtual std::string getKind() const;
+
+    // Overrides method in Participant.
+    virtual const std::set<std::string> getTransportURLs() const;
 
     /**
      * Reads one event from the bus. If @a block is true, blocks until

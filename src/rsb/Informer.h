@@ -110,6 +110,9 @@ public:
     // Overrides method in Participant.
     virtual std::string getKind() const;
 
+    // Overrides method in Participant.
+    virtual const std::set<std::string> getTransportURLs() const;
+
     /**
      * Return the event payload type of this Informer.
      *

@@ -66,6 +66,11 @@ std::string InformerBase::getKind() const {
     return "informer";
 }
 
+const std::set<std::string> InformerBase::getTransportURLs() const {
+    return this->configurator->getTransportURLs();
+}
+
+
 string InformerBase::getType() const {
     return this->defaultType;
 }

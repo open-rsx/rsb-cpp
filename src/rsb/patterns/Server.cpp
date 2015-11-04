@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -58,6 +58,10 @@ void Method::deactivate() {
 
 const std::string& Method::getName() const {
     return this->name;
+}
+
+const std::set<std::string> Method::getTransportURLs() const {
+    return std::set<std::string>();
 }
 
 

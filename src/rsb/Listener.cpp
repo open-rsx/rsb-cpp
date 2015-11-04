@@ -59,6 +59,10 @@ std::string Listener::getKind() const {
     return "listener";
 }
 
+const std::set<std::string> Listener::getTransportURLs() const {
+    return d->configurator->getTransportURLs();
+}
+
 void Listener::initialize(const vector<InPushConnectorPtr>& connectors,
         const Scope& scope, const ParticipantConfig& config) {
     d->configurator.reset(

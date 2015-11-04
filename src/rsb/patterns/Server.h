@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -25,6 +25,9 @@
  * ============================================================ */
 
 #pragma once
+
+#include <string>
+#include <set>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
@@ -69,6 +72,9 @@ public:
      * Returns the name of the method.
      */
     const std::string& getName() const;
+
+    // Overrides method in Participant.
+    virtual const std::set<std::string> getTransportURLs() const;
 protected:
     /**
      * Returns the @ref Listener participant, creating it if necessary.

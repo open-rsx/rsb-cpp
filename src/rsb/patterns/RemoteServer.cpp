@@ -149,6 +149,10 @@ std::string RemoteServer::getKind() const {
     return "remote-server";
 }
 
+const std::set<std::string> RemoteServer::getTransportURLs() const {
+    return std::set<std::string>();
+}
+
 RemoteServer::RemoteMethodPtr RemoteServer::getMethod(const string& name) {
 
     boost::mutex::scoped_lock lock(this->methodsMutex);

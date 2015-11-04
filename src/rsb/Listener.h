@@ -27,6 +27,7 @@
 #pragma once
 
 #include <string>
+#include <set>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -99,6 +100,9 @@ public:
 
     // Overrides method in Participant.
     virtual std::string getKind() const;
+
+    // Overrides method in Participant.
+    virtual const std::set<std::string> getTransportURLs() const;
 
     /**
      * Adds a filter that will be applied after some time (but not immediately

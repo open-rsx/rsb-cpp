@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -55,6 +55,10 @@ Reader::Reader(const vector<InPullConnectorPtr>& connectors,
 
 std::string Reader::getKind() const {
     return "reader";
+}
+
+const std::set<std::string> Reader::getTransportURLs() const {
+    return this->configurator->getTransportURLs();
 }
 
 EventPtr Reader::read(bool block) {
