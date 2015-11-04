@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -25,6 +25,11 @@
  * ============================================================  */
 
 #include "InConnector.h"
+
+#include <boost/format.hpp>
+
+#include <rsc/os/HostInfo.h>
+#include <rsc/os/ProcessInfo.h>
 
 using namespace std;
 
@@ -61,6 +66,14 @@ void InConnector::setScope(const Scope& scope) {
 
     this->scope = scope;
 }
+
+// Overwrites method in rsb::transport::Connector.
+const std::string InConnector::getTransportURL() const {
+    return boost::str(boost::format("inprocess://%1%:%2%")
+                      % rsc::os::currentHostname()
+                      % rsc::os::currentProcessId());
+}
+
 
 void InConnector::activate() {
     RSCDEBUG(logger, "Activating");

@@ -68,6 +68,15 @@ public:
      * @throw UnsupportedQualityOfServiceException requirements cannot be met
      */
     virtual void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs) = 0;
+
+    /**
+     * Return an URL describing the transport kind and its
+     * configuration for this connector.
+     *
+     * @return A string representation of the transport URL.
+     */
+    virtual const std::string getTransportURL() const = 0;
+
 };
 
 typedef boost::shared_ptr<Connector> ConnectorPtr;

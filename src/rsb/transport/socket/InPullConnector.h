@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -84,6 +84,9 @@ public:
     void handle(rsb::EventPtr event);
 
     EventPtr raiseEvent(bool block);
+
+    // Overwrites method in ConnectorBase.
+    virtual const std::string getTransportURL() const;
 private:
     rsc::logging::LoggerPtr logger;
 

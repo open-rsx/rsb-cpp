@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2013, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -109,6 +109,9 @@ EventPtr InPullConnector::raiseEvent(bool block) {
     }
 }
 
+const std::string InPullConnector::getTransportURL() const {
+    return ConnectorBase::getTransportURL();
+}
 
 }
 }

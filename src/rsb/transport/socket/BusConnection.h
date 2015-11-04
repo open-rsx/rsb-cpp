@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -89,6 +89,8 @@ public:
 
     void sendEvent(EventPtr           event,
                    const std::string& wireSchema);
+
+    virtual const std::string getTransportURL() const;
 private:
     typedef boost::weak_ptr<Bus> WeakBusPtr;
 

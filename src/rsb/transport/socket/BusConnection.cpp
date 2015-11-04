@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -27,6 +27,7 @@
 #include "BusConnection.h"
 
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 
 #include <rsc/misc/langutils.h>
 
@@ -277,6 +278,12 @@ void BusConnection::printContents(ostream& stream) const {
     } catch (...) {
         stream << "<error printing socket info>";
     }
+}
+
+const std::string BusConnection::getTransportURL() const {
+    return boost::str(boost::format("socket://%1%:%2%")
+                      % this->socket->remote_endpoint().address().to_string()
+                      % this->socket->remote_endpoint().port());
 }
 
 }

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -69,6 +69,9 @@ public:
     void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
 
     void handle(EventPtr e);
+
+    // Overwrites method in ConnectorBase.
+    virtual const std::string getTransportURL() const;
 
     static transport::OutConnector* create(const rsc::runtime::Properties& args);
 private:

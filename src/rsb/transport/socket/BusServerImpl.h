@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -78,6 +78,7 @@ public:
     void handleIncoming(EventPtr         event,
                         BusConnectionPtr connection);
 
+    virtual const std::string getTransportURL() const;
 protected:
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket> SocketPtr;
 private:
