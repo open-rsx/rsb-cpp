@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -56,6 +56,10 @@ public:
 
     string getClassName() const {
         return "TestConnector";
+    }
+
+    const std::string getTransportURL() const {
+        return "test:";
     }
 
     EventPtr raiseEvent(bool /*block*/) {
