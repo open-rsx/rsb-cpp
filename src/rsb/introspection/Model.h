@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <string>
+#include <set>
 
 #include <boost/date_time/posix_time/ptime.hpp>
 
@@ -51,11 +52,12 @@ namespace introspection {
  */
 class ParticipantInfo {
 public:
-    ParticipantInfo(const std::string&     kind,
-                    const rsc::misc::UUID& id,
-                    const rsc::misc::UUID& parentId,
-                    const Scope&           scope,
-                    const std::string&     type);
+    ParticipantInfo(const std::string&           kind,
+                    const rsc::misc::UUID&       id,
+                    const rsc::misc::UUID&       parentId,
+                    const Scope&                 scope,
+                    const std::string&           type,
+                    const std::set<std::string>& transportURLs);
     virtual ~ParticipantInfo();
 
     const std::string& getKind() const;
@@ -67,12 +69,15 @@ public:
     const Scope& getScope() const;
 
     const std::string& getType() const;
+
+    const std::set<std::string>& getTransportURLs() const;
 private:
-    std::string     kind;
-    rsc::misc::UUID id;
-    rsc::misc::UUID parentId;
-    Scope           scope;
-    std::string     type;
+    std::string           kind;
+    rsc::misc::UUID       id;
+    rsc::misc::UUID       parentId;
+    Scope                 scope;
+    std::string           type;
+    std::set<std::string> transportURLs;
 };
 
 // ProcessInfo

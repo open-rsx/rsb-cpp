@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -156,7 +156,8 @@ void IntrospectionSender::addParticipant(ParticipantPtr participant,
                          participant->getId(),
                          (parent ? parent->getId() : rsc::misc::UUID(false)),
                          *participant->getScope(),
-                         "TODO"); // TODO type
+                         "TODO", // TODO type
+                         participant->getTransportURLs());
     this->participants.push_back(info);
 
     sendHello(info);
@@ -205,6 +206,11 @@ void IntrospectionSender::sendHello(const ParticipantInfo& participant,
     }
     hello->set_kind(participant.getKind());
     hello->set_scope(participant.getScope().toString());
+    for (std::set<std::string>::const_iterator it
+             = participant.getTransportURLs().begin();
+         it != participant.getTransportURLs().end(); ++it) {
+        hello->add_transport(*it);
+    }
 
     // Add process information.
     rsb::protocol::operatingsystem::Process* process

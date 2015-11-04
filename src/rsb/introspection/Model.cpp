@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -44,12 +44,14 @@ namespace introspection {
 
 // ParticipantInfo
 
-ParticipantInfo::ParticipantInfo(const std::string&     kind,
-                                 const rsc::misc::UUID& id,
-                                 const rsc::misc::UUID& parentId,
-                                 const Scope&           scope,
-                                 const std::string&     type)
-    : kind(kind), id(id), parentId(parentId), scope(scope), type(type) {
+ParticipantInfo::ParticipantInfo(const std::string&           kind,
+                                 const rsc::misc::UUID&       id,
+                                 const rsc::misc::UUID&       parentId,
+                                 const Scope&                 scope,
+                                 const std::string&           type,
+                                 const std::set<std::string>& transportURLs)
+    : kind(kind), id(id), parentId(parentId), scope(scope), type(type),
+      transportURLs(transportURLs) {
 }
 
 ParticipantInfo::~ParticipantInfo() {
@@ -74,6 +76,11 @@ const Scope& ParticipantInfo::getScope() const {
 const std::string& ParticipantInfo::getType() const {
     return this->type;
 }
+
+const std::set<std::string>& ParticipantInfo::getTransportURLs() const {
+    return this->transportURLs;
+}
+
 
 // ProcessInfo
 
