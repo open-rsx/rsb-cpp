@@ -82,6 +82,15 @@ void OutRouteConfigurator::printContents(ostream& stream) const {
             << d->shutdown;
 }
 
+const std::set<std::string> OutRouteConfigurator::getTransportURLs() const {
+    std::set<std::string> result;
+    for (ConnectorList::iterator it = d->connectors.begin();
+         it != d->connectors.end(); ++it) {
+        result.insert((*it)->getTransportURL());
+    }
+    return result;
+}
+
 void OutRouteConfigurator::activate() {
     RSCDEBUG(d->logger, "Activating");
 

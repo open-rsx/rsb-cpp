@@ -84,6 +84,15 @@ void InRouteConfigurator::printContents(ostream& stream) const {
             << ", shutdown = " << d->shutdown;
 }
 
+const std::set<std::string> InRouteConfigurator::getTransportURLs() const {
+    std::set<std::string> result;
+    for (ConnectorSet::iterator it = d->connectors.begin();
+         it != d->connectors.end(); ++it) {
+        result.insert((*it)->getTransportURL());
+    }
+    return result;
+}
+
 void InRouteConfigurator::activate() {
     RSCDEBUG(d->logger, "Activating");
 

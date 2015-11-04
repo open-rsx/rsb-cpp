@@ -66,6 +66,8 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream& stream) const;
 
+    const std::set<std::string> getTransportURLs() const;
+
     void activate();
     void deactivate();
 
