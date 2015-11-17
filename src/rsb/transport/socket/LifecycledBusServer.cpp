@@ -91,6 +91,10 @@ void LifecycledBusServer::handleIncoming(EventPtr event,
     this->server->handleIncoming(event, connection);
 }
 
+const string LifecycledBusServer::getTransportURL() const {
+    return this->server->getTransportURL();
+}
+
 void LifecycledBusServer::printContents(std::ostream& stream) const {
     stream << this->server;
 }

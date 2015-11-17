@@ -69,6 +69,8 @@ public:
     void handleIncoming(EventPtr         event,
                         BusConnectionPtr connection);
 
+    virtual const std::string getTransportURL() const;
+
     virtual void printContents(std::ostream& stream) const;
 
 private:
