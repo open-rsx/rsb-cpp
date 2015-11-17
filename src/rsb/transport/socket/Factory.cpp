@@ -71,7 +71,7 @@ boost::shared_ptr<BusType> Factory::searchInMap(const Endpoint& endpoint,
         if (result) {
             checkOptions(result, tcpnodelay);
             RSCDEBUG(logger,
-                    "Found existing bus client " << result
+                    "Found existing bus " << result
                             << " without resolving");
             return result;
         } else {
