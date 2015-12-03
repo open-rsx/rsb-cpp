@@ -195,7 +195,7 @@ boost::signals2::connection participantDestroyedConnection;
 
 extern "C" {
 
-    void RSC_PLUGIN_INIT_SYMBOL() {
+    RSC_PLUGIN_INIT_SIGNATURE() {
         // Register converters.
         rsc::logging::LoggerPtr logger = rsc::logging::Logger::getLogger("rsb.introspection");
         RSCDEBUG(logger, "Registering converters for introspection types");
@@ -224,7 +224,7 @@ extern "C" {
             ->connect(boost::bind(&IntrospectionParticipantObserver::handleParticipantDestroyed, observer, _1));
     }
 
-    void RSC_PLUGIN_SHUTDOWN_SYMBOL() {
+    RSC_PLUGIN_SHUTDOWN_SIGNATURE() {
         rsc::logging::LoggerPtr logger = rsc::logging::Logger::getLogger("rsb.introspection");
 
         RSCDEBUG(logger, "Unregistering participant creation and destruction hooks");
