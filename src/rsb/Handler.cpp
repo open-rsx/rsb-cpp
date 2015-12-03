@@ -48,10 +48,8 @@ set<string> Handler::getMethods() const {
 }
 
 bool Handler::acceptsMethod(const string& method) const {
-    if (methods.empty()) {
-        return true;
-    }
-    return methods.count(method);
+    return this->methods.empty()
+        || (this->methods.find(method) != this->methods.end());
 }
 
 EventFunctionHandler::EventFunctionHandler(const EventFunction& function,

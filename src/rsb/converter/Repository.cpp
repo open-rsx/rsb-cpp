@@ -41,7 +41,7 @@ static boost::mutex repositoriesByNameMutex;
 void* converterRepositoryByName(const string &wireTypeName,
         RepositoryCreater &creater) {
     boost::mutex::scoped_lock lock(repositoriesByNameMutex);
-    if (repositoriesByName.count(wireTypeName) == 0) {
+    if (repositoriesByName.find(wireTypeName) == repositoriesByName.end()) {
         repositoriesByName[wireTypeName] = creater.create();
     }
     return repositoriesByName[wireTypeName];

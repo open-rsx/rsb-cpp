@@ -181,7 +181,7 @@ bool Event::removeCause(const EventId& id) {
 }
 
 bool Event::isCause(const EventId& id) const {
-    return d->causes.count(id) > 0;
+    return this->d->causes.find(id) != this->d->causes.end();
 }
 
 set<EventId> Event::getCauses() const {

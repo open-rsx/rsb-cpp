@@ -171,16 +171,16 @@ set<string> MetaData::userTimeKeys() const {
 }
 
 bool MetaData::hasUserTime(const string& key) const {
-    return userTimes.count(key) > 0;
+    return this->userTimes.find(key) != this->userTimes.end();
 }
 
 boost::uint64_t MetaData::getUserTime(const string& key) const {
-    map<string, boost::uint64_t>::const_iterator it = userTimes.find(key);
-    if (it == userTimes.end()) {
+    map<string, boost::uint64_t>::const_iterator it
+        = this->userTimes.find(key);
+    if (it == this->userTimes.end()) {
         throw invalid_argument("There is no user time with key '" + key + "'.");
-    } else {
-        return it->second;
     }
+    return it->second;
 }
 
 void MetaData::setUserTime(const string& key, const boost::uint64_t& time) {
@@ -217,16 +217,16 @@ set<string> MetaData::userInfoKeys() const {
 }
 
 bool MetaData::hasUserInfo(const string& key) const {
-    return userInfos.count(key);
+    return this->userInfos.find(key) != this->userInfos.end();
 }
 
 string MetaData::getUserInfo(const string& key) const {
-    if (userInfos.count(key)) {
-        return userInfos.find(key)->second;
-    } else {
+    map<string, string>::const_iterator it = this->userInfos.find(key);
+    if (it == this->userInfos.end()) {
         throw invalid_argument(
                 "No meta info registered under key '" + key + "'");
     }
+    return it->second;
 }
 
 void MetaData::setUserInfo(const string& key, const string& value) {

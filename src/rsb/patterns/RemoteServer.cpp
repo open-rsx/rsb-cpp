@@ -157,7 +157,7 @@ RemoteServer::RemoteMethodPtr RemoteServer::getMethod(const string& name) {
 
     boost::mutex::scoped_lock lock(this->methodsMutex);
 
-    if (!this->methods.count(name)) {
+    if (this->methods.find(name) == this->methods.end()) {
         RemoteMethodPtr method
             = getFactory().createRemoteMethod(getScope()->concat(Scope("/" + name)),
                                               this->listenerConfig,

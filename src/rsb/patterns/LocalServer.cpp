@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- *               2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -154,7 +154,7 @@ void LocalServer::registerMethod(const std::string& name, CallbackPtr callback) 
     // TODO locking?
 
     // check that method does not exist
-    if (this->methods.count(name)) {
+    if (this->methods.find(name) != this->methods.end()) {
         throw MethodExistsException(name, getScope()->toString());
     }
 
