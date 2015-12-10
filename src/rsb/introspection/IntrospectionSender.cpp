@@ -119,13 +119,14 @@ struct QueryHandler : public Handler {
 // @author jmoringe
 struct EchoCallback : public patterns::LocalServer::EventCallback {
     EventPtr call(const std::string& /*methodName*/, EventPtr request) {
-        request->mutableMetaData()
-            .setUserTime("request.send",
-                         request->getMetaData().getSendTime());
-        request->mutableMetaData()
-            .setUserTime("request.receive",
-                         request->getMetaData().getReceiveTime());
-        return request;
+        EventPtr reply(new Event(request->getScope(),
+                                 request->getData(),
+                                 request->getType()));
+        reply->mutableMetaData().setUserTime("request.send",
+                                             request->getMetaData().getSendTime());
+        reply->mutableMetaData().setUserTime("request.receive",
+                                             request->getMetaData().getReceiveTime());
+        return reply;
     }
 };
 
