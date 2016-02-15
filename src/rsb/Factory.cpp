@@ -207,6 +207,7 @@ Factory::Factory() :
         defaultPath.push_back(Version::libdir() / Version::buildPluginPathSuffix());
         rsc::plugins::Configurator configurator(pluginManager, defaultPath);
         provideConfigOptions(configurator);
+        configurator.execute(true);
     }
     factoryWhileLoadingPlugins = NULL; // TODO unwind-protect
 
