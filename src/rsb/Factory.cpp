@@ -3,7 +3,7 @@
  * This file is a part of the RSB project.
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012, 2013, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2013, 2014, 2016 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -190,7 +190,7 @@ Factory::Factory() :
     // 1. $HOME/.$RSB_PLUGIN_PATH_SUFFIX
     // 2. $libdir/$RSB_PLUGIN_PATH_SUFFIX
     RSCINFO(this->logger, "Processing plugin configuration");
-    {
+    try {
         factoryWhileLoadingPlugins = this;
 
         vector<boost::filesystem::path> defaultPath;
@@ -208,8 +208,11 @@ Factory::Factory() :
         rsc::plugins::Configurator configurator(pluginManager, defaultPath);
         provideConfigOptions(configurator);
         configurator.execute(true);
+    } catch (...) {
+        factoryWhileLoadingPlugins = NULL;
+        throw;
     }
-    factoryWhileLoadingPlugins = NULL; // TODO unwind-protect
+    factoryWhileLoadingPlugins = NULL;
 
     // Setup default participant config
     //
