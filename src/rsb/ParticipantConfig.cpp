@@ -390,7 +390,7 @@ void ParticipantConfig::printContents(std::ostream& stream) const {
            << ", transports = " << this->getTransports(true)
            << ", eventReceivingStrategy = " << this->eventReceivingStrategy
            << ", eventSendingStrategy = " << this->eventSendingStrategy
-           << ", options = " << this->options << "]";
+           << ", options = " << this->options;
 }
 
 }
