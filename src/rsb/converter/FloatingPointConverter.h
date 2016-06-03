@@ -95,7 +95,7 @@ public:
  *
  * @author jmoringe
  */
-RSB_EXPORT class FloatConverter: public FloatingPointConverter<float> {
+class RSB_EXPORT FloatConverter: public FloatingPointConverter<float> {
 public:
     FloatConverter();
 };
@@ -105,7 +105,7 @@ public:
  *
  * @author jmoringe
  */
-RSB_EXPORT class DoubleConverter: public FloatingPointConverter<double> {
+class RSB_EXPORT DoubleConverter: public FloatingPointConverter<double> {
 public:
     DoubleConverter();
 };
