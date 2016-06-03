@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2013, 2016 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,6 +28,7 @@
 #include "rsb/Handler.h"
 
 #include <iostream>
+#include <limits>
 
 #include <boost/bind.hpp>
 
@@ -43,6 +44,7 @@
 #include "rsb/converter/Uint32Converter.h"
 #include "rsb/converter/Uint64Converter.h"
 #include "rsb/converter/Int64Converter.h"
+#include "rsb/converter/FloatingPointConverter.h"
 #include "rsb/converter/VoidConverter.h"
 
 using namespace std;
@@ -156,6 +158,60 @@ TEST_P(Uint32ConverterTest, testRoundtrip)
 
 INSTANTIATE_TEST_CASE_P(DefaultConverterTest, Uint32ConverterTest,
                         ::testing::Values<boost::uint32_t>(0, 1, 1234242));
+
+class FloatConverterTest: public ::testing::TestWithParam<float> {
+};
+
+TEST_P(FloatConverterTest, testRoundtrip)
+{
+
+    FloatConverter c;
+    string wire;
+    float expected = GetParam();
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<float>(),
+                                boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(expected, *(boost::static_pointer_cast<float>(result.second)));
+
+}
+
+INSTANTIATE_TEST_CASE_P(DefaultConverterTest, FloatConverterTest,
+                        ::testing::Values<float>(0.0, 1.0, 1.5, 1e9,
+                                                 -0.0, -1.0, -1.5, -1e9,
+                                                 std::numeric_limits<float>::infinity(),
+                                                 std::numeric_limits<float>::min(),
+                                                 // C++11
+                                                 //std::numeric_limits<float>::lowest(),
+                                                 std::numeric_limits<float>::max()));
+
+class DoubleConverterTest: public ::testing::TestWithParam<double> {
+};
+
+TEST_P(DoubleConverterTest, testRoundtrip)
+{
+
+    DoubleConverter c;
+    string wire;
+    double expected = GetParam();
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<double>(),
+                                boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(expected, *(boost::static_pointer_cast<double>(result.second)));
+
+}
+
+INSTANTIATE_TEST_CASE_P(DefaultConverterTest, DoubleConverterTest,
+                        ::testing::Values<double>(0.0, 1.0, 1.5, 1e9,
+                                                  -0.0, -1.0, -1.5, -1e9,
+                                                  std::numeric_limits<double>::infinity(),
+                                                  std::numeric_limits<double>::min(),
+                                                  // C++11
+                                                  //std::numeric_limits<double>::lowest(),
+                                                  std::numeric_limits<double>::max()));
 
 TEST(VoidConverterTest, testRoundtrip)
 {

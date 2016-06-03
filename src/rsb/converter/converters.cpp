@@ -36,6 +36,7 @@
 #include "StringConverter.h"
 #include "Int64Converter.h"
 #include "Uint64Converter.h"
+#include "FloatingPointConverter.h"
 #include "VoidConverter.h"
 
 using namespace std;
@@ -62,6 +63,10 @@ void registerDefaultConverters() {
                 Converter<std::string>::Ptr(new Uint64Converter));
         converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new Int64Converter));
+        converterRepository<string>()->registerConverter(
+            Converter<std::string>::Ptr(new FloatConverter));
+        converterRepository<string>()->registerConverter(
+            Converter<std::string>::Ptr(new DoubleConverter));
         converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new VoidConverter));
         registered = true;
