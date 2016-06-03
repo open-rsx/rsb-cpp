@@ -57,6 +57,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/TypeNameConverterPredicate.cpp
             rsb/converter/Uint32Converter.cpp
             rsb/converter/Uint64Converter.cpp
+            rsb/converter/FloatingPointConverter.cpp
             rsb/converter/VoidConverter.cpp
             rsb/converter/converters.cpp
 
@@ -150,6 +151,7 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/TypeNameConverterPredicate.h
             rsb/converter/Uint32Converter.h
             rsb/converter/Uint64Converter.h
+            rsb/converter/FloatingPointConverter.h
             rsb/converter/VoidConverter.h
             rsb/converter/RosettaConverter.h
             rsb/converter/converters.h
