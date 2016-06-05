@@ -165,14 +165,39 @@ Factory& getFactory() {
     }
 }
 
+struct ConfigDebugPrinter {
+    ConfigDebugPrinter(const std::string& phase, bool enabled)
+        : phase(phase), enabled(enabled) {
+        if (this->enabled){
+            std::cerr << "Starting processing " << this->phase << " configuration"
+                      << std::endl << std::endl;
+        }
+    }
+
+    ~ConfigDebugPrinter() {
+        if (this->enabled) {
+            std::cerr << std::endl
+                      << "Finished processing " << this->phase << " configuration"
+                      << std::endl << std::endl;
+        }
+    }
+
+    std::string phase;
+    bool        enabled;
+};
+
 Factory::Factory() :
     logger(Logger::getLogger("rsb.Factory")),
     pluginManager(new rsc::plugins::Manager()),
     signalParticipantCreated(new SignalParticipantCreated),
     signalParticipantDestroyed(new SignalParticipantDestroyed) {
 
+    bool debugConfig = getEnvironmentVariable("__CONFIG_DEBUG");
+
     // Configure RSC-based logging.
     {
+        ConfigDebugPrinter printer("RSC-based logging", debugConfig);
+
         rsc::logging::OptionBasedConfigurator configurator;
         configure(configurator, "rsb.conf", "RSC_", 0, 0, false, Version::installPrefix());
     }
@@ -191,6 +216,8 @@ Factory::Factory() :
     // 2. $libdir/$RSB_PLUGIN_PATH_SUFFIX
     RSCINFO(this->logger, "Processing plugin configuration");
     try {
+        ConfigDebugPrinter printer("plugin", debugConfig);
+
         factoryWhileLoadingPlugins = this;
 
         vector<boost::filesystem::path> defaultPath;
@@ -222,7 +249,9 @@ Factory::Factory() :
     // + Out
     // Disable discovered connectors with the exception of the
     // socket transport.
-    set<string> availableTransports = getAvailableTransports(DIRECTION_IN_PUSH | DIRECTION_IN_PULL | DIRECTION_OUT);
+    set<string> availableTransports = getAvailableTransports(DIRECTION_IN_PUSH
+                                                             | DIRECTION_IN_PULL
+                                                             | DIRECTION_OUT);
 
     this->defaultConfig = ParticipantConfig();
     for (set<string>::const_iterator it = availableTransports.begin();
@@ -239,13 +268,22 @@ Factory::Factory() :
 
     // Merge with user configuration (configuration files, environment
     // variables)
-    provideConfigOptions(this->defaultConfig);
+    {
+        ConfigDebugPrinter printer("default participant", debugConfig);
+
+        provideConfigOptions(this->defaultConfig);
+    }
+    if (debugConfig) {
+        std::cerr << "Default participant configuration" << std::endl
+                  << defaultConfig << std::endl << std::endl;
+    }
 
     // Issue a warning if the combination of available transport
     // implementations and user configuration leads to no enabled
     // transports.
     if (this->defaultConfig.getTransports().empty()) {
-        RSCWARN(logger, "No transports are enabled. This is probably a configuration error or an internal RSB error.");
+        RSCWARN(logger, "No transports are enabled. This is probably a"
+                        " configuration error or an internal RSB error.");
     }
 
     RSCDEBUG(logger, "Default config " << defaultConfig);
