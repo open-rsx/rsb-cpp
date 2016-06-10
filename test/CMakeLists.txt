@@ -63,6 +63,7 @@ SET(CORE_TEST_SOURCES rsbtest_core.cpp
                       rsb/converter/TestConverterTest.cpp
 
                       rsb/filter/TypeFilterTest.cpp
+                      rsb/filter/CauseFilterTest.cpp
 
                       rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
 
