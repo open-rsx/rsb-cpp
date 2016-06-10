@@ -44,7 +44,6 @@
 namespace rsb {
 
 class EventId;
-typedef boost::shared_ptr<EventId> EventIdPtr;
 class MetaData;
 class Scope;
 typedef boost::shared_ptr<Scope> ScopePtr;
