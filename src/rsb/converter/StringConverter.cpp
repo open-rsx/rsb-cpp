@@ -26,8 +26,6 @@
 
 #include "StringConverter.h"
 
-#include <rsc/misc/Registry.h>
-
 using namespace std;
 
 namespace rsb {
