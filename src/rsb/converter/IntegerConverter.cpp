@@ -2,8 +2,7 @@
  *
  * This file is a part of the RSB project
  *
- * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2016 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -25,41 +24,26 @@
  *
  * ============================================================ */
 
-#pragma once
-
-#include <string>
-
-#include <boost/shared_ptr.hpp>
-
-#include "Converter.h"
-
-#include "rsb/rsbexports.h"
+#include "IntegerConverter.h"
 
 namespace rsb {
 namespace converter {
 
-/**
- * Converter for the uint64 type.
- *
- * @author jwienke
- * @author jmoringe
- */
-class RSB_EXPORT Uint64Converter: public Converter<std::string> {
-public:
-    Uint64Converter();
-    virtual ~Uint64Converter();
+Uint32Converter::Uint32Converter()
+    : IntegerConverter<boost::uint32_t>("uint32") {
+}
 
-    std::string serialize(const AnnotatedData& data, std::string& wire);
-    AnnotatedData deserialize(const std::string& wireSchema,
-                              const std::string& wire);
+Uint64Converter::Uint64Converter()
+    : IntegerConverter<boost::uint64_t>("uint64") {
+}
 
-private:
+Int32Converter::Int32Converter()
+    : IntegerConverter<boost::int32_t>("int32") {
+}
 
-    static const std::string WIRE_SCHEMA;
-
-};
-
-typedef boost::shared_ptr<Uint64Converter> Uint64ConverterPtr;
+Int64Converter::Int64Converter()
+    : IntegerConverter<boost::int64_t>("int64") {
+}
 
 }
 }

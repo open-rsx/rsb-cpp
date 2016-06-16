@@ -34,8 +34,7 @@
 #include "EventsByScopeMapConverter.h"
 #include "EventIdConverter.h"
 #include "StringConverter.h"
-#include "Int64Converter.h"
-#include "Uint64Converter.h"
+#include "IntegerConverter.h"
 #include "FloatingPointConverter.h"
 #include "VoidConverter.h"
 
