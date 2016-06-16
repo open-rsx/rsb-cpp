@@ -57,6 +57,7 @@ SET(SOURCES rsb/CommException.cpp
             rsb/converter/IntegerConverter.cpp
             rsb/converter/FloatingPointConverter.cpp
             rsb/converter/VoidConverter.cpp
+            rsb/converter/ScopeConverter.cpp
             rsb/converter/converters.cpp
 
             rsb/eventprocessing/Handler.cpp
@@ -150,6 +151,7 @@ SET(HEADERS rsb/CommException.h
             rsb/converter/IntegerConverter.h
             rsb/converter/FloatingPointConverter.h
             rsb/converter/VoidConverter.h
+            rsb/converter/ScopeConverter.h
             rsb/converter/RosettaConverter.h
             rsb/converter/converters.h
 

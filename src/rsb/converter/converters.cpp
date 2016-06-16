@@ -37,6 +37,7 @@
 #include "IntegerConverter.h"
 #include "FloatingPointConverter.h"
 #include "VoidConverter.h"
+#include "ScopeConverter.h"
 
 using namespace std;
 
@@ -68,6 +69,8 @@ void registerDefaultConverters() {
             Converter<std::string>::Ptr(new DoubleConverter));
         converterRepository<string>()->registerConverter(
                 Converter<std::string>::Ptr(new VoidConverter));
+        converterRepository<string>()->registerConverter(
+            Converter<std::string>::Ptr(new ScopeConverter));
         registered = true;
     }
 

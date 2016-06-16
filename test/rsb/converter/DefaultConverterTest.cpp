@@ -38,12 +38,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "rsb/Scope.h"
+
 #include "rsb/converter/BoolConverter.h"
 #include "rsb/converter/ByteArrayConverter.h"
 #include "rsb/converter/StringConverter.h"
 #include "rsb/converter/IntegerConverter.h"
 #include "rsb/converter/FloatingPointConverter.h"
 #include "rsb/converter/VoidConverter.h"
+#include "rsb/converter/ScopeConverter.h"
 
 using namespace std;
 
@@ -245,6 +248,29 @@ TEST(VoidConverterTest, testRoundtrip)
     EXPECT_EQ(rsc::runtime::typeName<void>(), result.first);
 
 }
+
+class ScopeConverterTest: public ::testing::TestWithParam<Scope> {
+};
+
+TEST_P(ScopeConverterTest, testRoundtrip)
+{
+
+    ScopeConverter c;
+    string wire;
+    Scope expected = GetParam();
+    string schema
+        = c.serialize(make_pair(rsc::runtime::typeName<Scope>(),
+                                boost::shared_ptr<void>(&expected, rsc::misc::NullDeleter())),
+                      wire);
+    AnnotatedData result = c.deserialize(schema, wire);
+    EXPECT_EQ(expected, *(boost::static_pointer_cast<Scope>(result.second)));
+
+}
+
+INSTANTIATE_TEST_CASE_P(DefaultConverterTest, ScopeConverterTest,
+                        ::testing::Values(Scope("/"),
+                                          Scope("/foo"),
+                                          Scope("/foo/bar")));
 
 TEST(ByteArrayConverterTest, testDeserializeEmpty)
 {
