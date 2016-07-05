@@ -192,7 +192,7 @@ Factory::Factory() :
     signalParticipantCreated(new SignalParticipantCreated),
     signalParticipantDestroyed(new SignalParticipantDestroyed) {
 
-    bool debugConfig = getEnvironmentVariable("__CONFIG_DEBUG");
+    bool debugConfig = getEnvironmentVariable("__CONFIG_DEBUG").get();
 
     // Configure RSC-based logging.
     {
