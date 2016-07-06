@@ -88,7 +88,7 @@ TEST(ParallelEventReceivingStrategyTest, testReceiving)
             continue;
         }
     }
-    EXPECT_TRUE(queueResult);
+    EXPECT_TRUE(queueResult.get());
     EXPECT_TRUE(okQueue->empty());
 
 }
@@ -144,7 +144,7 @@ TEST(ParallelEventReceivingStrategyTest, testMethodFiltering)
             continue;
         }
     }
-    EXPECT_TRUE(queueResult);
+    EXPECT_TRUE(queueResult.get());
     EXPECT_TRUE(okQueue->empty());
 
 }
