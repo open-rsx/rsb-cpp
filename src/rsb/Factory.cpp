@@ -154,6 +154,10 @@ prepareConnectorOptions(const rsb::ParticipantConfig::Transport& config,
 
 namespace rsb {
 
+const std::string CONFIG_DEBUG_ENVIRONMENT_VARIABLE = "RSB_CONFIG_DEBUG";
+
+const std::string CONFIG_FILES_ENVIRONEMNT_VARIABLE = "RSB_CONFIG_FILES";
+
 Factory* factoryWhileLoadingPlugins = NULL;
 
 Factory& getFactory() {
@@ -192,14 +196,14 @@ Factory::Factory() :
     signalParticipantCreated(new SignalParticipantCreated),
     signalParticipantDestroyed(new SignalParticipantDestroyed) {
 
-    bool debugConfig = getEnvironmentVariable("__CONFIG_DEBUG").get();
+    bool debugConfig = getEnvironmentVariable("RSB_CONFIG_DEBUG").get();
 
     // Configure RSC-based logging.
     {
         ConfigDebugPrinter printer("RSC-based logging", debugConfig);
 
         rsc::logging::OptionBasedConfigurator configurator;
-        configure(configurator, "rsb.conf", "RSC_", 0, 0, false, Version::installPrefix());
+        provideConfigOptions("RSC_", configurator, false);
     }
 
     // Register default implementation for all extension points.
@@ -233,7 +237,7 @@ Factory::Factory() :
         }
         defaultPath.push_back(Version::libdir() / Version::buildPluginPathSuffix());
         rsc::plugins::Configurator configurator(pluginManager, defaultPath);
-        provideConfigOptions(configurator);
+        provideConfigOptions("RSB_", configurator);
         configurator.execute(true);
     } catch (...) {
         factoryWhileLoadingPlugins = NULL;
@@ -271,7 +275,7 @@ Factory::Factory() :
     {
         ConfigDebugPrinter printer("default participant", debugConfig);
 
-        provideConfigOptions(this->defaultConfig);
+        provideConfigOptions("RSB_", this->defaultConfig);
     }
     if (debugConfig) {
         std::cerr << "Default participant configuration" << std::endl
@@ -292,9 +296,12 @@ Factory::Factory() :
 Factory::~Factory() {
 }
 
-void Factory::provideConfigOptions(OptionHandler& handler) {
-    configure(handler, "rsb.conf", "RSB_", 0, 0, true,
-            Version::installPrefix());
+void Factory::provideConfigOptions(const std::string& environmentVariablePrefix,
+                                   OptionHandler&     handler,
+                                   bool               stripPrefix) {
+    configure(handler, "rsb.conf", environmentVariablePrefix, 0, 0, stripPrefix,
+              Version::installPrefix(), CONFIG_DEBUG_ENVIRONMENT_VARIABLE,
+              defaultConfigurationFiles(CONFIG_FILES_ENVIRONEMNT_VARIABLE));
 }
 
 SignalParticipantCreatedPtr Factory::getSignalParticipantCreated() {

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015, 2016 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -211,7 +211,7 @@ extern "C" {
 
         // Process configuration to obtain value of the
         // introspection.displayname option.
-        rsb::Factory::provideConfigOptions(*observer);
+        rsb::Factory::provideConfigOptions("RSB_", *observer);
 
         // Register participant creation hook.
         RSCDEBUG(logger, "Registering participant creation and destruction hooks");

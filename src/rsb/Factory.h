@@ -310,9 +310,12 @@ public:
      * @note that the option processing performed by this method can
      *       be expensive.
      *
+     * @param environmentVariablePrefix TODO
      * @param handler the handler to inform about options
      */
-    static void provideConfigOptions(rsc::config::OptionHandler& handler);
+    static void provideConfigOptions(const std::string&          environmentVariablePrefix,
+                                     rsc::config::OptionHandler& handler,
+                                     bool                        stripPrefix = true);
 
 private:
     /**
