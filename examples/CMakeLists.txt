@@ -13,6 +13,9 @@ MACRO(EXAMPLE NAME)
     TARGET_LINK_LIBRARIES(${BINARY} ${LIB_NAME})
 ENDMACRO()
 
+EXAMPLE(configuration-transports
+        configuration-transports.cpp)
+
 EXAMPLE(informer
         informer/informer.cpp)
 EXAMPLE(anyinformer
