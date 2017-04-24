@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2013, 2017 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -31,9 +31,13 @@
 
 #include <rsb/Factory.h>
 
+#include "testhelpers.h"
+
 using namespace std;
 
 int main() {
+
+    disableExternalConfigFiles();
 
     // This test makes a failing attempt to contact a socket transport
     // server. This used to lead to failed assertion in the socket
@@ -53,4 +57,5 @@ int main() {
     }
 
     return EXIT_SUCCESS;
+
 }

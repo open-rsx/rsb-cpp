@@ -32,6 +32,8 @@
 #include "rsb/ParticipantConfig.h"
 #include "rsb/Factory.h"
 
+#include "testhelpers.h"
+
 using namespace std;
 using namespace testing;
 using namespace rsb;
@@ -51,6 +53,10 @@ TEST(FactoryTest, testDefaultParticipantConfig)
 }
 
 int main(int argc, char** argv) {
+
+    disableExternalConfigFiles();
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
+
 }
