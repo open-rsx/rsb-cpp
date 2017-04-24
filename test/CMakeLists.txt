@@ -21,20 +21,27 @@ configure_file(testconfig.h.in ${CMAKE_CURRENT_BINARY_DIR}/testconfig.h)
 
 set(AVAILABLE_TESTS)
 
+function(test NAME)
+    set(SOURCES ${ARGN})
+    add_executable(${NAME} ${SOURCES})
+    target_link_libraries(${NAME}
+                          ${LIB_NAME}
+                          ${Boost_LIBRARIES}
+                          ${GMOCK_LIBRARIES})
+
+    add_test(${NAME}
+             ${EXECUTABLE_OUTPUT_PATH}/${NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
+    list(APPEND AVAILABLE_TESTS ${NAME})
+    set(AVAILABLE_TESTS "${AVAILABLE_TESTS}" PARENT_SCOPE)
+endfunction()
+
 # --- integration test ---
 
-set(RSB_TEST_SOURCES rsb/integrationtest.cpp
-                     rsb/InformerTask.cpp
-                     rsb/InformerTask.h)
+test(${RSB_TEST_NAME}
+     rsb/integrationtest.cpp
 
-add_executable(${RSB_TEST_NAME} ${RSB_TEST_SOURCES})
-target_link_libraries(${RSB_TEST_NAME}
-                      ${LIB_NAME}
-                      ${Boost_LIBRARIES}
-                      ${GMOCK_LIBRARIES})
-
-add_test(${RSB_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${RSB_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
-list(APPEND AVAILABLE_TESTS ${RSB_TEST_NAME})
+     rsb/InformerTask.cpp
+     rsb/InformerTask.h)
 
 # --- core test ---
 
@@ -42,59 +49,46 @@ protobuf_generate_cpp(TEST_PROTO_SOURCES TEST_PROTO_HEADERS
                       PROTOFILES   rsb/converter/TestMessage.proto
                       OUTPATH      ${CMAKE_CURRENT_BINARY_DIR})
 
-set(CORE_TEST_SOURCES rsbtest_core.cpp
-                      rsb/EventTest.cpp
-                      rsb/EventIdTest.cpp
-                      rsb/HandlerTest.cpp
-                      rsb/InformerTest.cpp
-                      rsb/MetaDataTest.cpp
-                      rsb/ParticipantConfigTest.cpp
-                      rsb/QualityOfServiceSpecTest.cpp
-                      rsb/ScopeTest.cpp
+test(${CORE_TEST_NAME}
+     ${TEST_PROTO_SOURCES}  ${TEST_PROTO_HEADERS}
 
-                      rsb/converter/DefaultConverterTest.cpp
-                      rsb/converter/EventCollectionsConverterTest.cpp
-                      rsb/converter/RegexConverterPredicateTest.cpp
-                      rsb/converter/PredicateConverterListTest.cpp
-                      rsb/converter/ProtocolBufferConverterLinkingTest.cpp
-                      rsb/converter/ProtocolBufferConverterTest.cpp
-                      rsb/converter/TestConverter.cpp
-                      rsb/converter/TestConverter.h
-                      rsb/converter/TestConverterTest.cpp
+     rsbtest_core.cpp
 
-                      rsb/filter/TypeFilterTest.cpp
-                      rsb/filter/CauseFilterTest.cpp
+     rsb/EventTest.cpp
+     rsb/EventIdTest.cpp
+     rsb/HandlerTest.cpp
+     rsb/InformerTest.cpp
+     rsb/MetaDataTest.cpp
+     rsb/ParticipantConfigTest.cpp
+     rsb/QualityOfServiceSpecTest.cpp
+     rsb/ScopeTest.cpp
 
-                      rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
+     rsb/converter/DefaultConverterTest.cpp
+     rsb/converter/EventCollectionsConverterTest.cpp
+     rsb/converter/RegexConverterPredicateTest.cpp
+     rsb/converter/PredicateConverterListTest.cpp
+     rsb/converter/ProtocolBufferConverterLinkingTest.cpp
+     rsb/converter/ProtocolBufferConverterTest.cpp
+     rsb/converter/TestConverter.cpp
+     rsb/converter/TestConverter.h
+     rsb/converter/TestConverterTest.cpp
 
-                      rsb/util/EventQueuePushHandlerTest.cpp
-                      rsb/util/MD5Test.cpp
-                      rsb/util/QueuePushHandlerTest.cpp
+     rsb/filter/TypeFilterTest.cpp
+     rsb/filter/CauseFilterTest.cpp
 
-                      rsb/transport/FactoryTest.cpp)
+     rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
 
-add_executable(${CORE_TEST_NAME} ${CORE_TEST_SOURCES} ${TEST_PROTO_SOURCES} ${TEST_PROTO_HEADERS})
-target_link_libraries(${CORE_TEST_NAME}
-                      ${LIB_NAME}
-                      ${Boost_LIBRARIES}
-                      ${GMOCK_LIBRARIES})
+     rsb/util/EventQueuePushHandlerTest.cpp
+     rsb/util/MD5Test.cpp
+     rsb/util/QueuePushHandlerTest.cpp
 
-add_test(${CORE_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${CORE_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
-list(APPEND AVAILABLE_TESTS ${CORE_TEST_NAME})
+     rsb/transport/FactoryTest.cpp)
 
 # --- factory test ---
 # needs to be externalized to start with a fresh factory instance
 
-set(FACTORY_TEST_SOURCES rsb/FactoryTest.cpp)
-
-add_executable(${FACTORY_TEST_NAME} ${FACTORY_TEST_SOURCES})
-target_link_libraries(${FACTORY_TEST_NAME}
-                      ${LIB_NAME}
-                      ${Boost_LIBRARIES}
-                      ${GMOCK_LIBRARIES})
-
-add_test(${FACTORY_TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${FACTORY_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
-list(APPEND AVAILABLE_TESTS ${FACTORY_TEST_NAME})
+test(${FACTORY_TEST_NAME}
+     rsb/FactoryTest.cpp)
 
 # --- core death tests ---
 
@@ -163,23 +157,13 @@ endif()
 
 # --- toplevel catch test ---
 
-
 if(WITH_SOCKET_TRANSPORT)
-
-    set(TOPLEVEL_CATCH_TEST_SOURCES rsbtest_toplevel_catch)
-    add_executable(${TOPLEVEL_CATCH_TEST_NAME} ${TOPLEVEL_CATCH_TEST_SOURCES})
-    target_link_libraries(${TOPLEVEL_CATCH_TEST_NAME}
-                          ${LIB_NAME}
-                          ${Boost_LIBRARIES}
-                          ${GMOCK_LIBRARIES})
-
-    add_test(${TOPLEVEL_CATCH_TEST_NAME}
-             ${EXECUTABLE_OUTPUT_PATH}/${TOPLEVEL_CATCH_TEST_NAME} "--gtest_output=xml:${TEST_RESULT_DIR}/")
-    list(APPEND AVAILABLE_TESTS ${TOPLEVEL_CATCH_TEST_NAME})
-
+    test(${TOPLEVEL_CATCH_TEST_NAME}
+         rsbtest_toplevel_catch.cpp)
 endif()
 
 # --- pkg-config test ---
+
 if(UNIX AND WITH_PKGCONFIG_TEST)
     configure_file(pkg-config-test.sh.in "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
     add_test(${PKGCONFIG_TEST_NAME} "${CMAKE_CURRENT_BINARY_DIR}/pkg-config-test.sh")
