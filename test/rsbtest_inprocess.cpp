@@ -32,7 +32,12 @@ using namespace std;
 using namespace testing;
 
 int main(int argc, char* argv[]) {
+
     srand(time(NULL));
+
+    disableExternalConfigFiles();
+
     InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
+
 }
