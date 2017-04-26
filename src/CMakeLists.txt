@@ -1,32 +1,32 @@
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb)
 
-PROTOBUF_GENERATE_CPP(PROTO_SOURCES PROTO_HEADERS
+protobuf_generate_cpp(PROTO_SOURCES PROTO_HEADERS
                       PROTOFILES   ${RSBPROTO_FILES}
                       PROTOROOT    ${RSBPROTO_ROOT}
                       EXPORT_MACRO RSB_PROTOCOL_EXPORT
                       OUTPATH      ${CMAKE_CURRENT_BINARY_DIR})
 
-STRING(REPLACE "." "_" RSB_EXPORTS_NAME ${LIB_NAME})
-CONFIGURE_FILE(rsb/rsbexports.h.in
+string(REPLACE "." "_" RSB_EXPORTS_NAME ${LIB_NAME})
+configure_file(rsb/rsbexports.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/rsb/rsbexports.h
                @ONLY)
 
 # version
-INCLUDE(PadString)
-PAD_STRING(MAJOR_PADDED 2 "0" ${RSB_VERSION_MAJOR})
-PAD_STRING(MINOR_PADDED 2 "0" ${RSB_VERSION_MINOR})
-PAD_STRING(PATCH_PADDED 2 "0" ${RSB_VERSION_PATCH})
-SET(RSB_VERSION_NUMERIC "${MAJOR_PADDED}${MINOR_PADDED}${PATCH_PADDED}")
-CONFIGURE_FILE(rsb/Version.cpp.in
+include(PadString)
+pad_string(MAJOR_PADDED 2 "0" ${RSB_VERSION_MAJOR})
+pad_string(MINOR_PADDED 2 "0" ${RSB_VERSION_MINOR})
+pad_string(PATCH_PADDED 2 "0" ${RSB_VERSION_PATCH})
+set(RSB_VERSION_NUMERIC "${MAJOR_PADDED}${MINOR_PADDED}${PATCH_PADDED}")
+configure_file(rsb/Version.cpp.in
                ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.cpp
                @ONLY)
-CONFIGURE_FILE(rsb/Version.h.in
+configure_file(rsb/Version.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/rsb/Version.h
                @ONLY)
 
-SET(SOURCES rsb/CommException.cpp
+set(SOURCES rsb/CommException.cpp
             rsb/Event.cpp
             rsb/EventId.cpp
             rsb/Exception.cpp
@@ -115,7 +115,7 @@ SET(SOURCES rsb/CommException.cpp
 
             ${PROTO_SOURCES})
 
-SET(HEADERS rsb/CommException.h
+set(HEADERS rsb/CommException.h
             rsb/Event.h
             rsb/EventCollections.h
             rsb/EventId.h
@@ -214,8 +214,8 @@ SET(HEADERS rsb/CommException.h
 
             ${PROTO_HEADERS})
 
-IF(WITH_SOCKET_TRANSPORT)
-    LIST(APPEND SOURCES rsb/transport/socket/Types.cpp
+if(WITH_SOCKET_TRANSPORT)
+    list(APPEND SOURCES rsb/transport/socket/Types.cpp
                         rsb/transport/socket/BusConnection.cpp
                         rsb/transport/socket/Bus.cpp
                         rsb/transport/socket/BusServer.cpp
@@ -228,7 +228,7 @@ IF(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/LifecycledBusServer.cpp
                         rsb/transport/socket/OutConnector.cpp
                         rsb/transport/socket/Serialization.cpp)
-    LIST(APPEND HEADERS rsb/transport/socket/Types.h
+    list(APPEND HEADERS rsb/transport/socket/Types.h
                         rsb/transport/socket/BusConnection.h
                         rsb/transport/socket/Bus.h
                         rsb/transport/socket/BusServer.h
@@ -241,37 +241,37 @@ IF(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/LifecycledBusServer.h
                         rsb/transport/socket/OutConnector.h
                         rsb/transport/socket/Serialization.h)
-ENDIF()
+endif()
 
-ADD_LIBRARY(${LIB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
-TARGET_LINK_LIBRARIES(${LIB_NAME} ${PROTOBUF_LIBRARIES}
+add_library(${LIB_NAME} SHARED ${SOURCES} ${HEADERS} ${PROTO_HEADERS})
+target_link_libraries(${LIB_NAME} ${PROTOBUF_LIBRARIES}
                                   ${RSC_LIBRARIES}
                                   ${Boost_LIBRARIES}
                                   ${CMAKE_THREAD_LIBS_INIT})
-SET_TARGET_PROPERTIES(${LIB_NAME}
+set_target_properties(${LIB_NAME}
                       PROPERTIES
                       VERSION ${SO_VERSION})
 
 # export the protocol classes on windows
-IF(WIN32)
-    SET_TARGET_PROPERTIES(${LIB_NAME}
+if(WIN32)
+    set_target_properties(${LIB_NAME}
                           PROPERTIES
                           COMPILE_DEFINITIONS "${PROTOCOL_EXPORT}")
-ENDIF()
+endif()
 
 # TODO why do we have to open sockets???
-IF(WIN32)
-    TARGET_LINK_LIBRARIES(${LIB_NAME} wsock32)
-ENDIF()
+if(WIN32)
+    target_link_libraries(${LIB_NAME} wsock32)
+endif()
 
-INSTALL(TARGETS ${LIB_NAME}
+install(TARGETS ${LIB_NAME}
         EXPORT RSBDepends
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
-INSTALL_FILES_RECURSIVE("include/${INSTALL_PATH_PREFIX}" HEADERS)
+install_files_recursive("include/${INSTALL_PATH_PREFIX}" HEADERS)
 
-INCLUDE(InstallDebugSymbols)
-INSTALL_DEBUG_SYMBOLS(TARGETS ${LIB_NAME})
+include(InstallDebugSymbols)
+install_debug_symbols(TARGETS ${LIB_NAME})
 
-ADD_SUBDIRECTORY(rsb/introspection)
+add_subdirectory(rsb/introspection)

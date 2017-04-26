@@ -1,67 +1,67 @@
 # Protocol Buffers as domain objects
-PROTOBUF_GENERATE_CPP(protobuf_converter/SimpleImage.pb.cc
+protobuf_generate_cpp(protobuf_converter/SimpleImage.pb.cc
                       protobuf_converter/SimpleImage.pb.h
                       PROTOFILES protobuf_converter/SimpleImage.proto
                       PROTOROOT  ${CMAKE_CURRENT_SOURCE_DIR}
                       OUTPATH    ${CMAKE_CURRENT_BINARY_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-MACRO(EXAMPLE NAME)
-    LIST(APPEND EXAMPLES ${BINARY})
-    SET(BINARY "example-${NAME}")
-    ADD_EXECUTABLE(${BINARY} ${ARGN})
-    TARGET_LINK_LIBRARIES(${BINARY} ${LIB_NAME})
-ENDMACRO()
+macro(example NAME)
+    list(APPEND EXAMPLES ${BINARY})
+    set(BINARY "example-${NAME}")
+    add_executable(${BINARY} ${ARGN})
+    target_link_libraries(${BINARY} ${LIB_NAME})
+endmacro()
 
-EXAMPLE(configuration-transports
+example(configuration-transports
         configuration-transports.cpp)
 
-EXAMPLE(informer
+example(informer
         informer/informer.cpp)
-EXAMPLE(anyinformer
+example(anyinformer
         informer/anyInformer.cpp)
-EXAMPLE(timed-informer
+example(timed-informer
         timed_informer/informer.cpp)
-EXAMPLE(listener
+example(listener
         listener/listener.cpp)
-EXAMPLE(reader
+example(reader
         reader/reader.cpp)
 
-EXAMPLE(send-file
+example(send-file
         informer/sendFile.cpp)
-EXAMPLE(receive-file
+example(receive-file
         listener/receiveFile.cpp)
 
-EXAMPLE(simple-image-sender
+example(simple-image-sender
         custom_converter/sender.cpp
         custom_converter/SimpleImageConverter.cpp)
-EXAMPLE(simple-image-sender-no-converter
+example(simple-image-sender-no-converter
         custom_converter/senderNoConverter.cpp)
 
-EXAMPLE(inter-transport-inprocess-and-socket
+example(inter-transport-inprocess-and-socket
         inter_transport/inprocess-and-socket.cpp)
-EXAMPLE(inter-transport-socket-only
+example(inter-transport-socket-only
         inter_transport/socket-only.cpp)
 
-EXAMPLE(simple-image-pb-sender
+example(simple-image-pb-sender
         protobuf_converter/sender.cpp
         protobuf_converter/SimpleImage.pb.cc)
-EXAMPLE(simple-image-pb-receiver
+example(simple-image-pb-receiver
         protobuf_converter/receiver.cpp
         protobuf_converter/SimpleImage.pb.cc)
 
-EXAMPLE(queueProcessing
+example(queueProcessing
         queue_processing/queueprocessing.cpp)
 
-EXAMPLE(meta-data-sender
+example(meta-data-sender
         meta_data/sender.cpp)
-EXAMPLE(meta-data-receiver
+example(meta-data-receiver
         meta_data/receiver.cpp)
 
-EXAMPLE(server server/server.cpp)
-EXAMPLE(client server/client.cpp)
+example(server server/server.cpp)
+example(client server/client.cpp)
 
-EXAMPLE(doublecheck doublecheck.cpp)
+example(doublecheck doublecheck.cpp)
 
-ADD_LIBRARY(exampleplugin SHARED plugin/Plugin.cpp)
-TARGET_LINK_LIBRARIES(exampleplugin ${LIB_NAME})
+add_library(exampleplugin SHARED plugin/Plugin.cpp)
+target_link_libraries(exampleplugin ${LIB_NAME})
