@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2017 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -37,7 +37,11 @@
 using namespace std;
 using namespace testing;
 
-static int dummy = pullInConnectorTest();
+static int dummy
+#if defined(__GNUC__)
+__attribute__((used))
+#endif
+= pullInConnectorTest();
 
 rsb::transport::InPullConnectorPtr createInProcessInPullConnector() {
     return rsb::transport::InPullConnectorPtr(new rsb::transport::inprocess::InPullConnector());
