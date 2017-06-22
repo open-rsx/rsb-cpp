@@ -40,6 +40,10 @@
 
 #define RSB_ABI_VERSION @RSB_ABI_VERSION@
 
+// Remove warnings with macro from sys/types.h on modern GCCs
+#undef minor
+#undef major
+
 namespace rsb {
 
 class RSB_EXPORT Version {
