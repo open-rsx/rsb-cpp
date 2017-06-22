@@ -166,13 +166,13 @@ int main(int argc, char** argv) {
         cout << "  Search path: " << manager->getPath() << endl;
         cout << "  Available plugins: " << endl;
         std::set<rsc::plugins::PluginPtr> plugins = manager->getPlugins();
-        
+
         for (std::set<rsc::plugins::PluginPtr>::const_iterator it
                  = plugins.begin(); it != plugins.end(); ++it) {
             cout << "  * " << (*it)->getName() << endl;
         }
     }
-    
+
     return EXIT_SUCCESS;
 
 }
