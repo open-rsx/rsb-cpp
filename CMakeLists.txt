@@ -1,6 +1,10 @@
 # -*- mode: cmake -*-
 cmake_minimum_required(VERSION 2.6)
 
+if(POLICY CMP0053)
+    cmake_policy(SET CMP0053 OLD)
+endif()
+
 project(RSB)
 
 # default version information
