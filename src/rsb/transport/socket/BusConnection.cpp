@@ -250,7 +250,11 @@ void BusConnection::handleReadBody(const boost::system::error_code& error,
     }
 
     // Deserialize the notification.
-    this->notification.ParseFromString(this->messageReceiveBuffer);
+    if (!this->notification.ParseFromString(this->messageReceiveBuffer)) {
+        RSCWARN(logger, "Received unparseable protobuf message, closing connection");
+        performSafeCleanup("handleReadBody[parsing]");
+        return;
+    }
 
     // Construct an Event instance *without* deserializing the
     // payload. This has to be done in connectors since different
