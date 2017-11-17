@@ -33,8 +33,6 @@
 
 #include "testhelpers.h"
 
-using namespace std;
-
 int main() {
 
     disableExternalConfigFiles();
@@ -47,13 +45,13 @@ int main() {
     try {
         rsb::ParticipantConfig config = factory.getDefaultParticipantConfig();
         rsc::runtime::Properties options;
-        options.set<string>("port",   "12345");
-        options.set<string>("server", "0");
+        options.set<std::string>("port",   "12345");
+        options.set<std::string>("server", "0");
         config.mutableTransport("socket").setOptions(options);
         factory.createListener("/dummy", config);
     }
-    catch(const exception& e) {
-        cout << "caught exception at toplevel: " << e.what() << endl;
+    catch(const std::exception& e) {
+        std::cout << "caught exception at toplevel: " << e.what() << std::endl;
     }
 
     return EXIT_SUCCESS;
