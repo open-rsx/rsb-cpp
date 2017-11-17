@@ -58,10 +58,6 @@
 
 #include "InformerTask.h"
 
-using namespace std;
-
-using namespace boost;
-
 using namespace testing;
 
 using namespace rsc::threading;
@@ -76,9 +72,9 @@ using namespace rsb::eventprocessing;
 class UserInformerTask: public rsc::threading::RepetitiveTask {
 public:
 
-    vector<EventPtr> events;
+    std::vector<EventPtr> events;
 
-    UserInformerTask(Informer<string>::Ptr informer,
+    UserInformerTask(Informer<std::string>::Ptr informer,
             const unsigned int& numEvents) :
             informer(informer), numEvents(numEvents), sentEvents(0) {
 
@@ -90,8 +86,8 @@ public:
     void execute() {
         EventPtr e(
                 new Event(Scope("/blah"),
-                        boost::shared_ptr<string>(new string("hello world")),
-                        rsc::runtime::typeName<string>()));
+                          boost::shared_ptr<std::string>(new std::string("hello world")),
+                          rsc::runtime::typeName<std::string>()));
         e->mutableMetaData().setUserInfo("foo", "blubb");
         e->mutableMetaData().setUserTime("tttt");
         e->mutableMetaData().setUserTime("xxxx", boost::uint64_t(42));
@@ -104,13 +100,13 @@ public:
     }
 
 private:
-    Informer<string>::Ptr informer;
+    Informer<std::string>::Ptr informer;
     unsigned int numEvents;
     unsigned int sentEvents;
 
 };
 
-class RoundtripTest: public ::testing::TestWithParam<string> {
+class RoundtripTest: public ::testing::TestWithParam<std::string> {
 public:
     virtual ~RoundtripTest() {
     }
@@ -123,7 +119,7 @@ TEST_P(RoundtripTest, testRoundtrip) {
     ParticipantConfig config;
     ParticipantConfig::Transport transport(GetParam());
     rsc::runtime::Properties p = transport.getOptions();
-    p.set<string>("port", lexical_cast<string>(SOCKET_PORT));
+    p.set<std::string>("port", boost::lexical_cast<std::string>(SOCKET_PORT));
     transport.setOptions(p);
     config.addTransport(transport);
     config.setQualityOfServiceSpec(
@@ -135,7 +131,7 @@ TEST_P(RoundtripTest, testRoundtrip) {
     const Scope scope("/blah");
 
     ListenerPtr listener = factory.createListener(scope);
-    Informer<string>::Ptr informer = factory.createInformer<string>(scope);
+    Informer<std::string>::Ptr informer = factory.createInformer<std::string>(scope);
 
     // domain objects
     unsigned int numEvents = 10;
@@ -157,7 +153,7 @@ TEST_P(RoundtripTest, testRoundtrip) {
     observer.waitReceived();
 
     // compare events
-    vector<EventPtr> receivedEvents = observer.getEvents();
+    std::vector<EventPtr> receivedEvents = observer.getEvents();
     ASSERT_EQ(source->events.size(), receivedEvents.size());
 
     for (size_t i = 0; i < receivedEvents.size(); ++i) {
@@ -167,8 +163,8 @@ TEST_P(RoundtripTest, testRoundtrip) {
 
         EXPECT_EQ(sent->getId(), received->getId());
         EXPECT_EQ(sent->getType(), received->getType());
-        EXPECT_EQ(*(boost::static_pointer_cast<string>(sent->getData())),
-                *(boost::static_pointer_cast<string>(received->getData())));
+        EXPECT_EQ(*(boost::static_pointer_cast<std::string>(sent->getData())),
+                  *(boost::static_pointer_cast<std::string>(received->getData())));
 
         EXPECT_EQ(informer->getId(), sent->getId().getParticipantId());
         EXPECT_GT(sent->getMetaData().getCreateTime(), (boost::uint64_t) 0);
@@ -183,16 +179,16 @@ TEST_P(RoundtripTest, testRoundtrip) {
                 received->getMetaData().getReceiveTime());
         EXPECT_GE(received->getMetaData().getReceiveTime(),
                 sent->getMetaData().getSendTime());
-        set<string> userInfoKeys = received->getMetaData().userInfoKeys();
+        std::set<std::string> userInfoKeys = received->getMetaData().userInfoKeys();
         EXPECT_EQ(sent->getMetaData().userInfoKeys(), userInfoKeys);
-        for (set<string>::const_iterator keyIt = userInfoKeys.begin();
+        for (std::set<std::string>::const_iterator keyIt = userInfoKeys.begin();
                 keyIt != userInfoKeys.end(); ++keyIt) {
             EXPECT_EQ(sent->getMetaData().getUserInfo(*keyIt),
                     received->getMetaData().getUserInfo(*keyIt));
         }
-        set<string> userTimeKeys = received->getMetaData().userTimeKeys();
+        std::set<std::string> userTimeKeys = received->getMetaData().userTimeKeys();
         EXPECT_EQ(sent->getMetaData().userTimeKeys(), userTimeKeys);
-        for (set<string>::const_iterator keyIt = userTimeKeys.begin();
+        for (std::set<std::string>::const_iterator keyIt = userTimeKeys.begin();
                 keyIt != userTimeKeys.end(); ++keyIt) {
             EXPECT_EQ(sent->getMetaData().getUserTime(*keyIt),
                     received->getMetaData().getUserTime(*keyIt));
@@ -203,7 +199,7 @@ TEST_P(RoundtripTest, testRoundtrip) {
 }
 
 INSTANTIATE_TEST_CASE_P(InprocessTransport, RoundtripTest,
-        ::testing::Values(string("inprocess")));
+                        ::testing::Values(std::string("inprocess")));
 
 // ------ informer test ------
 
@@ -222,7 +218,7 @@ protected:
         {
             ParticipantConfig::Transport& socketTransport = config.mutableTransport("socket");
             rsc::runtime::Properties& p = socketTransport.mutableOptions();
-            p.set<string>("port", lexical_cast<string>(SOCKET_PORT));
+            p.set<std::string>("port", boost::lexical_cast<std::string>(SOCKET_PORT));
         }
 #endif
 
@@ -242,27 +238,27 @@ protected:
 TEST_F(InformerTest, testTypeCheck) {
     Factory& factory = getFactory();
 
-    boost::shared_ptr<string> payload(new string("foo"));
+    boost::shared_ptr<std::string> payload(new std::string("foo"));
     {
-        Informer<string>::Ptr informer = factory.createInformer<string>(
+        Informer<std::string>::Ptr informer = factory.createInformer<std::string>(
                 Scope("/"), ParticipantConfig());
         EXPECT_THROW(informer->publish(payload, "not-string"),
-                invalid_argument);
+                     std::invalid_argument);
 
         InformerBasePtr informerBase = factory.createInformerBase(Scope("/"),
                 "std::string", ParticipantConfig());
         EXPECT_THROW(informerBase->publish(payload, "not-string"),
-                invalid_argument);
+                     std::invalid_argument);
     }
     {
-        Informer<string>::Ptr informer = factory.createInformer<string>(
+        Informer<std::string>::Ptr informer = factory.createInformer<std::string>(
                 Scope("/"), ParticipantConfig());
         EventPtr event(new Event(Scope("/"), payload, "not-string"));
-        EXPECT_THROW(informer->publish(event), invalid_argument);
+        EXPECT_THROW(informer->publish(event), std::invalid_argument);
 
         InformerBasePtr informerBase = factory.createInformerBase(Scope("/"),
                 "std::string", ParticipantConfig());
-        EXPECT_THROW(informerBase->publish(event), invalid_argument);
+        EXPECT_THROW(informerBase->publish(event), std::invalid_argument);
     }
 
     // AnyType can be used for "disable type check"
@@ -289,26 +285,26 @@ TEST_F(InformerTest, testTypeCheck) {
 
 TEST_F(InformerTest, testScopeCheck) {
     Factory& factory = getFactory();
-    Informer<string>::Ptr informer = factory.createInformer<string>(
+    Informer<std::string>::Ptr informer = factory.createInformer<std::string>(
             Scope("/foo"), ParticipantConfig());
-    boost::shared_ptr<string> payload(new string("foo"));
+    boost::shared_ptr<std::string> payload(new std::string("foo"));
 
     // Wrong: unrelated scope
     {
-        EventPtr event(new Event(Scope("/wrong"), payload, typeName<string>()));
-        EXPECT_THROW(informer->publish(event), invalid_argument);
+        EventPtr event(new Event(Scope("/wrong"), payload, typeName<std::string>()));
+        EXPECT_THROW(informer->publish(event), std::invalid_argument);
     }
 
     // OK: identical scope
     {
-        EventPtr event(new Event(Scope("/foo"), payload, typeName<string>()));
+        EventPtr event(new Event(Scope("/foo"), payload, typeName<std::string>()));
         informer->publish(event);
     }
 
     // OK: subscope
     {
         EventPtr event(
-                new Event(Scope("/foo/subscope"), payload, typeName<string>()));
+            new Event(Scope("/foo/subscope"), payload, typeName<std::string>()));
         informer->publish(event);
     }
 }
@@ -316,20 +312,20 @@ TEST_F(InformerTest, testScopeCheck) {
 TEST_F(InformerTest, testReturnValue) {
     Factory& factory = getFactory();
     const Scope scope("/return/value/test");
-    Informer<string>::Ptr informer = factory.createInformer<string>(scope,
+    Informer<std::string>::Ptr informer = factory.createInformer<std::string>(scope,
             ParticipantConfig());
 
     {
         EventPtr event = informer->publish(
-                boost::shared_ptr<string>(new string("foo")));
-        EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
+            boost::shared_ptr<std::string>(new std::string("foo")));
+        EXPECT_EQ(*boost::static_pointer_cast<std::string>(event->getData()), "foo");
     }
 
     {
         EventPtr event = informer->publish(
-                boost::shared_ptr<void>(new string("foo")),
-                rsc::runtime::typeName<std::string>());
-        EXPECT_EQ(*static_pointer_cast<string>(event->getData()), "foo");
+            boost::shared_ptr<void>(new std::string("foo")),
+            rsc::runtime::typeName<std::string>());
+        EXPECT_EQ(*boost::static_pointer_cast<std::string>(event->getData()), "foo");
     }
 
 }
@@ -347,19 +343,19 @@ TEST_F(InformerTest, testConversionException) {
             boost::str(boost::format("%1%") % SOCKET_PORT);
 
     const Scope scope("/damn/strange/scope");
-    Informer<string>::Ptr informer = factory.createInformer<string>(scope,
+    Informer<std::string>::Ptr informer = factory.createInformer<std::string>(scope,
             config, "IAmNotConvertible");
     EXPECT_THROW(
-            informer->publish(boost::shared_ptr<string> (new string("foo"))),
-            runtime_error);
+        informer->publish(boost::shared_ptr<std::string> (new std::string("foo"))),
+        std::runtime_error);
     EXPECT_THROW(
-            informer->publish(boost::shared_ptr<string> (new string("foo")), "IAmNotConvertible"),
-            runtime_error);
+        informer->publish(boost::shared_ptr<std::string> (new std::string("foo")), "IAmNotConvertible"),
+        std::runtime_error);
 
     EventPtr e(
-            new Event(scope, boost::shared_ptr<string>(new string("foo")),
-                    "IAmNotConvertible"));
-    EXPECT_THROW(informer->publish(e), runtime_error);
+        new Event(scope, boost::shared_ptr<std::string>(new std::string("foo")),
+                  "IAmNotConvertible"));
+    EXPECT_THROW(informer->publish(e), std::runtime_error);
 
 }
 #endif
@@ -378,9 +374,9 @@ TEST_F(InformerTest, testConversion) {
             boost::str(boost::format("%1%") % SOCKET_PORT);
 
     const Scope scope("/damn/strange/scope");
-    Informer<string>::Ptr informer
-        = factory.createInformer<string>("/scope", config);
-    informer->publish(boost::shared_ptr<string>(new string("test")));
+    Informer<std::string>::Ptr informer
+        = factory.createInformer<std::string>("/scope", config);
+    informer->publish(boost::shared_ptr<std::string>(new std::string("test")));
 }
 #endif
 
