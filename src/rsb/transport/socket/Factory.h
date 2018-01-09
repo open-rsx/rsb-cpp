@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -74,12 +74,12 @@ public:
                   bool                   tcpnodelay);
 
 private:
-    typedef std::pair<std::string, boost::uint16_t>	         Endpoint;
+    typedef std::pair<std::string, boost::uint16_t>	     Endpoint;
     typedef boost::shared_ptr<boost::asio::ip::tcp::socket>  SocketPtr;
 
     typedef boost::shared_ptr<boost::asio::io_service::work> WorkPtr;
 
-    typedef std::map<Endpoint, boost::weak_ptr<Bus> >	     BusClientMap;
+    typedef std::map<Endpoint, boost::weak_ptr<Bus> >        BusClientMap;
     typedef std::map<Endpoint, boost::weak_ptr<BusServer> >  BusServerMap;
 
     rsc::logging::LoggerPtr logger;
