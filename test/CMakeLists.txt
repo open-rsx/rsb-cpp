@@ -76,6 +76,7 @@ test(${CORE_TEST_NAME}
      rsb/filter/TypeFilterTest.cpp
      rsb/filter/CauseFilterTest.cpp
 
+     rsb/eventprocessing/ScopeDispatcher.cpp
      rsb/eventprocessing/ParallelEventReceivingStrategyTest.cpp
 
      rsb/util/EventQueuePushHandlerTest.cpp

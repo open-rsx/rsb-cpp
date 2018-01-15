@@ -170,6 +170,7 @@ set(HEADERS rsb/CommException.h
             rsb/eventprocessing/PushInRouteConfigurator.h
             rsb/eventprocessing/OutRouteConfigurator.h
             rsb/eventprocessing/strategies.h
+            rsb/eventprocessing/ScopeDispatcher.h
 
             rsb/filter/Filter.h
             rsb/filter/FilterActionTypes.h
