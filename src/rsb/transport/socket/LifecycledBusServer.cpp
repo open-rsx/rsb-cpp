@@ -35,9 +35,8 @@ namespace transport {
 namespace socket {
 
 LifecycledBusServer::LifecycledBusServer(BusServerPtr server) :
-        Bus(AsioServiceContextPtr()), BusServer(AsioServiceContextPtr(), false), logger(
-                Logger::getLogger("rsb.transport.socket.LifecycledBusServer")), server(
-                server) {
+    logger(Logger::getLogger("rsb.transport.socket.LifecycledBusServer")),
+    server(server) {
 }
 
 LifecycledBusServer::~LifecycledBusServer() {
@@ -70,10 +69,6 @@ bool LifecycledBusServer::isTcpnodelay() const {
 
 void LifecycledBusServer::handle(EventPtr event) {
     this->server->handle(event);
-}
-
-AsioServiceContextPtr LifecycledBusServer::getService() const {
-    return server->getService();
 }
 
 void LifecycledBusServer::activate() {

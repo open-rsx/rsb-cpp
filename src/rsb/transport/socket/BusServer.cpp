@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,11 +29,6 @@
 namespace rsb {
 namespace transport {
 namespace socket {
-
-BusServer::BusServer(AsioServiceContextPtr asioService, bool tcpnodelay) :
-        Bus(asioService, tcpnodelay) {
-
-}
 
 BusServer::~BusServer() {
 }

@@ -26,7 +26,10 @@
 
 #pragma once
 
+#include "../AsioServiceContext.h"
+
 #include "BusServer.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -59,8 +62,6 @@ public:
     virtual bool isTcpnodelay() const;
 
     virtual void handle(EventPtr event);
-
-    virtual AsioServiceContextPtr getService() const;
 
     void activate();
 

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2012, 2015, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -35,6 +35,7 @@
 
 #include <rsc/logging/Logger.h>
 
+#include "BusImpl.h"
 #include "BusServer.h"
 
 #include "rsb/rsbexports.h"
@@ -56,7 +57,8 @@ namespace socket {
  *
  * @author jmoringe
  */
-class RSB_EXPORT BusServerImpl : public BusServer,
+class RSB_EXPORT BusServerImpl : public virtual BusImpl,
+                                 public virtual BusServer,
                                  public boost::enable_shared_from_this<BusServerImpl> {
 public:
     BusServerImpl(AsioServiceContextPtr    asioService,

@@ -219,6 +219,7 @@ if(WITH_SOCKET_TRANSPORT)
     list(APPEND SOURCES rsb/transport/socket/Types.cpp
                         rsb/transport/socket/BusConnection.cpp
                         rsb/transport/socket/Bus.cpp
+                        rsb/transport/socket/BusImpl.cpp
                         rsb/transport/socket/BusServer.cpp
                         rsb/transport/socket/BusServerImpl.cpp
                         rsb/transport/socket/Factory.cpp
@@ -232,6 +233,7 @@ if(WITH_SOCKET_TRANSPORT)
     list(APPEND HEADERS rsb/transport/socket/Types.h
                         rsb/transport/socket/BusConnection.h
                         rsb/transport/socket/Bus.h
+                        rsb/transport/socket/BusImpl.h
                         rsb/transport/socket/BusServer.h
                         rsb/transport/socket/BusServerImpl.h
                         rsb/transport/socket/Factory.h

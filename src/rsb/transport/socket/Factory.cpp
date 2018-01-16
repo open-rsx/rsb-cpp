@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -34,6 +34,7 @@
 
 #include <rsc/runtime/ContainerIO.h>
 
+#include "BusImpl.h"
 #include "BusServerImpl.h"
 #include "LifecycledBusServer.h"
 
@@ -145,7 +146,7 @@ BusPtr Factory::getBusClientFor(const string&  host,
     // worked. Create a new bus client.
     RSCDEBUG(logger, "Did not find bus client after resolving; creating a new one");
 
-    BusPtr result(new Bus(this->asioService, tcpnodelay));
+    BusPtr result(new BusImpl(this->asioService, tcpnodelay));
     this->busClients[endpoint] = result;
 
     BusConnectionPtr connection(new BusConnection(result, socket, true, tcpnodelay));

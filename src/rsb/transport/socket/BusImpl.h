@@ -27,12 +27,24 @@
 #pragma once
 
 #include <string>
+#include <map>
+#include <list>
 
 #include <boost/shared_ptr.hpp>
 
+#include <boost/thread/recursive_mutex.hpp>
+
+#include <rsc/logging/Logger.h>
+
 #include "../../Event.h"
+#include "../../Scope.h"
 
 #include "../../eventprocessing/Handler.h"
+
+#include "../AsioServiceContext.h"
+
+#include "Bus.h"
+#include "BusConnection.h"
 
 #include "rsb/rsbexports.h"
 
@@ -43,31 +55,20 @@ namespace socket {
 class InConnector;
 typedef boost::shared_ptr<InConnector> InConnectorPtr;
 
-class BusConnection;
-typedef boost::shared_ptr<BusConnection> BusConnectionPtr;
+class ConnectorBase;
 
 /**
- * Instances of this class provide access to a socket-based bus.
- *
- * It is transparent for clients (connectors) of this class whether is
- * accessed by running the bus server or by connecting to the bus
- * server as a client.
- *
- * In-direction connectors add themselves as event sinks using the
- * @ref addSink method.
- *
- * Out-direction connectors submit events to the bus using the @ref
- * handle method.
- *
  * @author jmoringe
  */
-class RSB_EXPORT Bus: public eventprocessing::Handler {
+class RSB_EXPORT BusImpl: public virtual Bus {
 friend class BusConnection;
 public:
-    virtual ~Bus();
+    BusImpl(AsioServiceContextPtr asioService,
+            bool                  tcpnodelay = false);
+    virtual ~BusImpl();
 
-    virtual void addSink(InConnectorPtr sink) = 0;
-    virtual void removeSink(InConnector* sink) = 0;
+    virtual void addSink(InConnectorPtr sink);
+    virtual void removeSink(InConnector* sink);
 
     /**
      * Adds @a connection to the list of connections of the bus. @a
@@ -76,7 +77,7 @@ public:
      *
      * @param connection The connection that should be added.
      */
-    virtual void addConnection(BusConnectionPtr connection) = 0;
+    virtual void addConnection(BusConnectionPtr connection);
 
     /**
      * Removes @a connection from the list of connections of this
@@ -84,19 +85,45 @@ public:
      *
      * @param connection The connection that should be removed.
      */
-    virtual void removeConnection(BusConnectionPtr connection) = 0;
+    virtual void removeConnection(BusConnectionPtr connection);
 
-    virtual bool isTcpnodelay() const = 0;
+    virtual bool isTcpnodelay() const;
 
-    virtual void handle(EventPtr event) = 0;
+    virtual void handle(EventPtr event);
 
     virtual void handleIncoming(EventPtr         event,
-                                BusConnectionPtr connection) = 0;
+                                BusConnectionPtr connection);
 
-    virtual const std::string getTransportURL() const = 0;
+    virtual void printContents(std::ostream& stream) const;
+
+    virtual const std::string getTransportURL() const;
+
+protected:
+    typedef std::list<BusConnectionPtr> ConnectionList;
+
+    ConnectionList getConnections() const;
+    boost::recursive_mutex& getConnectionLock();
+
+    virtual AsioServiceContextPtr getService() const;
+private:
+    typedef std::list<boost::weak_ptr<InConnector> > SinkList;
+    typedef std::map<Scope, SinkList>                SinkMap;
+
+    rsc::logging::LoggerPtr  logger;
+
+    // the asio service this bus operates on. Storing this pointer keeps the
+    // service alive as long as this instance is alive
+    AsioServiceContextPtr    asioService;
+
+    ConnectionList           connections;
+    boost::recursive_mutex   connectionLock;
+
+    SinkMap                  sinks;
+    boost::recursive_mutex   connectorLock;
+
+    bool                     tcpnodelay;
+
 };
-
-typedef boost::shared_ptr<Bus> BusPtr;
 
 }
 }

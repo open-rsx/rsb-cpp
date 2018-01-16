@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,8 +28,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <rsc/logging/Logger.h>
-
 #include "Bus.h"
 
 #include "rsb/rsbexports.h"
@@ -53,7 +51,6 @@ namespace socket {
  */
 class RSB_EXPORT BusServer : public virtual Bus {
 public:
-    BusServer(AsioServiceContextPtr asioService, bool tcpnodelay);
     virtual ~BusServer();
 
     virtual void activate() = 0;

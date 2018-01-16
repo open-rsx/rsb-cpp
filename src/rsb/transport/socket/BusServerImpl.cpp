@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -49,7 +49,7 @@ namespace socket {
 BusServerImpl::BusServerImpl(AsioServiceContextPtr asioService,
                              boost::uint16_t       port,
                              bool                  tcpnodelay)
-    : Bus(asioService, tcpnodelay), BusServer(asioService, tcpnodelay),
+    : BusImpl(asioService, tcpnodelay),
       logger(Logger::getLogger("rsb.transport.socket.BusServerImpl")),
       acceptor(*this->getService()->getService(), tcp::endpoint(tcp::v4(), port)),
       active(false), shutdown(false) {
@@ -118,7 +118,7 @@ void BusServerImpl::handleAccept(boost::shared_ptr<BusServerImpl> ref,
 
 void BusServerImpl::handleIncoming(EventPtr         event,
                                    BusConnectionPtr connection) {
-    Bus::handleIncoming(event, connection);
+    BusImpl::handleIncoming(event, connection);
 
     RSCDEBUG(logger, "Delivering received event to connections " << event);
     {
