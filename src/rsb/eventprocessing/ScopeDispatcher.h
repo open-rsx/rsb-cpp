@@ -124,6 +124,23 @@ public:
             }
         }
     }
+
+    /**
+     * Calls @a function for each sink in the dispatcher.
+     *
+     * @param function The function that should be called for each
+     *                 sink.
+     */
+    void mapAllSinks(boost::function<void (const T&)> function) const {
+        for (typename SinkMap::const_iterator it = this->sinks.begin();
+             it != this->sinks.end(); ++it) {
+            const SinkList& sinks = it->second;
+            for (typename SinkList::const_iterator it_ = sinks.begin();
+                 it_ != sinks.end(); ++it_) {
+                function(*it_);
+            }
+        }
+    }
 protected:
     typedef std::list<T>              SinkList;
     typedef std::map<Scope, SinkList> SinkMap;
@@ -176,6 +193,20 @@ public:
                     if (pointer) {
                         function(*pointer);
                     }
+                }
+            }
+        }
+    }
+
+    void mapAllSinks(boost::function<void (T&)> function) const {
+        for (typename WeakScopeDispatcher::SinkMap::const_iterator it
+                 = this->sinks.begin(); it != this->sinks.end(); ++it) {
+            const typename WeakScopeDispatcher::SinkList& sinks = it->second;
+            for (typename WeakScopeDispatcher::SinkList::const_iterator it_
+                     = sinks.begin(); it_ != sinks.end(); ++it_) {
+                boost::shared_ptr<T> pointer = it_->lock();
+                if (pointer) {
+                    function(*pointer);
                 }
             }
         }
