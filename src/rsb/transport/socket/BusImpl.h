@@ -27,7 +27,6 @@
 #pragma once
 
 #include <string>
-#include <map>
 #include <list>
 
 #include <boost/shared_ptr.hpp>
@@ -40,6 +39,7 @@
 #include "../../Scope.h"
 
 #include "../../eventprocessing/Handler.h"
+#include "../../eventprocessing/ScopeDispatcher.h"
 
 #include "../AsioServiceContext.h"
 
@@ -68,7 +68,7 @@ public:
     virtual ~BusImpl();
 
     virtual void addSink(InConnectorPtr sink);
-    virtual void removeSink(InConnector* sink);
+    virtual void removeSink(const InConnector* sink);
 
     /**
      * Adds @a connection to the list of connections of the bus. @a
@@ -106,8 +106,7 @@ protected:
 
     virtual AsioServiceContextPtr getService() const;
 private:
-    typedef std::list<boost::weak_ptr<InConnector> > SinkList;
-    typedef std::map<Scope, SinkList>                SinkMap;
+    typedef eventprocessing::WeakScopeDispatcher<InConnector> SinkDispatcher;
 
     rsc::logging::LoggerPtr  logger;
 
@@ -118,7 +117,7 @@ private:
     ConnectionList           connections;
     boost::recursive_mutex   connectionLock;
 
-    SinkMap                  sinks;
+    SinkDispatcher           sinkDispatcher;
     boost::recursive_mutex   connectorLock;
 
     bool                     tcpnodelay;

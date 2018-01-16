@@ -54,8 +54,8 @@ BusImpl::~BusImpl() {
     RSCDEBUG(logger, "Destructing bus instance");
 
     // Sinks should be empty.
-    if (!this->sinks.empty()) {
-        RSCWARN(logger, "" << this->sinks.size() << " non-empty scopes when destructing");
+    if (!this->sinkDispatcher.empty()) {
+        RSCWARN(logger, "" << this->sinkDispatcher.size() << " non-empty scopes when destructing");
     }
 
     // Active connections hold a shared_ptr to themselves and would
@@ -94,37 +94,15 @@ void BusImpl::addSink(InConnectorPtr sink) {
 
     Scope scope = sink->getScope();
     RSCDEBUG(logger, "Adding sink " << sink << " to scope " << scope);
-    SinkList& connectors = this->sinks[scope];
-    connectors.push_back(sink);
+    this->sinkDispatcher.addSink(scope, sink);
 }
 
-void BusImpl::removeSink(InConnector* sink) {
+void BusImpl::removeSink(const InConnector* sink) {
     boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
     Scope scope = sink->getScope();
     RSCDEBUG(logger, "Removing sink " << sink << " from scope " << scope);
-    SinkList& connectors = this->sinks[scope];
-    RSCDEBUG(logger, "Scope " << scope << " has "
-             << connectors.size() << " connectors (before removing)");
-    for (SinkList::iterator it = connectors.begin(); it != connectors.end(); ++it) {
-        // If the weak pointer is dangling, we found our
-        // sink. Otherwise, we can just check the pointer.
-        InConnectorPtr ptr = it->lock();
-        if (!ptr || (ptr.get() == sink)) {
-            RSCDEBUG(logger, "Found connector " << sink << " in scope " << scope);
-            connectors.erase(it);
-            break;
-        }
-    }
-    RSCDEBUG(logger, "Scope " << scope << " has "
-             << connectors.size() << " connectors (after removing)");
-
-    // If no connectors remain for the scope, the whole entry can be
-    // removed.
-    if (connectors.empty()) {
-        RSCDEBUG(logger, "Removing empty scope " << scope);
-        this->sinks.erase(scope);
-    }
+    this->sinkDispatcher.removeSink(scope, sink);
 }
 
 void BusImpl::addConnection(BusConnectionPtr connection) {
@@ -143,6 +121,20 @@ void BusImpl::removeConnection(BusConnectionPtr connection) {
     this->connections.remove(connection);
 }
 
+// Cannot be a local struct in the handle() method since some
+// compilers (or standard versions?) don't support that.
+namespace {
+
+struct PoorPersonsLambda1 {
+    EventPtr event;
+    PoorPersonsLambda1(EventPtr event) : event(event) {}
+    void operator()(InConnector& sink) {
+        sink.handle(this->event);
+    }
+};
+
+}
+
 void BusImpl::handle(EventPtr event) {
     // Dispatch to our own connectors.
     RSCDEBUG(logger, "Delivering outgoing event to connectors " << event);
@@ -153,21 +145,8 @@ void BusImpl::handle(EventPtr event) {
     {
         boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
-        for (vector<Scope>::const_iterator it = scopes.begin(); it != scopes.end(); ++it) {
-            SinkMap::const_iterator it_ = this->sinks.find(*it);
-            if (it_ != this->sinks.end()) {
-                const SinkList& connectors = it_->second;
-
-                for (SinkList::const_iterator it__ = connectors.begin(); it__
-                         != connectors.end(); ++it__) {
-                    InConnectorPtr connector = it__->lock();
-                    if (connector) {
-                        RSCDEBUG(logger, "Delivering to connector " << connector << " in " << *it);
-                        connector->handle(event);
-                    }
-                }
-            }
-        }
+        this->sinkDispatcher.mapSinks(event->getScope(),
+                                      PoorPersonsLambda1(event));
     }
 
     // Dispatch to outgoing connections.
@@ -199,6 +178,20 @@ void BusImpl::handle(EventPtr event) {
     }
 }
 
+// Cannot be a local struct in the handle() method since some
+// compilers (or standard versions?) don't support that.
+namespace {
+
+struct PoorPersonsLambda2 {
+    EventPtr event;
+    PoorPersonsLambda2(EventPtr event) : event(event) {};
+    void operator()(InConnector& sink) {
+        sink.handle(this->event);
+    }
+};
+
+}
+
 void BusImpl::handleIncoming(EventPtr         event,
                              BusConnectionPtr /*connection*/) {
     RSCDEBUG(logger, "Delivering received event to connectors " << event);
@@ -209,27 +202,14 @@ void BusImpl::handleIncoming(EventPtr         event,
     {
         boost::recursive_mutex::scoped_lock lock(this->connectorLock);
 
-        for (vector<Scope>::const_iterator it = scopes.begin(); it != scopes.end(); ++it) {
-            SinkMap::const_iterator it_ = this->sinks.find(*it);
-            if (it_ != this->sinks.end()) {
-                const SinkList& connectors = it_->second;
-
-                for (SinkList::const_iterator it__ = connectors.begin(); it__
-                         != connectors.end(); ++it__) {
-                    InConnectorPtr connector = it__->lock();
-                    if (connector) {
-                        RSCDEBUG(logger, "Delivering to connector " << connector << " in " << *it);
-                        connector->handle(event);
-                    }
-                }
-            }
-        }
+        this->sinkDispatcher.mapSinks(event->getScope(),
+                                      PoorPersonsLambda2(event));
     }
 }
 
 void BusImpl::printContents(ostream& stream) const {
     stream << "connections = " << this->connections
-           << ", sinks = " << this->sinks;
+           << ", sinks = " << this->sinkDispatcher.size();
 }
 
 const std::string BusImpl::getTransportURL() const {

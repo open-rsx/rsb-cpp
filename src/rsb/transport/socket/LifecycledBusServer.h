@@ -54,7 +54,7 @@ public:
     virtual ~LifecycledBusServer();
 
     virtual void addSink(InConnectorPtr sink);
-    virtual void removeSink(InConnector* sink);
+    virtual void removeSink(const InConnector* sink);
 
     virtual void addConnection(BusConnectionPtr connection);
     virtual void removeConnection(BusConnectionPtr connection);

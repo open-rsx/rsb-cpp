@@ -67,7 +67,7 @@ public:
     virtual ~Bus();
 
     virtual void addSink(InConnectorPtr sink) = 0;
-    virtual void removeSink(InConnector* sink) = 0;
+    virtual void removeSink(const InConnector* sink) = 0;
 
     /**
      * Adds @a connection to the list of connections of the bus. @a

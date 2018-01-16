@@ -51,7 +51,7 @@ void LifecycledBusServer::addSink(InConnectorPtr sink) {
     this->server->addSink(sink);
 }
 
-void LifecycledBusServer::removeSink(InConnector* sink) {
+void LifecycledBusServer::removeSink(const InConnector* sink) {
     this->server->removeSink(sink);
 }
 
