@@ -108,7 +108,7 @@ install(FILES "${CMAKE_BINARY_DIR}/copyright"
 execute_process(COMMAND ${GIT_EXECUTABLE}
                         log "--format=%ad  %an  <%ae>%n%n%w(76,8,10)%s%w(76,8,8)%n%n%b%n"
                         --date=short
-                COMMAND gzip -9
+                COMMAND gzip -n -9
                 OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.gz")
 execute_process(COMMAND sh -c "echo -n \"sed -e '\" ; for c in $(${GIT_EXECUTABLE} rev-list --all -- \"${CMAKE_CURRENT_LIST_FILE}\") ; do echo -n \"s/$c/$(${GIT_EXECUTABLE} describe --tags $c | sed -re s/[^0-9]*\\([0-9]+\\)\\.\\([0-9]+\\)-\\([0-9]+\\)-.*/\\\\1.\\'\\$\\(\\(\\\\2+1\\)\\)\\'.\\\\3/)/\\;\" ; done ; echo \"'\""
                 OUTPUT_VARIABLE RULES)
@@ -117,7 +117,7 @@ execute_process(COMMAND ${GIT_EXECUTABLE}
                         --date=rfc
                         -- "${CMAKE_CURRENT_LIST_FILE}"
                 COMMAND sh -c ${RULES}
-                COMMAND gzip -9
+                COMMAND gzip -n -9
                 OUTPUT_FILE "${CMAKE_BINARY_DIR}/changelog.Debian.gz")
 install(FILES "${CMAKE_BINARY_DIR}/changelog.gz"
               "${CMAKE_BINARY_DIR}/changelog.Debian.gz"
