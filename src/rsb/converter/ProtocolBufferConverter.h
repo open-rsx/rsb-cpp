@@ -2,7 +2,7 @@
  *
  * This file is part of RSB.
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -61,7 +61,7 @@ private:
 
     std::string typeNameToProtoName(const std::string& type_name) {
         bool skip = false;
-    #ifdef WIN32
+    #ifdef _WIN32
         if (type_name.size() >= 6 && type_name.substr(0, 6) == "class ") {
             skip = true;
         }
