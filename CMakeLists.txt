@@ -1,11 +1,9 @@
 # -*- mode: cmake -*-
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 if(POLICY CMP0053)
     cmake_policy(SET CMP0053 OLD)
 endif()
-
-project(RSB)
 
 # default version information
 set(VERSION_MAJOR   "0" CACHE STRING "Major project version part")
@@ -13,9 +11,10 @@ set(VERSION_MINOR   "18" CACHE STRING "Minor project version part")
 set(RSB_ABI_VERSION "2")
 set(SO_VERSION      "${VERSION_MAJOR}.${VERSION_MINOR}")
 
-# --- cmake settings ---
+project(RSB VERSION "${VERSION_MAJOR}.${VERSION_MINOR}"
+            LANGUAGES C CXX)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE)
+# --- cmake settings ---
 
 # this must be done in the beginning to adjust the cmake path
 find_package(RSC "${VERSION_MAJOR}.${VERSION_MINOR}" REQUIRED)
