@@ -7,7 +7,7 @@ endif()
 
 # default version information
 set(VERSION_MAJOR   "0" CACHE STRING "Major project version part")
-set(VERSION_MINOR   "18" CACHE STRING "Minor project version part")
+set(VERSION_MINOR   "19" CACHE STRING "Minor project version part")
 set(RSB_ABI_VERSION "2")
 set(SO_VERSION      "${VERSION_MAJOR}.${VERSION_MINOR}")
 
