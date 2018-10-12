@@ -2,9 +2,18 @@ include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb/protocol
                            ${CMAKE_SOURCE_DIR}/src/rsb)
 
+set(RSBPROTO_FILES "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/collections/EventsByScopeMap.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/EventId.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/EventMetaData.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/FragmentedNotification.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/introspection/Bye.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/introspection/Hello.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/Notification.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/operatingsystem/Host.proto"
+                   "${CMAKE_SOURCE_DIR}/protocol/rsb/protocol/operatingsystem/Process.proto")
 protobuf_generate_cpp(PROTO_SOURCES PROTO_HEADERS
                       PROTOFILES   ${RSBPROTO_FILES}
-                      PROTOROOT    ${RSBPROTO_ROOT}
+                      PROTOROOT    "${CMAKE_SOURCE_DIR}/protocol"
                       EXPORT_MACRO RSB_PROTOCOL_EXPORT
                       OUTPATH      ${CMAKE_CURRENT_BINARY_DIR})
 

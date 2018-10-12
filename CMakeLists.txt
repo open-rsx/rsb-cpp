@@ -110,11 +110,6 @@ if(NOT PROTOBUF_FOUND)
     message(FATAL_ERROR "protocol buffers not found")
 endif()
 
-# We abuse the "patch" component of the version to encode the wire
-# format version
-set(RSB_PROTOCOL_VERSION "${RSB_VERSION_MAJOR}.${RSB_VERSION_MINOR}.8")
-find_package(RSBProtocol ${RSB_PROTOCOL_VERSION} REQUIRED)
-
 # --- based on the dependencies, find out what to really build ---
 
 set(WITH_SOCKET_TRANSPORT ${BUILD_SOCKET_TRANSPORT})
