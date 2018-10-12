@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/open-rsx/rsb-cpp.svg?branch=master)](https://travis-ci.org/open-rsx/rsb-cpp) [![Coverage Report](https://codecov.io/gh/open-rsx/rsb-cpp/branch/master/graph/badge.svg)](https://codecov.io/gh/open-rsx/rsb-cpp)
+
 # Introduction #
 
 This repository contains the C++ implementation of the [Robotics Service Bus](https://github.com/open-rsx) middleware.
