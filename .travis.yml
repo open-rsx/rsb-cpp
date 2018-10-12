@@ -1,0 +1,74 @@
+language: cpp
+dist: xenial
+compiler:
+  - clang
+  - gcc
+addons:
+  apt:
+    packages:
+      - cmake
+      - g++
+      - git
+      - libboost-date-time-dev
+      - libboost-filesystem-dev
+      - libboost-program-options-dev
+      - libboost-regex-dev
+      - libboost-signals-dev
+      - libboost-system-dev
+      - libboost-thread-dev
+      - libprotobuf-dev
+      - protobuf-compiler
+      - make
+      - unzip
+      - wget
+before_script:
+  - mkdir upstream
+  - cd upstream
+  - wget "https://dl.bintray.com/open-rsx/travis-artifacts/rsc-${CC}-master.tar.gz"
+  - "tar -xzf rsc-*.tar.gz"
+  - cd ..
+script:
+  - mkdir -p build && cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=/rsb-cpp -DCMAKE_PREFIX_PATH=upstream/rsc ..
+  - make -j3
+  - make test
+  - make DESTDIR=install_dir install
+  - tar -C install_dir -czf "rsb-cpp-${CC}.tar.gz" rsb-cpp
+  - |
+    cat << EOF > bintray.json
+    {
+      "package": {
+        "name": "rsb-cpp",
+        "repo": "travis-artifacts",
+        "subject": "open-rsx",
+        "desc": "Travis artifact for branch ${TRAVIS_BRANCH}",
+        "vcs_url": "https://github.com/open-rsx/rsb-cpp.git",
+        "licenses": ["LGPL-3.0"]
+      },
+
+      "version": {
+        "name": "travis-${TRAVIS_BRANCH}",
+        "vcs_tag": "${TRAVIS_BRANCH}"
+      },
+
+      "files": [
+        {
+          "includePattern": "\./(rsb-cpp-.*).tar.gz",
+          "uploadPattern": "\$1-${TRAVIS_BRANCH}.tar.gz",
+          "matrixParams": {
+            "override": 1
+          }
+        }
+      ],
+      "publish": true
+    }
+    EOF
+deploy:
+  provider: bintray
+  file: "bintray.json"
+  user: "languitar"
+  key: '${BINTRAY_KEY}'
+  skip_cleanup: true
+  on:
+    repo: open-rsx/rsb-cpp
+    all_branches: true
