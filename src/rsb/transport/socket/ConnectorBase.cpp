@@ -46,11 +46,12 @@ ConnectorBase::ConnectorBase(FactoryPtr                    factory,
                              const string&                 host,
                              unsigned int                  port,
                              Server                        server,
-                             bool                          tcpnodelay) :
+                             bool                          tcpnodelay,
+                             bool                          waitForClientDisconnects) :
     ConverterSelectingConnector<string>(converters),
     active(false), logger(Logger::getLogger("rsb.transport.socket.ConnectorBase")),
     factory(factory), host(host), port(port), server(server),
-    tcpnodelay(tcpnodelay) {
+    tcpnodelay(tcpnodelay), waitForClientDisconnects(waitForClientDisconnects) {
 }
 
 ConnectorBase::~ConnectorBase() {
@@ -83,7 +84,7 @@ void ConnectorBase::activate() {
     // getBus
     RSCINFO(logger, "Server mode: " << this->server);
     this->bus = this->factory->getBus(this->server, this->host, this->port,
-            this->tcpnodelay);
+            this->tcpnodelay, this->waitForClientDisconnects);
 
     this->active = true;
 

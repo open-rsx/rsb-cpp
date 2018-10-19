@@ -73,6 +73,7 @@ void registerDefaultTransports() {
             options.insert("port");
             options.insert("server");
             options.insert("tcpnodelay");
+            options.insert("wait");
 
             factory.registerConnector("socket",
                                       &socket::InPushConnector::create,
@@ -100,6 +101,7 @@ void registerDefaultTransports() {
             options.insert("port");
             options.insert("server");
             options.insert("tcpnodelay");
+            options.insert("wait");
 
             factory.registerConnector("socket",
                                       &socket::InPullConnector::create,
@@ -126,6 +128,7 @@ void registerDefaultTransports() {
             options.insert("port");
             options.insert("server");
             options.insert("tcpnodelay");
+            options.insert("wait");
 
             factory.registerConnector("socket",
                                       &socket::OutConnector::create,

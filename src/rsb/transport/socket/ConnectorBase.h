@@ -80,13 +80,17 @@ public:
      *                   implementing the communication of the newly
      *                   created connector. Setting this option trades
      *                   decreased latency for decreased throughput.
+     * @param waitForClientDisconnects If true, delay shutdown of the server
+     *                                 socket until all clients have
+     *                                 disconnected.
      */
     ConnectorBase(FactoryPtr                    factory,
                   ConverterSelectionStrategyPtr converters,
                   const std::string&            host,
                   unsigned int                  port,
                   Server                        server,
-                  bool                          tcpnodelay);
+                  bool                          tcpnodelay,
+                  bool                          waitForClientDisconnects=true);
 
     virtual ~ConnectorBase();
 
@@ -122,6 +126,7 @@ private:
     unsigned int            port;
     Server                  server;
     bool                    tcpnodelay;
+    bool                    waitForClientDisconnects;
 };
 
 typedef boost::shared_ptr<ConnectorBase> ConnectorBasePtr;

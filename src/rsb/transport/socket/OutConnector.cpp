@@ -50,7 +50,8 @@ transport::OutConnector* OutConnector::create(const Properties& args) {
                             args.get<string>                       ("host",       DEFAULT_HOST),
                             args.getAs<unsigned int>               ("port",       DEFAULT_PORT),
                             args.getAs<Server>                     ("server",     SERVER_AUTO),
-                            args.getAs<bool>                       ("tcpnodelay", true));
+                            args.getAs<bool>                       ("tcpnodelay", true),
+                            args.getAs<bool>                       ("wait", true));
 }
 
 OutConnector::OutConnector(FactoryPtr                    factory,
@@ -58,8 +59,10 @@ OutConnector::OutConnector(FactoryPtr                    factory,
                            const string&                  host,
                            unsigned int                   port,
                            Server                         server,
-                           bool                           tcpnodelay) :
-    ConnectorBase(factory, converters, host, port, server, tcpnodelay),
+                           bool                           tcpnodelay,
+                           bool                           waitForClientDisconnects) :
+    ConnectorBase(factory, converters, host, port, server, tcpnodelay,
+                  waitForClientDisconnects),
     logger(Logger::getLogger("rsb.transport.socket.OutConnector")){
 }
 

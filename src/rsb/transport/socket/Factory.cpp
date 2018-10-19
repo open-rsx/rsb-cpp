@@ -160,7 +160,8 @@ BusPtr Factory::getBusClientFor(const string&  host,
 
 BusServerPtr Factory::getBusServerFor(const string&  host,
                                       uint16_t       port,
-                                      bool           tcpnodelay) {
+                                      bool           tcpnodelay,
+                                      bool           waitForClientDisconnects) {
     RSCDEBUG(logger, "Was asked for a bus server for " << host << ":" << port);
 
     // Try to find an existing entry for the specified endpoint.
@@ -179,7 +180,7 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
             new LifecycledBusServer(
                     BusServerPtr(
                             new BusServerImpl(this->asioService, port,
-                                    tcpnodelay))));
+                                    tcpnodelay, waitForClientDisconnects))));
     result->activate();
     this->busServers[endpoint] = result;
 
@@ -191,7 +192,8 @@ BusServerPtr Factory::getBusServerFor(const string&  host,
 BusPtr Factory::getBus(const Server&          serverMode,
                        const std::string&     host,
                        const boost::uint16_t& port,
-                       bool                   tcpnodelay) {
+                       bool                   tcpnodelay,
+                       bool                   waitForClientDisconnects) {
 
     boost::mutex::scoped_lock lock(this->busMutex);
 
@@ -199,10 +201,12 @@ BusPtr Factory::getBus(const Server&          serverMode,
     case SERVER_NO:
         return getBusClientFor(host, port, tcpnodelay);
     case SERVER_YES:
-        return getBusServerFor(host, port, tcpnodelay);
+        return getBusServerFor(host, port, tcpnodelay,
+                               waitForClientDisconnects);
     case SERVER_AUTO:
         try {
-            return getBusServerFor(host, port, tcpnodelay);
+            return getBusServerFor(host, port, tcpnodelay,
+                                   waitForClientDisconnects);
         } catch (const std::exception& e) {
             RSCINFO(logger,
                     "Could not create server for bus: " << e.what() << "; trying to access bus as client");
