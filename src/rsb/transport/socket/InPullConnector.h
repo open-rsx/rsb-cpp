@@ -75,7 +75,8 @@ public:
                     const std::string&            host,
                     unsigned int                  port,
                     Server                        server,
-                    bool                          tcpnodelay);
+                    bool                          tcpnodelay,
+                    bool                          waitForClientDisconnects=true);
 
     virtual ~InPullConnector();
 

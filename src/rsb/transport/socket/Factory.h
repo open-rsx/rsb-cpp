@@ -71,7 +71,8 @@ public:
     BusPtr getBus(const Server&          serverMode,
                   const std::string&     host,
                   const boost::uint16_t& port,
-                  bool                   tcpnodelay);
+                  bool                   tcpnodelay,
+                  bool                   waitForClientDisconnects);
 
 private:
     typedef std::pair<std::string, boost::uint16_t>	     Endpoint;
@@ -96,7 +97,8 @@ private:
 
     BusServerPtr getBusServerFor(const std::string& host,
                                  boost::uint16_t    port,
-                                 bool               tcpnodelay);
+                                 bool               tcpnodelay,
+                                 bool               waitForClientDisconnects);
 
     static void checkOptions(BusPtr bus, bool tcpnodelay);
 

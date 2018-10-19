@@ -32,6 +32,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/thread/condition_variable.hpp>
 
 #include <rsc/logging/Logger.h>
 
@@ -63,7 +64,8 @@ class RSB_EXPORT BusServerImpl : public virtual BusImpl,
 public:
     BusServerImpl(AsioServiceContextPtr    asioService,
                   boost::uint16_t          port,
-                  bool                     tcpnodelay);
+                  bool                     tcpnodelay,
+                  bool                     waitForClientDisconnects);
 
     virtual ~BusServerImpl();
 
@@ -76,6 +78,8 @@ public:
     void activate();
 
     void deactivate();
+
+    virtual void removeConnection(BusConnectionPtr connection);
 
     void handleIncoming(EventPtr         event,
                         BusConnectionPtr connection);
@@ -91,6 +95,10 @@ private:
 
     volatile bool                   active;
     volatile bool                   shutdown;
+
+    bool                            waitForClientDisconnects;
+
+    boost::condition_variable_any   shutdownCondition;
 
     // These two member functions have the additional ref parameter to
     // ensure that the BusServerImpl object cannot be destroyed while

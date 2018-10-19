@@ -46,8 +46,10 @@ InConnector::InConnector(FactoryPtr                    factory,
                          const string&                 host,
                          unsigned int                  port,
                          Server                        server,
-                         bool                          tcpnodelay) :
-    ConnectorBase(factory, converters, host, port, server, tcpnodelay),
+                         bool                          tcpnodelay,
+                         bool                          waitForClientDisconnects) :
+    ConnectorBase(factory, converters, host, port, server, tcpnodelay,
+                  waitForClientDisconnects),
     logger(Logger::getLogger("rsb.transport.socket.InConnector")) {
 }
 

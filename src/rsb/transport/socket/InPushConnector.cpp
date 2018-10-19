@@ -49,7 +49,8 @@ transport::InPushConnector* InPushConnector::create(const Properties& args) {
                                args.get<string>                       ("host",       DEFAULT_HOST),
                                args.getAs<unsigned int>               ("port",       DEFAULT_PORT),
                                args.getAs<Server>                     ("server",     SERVER_AUTO),
-                               args.getAs<bool>                       ("tcpnodelay", true));
+                               args.getAs<bool>                       ("tcpnodelay", true),
+                               args.getAs<bool>                       ("wait", true));
 }
 
 InPushConnector::InPushConnector(FactoryPtr                    factory,
@@ -57,9 +58,12 @@ InPushConnector::InPushConnector(FactoryPtr                    factory,
                                  const string&                 host,
                                  unsigned int                  port,
                                  Server                        server,
-                                 bool                          tcpnodelay) :
-    ConnectorBase(factory, converters, host, port, server, tcpnodelay),
-    InConnector(factory, converters, host, port, server, tcpnodelay),
+                                 bool                          tcpnodelay,
+                                 bool                          waitForClientDisconnects) :
+    ConnectorBase(factory, converters, host, port, server, tcpnodelay,
+                  waitForClientDisconnects),
+    InConnector(factory, converters, host, port, server, tcpnodelay,
+                waitForClientDisconnects),
     logger(Logger::getLogger("rsb.transport.socket.InPushConnector")) {
 }
 

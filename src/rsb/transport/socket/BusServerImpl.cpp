@@ -48,11 +48,13 @@ namespace socket {
 
 BusServerImpl::BusServerImpl(AsioServiceContextPtr asioService,
                              boost::uint16_t       port,
-                             bool                  tcpnodelay)
+                             bool                  tcpnodelay,
+                             bool                  waitForClientDisconnects)
     : BusImpl(asioService, tcpnodelay),
       logger(Logger::getLogger("rsb.transport.socket.BusServerImpl")),
       acceptor(*this->getService()->getService(), tcp::endpoint(tcp::v4(), port)),
-      active(false), shutdown(false) {
+      active(false), shutdown(false),
+      waitForClientDisconnects(waitForClientDisconnects) {
 }
 
 
@@ -77,9 +79,32 @@ void BusServerImpl::deactivate() {
     // sequence (see handleAccept()).
     this->shutdown = true;
     this->acceptor.cancel();
-    while (this->shutdown);
+    while (this->shutdown) {
+        // ugly active shutdown
+    }
+
+    {
+        boost::unique_lock<boost::recursive_mutex> lock(getConnectionLock());
+        if (!getConnections().empty()) {
+            RSCWARN(logger, "Active client connections exist");
+        }
+        if (this->waitForClientDisconnects) {
+            RSCDEBUG(logger, "Waiting for client connections to terminate");
+            while (!getConnections().empty()) {
+                this->shutdownCondition.wait(lock);
+            }
+        } else {
+            RSCWARN(logger, "Not waiting for client connections as requested");
+        }
+    }
 
     this->active =  false;
+}
+
+void BusServerImpl::removeConnection(BusConnectionPtr connection) {
+    boost::recursive_mutex::scoped_lock lock(getConnectionLock());
+    BusImpl::removeConnection(connection);
+    this->shutdownCondition.notify_one();
 }
 
 void BusServerImpl::acceptOne(boost::shared_ptr<BusServerImpl> ref) {
