@@ -57,14 +57,6 @@ void MetaData::printContents(std::ostream& stream) const {
             << userTimes << ", userInfos = " << userInfos;
 }
 
-rsc::misc::UUID MetaData::getSenderId() const {
-    return senderId;
-}
-
-void MetaData::setSenderId(const rsc::misc::UUID& senderId) {
-    this->senderId = senderId;
-}
-
 boost::uint64_t MetaData::getCreateTime() const {
     return createTime;
 }

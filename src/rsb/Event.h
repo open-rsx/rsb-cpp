@@ -84,15 +84,6 @@ public:
     void printContents(std::ostream& stream) const;
 
     /**
-     * Returns the sequence which indicates the position of the event
-     * in the stream of events published by a single informer.
-     *
-     * @return sequence number of the event.
-     * @deprecated Use #getId instead
-     */
-    DEPRECATED(boost::uint64_t getSequenceNumber() const);
-
-    /**
      * Returns the id of this event. The id is not defined until the event is
      * sent by an informer.
      *
@@ -110,28 +101,6 @@ public:
      *                       with
      */
     void setId(const rsc::misc::UUID& senderId, const boost::uint32_t& sequenceNumber);
-
-    /**
-     * Returns the id of this event. The id is not defined until the event is
-     * sent by an informer.
-     *
-     * @return id of the event
-     * @throw rsc::misc::IllegalStateException if there cannot be an id because
-     *                                         the event was not sent so far.
-     * @deprecated Use #getId instead for consistent naming across
-     *             implementations
-     */
-    DEPRECATED(EventId getEventId() const);
-
-    /**
-     * Sets all information necessary to generate an id for this event.
-     *
-     * @param senderId id of the sender of this event
-     * @param sequenceNumber the unique number per sender this event was sent
-     *                       with
-     */
-    DEPRECATED(void setEventId(const rsc::misc::UUID& senderId,
-                const boost::uint32_t& sequenceNumber));
 
     /**
      * @name scope access

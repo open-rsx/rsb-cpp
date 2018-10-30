@@ -63,22 +63,6 @@ public:
     void printContents(std::ostream& stream) const;
 
     /**
-     * Returns the ID (a UUID) of the sending participant.
-     *
-     * @return A copy of the sender id UUID object.
-     * @deprecated Can be obtained from an @ref EventId instance
-     */
-    DEPRECATED(rsc::misc::UUID getSenderId() const);
-
-    /**
-     * Sets the ID (a UUID) of the sending participant.
-     *
-     * @param senderId id of the sending participant
-     * @deprecated Can be set in an @ref EventId instance
-     */
-    DEPRECATED(void setSenderId(const rsc::misc::UUID& senderId));
-
-    /**
      * @name framework timestamps
      *
      * Timestamps supplied by the framework itself.

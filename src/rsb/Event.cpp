@@ -111,10 +111,6 @@ void Event::printContents(ostream& stream) const {
     stream << ", causes = " << d->causes;
 }
 
-boost::uint64_t Event::getSequenceNumber() const {
-    return getId().getSequenceNumber();
-}
-
 EventId Event::getId() const {
     if (!d->id) {
         throw rsc::misc::IllegalStateException(
@@ -123,21 +119,9 @@ EventId Event::getId() const {
     return *d->id;
 }
 
-EventId Event::getEventId() const {
-    return getId();
-}
-
 void Event::setId(const rsc::misc::UUID& senderId,
         const boost::uint32_t& sequenceNumber) {
     d->id.reset(new EventId(senderId, sequenceNumber));
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    d->metaData.setSenderId(senderId);
-#pragma GCC diagnostic pop
-}
-
-void Event::setEventId(const rsc::misc::UUID& senderId,
-        const boost::uint32_t& sequenceNumber) {
-    setId(senderId, sequenceNumber);
 }
 
 void Event::setScopePtr(ScopePtr s) {

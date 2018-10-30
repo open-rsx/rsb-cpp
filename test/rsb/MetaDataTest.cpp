@@ -49,15 +49,6 @@ TEST(MetaDataTest, testConstruction) {
 
 }
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-TEST(MetaDataTest, testSenderId) {
-    const rsc::misc::UUID id;
-    MetaData meta;
-    meta.setSenderId(id);
-    EXPECT_EQ(id, meta.getSenderId());
-}
-#pragma GCC diagnostic pop
-
 TEST(MetaDataTest, testTimesDouble) {
 
     // from the internal structure I assume that all double-based setters use
@@ -173,33 +164,24 @@ TEST(MetaDataTest, testUserInfos) {
 
 }
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 TEST(MetaDataTest, testComparison) {
 
     MetaData meta1;
-    meta1.setSenderId(rsc::misc::UUID());
     MetaData meta2;
-    meta2.setSenderId(rsc::misc::UUID());
-    EXPECT_NE(meta1, meta2);
-    // distinct times + UUIDs
+    // May or may not be equal at this point, depending on which
+    // creation times get assigned.
+
+    // Must be equal after setting the same creation time.
     meta2.setCreateTime(meta1.getCreateTime());
-    EXPECT_NE(meta1, meta2);
-    // still distinct UUIDs
-
-    meta2.setSenderId(meta1.getSenderId());
     EXPECT_EQ(meta1, meta2);
-    // identical
-
-    meta1.setSenderId(rsc::misc::UUID());
-    EXPECT_NE(meta1, meta2);
-    // distinct UUIDs, again
 
     meta2 = meta1;
     EXPECT_EQ(meta1, meta2);
+
     meta2.setUserInfo("foo", "bar");
     EXPECT_NE(meta1, meta2);
+
     meta1.setUserInfo("foo", "bar");
     EXPECT_EQ(meta1, meta2);
 
 }
-#pragma GCC diagnostic pop
