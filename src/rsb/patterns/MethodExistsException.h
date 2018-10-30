@@ -40,17 +40,17 @@ namespace patterns {
 class RSB_EXPORT MethodExistsException: public rsb::Exception {
 public:
 
-	/**
-	 * Constructs a new exception.
-	 *
-	 * @param methodName name of the method
-	 * @param server name of the server
-	 */
-	MethodExistsException(const std::string& methodName,
-			const std::string& server);
-	virtual ~MethodExistsException() throw ();
+    /**
+     * Constructs a new exception.
+     *
+     * @param methodName name of the method
+     * @param server name of the server
+     */
+    MethodExistsException(const std::string& methodName,
+                          const std::string& server);
+    virtual ~MethodExistsException() throw ();
+
 };
 
 }
 }
-
