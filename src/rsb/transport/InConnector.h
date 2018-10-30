@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,14 +29,17 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
+#include "../eventprocessing/Handler.h"
+
 #include "../filter/FilterObserver.h"
+
+#include "../ParticipantConfig.h"
 
 #include "Connector.h"
 
 #include "rsb/rsbexports.h"
 
 namespace rsb {
-
 namespace transport {
 
 /**
@@ -54,6 +57,25 @@ public:
     typedef boost::shared_ptr<InConnector> Ptr;
 
     virtual ~InConnector();
+
+    virtual void addHandler(eventprocessing::HandlerPtr handler);
+    virtual void removeHandler(eventprocessing::HandlerPtr handler);
+
+    /**
+     * A temporary hack to pass an ErrorStrategy to in-connectors so
+     * that they can be instructed by clients on what to do in case of
+     * asynchronous receive errors. The current convention is that @c
+     * ERROR_STRATEGY_LOG and @c ERROR_STRATEGY_PRINT shall use the
+     * declared channel for displaying the error once and afterwards
+     * connectors should stop processing.
+     *
+     * @param strategy the new error strategy to use
+     */
+    virtual void setErrorStrategy(ParticipantConfig::ErrorStrategy strategy);
+ protected:
+    typedef std::list<eventprocessing::HandlerPtr> HandlerList;
+
+    HandlerList handlers;
 };
 
 typedef InConnector::Ptr InConnectorPtr;

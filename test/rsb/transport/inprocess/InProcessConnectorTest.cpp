@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011-2017 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -27,8 +27,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "rsb/transport/inprocess/InPullConnector.h"
-#include "rsb/transport/inprocess/InPushConnector.h"
+#include "rsb/transport/inprocess/InConnector.h"
 #include "rsb/transport/inprocess/OutConnector.h"
 
 #include "testconfig.h"
@@ -43,20 +42,15 @@ __attribute__((used))
 #endif
 = pullInConnectorTest();
 
-rsb::transport::InPullConnectorPtr createInProcessInPullConnector() {
-    return rsb::transport::InPullConnectorPtr(new rsb::transport::inprocess::InPullConnector());
-}
-
-rsb::transport::InPushConnectorPtr createInProcessInPushConnector() {
-    return rsb::transport::InPushConnectorPtr(new rsb::transport::inprocess::InPushConnector());
+rsb::transport::InConnectorPtr createInProcessInConnector() {
+    return rsb::transport::InConnectorPtr(new rsb::transport::inprocess::InConnector());
 }
 
 rsb::transport::OutConnectorPtr createInProcessOutConnector() {
     return rsb::transport::OutConnectorPtr(new rsb::transport::inprocess::OutConnector());
 }
 
-const ConnectorTestSetup inProcessSetup(createInProcessInPullConnector,
-                                        createInProcessInPushConnector,
+const ConnectorTestSetup inProcessSetup(createInProcessInConnector,
                                         createInProcessOutConnector);
 
 INSTANTIATE_TEST_CASE_P(InProcessConnector,

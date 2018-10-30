@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -31,7 +31,7 @@
 #include <rsc/logging/Logger.h>
 
 #include "../Handler.h"
-#include "../transport/InPushConnector.h"
+#include "../transport/InConnector.h"
 #include "InRouteConfigurator.h"
 #include "PushEventReceivingStrategy.h"
 

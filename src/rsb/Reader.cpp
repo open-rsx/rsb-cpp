@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -38,12 +38,12 @@ using namespace rsb::transport;
 
 namespace rsb {
 
-Reader::Reader(const vector<InPullConnectorPtr>& connectors,
+Reader::Reader(const vector<InConnectorPtr>& connectors,
                const Scope&                  scope,
                const ParticipantConfig&      config) :
     Participant(scope, config) {
     this->configurator.reset(new PullInRouteConfigurator(scope, config));
-    for (vector<InPullConnectorPtr>::const_iterator it = connectors.begin(); it
+    for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
              != connectors.end(); ++it) {
         this->configurator->addConnector(*it);
     }

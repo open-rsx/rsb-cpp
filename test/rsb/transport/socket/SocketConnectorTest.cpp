@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011-2017 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,8 +29,7 @@
 
 #include "rsb/converter/Repository.h"
 
-#include "rsb/transport/socket/InPullConnector.h"
-#include "rsb/transport/socket/InPushConnector.h"
+#include "rsb/transport/socket/InConnector.h"
 #include "rsb/transport/socket/OutConnector.h"
 
 #include "testconfig.h"
@@ -46,22 +45,13 @@ __attribute__((used))
 #endif
 = pullInConnectorTest();
 
-rsb::transport::InPullConnectorPtr createSocketInPullConnector() {
-    return rsb::transport::InPullConnectorPtr(
-            new rsb::transport::socket::InPullConnector(
+rsb::transport::InConnectorPtr createSocketInConnector() {
+    return rsb::transport::InConnectorPtr(
+            new rsb::transport::socket::InConnector(
                     rsb::transport::socket::getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT,
-                    rsb::transport::socket::SERVER_AUTO, true));
-}
-
-rsb::transport::InPushConnectorPtr createSocketInPushConnector() {
-    return rsb::transport::InPushConnectorPtr(
-            new rsb::transport::socket::InPushConnector(
-                    rsb::transport::socket::getDefaultFactory(),
-                    converterRepository<string>()->getConvertersForDeserialization(),
-                    "localhost", SOCKET_PORT,
-                    rsb::transport::socket::SERVER_AUTO, true));
+                    rsb::transport::socket::SERVER_AUTO, true, true));
 }
 
 rsb::transport::OutConnectorPtr createSocketOutConnector() {
@@ -70,11 +60,11 @@ rsb::transport::OutConnectorPtr createSocketOutConnector() {
                     rsb::transport::socket::getDefaultFactory(),
                     converterRepository<string>()->getConvertersForSerialization(),
                     "localhost", SOCKET_PORT,
-                    rsb::transport::socket::SERVER_AUTO, true));
+                    rsb::transport::socket::SERVER_AUTO, true, true));
 }
 
-const ConnectorTestSetup socketSetup(createSocketInPullConnector,
-        createSocketInPushConnector, createSocketOutConnector);
+const ConnectorTestSetup socketSetup(createSocketInConnector,
+                                     createSocketOutConnector);
 
 INSTANTIATE_TEST_CASE_P(SocketConnector, ConnectorTest,
         ::testing::Values(socketSetup));

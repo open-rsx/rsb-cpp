@@ -40,8 +40,7 @@
 
 #include <boost/type_traits.hpp>
 
-#include "InPullConnector.h"
-#include "InPushConnector.h"
+#include "InConnector.h"
 #include "OutConnector.h"
 #include "rsb/rsbexports.h"
 
@@ -51,14 +50,11 @@ namespace transport {
 template <typename Interface>
 class ConnectorFactory;
 
-typedef ConnectorFactory<InPullConnector> InPullFactory;
-
-typedef ConnectorFactory<InPushConnector> InPushFactory;
+typedef ConnectorFactory<InConnector> InFactory;
 
 typedef ConnectorFactory<OutConnector> OutFactory;
 
-RSB_EXPORT InPullFactory& getInPullFactory();
-RSB_EXPORT InPushFactory& getInPushFactory();
+RSB_EXPORT InFactory& getInFactory();
 RSB_EXPORT OutFactory& getOutFactory();
 
 /**
@@ -164,8 +160,7 @@ public:
 private:
     rsc::logging::LoggerPtr logger;
 
-    friend InPullFactory& getInPullFactory();
-    friend InPushFactory& getInPushFactory();
+    friend InFactory& getInFactory();
     friend OutFactory& getOutFactory();
 
     typedef rsc::patterns::Factory<std::string, Interface> Factory;

@@ -44,7 +44,7 @@ public:
     eventprocessing::PushInRouteConfiguratorPtr configurator;
 };
 
-Listener::Listener(const vector<InPushConnectorPtr>& connectors,
+Listener::Listener(const vector<InConnectorPtr>& connectors,
         const Scope& scope, const ParticipantConfig& config) :
     Participant(scope, config), d(new Impl) {
 
@@ -63,12 +63,12 @@ const std::set<std::string> Listener::getTransportURLs() const {
     return d->configurator->getTransportURLs();
 }
 
-void Listener::initialize(const vector<InPushConnectorPtr>& connectors,
+void Listener::initialize(const vector<InConnectorPtr>& connectors,
         const Scope& scope, const ParticipantConfig& config) {
     d->configurator.reset(
             new eventprocessing::PushInRouteConfigurator(scope, config));
     d->configurator->setErrorStrategy(getConfig().getErrorStrategy());
-    for (vector<InPushConnectorPtr>::const_iterator it = connectors.begin(); it
+    for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
             != connectors.end(); ++it) {
         d->configurator->addConnector(*it);
     }

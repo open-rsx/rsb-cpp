@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -44,8 +44,8 @@ typedef boost::shared_ptr<Filter> FilterPtr;
 }
 
 namespace transport {
-class InPullConnector;
-typedef boost::shared_ptr<InPullConnector> InPullConnectorPtr;
+class InConnector;
+typedef boost::shared_ptr<InConnector> InConnectorPtr;
 }
 
 namespace eventprocessing {
@@ -66,7 +66,7 @@ namespace eventprocessing {
  */
 class RSB_EXPORT PullEventReceivingStrategy: public EventReceivingStrategy {
 public:
-    PullEventReceivingStrategy(const std::set<transport::InPullConnectorPtr>& connectors);
+    PullEventReceivingStrategy(const std::set<transport::InConnectorPtr>& connectors);
     virtual ~PullEventReceivingStrategy();
 
     virtual void addFilter(filter::FilterPtr filter);

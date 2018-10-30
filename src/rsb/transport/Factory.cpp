@@ -29,13 +29,8 @@
 namespace rsb {
 namespace transport {
 
-InPullFactory& getInPullFactory() {
-    static InPullFactory factory;
-    return factory;
-}
-
-InPushFactory& getInPushFactory() {
-    static InPushFactory factory;
+InFactory& getInFactory() {
+    static InFactory factory;
     return factory;
 }
 

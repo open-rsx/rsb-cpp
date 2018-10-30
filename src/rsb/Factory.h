@@ -341,11 +341,8 @@ private:
     std::vector<transport::OutConnectorPtr>
         createOutConnectors(const ParticipantConfig& config);
 
-    std::vector<transport::InPullConnectorPtr>
-        createInPullConnectors(const ParticipantConfig& config);
-
-    std::vector<transport::InPushConnectorPtr>
-        createInPushConnectors(const ParticipantConfig& config);
+    std::vector<transport::InConnectorPtr>
+        createInConnectors(const ParticipantConfig& config);
 
     void configureSubsystem(rsc::config::OptionHandler& handler,
                             const std::string& environmentVariablePrefix = "RSB_");

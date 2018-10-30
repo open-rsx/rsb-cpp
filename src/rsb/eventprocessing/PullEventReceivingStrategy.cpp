@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,7 +28,7 @@
 
 #include "../filter/Filter.h"
 
-#include "../transport/InPullConnector.h"
+#include "../transport/InConnector.h"
 
 using namespace std;
 
@@ -40,7 +40,7 @@ using namespace rsb::transport;
 namespace rsb {
 namespace eventprocessing {
 
-typedef std::set<transport::InPullConnectorPtr> ConnectorSet;
+typedef std::set<transport::InConnectorPtr> ConnectorSet;
 typedef std::set<filter::FilterPtr> FilterSet;
 
 class PullEventReceivingStrategy::Impl {
@@ -50,7 +50,7 @@ public:
     ConnectorSet connectors;
 };
 
-PullEventReceivingStrategy::PullEventReceivingStrategy(const set<InPullConnectorPtr>& connectors) :
+PullEventReceivingStrategy::PullEventReceivingStrategy(const set<InConnectorPtr>& connectors) :
     d(new Impl) {
     d->connectors = connectors;
 }
@@ -72,11 +72,11 @@ EventPtr PullEventReceivingStrategy::raiseEvent(bool block) {
     // it.
     for (ConnectorSet::iterator it = d->connectors.begin(); it
             != d->connectors.end(); ++it) {
-        EventPtr event((*it)->raiseEvent(block));
+        /*EventPtr event((*it)->raiseEvent(block));
         if (event) {
             // TODO filter
             return event;
-        }
+            }*/
     }
     return EventPtr();
 }

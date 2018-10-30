@@ -70,12 +70,8 @@ int pullInConnectorTest() {
 TEST_P(ConnectorTest, testConstruction) {
     rsb::getFactory();
     {
-        InPullConnectorPtr connector;
-        ASSERT_NO_THROW(connector = GetParam().createInPullConnector());
-    }
-    {
-        InPushConnectorPtr connector;
-        ASSERT_NO_THROW(connector = GetParam().createInPushConnector());
+        InConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createInConnector());
     }
     {
         OutConnectorPtr connector;
@@ -85,17 +81,9 @@ TEST_P(ConnectorTest, testConstruction) {
 
 TEST_P(ConnectorTest, testConnection) {
     rsb::getFactory();
-
     {
-        InPullConnectorPtr connector;
-        ASSERT_NO_THROW(connector = GetParam().createInPullConnector());
-        ASSERT_NO_THROW(connector->activate());
-        ASSERT_NO_THROW(connector->deactivate());
-    }
-
-    {
-        InPushConnectorPtr connector;
-        ASSERT_NO_THROW(connector = GetParam().createInPushConnector());
+        InConnectorPtr connector;
+        ASSERT_NO_THROW(connector = GetParam().createInConnector());
         ASSERT_NO_THROW(connector->activate());
         ASSERT_NO_THROW(connector->deactivate());
     }
@@ -170,7 +158,7 @@ TEST_P(ConnectorTest, testHierarchySending) {
         Scope receiveScope = *receiveScopeIt;
 
         // in connector
-        InPushConnectorPtr in = GetParam().createInPushConnector();
+        InConnectorPtr in = GetParam().createInConnector();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(receiveScope);
         in->activate();
@@ -249,7 +237,7 @@ TEST_P(ConnectorTest, testRoundtripDynamicScopes) {
     ASSERT_NO_THROW(out->activate());
 
     // in connector
-    InPushConnectorPtr in = GetParam().createInPushConnector();
+    InConnectorPtr in = GetParam().createInConnector();
     in->setQualityOfServiceSpecs(qosSpecs);
     in->setScope(Scope("/"));
     ASSERT_NO_THROW(in->activate());
@@ -301,7 +289,7 @@ TEST_P(ConnectorTest, testRoundtrip) {
             sizeIt != sizes.end(); ++sizeIt) {
 
         // in connector
-        InPushConnectorPtr in = GetParam().createInPushConnector();
+        InConnectorPtr in = GetParam().createInConnector();
         in->setQualityOfServiceSpecs(qosSpecs);
         in->setScope(scope);
         ASSERT_NO_THROW(in->activate());

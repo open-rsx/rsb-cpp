@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -76,11 +76,8 @@ void PushInRouteConfigurator::activate() {
     InRouteConfigurator::ConnectorSet connectors = getConnectors();
     for (InRouteConfigurator::ConnectorSet::const_iterator it =
             connectors.begin(); it != connectors.end(); ++it) {
-        InPushConnectorPtr connector = dynamic_pointer_cast<InPushConnector>(
-                *it);
-        assert(connector);
-        connector->setErrorStrategy(this->errorStrategy);
-        connector->addHandler(
+        (*it)->setErrorStrategy(this->errorStrategy);
+        (*it)->addHandler(
                 HandlerPtr(
                         new EventFunctionHandler(
                                 boost::bind(&PushEventReceivingStrategy::handle,
@@ -103,10 +100,7 @@ void PushInRouteConfigurator::setErrorStrategy(const ParticipantConfig::ErrorStr
     InRouteConfigurator::ConnectorSet connectors = getConnectors();
     for (InRouteConfigurator::ConnectorSet::const_iterator it =
             connectors.begin(); it != connectors.end(); ++it) {
-        InPushConnectorPtr connector = dynamic_pointer_cast<InPushConnector>(
-                *it);
-        assert(connector);
-        connector->setErrorStrategy(this->errorStrategy);
+        (*it)->setErrorStrategy(this->errorStrategy);
     }
     this->errorStrategy = strategy;
 }

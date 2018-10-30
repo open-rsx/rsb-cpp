@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -147,8 +147,7 @@ int main(int argc, char** argv) {
     if (connectors || verbose) {
         cout << endl << "Connectors" << endl;
 
-        cout << rsb::transport::getInPullFactory() << endl;
-        cout << rsb::transport::getInPushFactory() << endl;
+        cout << rsb::transport::getInFactory() << endl;
         cout << rsb::transport::getOutFactory() << endl;
     }
 

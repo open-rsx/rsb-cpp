@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -30,6 +30,19 @@ namespace rsb {
 namespace transport {
 
 InConnector::~InConnector() {
+}
+
+void InConnector::addHandler(eventprocessing::HandlerPtr handler) {
+    this->handlers.push_back(handler);
+}
+
+void InConnector::removeHandler(eventprocessing::HandlerPtr handler) {
+    this->handlers.remove(handler);
+}
+
+void InConnector::setErrorStrategy(
+    ParticipantConfig::ErrorStrategy /*strategy*/) {
+    // empty implementation to preserve the API
 }
 
 }

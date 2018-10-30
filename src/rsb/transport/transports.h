@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -40,9 +40,8 @@ RSB_EXPORT void registerDefaultTransports();
  * Transport directions. Can be combined via bitwise or.
  */
 enum Directions {
-    DIRECTION_IN_PUSH = 0x01,
-    DIRECTION_IN_PULL = 0x02,
-    DIRECTION_OUT     = 0x04
+    DIRECTION_IN  = 0x01,
+    DIRECTION_OUT = 0x02
 };
 
 /**

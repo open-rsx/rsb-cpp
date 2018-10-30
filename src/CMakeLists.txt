@@ -106,14 +106,10 @@ set(SOURCES rsb/CommException.cpp
             rsb/transport/Factory.cpp
             rsb/transport/OutConnector.cpp
             rsb/transport/InConnector.cpp
-            rsb/transport/InPullConnector.cpp
-            rsb/transport/InPushConnector.cpp
             rsb/transport/transports.cpp
 
             rsb/transport/inprocess/Bus.cpp
             rsb/transport/inprocess/InConnector.cpp
-            rsb/transport/inprocess/InPullConnector.cpp
-            rsb/transport/inprocess/InPushConnector.cpp
             rsb/transport/inprocess/OutConnector.cpp
 
             rsb/util/EventQueuePushHandler.cpp
@@ -202,8 +198,6 @@ set(HEADERS rsb/CommException.h
             rsb/transport/AsioServiceContext.h
             rsb/transport/Connector.h
             rsb/transport/InConnector.h
-            rsb/transport/InPullConnector.h
-            rsb/transport/InPushConnector.h
             rsb/transport/OutConnector.h
             rsb/transport/ConverterSelectingConnector.h
             rsb/transport/Factory.h
@@ -211,8 +205,6 @@ set(HEADERS rsb/CommException.h
 
             rsb/transport/inprocess/Bus.h
             rsb/transport/inprocess/InConnector.h
-            rsb/transport/inprocess/InPullConnector.h
-            rsb/transport/inprocess/InPushConnector.h
             rsb/transport/inprocess/OutConnector.h
 
             rsb/util/EventQueuePushHandler.h
@@ -234,8 +226,6 @@ if(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/Factory.cpp
                         rsb/transport/socket/ConnectorBase.cpp
                         rsb/transport/socket/InConnector.cpp
-                        rsb/transport/socket/InPushConnector.cpp
-                        rsb/transport/socket/InPullConnector.cpp
                         rsb/transport/socket/LifecycledBusServer.cpp
                         rsb/transport/socket/OutConnector.cpp
                         rsb/transport/socket/Serialization.cpp)
@@ -248,8 +238,6 @@ if(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/Factory.h
                         rsb/transport/socket/ConnectorBase.h
                         rsb/transport/socket/InConnector.h
-                        rsb/transport/socket/InPushConnector.h
-                        rsb/transport/socket/InPullConnector.h
                         rsb/transport/socket/LifecycledBusServer.h
                         rsb/transport/socket/OutConnector.h
                         rsb/transport/socket/Serialization.h)

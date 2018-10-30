@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014, 2015, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -37,7 +37,7 @@
 #include "Event.h"
 #include "Participant.h"
 #include "eventprocessing/InRouteConfigurator.h"
-#include "transport/InPullConnector.h"
+#include "transport/InConnector.h"
 
 namespace rsb {
 
@@ -73,7 +73,7 @@ public:
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createReader instead of calling this directly.
      */
-    Reader(const std::vector<transport::InPullConnectorPtr>& connectors,
+    Reader(const std::vector<transport::InConnectorPtr>& connectors,
            const Scope&                                  scope,
            const ParticipantConfig&                      config);
 

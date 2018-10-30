@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -28,7 +28,7 @@
 
 #include <set>
 
-#include "../transport/InPullConnector.h"
+#include "../transport/InConnector.h"
 #include "PullEventReceivingStrategy.h"
 
 using namespace std;
@@ -49,10 +49,10 @@ EventReceivingStrategyPtr PullInRouteConfigurator::createEventReceivingStrategy(
     // Pass all configured connectors a PullEventReceivingStrategy
     // object, ensuring that they actually are InPullConnectors.
     set<InConnectorPtr> connectors_ = getConnectors();
-    set<InPullConnectorPtr> connectors;
+    set<InConnectorPtr> connectors;
     for (set<InConnectorPtr>::const_iterator it = connectors_.begin();
          it != connectors_.end(); ++it) {
-        InPullConnectorPtr connector = dynamic_pointer_cast<InPullConnector>(*it);
+        InConnectorPtr connector = dynamic_pointer_cast<InConnector>(*it);
         assert(connector);
         connectors.insert(connector);
     }
