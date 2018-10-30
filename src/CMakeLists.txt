@@ -43,7 +43,6 @@ set(SOURCES rsb/CommException.cpp
             rsb/CreateFunctions.cpp
             rsb/Handler.cpp
             rsb/Informer.cpp
-            rsb/Reader.cpp
             rsb/Listener.cpp
             rsb/MetaData.cpp
             rsb/Participant.cpp
@@ -90,6 +89,7 @@ set(SOURCES rsb/CommException.cpp
             rsb/filter/CauseFilter.cpp
 
             rsb/patterns/MethodExistsException.cpp
+            rsb/patterns/Reader.cpp
             rsb/patterns/Server.cpp
             rsb/patterns/RemoteServer.cpp
             rsb/patterns/LocalServer.cpp
@@ -126,7 +126,6 @@ set(HEADERS rsb/CommException.h
             rsb/CreateFunctions.h
             rsb/Handler.h
             rsb/Informer.h
-            rsb/Reader.h
             rsb/Listener.h
             rsb/MetaData.h
             rsb/Participant.h
@@ -180,6 +179,7 @@ set(HEADERS rsb/CommException.h
             rsb/filter/CauseFilter.h
 
             rsb/patterns/MethodExistsException.h
+            rsb/patterns/Reader.h
             rsb/patterns/Server.h
             rsb/patterns/RemoteServer.h
             rsb/patterns/LocalServer.h

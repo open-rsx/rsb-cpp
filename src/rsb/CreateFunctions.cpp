@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -41,8 +41,8 @@ ListenerPtr createListener(const Scope&             scope,
     return getFactory().createListener(scope, config);
 }
 
-ReaderPtr createReader(const Scope&             scope,
-                       const ParticipantConfig& config) {
+patterns::ReaderPtr createReader(const Scope&             scope,
+                                 const ParticipantConfig& config) {
     return getFactory().createReader(scope, config);
 }
 

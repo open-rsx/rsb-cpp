@@ -44,13 +44,13 @@
 #include "rsb/rsbexports.h"
 
 #include "ParticipantConfig.h"
-#include "Reader.h"
 #include "Listener.h"
 #include "Informer.h"
 
 #include "transport/Connector.h"
 #include "transport/Factory.h"
 
+#include "patterns/Reader.h"
 #include "patterns/LocalServer.h"
 #include "patterns/RemoteServer.h"
 
@@ -179,11 +179,11 @@ public:
      * @throw RSBError when the requested connection cannot be
      *                 established.
      **/
-    ReaderPtr createReader(const Scope&             scope,
-                           const ParticipantConfig& config
-                           = getFactory().getDefaultParticipantConfig(),
-                           Participant*             parent
-                           = 0);
+    patterns::ReaderPtr createReader(const Scope&             scope,
+                                     const ParticipantConfig& config
+                                     = getFactory().getDefaultParticipantConfig(),
+                                     Participant*             parent
+                                     = 0);
 
     /**
      * Creates a @ref patterns::LocalServer::LocalMethod.

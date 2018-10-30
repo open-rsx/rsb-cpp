@@ -30,25 +30,25 @@
 
 #include <rsc/threading/SynchronizedQueue.h>
 
-#include "Handler.h"
-
-#include "eventprocessing/EventReceivingStrategy.h"
-#include "eventprocessing/InRouteConfigurator.h"
-
-using namespace std;
-
-using namespace boost;
-
-using namespace rsb::eventprocessing;
-using namespace rsb::transport;
+#include "../Factory.h"
+#include "../Handler.h"
 
 namespace rsb {
+namespace patterns {
 
-Reader::Reader(const vector<InConnectorPtr>& connectors,
-               const Scope&                  scope,
-               const ParticipantConfig&      config) :
-    Participant(scope, config) {
-    initialize(connectors, scope, config);
+Reader::Reader(const Scope&             scope,
+               const ParticipantConfig& config) :
+    Participant(scope, config),
+    listener(getFactory().createListener(scope, config, this)) {
+
+    this->listener->addHandler(
+            HandlerPtr(new EventFunctionHandler(boost::bind(&Reader::handle,
+                                                            this, _1))),
+            true);
+}
+
+Reader::~Reader() {
+    this->listener.reset();
 }
 
 std::string Reader::getKind() const {
@@ -56,28 +56,8 @@ std::string Reader::getKind() const {
 }
 
 const std::set<std::string> Reader::getTransportURLs() const {
-    return this->configurator->getTransportURLs();
+    return std::set<std::string>();
 }
-
-void Reader::initialize(const std::vector<InConnectorPtr>& connectors,
-                        const Scope&                       scope,
-                        const ParticipantConfig&           config) {
-    this->configurator.reset(new eventprocessing::InRouteConfigurator(scope, config));
-    this->configurator->setErrorStrategy(getConfig().getErrorStrategy());
-    for (std::vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
-           != connectors.end(); ++it) {
-      this->configurator->addConnector(*it);
-    }
-
-    this->configurator->setQualityOfServiceSpecs(config.getQualityOfServiceSpec());
-
-    this->configurator->activate();
-
-    this->configurator->handlerAdded(
-            HandlerPtr(new EventFunctionHandler(boost::bind(&Reader::handle, this, _1))),
-            true);
-}
-
 
 EventPtr Reader::read(bool block) {
     if (block) {
@@ -95,4 +75,5 @@ void Reader::handle(EventPtr event) {
     this->queue.push(event);
 }
 
+}
 }

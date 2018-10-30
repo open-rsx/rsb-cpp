@@ -332,11 +332,11 @@ ListenerPtr Factory::createListener(const Scope&             scope,
     return listener;
 }
 
-ReaderPtr Factory::createReader(const Scope&             scope,
-                                const ParticipantConfig& config,
-                                Participant*             parent) {
-    ReaderPtr reader(
-        new Reader(createInConnectors(config), scope, config));
+patterns::ReaderPtr Factory::createReader(const Scope&             scope,
+                                          const ParticipantConfig& config,
+                                          Participant*             parent) {
+    patterns::ReaderPtr reader(
+        new patterns::Reader(scope, config));
     reader->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
     (*this->signalParticipantCreated)(reader, parent);
     return reader;

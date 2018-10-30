@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2011, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -107,9 +107,9 @@ RSB_EXPORT ListenerPtr createListener(const Scope& scope,
  * @return A shared_ptr to the new @ref Reader object.
  * @throw RSBError If the requested reader cannot be created.
  **/
-RSB_EXPORT ReaderPtr createReader(const Scope& scope,
-                                  const ParticipantConfig& config
-                                  = getFactory().getDefaultParticipantConfig());
+RSB_EXPORT patterns::ReaderPtr createReader(const Scope& scope,
+                                            const ParticipantConfig& config
+                                            = getFactory().getDefaultParticipantConfig());
 
 /**
  * Creates and returns a @ref Server object that exposes methods under
