@@ -30,7 +30,6 @@
 #include <iterator>
 
 #include "eventprocessing/InRouteConfigurator.h"
-#include "eventprocessing/PushInRouteConfigurator.h"
 
 using namespace std;
 
@@ -41,7 +40,7 @@ namespace rsb {
 class Listener::Impl {
 public:
     rsc::logging::LoggerPtr logger;
-    eventprocessing::PushInRouteConfiguratorPtr configurator;
+    eventprocessing::InRouteConfiguratorPtr configurator;
 };
 
 Listener::Listener(const vector<InConnectorPtr>& connectors,
@@ -66,7 +65,7 @@ const std::set<std::string> Listener::getTransportURLs() const {
 void Listener::initialize(const vector<InConnectorPtr>& connectors,
         const Scope& scope, const ParticipantConfig& config) {
     d->configurator.reset(
-            new eventprocessing::PushInRouteConfigurator(scope, config));
+            new eventprocessing::InRouteConfigurator(scope, config));
     d->configurator->setErrorStrategy(getConfig().getErrorStrategy());
     for (vector<InConnectorPtr>::const_iterator it = connectors.begin(); it
             != connectors.end(); ++it) {

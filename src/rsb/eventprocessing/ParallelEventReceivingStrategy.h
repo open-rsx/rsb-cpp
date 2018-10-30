@@ -38,7 +38,8 @@
 
 #include "../Event.h"
 #include "../ParticipantConfig.h"
-#include "PushEventReceivingStrategy.h"
+#include "EventReceivingStrategy.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -59,7 +60,7 @@ namespace eventprocessing {
  *
  * @author swrede
  */
-class RSB_EXPORT ParallelEventReceivingStrategy: public PushEventReceivingStrategy {
+class RSB_EXPORT ParallelEventReceivingStrategy: public EventReceivingStrategy {
 public:
     static EventReceivingStrategy* create(const rsc::runtime::Properties& props);
 
@@ -70,9 +71,6 @@ public:
     std::string getClassName() const;
     void printContents(std::ostream& stream) const;
 
-    void setHandlerErrorStrategy(
-            const ParticipantConfig::ErrorStrategy& strategy);
-
     // Qualification of HandlerPtr is required since there is another
     // HandlerPtr type in eventprocessing.
     virtual void addHandler(rsb::HandlerPtr handler, const bool& wait);
@@ -80,6 +78,9 @@ public:
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
+
+    void setHandlerErrorStrategy(
+        const ParticipantConfig::ErrorStrategy& strategy);
 
     void handle(EventPtr e);
 

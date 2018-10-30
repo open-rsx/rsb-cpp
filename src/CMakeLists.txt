@@ -75,12 +75,9 @@ set(SOURCES rsb/CommException.cpp
             rsb/eventprocessing/DirectEventSendingStrategy.cpp
             rsb/eventprocessing/EventReceivingStrategy.cpp
             rsb/eventprocessing/EventReceivingStrategyFactory.cpp
-            rsb/eventprocessing/PullEventReceivingStrategy.cpp
             rsb/eventprocessing/DirectEventReceivingStrategy.cpp
             rsb/eventprocessing/ParallelEventReceivingStrategy.cpp
             rsb/eventprocessing/InRouteConfigurator.cpp
-            rsb/eventprocessing/PullInRouteConfigurator.cpp
-            rsb/eventprocessing/PushInRouteConfigurator.cpp
             rsb/eventprocessing/OutRouteConfigurator.cpp
             rsb/eventprocessing/strategies.cpp
 
@@ -166,13 +163,9 @@ set(HEADERS rsb/CommException.h
             rsb/eventprocessing/DirectEventSendingStrategy.h
             rsb/eventprocessing/EventReceivingStrategy.h
             rsb/eventprocessing/EventReceivingStrategyFactory.h
-            rsb/eventprocessing/PullEventReceivingStrategy.h
-            rsb/eventprocessing/PushEventReceivingStrategy.h
             rsb/eventprocessing/DirectEventReceivingStrategy.h
             rsb/eventprocessing/ParallelEventReceivingStrategy.h
             rsb/eventprocessing/InRouteConfigurator.h
-            rsb/eventprocessing/PullInRouteConfigurator.h
-            rsb/eventprocessing/PushInRouteConfigurator.h
             rsb/eventprocessing/OutRouteConfigurator.h
             rsb/eventprocessing/strategies.h
             rsb/eventprocessing/ScopeDispatcher.h

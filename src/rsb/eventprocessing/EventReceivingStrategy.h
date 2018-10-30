@@ -3,6 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
+ * Copyright (C) 2010-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,7 +30,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
+#include "../ParticipantConfig.h"
 #include "../Handler.h"
+
 #include "rsb/rsbexports.h"
 
 namespace rsb {
@@ -48,6 +51,9 @@ namespace eventprocessing {
  * Implementations of this interface organize the receiving of events
  * via @ref rsb::transport::InConnector s.
  *
+ * A list of handlers is maintained and dispatching of events is done
+ * by calling each handler.
+ *
  * @author swrede
  * @author jmoringe
  */
@@ -58,6 +64,35 @@ public:
 
     virtual void addFilter(filter::FilterPtr filter) = 0;
     virtual void removeFilter(filter::FilterPtr filter) = 0;
+
+    /**
+     * Adds a new handler that will be notified about new events.
+     *
+     * @param handler handler to add
+     * @param wait if set to @c true, this method must only return after the
+     *             handler has been install completely so that the next event
+     *             will be delivered to it
+     */
+    virtual void addHandler(rsb::HandlerPtr handler, const bool& wait) = 0;
+
+    /**
+     * Removes a handler that will will then not be notified anymore.
+     *
+     * @param handler handler to remove
+     * @param wait if set to @c true, this method must only return after the
+     *             handler has been removed completely and will not receive
+     *             any more notifications
+     */
+    virtual void removeHandler(rsb::HandlerPtr handler, const bool& wait) = 0;
+
+    /**
+     * Defines the strategy to use for handling dispatching errors to
+     * the client handler.
+     *
+     * @param strategy the new strategy to use
+     */
+    virtual void setHandlerErrorStrategy(
+        const ParticipantConfig::ErrorStrategy& strategy) = 0;
 
     /**
      * Dispatches the event to the listener.

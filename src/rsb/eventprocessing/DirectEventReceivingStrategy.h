@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -38,7 +38,7 @@
 #include "../Event.h"
 #include "../ParticipantConfig.h"
 
-#include "PushEventReceivingStrategy.h"
+#include "EventReceivingStrategy.h"
 
 #include "rsb/rsbexports.h"
 
@@ -46,8 +46,8 @@ namespace rsb {
 namespace eventprocessing {
 
 /**
- * This push-style event receiving strategy filters and dispatches
- * @ref rsb::Event s in the context of the thread calling @ref handle.
+ * This event receiving strategy filters and dispatches @ref
+ * rsb::Event s in the context of the thread calling @ref handle.
  *
  * Even calls to @ref rsb::Handler s run in this thread, so stack
  * exhaustion and deadlocks are possible.
@@ -58,7 +58,7 @@ namespace eventprocessing {
  *
  * @author jmoringe
  */
-class RSB_EXPORT DirectEventReceivingStrategy: public PushEventReceivingStrategy {
+class RSB_EXPORT DirectEventReceivingStrategy: public EventReceivingStrategy {
 public:
     static EventReceivingStrategy* create(const rsc::runtime::Properties& props);
 
@@ -68,15 +68,13 @@ public:
 
     void printContents(std::ostream& stream) const;
 
-    void setHandlerErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy);
-
-    // Qualification of HandlerPtr is required since there is another
-    // HandlerPtr type in eventprocessing.
     virtual void addHandler(rsb::HandlerPtr handler, const bool& wait);
     virtual void removeHandler(rsb::HandlerPtr handler, const bool& wait);
 
     virtual void addFilter(filter::FilterPtr filter);
     virtual void removeFilter(filter::FilterPtr filter);
+
+    void setHandlerErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy);
 
     void handle(EventPtr e);
 

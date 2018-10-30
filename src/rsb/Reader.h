@@ -32,11 +32,14 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
+#include <rsc/threading/SynchronizedQueue.h>
 
 #include "Scope.h"
 #include "Event.h"
 #include "Participant.h"
+
 #include "eventprocessing/InRouteConfigurator.h"
+
 #include "transport/InConnector.h"
 
 namespace rsb {
@@ -101,6 +104,14 @@ private:
     rsc::logging::LoggerPtr logger;
 
     eventprocessing::InRouteConfiguratorPtr configurator;
+
+    rsc::threading::SynchronizedQueue<EventPtr> queue;
+
+    void initialize(const std::vector<transport::InConnectorPtr>& connectors,
+                    const Scope&                                  scope,
+                    const ParticipantConfig&                      config);
+
+    void handle(EventPtr event);
 };
 
 typedef boost::shared_ptr<Reader> ReaderPtr;
