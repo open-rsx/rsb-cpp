@@ -315,7 +315,7 @@ SignalParticipantDestroyedPtr Factory::getSignalParticipantDestroyed() {
 InformerBasePtr Factory::createInformerBase(const Scope&             scope,
                                             const string&            dataType,
                                             const ParticipantConfig& config,
-                                            ParticipantPtr           parent) {
+                                            Participant*             parent) {
     InformerBasePtr informer(
         new InformerBase(createOutConnectors(config), scope, config, dataType));
     informer->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
@@ -326,7 +326,7 @@ InformerBasePtr Factory::createInformerBase(const Scope&             scope,
 
 ListenerPtr Factory::createListener(const Scope&             scope,
                                     const ParticipantConfig& config,
-                                    ParticipantPtr           parent) {
+                                    Participant*             parent) {
     ListenerPtr listener(
         new Listener(createInPushConnectors(config), scope, config));
     listener->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
@@ -336,7 +336,7 @@ ListenerPtr Factory::createListener(const Scope&             scope,
 
 ReaderPtr Factory::createReader(const Scope&             scope,
                                 const ParticipantConfig& config,
-                                ParticipantPtr           parent) {
+                                Participant*             parent) {
     ReaderPtr reader(
         new Reader(createInPullConnectors(config), scope, config));
     reader->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
@@ -349,7 +349,7 @@ patterns::LocalServer::LocalMethodPtr Factory::createLocalMethod
  patterns::LocalServer::CallbackPtr callback,
  const ParticipantConfig&           listenerConfig,
  const ParticipantConfig&           informerConfig,
- ParticipantPtr                     parent) {
+ Participant*                       parent) {
     patterns::LocalServer::LocalMethodPtr method
         (new patterns::LocalServer::LocalMethod
          (scope, scope.getComponents()[scope.getComponents().size() -1],
@@ -362,7 +362,7 @@ patterns::LocalServer::LocalMethodPtr Factory::createLocalMethod
 patterns::LocalServerPtr Factory::createLocalServer(const Scope& scope,
                                                     const ParticipantConfig &listenerConfig,
                                                     const ParticipantConfig &informerConfig,
-                                                    ParticipantPtr          parent) {
+                                                    Participant*            parent) {
     patterns::LocalServerPtr server(
         new patterns::LocalServer(scope, listenerConfig, informerConfig));
     server->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
@@ -374,7 +374,7 @@ patterns::RemoteServer::RemoteMethodPtr Factory::createRemoteMethod
 (const Scope&             scope,
  const ParticipantConfig& listenerConfig,
  const ParticipantConfig& informerConfig,
- ParticipantPtr           parent) {
+ Participant*             parent) {
     patterns::RemoteServer::RemoteMethodPtr method
         (new patterns::RemoteServer::RemoteMethod
          (scope, scope.getComponents()[scope.getComponents().size() -1],
@@ -387,7 +387,7 @@ patterns::RemoteServer::RemoteMethodPtr Factory::createRemoteMethod
 patterns::RemoteServerPtr Factory::createRemoteServer(const Scope&             scope,
                                                       const ParticipantConfig &listenerConfig,
                                                       const ParticipantConfig &informerConfig,
-                                                      ParticipantPtr           parent) {
+                                                      Participant*             parent) {
     patterns::RemoteServerPtr server(
         new patterns::RemoteServer(scope, listenerConfig, informerConfig));
     server->setSignalParticipantDestroyed(this->signalParticipantDestroyed);

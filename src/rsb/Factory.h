@@ -56,7 +56,7 @@
 
 namespace rsb {
 
-typedef boost::signals2::signal<void(ParticipantPtr, ParticipantPtr)> SignalParticipantCreated;
+typedef boost::signals2::signal<void(ParticipantPtr, Participant*)> SignalParticipantCreated;
 typedef boost::shared_ptr<SignalParticipantCreated> SignalParticipantCreatedPtr;
 
 class Factory;
@@ -109,8 +109,8 @@ public:
                    = getFactory().getDefaultParticipantConfig(),
                    const std::string&       dataType
                    = detail::TypeName<DataType>()(),
-                   ParticipantPtr           parent
-                   = ParticipantPtr()) {
+                   Participant*             parent
+                   = 0) {
         typename Informer<DataType>::Ptr informer(
             new Informer<DataType>(createOutConnectors(config), scope,
                                    config, dataType));
@@ -141,8 +141,8 @@ public:
                                        = "",
                                        const ParticipantConfig& config
                                        = getFactory().getDefaultParticipantConfig(),
-                                       ParticipantPtr           parent
-                                       = ParticipantPtr());
+                                       Participant*             parent
+                                       = 0);
 
     /**
      * Creates a new listener for the specified scope.
@@ -158,8 +158,8 @@ public:
     ListenerPtr createListener(const Scope&             scope,
                                const ParticipantConfig& config
                                = getFactory().getDefaultParticipantConfig(),
-                               ParticipantPtr           parent
-                               = ParticipantPtr());
+                               Participant*             parent
+                               = 0);
 
     /**
      * Creates a new @ref Reader object for the specified scope.
@@ -182,8 +182,8 @@ public:
     ReaderPtr createReader(const Scope&             scope,
                            const ParticipantConfig& config
                            = getFactory().getDefaultParticipantConfig(),
-                           ParticipantPtr           parent
-                           = ParticipantPtr());
+                           Participant*             parent
+                           = 0);
 
     /**
      * Creates a @ref patterns::LocalServer::LocalMethod.
@@ -210,8 +210,8 @@ public:
         = getFactory().getDefaultParticipantConfig(),
         const ParticipantConfig&           informerConfig
         = getFactory().getDefaultParticipantConfig(),
-        ParticipantPtr                     parent
-        = ParticipantPtr());
+        Participant*                       parent
+        = 0);
 
     /**
      * Creates a @ref Server object that exposes methods under the
@@ -232,8 +232,8 @@ public:
             = getFactory().getDefaultParticipantConfig(),
             const ParticipantConfig& informerConfig
             = getFactory().getDefaultParticipantConfig(),
-            ParticipantPtr           parent
-            = ParticipantPtr());
+            Participant*             parent
+            = 0);
 
     /**
      * Creates a @ref patterns::RemoteServer::RemoteMethod.
@@ -254,8 +254,8 @@ public:
         = getFactory().getDefaultParticipantConfig(),
         const ParticipantConfig& informerConfig
         = getFactory().getDefaultParticipantConfig(),
-        ParticipantPtr           parent
-        = ParticipantPtr());
+        Participant*             parent
+        = 0);
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
@@ -276,8 +276,8 @@ public:
             = getFactory().getDefaultParticipantConfig(),
             const ParticipantConfig& informerConfig
             = getFactory().getDefaultParticipantConfig(),
-            ParticipantPtr           parent
-            = ParticipantPtr());
+            Participant*             parent
+            = 0);
 
     /**
      * Returns the default configuration for new participants.

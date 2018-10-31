@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -148,7 +148,7 @@ IntrospectionSender::IntrospectionSender(boost::shared_ptr<std::string> processD
 }
 
 void IntrospectionSender::addParticipant(ParticipantPtr participant,
-                                         ParticipantPtr parent) {
+                                         Participant*   parent) {
     RSCDEBUG(this->logger, boost::format("Adding participant %1%") % participant);
 
     boost::mutex::scoped_lock lock(this->mutex);

@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2012, 2013, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -31,7 +31,6 @@
 #include <map>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
 #include <rsc/logging/Logger.h>
@@ -51,8 +50,7 @@ namespace patterns {
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT LocalServer: public Participant,
-                              public boost::enable_shared_from_this<LocalServer> {
+class RSB_EXPORT LocalServer: public Participant {
 public:
 
     /**

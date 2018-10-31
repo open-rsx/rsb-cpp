@@ -162,7 +162,7 @@ RemoteServer::RemoteMethodPtr RemoteServer::getMethod(const string& name) {
             = getFactory().createRemoteMethod(getScope()->concat(Scope("/" + name)),
                                               this->listenerConfig,
                                               this->informerConfig,
-                                              shared_from_this());
+                                              this);
 
         method->activate();
 

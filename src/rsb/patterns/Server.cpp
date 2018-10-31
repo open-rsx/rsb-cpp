@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -78,8 +78,7 @@ const ParticipantConfig& Method::getListenerConfig() const {
 }
 
 ListenerPtr Method::makeListener() {
-    return getFactory().createListener(*getScope(), getListenerConfig(),
-                                       shared_from_this());
+    return getFactory().createListener(*getScope(), getListenerConfig(), this);
 }
 
 InformerBasePtr Method::getInformer() {
@@ -98,7 +97,7 @@ InformerBasePtr Method::makeInformer() {
     return getFactory().createInformerBase(*getScope(),
                                            "", // TODO
                                            getInformerConfig(),
-                                           shared_from_this());
+                                           this);
 }
 
 }
