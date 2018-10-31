@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -65,12 +65,6 @@ void DirectEventReceivingStrategy::printContents(ostream& stream) const {
     stream << "filters = " << this->filters
            << ", errorStrategy = " << this->errorStrategy
            << ", singleThreaded = " << this->singleThreaded;
-}
-
-void DirectEventReceivingStrategy::setHandlerErrorStrategy(
-        const ParticipantConfig::ErrorStrategy& strategy) {
-    boost::shared_lock<boost::shared_mutex> lock(errorStrategyMutex);
-    this->errorStrategy = strategy;
 }
 
 bool DirectEventReceivingStrategy::filter(EventPtr e) {
@@ -204,6 +198,11 @@ void DirectEventReceivingStrategy::removeHandler(rsb::HandlerPtr handler,
     boost::shared_lock<boost::shared_mutex> lock(this->handlerMutex);
 
     this->handlers.remove(handler);
+}
+
+void DirectEventReceivingStrategy::setHandlerErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy) {
+    boost::shared_lock<boost::shared_mutex> lock(errorStrategyMutex);
+    this->errorStrategy = strategy;
 }
 
 void DirectEventReceivingStrategy::addFilter(filter::FilterPtr filter) {

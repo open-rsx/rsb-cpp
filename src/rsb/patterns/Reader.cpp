@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -26,31 +26,29 @@
 
 #include "Reader.h"
 
-#include "eventprocessing/PullEventReceivingStrategy.h"
-#include "eventprocessing/PullInRouteConfigurator.h"
+#include <boost/bind.hpp>
 
-using namespace std;
+#include <rsc/threading/SynchronizedQueue.h>
 
-using namespace boost;
-
-using namespace rsb::eventprocessing;
-using namespace rsb::transport;
+#include "../Factory.h"
+#include "../Handler.h"
 
 namespace rsb {
+namespace patterns {
 
-Reader::Reader(const vector<InPullConnectorPtr>& connectors,
-               const Scope&                  scope,
-               const ParticipantConfig&      config) :
-    Participant(scope, config) {
-    this->configurator.reset(new PullInRouteConfigurator(scope, config));
-    for (vector<InPullConnectorPtr>::const_iterator it = connectors.begin(); it
-             != connectors.end(); ++it) {
-        this->configurator->addConnector(*it);
-    }
+Reader::Reader(const Scope&             scope,
+               const ParticipantConfig& config) :
+    Participant(scope, config),
+    listener(getFactory().createListener(scope, config, this)) {
 
-    this->configurator->setQualityOfServiceSpecs(config.getQualityOfServiceSpec());
+    this->listener->addHandler(
+            HandlerPtr(new EventFunctionHandler(boost::bind(&Reader::handle,
+                                                            this, _1))),
+            true);
+}
 
-    this->configurator->activate();
+Reader::~Reader() {
+    this->listener.reset();
 }
 
 std::string Reader::getKind() const {
@@ -58,14 +56,24 @@ std::string Reader::getKind() const {
 }
 
 const std::set<std::string> Reader::getTransportURLs() const {
-    return this->configurator->getTransportURLs();
+    return std::set<std::string>();
 }
 
 EventPtr Reader::read(bool block) {
-    PullEventReceivingStrategyPtr strategy
-        = dynamic_pointer_cast<PullEventReceivingStrategy>(this->configurator->getEventReceivingStrategy());
-    assert(strategy);
-    return strategy->raiseEvent(block);
+    if (block) {
+        return this->queue.pop();
+    } else {
+        try {
+            return this->queue.tryPop();
+        } catch (const rsc::threading::QueueEmptyException&) {
+            return EventPtr();
+        }
+    }
 }
 
+void Reader::handle(EventPtr event) {
+    this->queue.push(event);
+}
+
+}
 }

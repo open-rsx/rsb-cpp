@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -29,6 +29,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <rsc/logging/Logger.h>
+#include <rsc/runtime/Properties.h>
 
 #include "../../Scope.h"
 
@@ -45,13 +46,14 @@ namespace transport{
 namespace inprocess {
 
 /**
- *
+ * Instances of this class receive events from the in-process bus.
  *
  * @author jmoringe
  */
 class RSB_EXPORT InConnector: public virtual transport::InConnector,
                               public virtual eventprocessing::Handler {
 public:
+    InConnector(BusPtr bus = getDefaultBus());
     virtual ~InConnector();
 
     void printContents(std::ostream& stream) const;
@@ -63,8 +65,13 @@ public:
     virtual void setScope(const Scope& scope);
 
     const std::string getTransportURL() const;
-protected:
-    InConnector(BusPtr bus = getDefaultBus());
+
+    void setQualityOfServiceSpecs(const QualityOfServiceSpec& specs);
+
+    void handle(EventPtr event);
+
+    static rsb::transport::InConnector* create(
+            const rsc::runtime::Properties& args);
 private:
     rsc::logging::LoggerPtr logger;
 

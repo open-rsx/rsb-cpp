@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011, 2014, 2015, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -26,56 +26,60 @@
 
 #pragma once
 
-#include <vector>
+#include <string>
 #include <set>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include <rsc/logging/Logger.h>
+#include <rsc/threading/SynchronizedQueue.h>
 
-#include "Scope.h"
-#include "Event.h"
-#include "Participant.h"
-#include "eventprocessing/InRouteConfigurator.h"
-#include "transport/InPullConnector.h"
+#include "../Scope.h"
+#include "../ParticipantConfig.h"
+#include "../Event.h"
+#include "../Participant.h"
+#include "../Listener.h"
+
+#include "rsb/rsbexports.h"
 
 namespace rsb {
+namespace patterns {
 
 /**
- * A Reader receives events published by a informers by participating
- * in a channel with a suitable scope. In contrast to the @ref
- * Listener participant, a Reader receives events using a pull-style
- * interface: the read method has to be explicitly in order to receive
- * events. This method may then block (depending on the @a block
- * parameter) until an event becomes available. The received event, if
- * any, is returned to the caller. There are no context swichtes or
- * queuing involved.
+ * A Reader receives and synchronously delivers events.
+ *
+ * In contrast to the @ref Listener participant, a Reader delivers
+ * events using a pull-style interface: the read method has to be
+ * called in order to receive events. This method may block (depending
+ * on the @a block parameter) until an event becomes available. The
+ * received event, if any, is returned to the caller.
  *
  * Usage example:
  * @code
- * ReaderPtr reader = getFactory().createReader(Scope("/example/informer"));
+ * rsb::patterns::ReaderPtr reader
+ *         = rsb::getFactory().createReader("/example/informer");
  * reader->read();
  * @endcode
  *
  * @author jmoringe
  */
-class RSB_EXPORT Reader: public Participant {
+class RSB_EXPORT Reader: public Participant,
+                         public boost::enable_shared_from_this<Reader> {
 public:
     /**
-     * Constructs a new reader object assigned to @a scope. The reader
-     * connects to the bus using the supplied @a connectors.
+     * Constructs a new reader object attached to @a scope.
      *
-     * @param connectors a list of connectors that the reader should
-     *                   use to communicate with the bus.
-     * @param scope the scope where the data is received from.
-     * @param config the configuration that was used to setup this listener
+     * @param scope the scope from which data is received.
+     * @param config the configuration for this reader
      *
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createReader instead of calling this directly.
      */
-    Reader(const std::vector<transport::InPullConnectorPtr>& connectors,
-           const Scope&                                  scope,
-           const ParticipantConfig&                      config);
+    Reader(const Scope&             scope,
+           const ParticipantConfig& config);
+
+    virtual ~Reader();
 
     // Overrides method in Participant.
     virtual std::string getKind() const;
@@ -100,9 +104,14 @@ public:
 private:
     rsc::logging::LoggerPtr logger;
 
-    eventprocessing::InRouteConfiguratorPtr configurator;
+    ListenerPtr listener;
+
+    rsc::threading::SynchronizedQueue<EventPtr> queue;
+
+    void handle(EventPtr event);
 };
 
 typedef boost::shared_ptr<Reader> ReaderPtr;
 
+}
 }

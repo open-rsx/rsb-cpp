@@ -73,12 +73,6 @@ void ParallelEventReceivingStrategy::printContents(ostream& stream) const {
     stream << "filters = " << filters << ", errorStrategy = " << errorStrategy;
 }
 
-void ParallelEventReceivingStrategy::setHandlerErrorStrategy(
-        const ParticipantConfig::ErrorStrategy& strategy) {
-    boost::recursive_mutex::scoped_lock lock(errorStrategyMutex);
-    this->errorStrategy = strategy;
-}
-
 bool ParallelEventReceivingStrategy::filter(rsb::HandlerPtr handler, EventPtr e) {
     RSCDEBUG(logger, "Matching event " << e << " for handler " << handler);
 
@@ -208,6 +202,13 @@ void ParallelEventReceivingStrategy::addFilter(filter::FilterPtr filter) {
 void ParallelEventReceivingStrategy::removeFilter(filter::FilterPtr filter) {
     boost::unique_lock<boost::shared_mutex> lock(filtersMutex);
     filters.erase(filter);
+}
+
+
+void ParallelEventReceivingStrategy::setHandlerErrorStrategy(
+        const ParticipantConfig::ErrorStrategy& strategy) {
+    boost::recursive_mutex::scoped_lock lock(errorStrategyMutex);
+    this->errorStrategy = strategy;
 }
 
 }

@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -31,18 +31,30 @@
 #include <rsc/os/HostInfo.h>
 #include <rsc/os/ProcessInfo.h>
 
+#include "../../Event.h"
+#include "../../MetaData.h"
+
 using namespace std;
 
 using namespace rsc::logging;
 
 namespace rsb {
-namespace transport{
+namespace transport {
 namespace inprocess {
 
 InConnector::InConnector(BusPtr bus) :
     logger(Logger::getLogger("rsb.transport.inprocess.InConnector")),
     bus(bus),
     active(false) {
+}
+
+transport::InConnector* InConnector::create(const rsc::runtime::Properties& /*args*/) {
+    // Seems to have confused some users.
+    // See https://code.cor-lab.de/issues/649
+    // if (args.has("converters")) {
+    //   RSCWARN(logger, "`converters' property found when constructing inprocess::InPushConnector. This connector does not support (or require) converters.");
+    // }
+    return new InConnector();
 }
 
 InConnector::~InConnector() {
@@ -89,6 +101,22 @@ void InConnector::deactivate() {
     this->active = false;
 
     bus->removeSink(this);
+}
+
+void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/) {
+}
+
+void InConnector::handle(EventPtr event) {
+    /** TODO(jmoringe, 2011-11-07): This ensures not overwriting
+     * earlier receive timestamp added by different
+     * connector. However, thread-safety issue remains.  */
+    if (event->getMetaData().getReceiveTime() == 0) {
+        event->mutableMetaData().setReceiveTime();
+    }
+    for (HandlerList::iterator it = this->handlers.begin(); it
+             != this->handlers.end(); ++it) {
+        (*it)->handle(event);
+    }
 }
 
 }

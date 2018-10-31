@@ -3,7 +3,7 @@
  * This file is a part of RSB project
  *
  * Copyright (C) 2010 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2011, 2012, 2014, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -32,7 +32,6 @@
 #include <set>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/mutex.hpp>
 
 #include <rsc/runtime/TypeStringTools.h>
@@ -57,8 +56,7 @@ namespace patterns {
  * @author jwienke
  * @author jmoringe
  */
-class RSB_EXPORT RemoteServer: public Participant,
-                               public boost::enable_shared_from_this<RemoteServer> {
+class RSB_EXPORT RemoteServer: public Participant {
 public:
     typedef rsc::threading::Future<EventPtr> FutureType;
     typedef boost::shared_ptr<FutureType> FuturePtr;

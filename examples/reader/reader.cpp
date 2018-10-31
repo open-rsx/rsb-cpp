@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012, 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     // Create a reader which synchronously receives events on the
     // specified scope.
     Factory& factory = getFactory();
-    ReaderPtr reader = factory.createReader(scope);
+    patterns::ReaderPtr reader = factory.createReader(scope);
 
     // Print events as they are received.
     while (rsc::misc::lastArrivedSignal() == rsc::misc::NO_SIGNAL) {

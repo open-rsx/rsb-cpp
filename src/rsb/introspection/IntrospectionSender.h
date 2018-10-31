@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2014 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -64,7 +64,7 @@ public:
                         = getFactory().getDefaultParticipantConfig());
 
     void addParticipant(ParticipantPtr participant,
-                        ParticipantPtr parent);
+                        Participant*   parent);
 
     bool removeParticipant(const Participant& participant);
 private:

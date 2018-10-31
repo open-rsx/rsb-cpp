@@ -44,19 +44,19 @@
 #include "rsb/rsbexports.h"
 
 #include "ParticipantConfig.h"
-#include "Reader.h"
 #include "Listener.h"
 #include "Informer.h"
 
 #include "transport/Connector.h"
 #include "transport/Factory.h"
 
+#include "patterns/Reader.h"
 #include "patterns/LocalServer.h"
 #include "patterns/RemoteServer.h"
 
 namespace rsb {
 
-typedef boost::signals2::signal<void(ParticipantPtr, ParticipantPtr)> SignalParticipantCreated;
+typedef boost::signals2::signal<void(ParticipantPtr, Participant*)> SignalParticipantCreated;
 typedef boost::shared_ptr<SignalParticipantCreated> SignalParticipantCreatedPtr;
 
 class Factory;
@@ -109,8 +109,8 @@ public:
                    = getFactory().getDefaultParticipantConfig(),
                    const std::string&       dataType
                    = detail::TypeName<DataType>()(),
-                   ParticipantPtr           parent
-                   = ParticipantPtr()) {
+                   Participant*             parent
+                   = 0) {
         typename Informer<DataType>::Ptr informer(
             new Informer<DataType>(createOutConnectors(config), scope,
                                    config, dataType));
@@ -141,8 +141,8 @@ public:
                                        = "",
                                        const ParticipantConfig& config
                                        = getFactory().getDefaultParticipantConfig(),
-                                       ParticipantPtr           parent
-                                       = ParticipantPtr());
+                                       Participant*             parent
+                                       = 0);
 
     /**
      * Creates a new listener for the specified scope.
@@ -158,8 +158,8 @@ public:
     ListenerPtr createListener(const Scope&             scope,
                                const ParticipantConfig& config
                                = getFactory().getDefaultParticipantConfig(),
-                               ParticipantPtr           parent
-                               = ParticipantPtr());
+                               Participant*             parent
+                               = 0);
 
     /**
      * Creates a new @ref Reader object for the specified scope.
@@ -179,11 +179,11 @@ public:
      * @throw RSBError when the requested connection cannot be
      *                 established.
      **/
-    ReaderPtr createReader(const Scope&             scope,
-                           const ParticipantConfig& config
-                           = getFactory().getDefaultParticipantConfig(),
-                           ParticipantPtr           parent
-                           = ParticipantPtr());
+    patterns::ReaderPtr createReader(const Scope&             scope,
+                                     const ParticipantConfig& config
+                                     = getFactory().getDefaultParticipantConfig(),
+                                     Participant*             parent
+                                     = 0);
 
     /**
      * Creates a @ref patterns::LocalServer::LocalMethod.
@@ -210,8 +210,8 @@ public:
         = getFactory().getDefaultParticipantConfig(),
         const ParticipantConfig&           informerConfig
         = getFactory().getDefaultParticipantConfig(),
-        ParticipantPtr                     parent
-        = ParticipantPtr());
+        Participant*                       parent
+        = 0);
 
     /**
      * Creates a @ref Server object that exposes methods under the
@@ -232,8 +232,8 @@ public:
             = getFactory().getDefaultParticipantConfig(),
             const ParticipantConfig& informerConfig
             = getFactory().getDefaultParticipantConfig(),
-            ParticipantPtr           parent
-            = ParticipantPtr());
+            Participant*             parent
+            = 0);
 
     /**
      * Creates a @ref patterns::RemoteServer::RemoteMethod.
@@ -254,8 +254,8 @@ public:
         = getFactory().getDefaultParticipantConfig(),
         const ParticipantConfig& informerConfig
         = getFactory().getDefaultParticipantConfig(),
-        ParticipantPtr           parent
-        = ParticipantPtr());
+        Participant*             parent
+        = 0);
 
     /**
      * Creates a @ref RemoteServer object for the server at scope @a
@@ -276,8 +276,8 @@ public:
             = getFactory().getDefaultParticipantConfig(),
             const ParticipantConfig& informerConfig
             = getFactory().getDefaultParticipantConfig(),
-            ParticipantPtr           parent
-            = ParticipantPtr());
+            Participant*             parent
+            = 0);
 
     /**
      * Returns the default configuration for new participants.
@@ -341,11 +341,8 @@ private:
     std::vector<transport::OutConnectorPtr>
         createOutConnectors(const ParticipantConfig& config);
 
-    std::vector<transport::InPullConnectorPtr>
-        createInPullConnectors(const ParticipantConfig& config);
-
-    std::vector<transport::InPushConnectorPtr>
-        createInPushConnectors(const ParticipantConfig& config);
+    std::vector<transport::InConnectorPtr>
+        createInConnectors(const ParticipantConfig& config);
 
     void configureSubsystem(rsc::config::OptionHandler& handler,
                             const std::string& environmentVariablePrefix = "RSB_");

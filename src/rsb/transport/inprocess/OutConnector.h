@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -37,6 +37,8 @@ namespace transport{
 namespace inprocess {
 
 /**
+ * Instances of this class send events to the in-process bus.
+ *
  * @author jmoringe
  */
 class RSB_EXPORT OutConnector: public rsb::transport::OutConnector {

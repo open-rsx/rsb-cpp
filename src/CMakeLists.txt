@@ -43,7 +43,6 @@ set(SOURCES rsb/CommException.cpp
             rsb/CreateFunctions.cpp
             rsb/Handler.cpp
             rsb/Informer.cpp
-            rsb/Reader.cpp
             rsb/Listener.cpp
             rsb/MetaData.cpp
             rsb/Participant.cpp
@@ -75,12 +74,9 @@ set(SOURCES rsb/CommException.cpp
             rsb/eventprocessing/DirectEventSendingStrategy.cpp
             rsb/eventprocessing/EventReceivingStrategy.cpp
             rsb/eventprocessing/EventReceivingStrategyFactory.cpp
-            rsb/eventprocessing/PullEventReceivingStrategy.cpp
             rsb/eventprocessing/DirectEventReceivingStrategy.cpp
             rsb/eventprocessing/ParallelEventReceivingStrategy.cpp
             rsb/eventprocessing/InRouteConfigurator.cpp
-            rsb/eventprocessing/PullInRouteConfigurator.cpp
-            rsb/eventprocessing/PushInRouteConfigurator.cpp
             rsb/eventprocessing/OutRouteConfigurator.cpp
             rsb/eventprocessing/strategies.cpp
 
@@ -93,6 +89,7 @@ set(SOURCES rsb/CommException.cpp
             rsb/filter/CauseFilter.cpp
 
             rsb/patterns/MethodExistsException.cpp
+            rsb/patterns/Reader.cpp
             rsb/patterns/Server.cpp
             rsb/patterns/RemoteServer.cpp
             rsb/patterns/LocalServer.cpp
@@ -106,14 +103,10 @@ set(SOURCES rsb/CommException.cpp
             rsb/transport/Factory.cpp
             rsb/transport/OutConnector.cpp
             rsb/transport/InConnector.cpp
-            rsb/transport/InPullConnector.cpp
-            rsb/transport/InPushConnector.cpp
             rsb/transport/transports.cpp
 
             rsb/transport/inprocess/Bus.cpp
             rsb/transport/inprocess/InConnector.cpp
-            rsb/transport/inprocess/InPullConnector.cpp
-            rsb/transport/inprocess/InPushConnector.cpp
             rsb/transport/inprocess/OutConnector.cpp
 
             rsb/util/EventQueuePushHandler.cpp
@@ -133,7 +126,6 @@ set(HEADERS rsb/CommException.h
             rsb/CreateFunctions.h
             rsb/Handler.h
             rsb/Informer.h
-            rsb/Reader.h
             rsb/Listener.h
             rsb/MetaData.h
             rsb/Participant.h
@@ -170,13 +162,9 @@ set(HEADERS rsb/CommException.h
             rsb/eventprocessing/DirectEventSendingStrategy.h
             rsb/eventprocessing/EventReceivingStrategy.h
             rsb/eventprocessing/EventReceivingStrategyFactory.h
-            rsb/eventprocessing/PullEventReceivingStrategy.h
-            rsb/eventprocessing/PushEventReceivingStrategy.h
             rsb/eventprocessing/DirectEventReceivingStrategy.h
             rsb/eventprocessing/ParallelEventReceivingStrategy.h
             rsb/eventprocessing/InRouteConfigurator.h
-            rsb/eventprocessing/PullInRouteConfigurator.h
-            rsb/eventprocessing/PushInRouteConfigurator.h
             rsb/eventprocessing/OutRouteConfigurator.h
             rsb/eventprocessing/strategies.h
             rsb/eventprocessing/ScopeDispatcher.h
@@ -191,6 +179,7 @@ set(HEADERS rsb/CommException.h
             rsb/filter/CauseFilter.h
 
             rsb/patterns/MethodExistsException.h
+            rsb/patterns/Reader.h
             rsb/patterns/Server.h
             rsb/patterns/RemoteServer.h
             rsb/patterns/LocalServer.h
@@ -202,8 +191,6 @@ set(HEADERS rsb/CommException.h
             rsb/transport/AsioServiceContext.h
             rsb/transport/Connector.h
             rsb/transport/InConnector.h
-            rsb/transport/InPullConnector.h
-            rsb/transport/InPushConnector.h
             rsb/transport/OutConnector.h
             rsb/transport/ConverterSelectingConnector.h
             rsb/transport/Factory.h
@@ -211,8 +198,6 @@ set(HEADERS rsb/CommException.h
 
             rsb/transport/inprocess/Bus.h
             rsb/transport/inprocess/InConnector.h
-            rsb/transport/inprocess/InPullConnector.h
-            rsb/transport/inprocess/InPushConnector.h
             rsb/transport/inprocess/OutConnector.h
 
             rsb/util/EventQueuePushHandler.h
@@ -234,8 +219,6 @@ if(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/Factory.cpp
                         rsb/transport/socket/ConnectorBase.cpp
                         rsb/transport/socket/InConnector.cpp
-                        rsb/transport/socket/InPushConnector.cpp
-                        rsb/transport/socket/InPullConnector.cpp
                         rsb/transport/socket/LifecycledBusServer.cpp
                         rsb/transport/socket/OutConnector.cpp
                         rsb/transport/socket/Serialization.cpp)
@@ -248,8 +231,6 @@ if(WITH_SOCKET_TRANSPORT)
                         rsb/transport/socket/Factory.h
                         rsb/transport/socket/ConnectorBase.h
                         rsb/transport/socket/InConnector.h
-                        rsb/transport/socket/InPushConnector.h
-                        rsb/transport/socket/InPullConnector.h
                         rsb/transport/socket/LifecycledBusServer.h
                         rsb/transport/socket/OutConnector.h
                         rsb/transport/socket/Serialization.h)

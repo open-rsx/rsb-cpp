@@ -33,8 +33,7 @@
 #include "rsb/Event.h"
 #include "rsb/Factory.h"
 #include "rsb/converter/Repository.h"
-#include "rsb/transport/socket/InPullConnector.h"
-#include "rsb/transport/socket/InPushConnector.h"
+#include "rsb/transport/socket/InConnector.h"
 #include "rsb/transport/socket/OutConnector.h"
 
 #include "testconfig.h"
@@ -54,35 +53,27 @@ TEST(SocketServerRoutingTest, testEventRouting) {
                     getDefaultFactory(),
                     converterRepository<string>()->getConvertersForSerialization(),
                     "localhost", SOCKET_PORT, rsb::transport::socket::SERVER_YES,
-                    true));
+                    true, true));
 
-    rsb::transport::InPullConnectorPtr clientReceiver(
-            new rsb::transport::socket::InPullConnector(
+    rsb::transport::InConnectorPtr clientReceiver(
+            new rsb::transport::socket::InConnector(
                     getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT, rsb::transport::socket::SERVER_NO,
-                    true));
+                    true, true));
 
-    rsb::transport::InPushConnectorPtr serverPushReceiver(
-            new rsb::transport::socket::InPushConnector(
-                    getDefaultFactory(),
-                    converterRepository<string>()->getConvertersForDeserialization(),
-                    "localhost", SOCKET_PORT, rsb::transport::socket::SERVER_YES,
-                    true));
-
-    rsb::transport::InPullConnectorPtr serverPullReceiver(
-            new rsb::transport::socket::InPullConnector(
+    rsb::transport::InConnectorPtr serverReceiver(
+            new rsb::transport::socket::InConnector(
                     getDefaultFactory(),
                     converterRepository<string>()->getConvertersForDeserialization(),
                     "localhost", SOCKET_PORT,
-                    rsb::transport::socket::SERVER_YES, true));
+                    rsb::transport::socket::SERVER_YES, true, true));
 
     Scope scope("/test/scope");
 
     sender->activate();
     clientReceiver->activate();
-    serverPullReceiver->activate();
-    serverPushReceiver->activate();
+    serverReceiver->activate();
 
     EventPtr event(new Event);
     event->setId(rsc::misc::UUID(), 42);
@@ -92,12 +83,8 @@ TEST(SocketServerRoutingTest, testEventRouting) {
 
     sender->handle(event);
 
-    clientReceiver->raiseEvent(true);
-    serverPullReceiver->raiseEvent(true);
-
     clientReceiver->deactivate();
-    serverPullReceiver->deactivate();
-    serverPushReceiver->deactivate();
+    serverReceiver->deactivate();
     sender->deactivate();
 
 }

@@ -56,8 +56,8 @@ typedef boost::shared_ptr<PushInRouteConfigurator> PushInRouteConfiguratorPtr;
 }
 
 namespace transport {
-class InPushConnector;
-typedef boost::shared_ptr<InPushConnector> InPushConnectorPtr;
+class InConnector;
+typedef boost::shared_ptr<InConnector> InConnectorPtr;
 }
 
 /**
@@ -93,7 +93,7 @@ public:
      * @note This constructor is exposed for unit tests and such. Use
      * @ref Factory::createListener instead of calling this directly.
      */
-    Listener(const std::vector<transport::InPushConnectorPtr>& connectors,
+    Listener(const std::vector<transport::InConnectorPtr>& connectors,
             const Scope& scope, const ParticipantConfig& config);
 
     virtual ~Listener();
@@ -147,9 +147,9 @@ private:
     class Impl;
     boost::scoped_ptr<Impl> d;
 
-    void initialize(const std::vector<transport::InPushConnectorPtr>& connectors,
-                    const Scope&                                      scope,
-                    const ParticipantConfig&                          config);
+    void initialize(const std::vector<transport::InConnectorPtr>& connectors,
+                    const Scope&                                  scope,
+                    const ParticipantConfig&                      config);
 };
 
 typedef boost::shared_ptr<Listener> ListenerPtr;

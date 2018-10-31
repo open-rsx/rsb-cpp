@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2015 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -35,9 +35,9 @@ using namespace rsc::runtime;
 using namespace rsb;
 using namespace rsb::transport;
 
-class TestConnector: public InPullConnector {
+class TestConnector: public InConnector {
 public:
-    static InPullConnector* create(const Properties&) {
+    static InConnector* create(const Properties&) {
         return new TestConnector();
     }
 
@@ -70,7 +70,7 @@ public:
 
 TEST(ConnectorFactoryTest, testRegister)
 {
-    ConnectorFactory<InPullConnector>& factory = getInPullFactory();
+    ConnectorFactory<InConnector>& factory = getInFactory();
     factory.registerConnector("bla", &TestConnector::create, "bla");
     factory.getConnectorInfo("bla");
 }

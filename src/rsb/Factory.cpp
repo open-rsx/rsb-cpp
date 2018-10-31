@@ -3,7 +3,7 @@
  * This file is a part of the RSB project.
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012, 2013, 2014, 2016 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2013, 2014, 2016, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -248,13 +248,11 @@ Factory::Factory() :
     // Setup default participant config
     //
     // Collect all available connector implementations:
-    // + In-push
-    // + In-pull
+    // + In
     // + Out
     // Disable discovered connectors with the exception of the
     // socket transport.
-    set<string> availableTransports = getAvailableTransports(DIRECTION_IN_PUSH
-                                                             | DIRECTION_IN_PULL
+    set<string> availableTransports = getAvailableTransports(DIRECTION_IN
                                                              | DIRECTION_OUT);
 
     this->defaultConfig = ParticipantConfig();
@@ -315,7 +313,7 @@ SignalParticipantDestroyedPtr Factory::getSignalParticipantDestroyed() {
 InformerBasePtr Factory::createInformerBase(const Scope&             scope,
                                             const string&            dataType,
                                             const ParticipantConfig& config,
-                                            ParticipantPtr           parent) {
+                                            Participant*             parent) {
     InformerBasePtr informer(
         new InformerBase(createOutConnectors(config), scope, config, dataType));
     informer->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
@@ -326,19 +324,19 @@ InformerBasePtr Factory::createInformerBase(const Scope&             scope,
 
 ListenerPtr Factory::createListener(const Scope&             scope,
                                     const ParticipantConfig& config,
-                                    ParticipantPtr           parent) {
+                                    Participant*             parent) {
     ListenerPtr listener(
-        new Listener(createInPushConnectors(config), scope, config));
+        new Listener(createInConnectors(config), scope, config));
     listener->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
     (*this->signalParticipantCreated)(listener, parent);
     return listener;
 }
 
-ReaderPtr Factory::createReader(const Scope&             scope,
-                                const ParticipantConfig& config,
-                                ParticipantPtr           parent) {
-    ReaderPtr reader(
-        new Reader(createInPullConnectors(config), scope, config));
+patterns::ReaderPtr Factory::createReader(const Scope&             scope,
+                                          const ParticipantConfig& config,
+                                          Participant*             parent) {
+    patterns::ReaderPtr reader(
+        new patterns::Reader(scope, config));
     reader->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
     (*this->signalParticipantCreated)(reader, parent);
     return reader;
@@ -349,7 +347,7 @@ patterns::LocalServer::LocalMethodPtr Factory::createLocalMethod
  patterns::LocalServer::CallbackPtr callback,
  const ParticipantConfig&           listenerConfig,
  const ParticipantConfig&           informerConfig,
- ParticipantPtr                     parent) {
+ Participant*                       parent) {
     patterns::LocalServer::LocalMethodPtr method
         (new patterns::LocalServer::LocalMethod
          (scope, scope.getComponents()[scope.getComponents().size() -1],
@@ -362,7 +360,7 @@ patterns::LocalServer::LocalMethodPtr Factory::createLocalMethod
 patterns::LocalServerPtr Factory::createLocalServer(const Scope& scope,
                                                     const ParticipantConfig &listenerConfig,
                                                     const ParticipantConfig &informerConfig,
-                                                    ParticipantPtr          parent) {
+                                                    Participant*            parent) {
     patterns::LocalServerPtr server(
         new patterns::LocalServer(scope, listenerConfig, informerConfig));
     server->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
@@ -374,7 +372,7 @@ patterns::RemoteServer::RemoteMethodPtr Factory::createRemoteMethod
 (const Scope&             scope,
  const ParticipantConfig& listenerConfig,
  const ParticipantConfig& informerConfig,
- ParticipantPtr           parent) {
+ Participant*             parent) {
     patterns::RemoteServer::RemoteMethodPtr method
         (new patterns::RemoteServer::RemoteMethod
          (scope, scope.getComponents()[scope.getComponents().size() -1],
@@ -387,7 +385,7 @@ patterns::RemoteServer::RemoteMethodPtr Factory::createRemoteMethod
 patterns::RemoteServerPtr Factory::createRemoteServer(const Scope&             scope,
                                                       const ParticipantConfig &listenerConfig,
                                                       const ParticipantConfig &informerConfig,
-                                                      ParticipantPtr           parent) {
+                                                      Participant*             parent) {
     patterns::RemoteServerPtr server(
         new patterns::RemoteServer(scope, listenerConfig, informerConfig));
     server->setSignalParticipantDestroyed(this->signalParticipantDestroyed);
@@ -405,46 +403,23 @@ void Factory::setDefaultParticipantConfig(const ParticipantConfig& config) {
     this->defaultConfig = config;
 }
 
-vector<InPullConnectorPtr>
-Factory::createInPullConnectors(const ParticipantConfig& config) {
+vector<InConnectorPtr>
+Factory::createInConnectors(const ParticipantConfig& config) {
     // Note: getTransports() only returns *enabled* transports.
-    vector<InPullConnectorPtr> connectors;
+    vector<InConnectorPtr> connectors;
     set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
     for (set<ParticipantConfig::Transport>::const_iterator transportIt =
              configuredTransports.begin(); transportIt
              != configuredTransports.end(); ++transportIt) {
         RSCDEBUG(logger, "Trying to add connector " << *transportIt);
         try {
-            connectors.push_back(InPullConnectorPtr(getInPullFactory()
-                                                    .createInst(transportIt->getName(),
-                                                                prepareConnectorOptions(*transportIt,
-                                                                                        DESERIALIZATION,
-                                                                                        this->logger))));
+            connectors.push_back(InConnectorPtr(getInFactory()
+                                                .createInst(transportIt->getName(),
+                                                            prepareConnectorOptions(*transportIt,
+                                                                                    DESERIALIZATION,
+                                                                                    this->logger))));
         } catch (const exception& e) {
-            throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', in-pull: %2%")
-                                           % transportIt->getName() % e.what()));
-        }
-    }
-    return connectors;
-}
-
-vector<InPushConnectorPtr>
-Factory::createInPushConnectors(const ParticipantConfig& config) {
-    // Note: getTransports() only returns *enabled* transports.
-    vector<InPushConnectorPtr> connectors;
-    set<ParticipantConfig::Transport> configuredTransports = config.getTransports();
-    for (set<ParticipantConfig::Transport>::const_iterator transportIt =
-             configuredTransports.begin(); transportIt
-             != configuredTransports.end(); ++transportIt) {
-        RSCDEBUG(logger, "Trying to add connector " << *transportIt);
-        try {
-            connectors.push_back(InPushConnectorPtr(getInPushFactory()
-                                                    .createInst(transportIt->getName(),
-                                                                prepareConnectorOptions(*transportIt,
-                                                                                        DESERIALIZATION,
-                                                                                        this->logger))));
-        } catch (const exception& e) {
-            throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', in-push: %2%")
+            throw runtime_error(boost::str(boost::format("Error configuring connector `%1%', in: %2%")
                                            % transportIt->getName() % e.what()));
         }
     }

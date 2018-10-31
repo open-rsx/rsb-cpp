@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project.
  *
- * Copyright (C) 2014, 2015, 2016 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2014, 2015, 2016, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -106,7 +106,7 @@ public:
     }
 
     void handleParticipantCreated(rsb::ParticipantPtr participant,
-                                  rsb::ParticipantPtr parent) {
+                                  rsb::Participant*   parent) {
         // Do not print out the participant directly since parts of might not be
         // constructed, which could be accessed by the participan's printing method
         RSCDEBUG(logger,

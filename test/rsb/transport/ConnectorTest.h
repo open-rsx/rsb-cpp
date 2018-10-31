@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2011 by Johannes Wienke <jwienke at techfak dot uni-bielefeld dot de>
- * Copyright (C) 2012 Jan Moringen <jmoringe@techfak.uni-bielfeld.de>
+ * Copyright (C) 2012-2018 Jan Moringen <jmoringe@techfak.uni-bielfeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -30,8 +30,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "rsb/transport/InPullConnector.h"
-#include "rsb/transport/InPushConnector.h"
+#include "rsb/transport/InConnector.h"
 #include "rsb/transport/OutConnector.h"
 
 /**
@@ -42,15 +41,12 @@
 class ConnectorTestSetup {
 public:
     ConnectorTestSetup(
-            boost::function<rsb::transport::InPullConnectorPtr()> createInPullConnector,
-            boost::function<rsb::transport::InPushConnectorPtr()> createInPushConnector,
+            boost::function<rsb::transport::InConnectorPtr()> createInConnector,
             boost::function<rsb::transport::OutConnectorPtr()> createOutConnector) :
-        createInPullConnector(createInPullConnector),
-        createInPushConnector(createInPushConnector),
+        createInConnector(createInConnector),
         createOutConnector(createOutConnector) {
     }
-    boost::function<rsb::transport::InPullConnectorPtr()> createInPullConnector;
-    boost::function<rsb::transport::InPushConnectorPtr()> createInPushConnector;
+    boost::function<rsb::transport::InConnectorPtr()> createInConnector;
     boost::function<rsb::transport::OutConnectorPtr()> createOutConnector;
 };
 

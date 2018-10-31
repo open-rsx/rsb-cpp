@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2011, 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -32,13 +32,11 @@
 
 #include <boost/thread.hpp>
 
-#include "inprocess/InPullConnector.h"
-#include "inprocess/InPushConnector.h"
+#include "inprocess/InConnector.h"
 #include "inprocess/OutConnector.h"
 
 #ifdef RSB_WITH_SOCKET_TRANSPORT
-#include "socket/InPushConnector.h"
-#include "socket/InPullConnector.h"
+#include "socket/InConnector.h"
 #include "socket/OutConnector.h"
 #endif
 
@@ -58,11 +56,11 @@ void registerDefaultTransports() {
     }
     registered = true;
 
-    // In-direction, push-style connectors
+    // In-direction connectors
     {
-        InPushFactory& factory = getInPushFactory();
+        InFactory& factory = getInFactory();
         factory.registerConnector("inprocess",
-                                  &inprocess::InPushConnector::create,
+                                  &inprocess::InConnector::create,
                                   "inprocess",
                                   false);
 
@@ -76,35 +74,7 @@ void registerDefaultTransports() {
             options.insert("wait");
 
             factory.registerConnector("socket",
-                                      &socket::InPushConnector::create,
-                                      "socket",
-                                      true,
-                                      options);
-        }
-#endif
-
-    }
-
-    // In-direction, pull-style connectors
-    {
-        InPullFactory& factory = getInPullFactory();
-
-        factory.registerConnector("inprocess",
-                                  &inprocess::InPullConnector::create,
-                                  "inprocess",
-                                  false);
-
-#ifdef RSB_WITH_SOCKET_TRANSPORT
-        {
-            set<string> options;
-            options.insert("host");
-            options.insert("port");
-            options.insert("server");
-            options.insert("tcpnodelay");
-            options.insert("wait");
-
-            factory.registerConnector("socket",
-                                      &socket::InPullConnector::create,
+                                      &socket::InConnector::create,
                                       "socket",
                                       true,
                                       options);
@@ -158,21 +128,12 @@ set<string> getAvailableTransports(unsigned int requiredDirections) {
     }
 
     set<string> result;
-    set<string> inPullTransports;
+    set<string> inTransports;
     {
-        set<InPullFactory::ConnectorInfo> infos = getInPullFactory().getConnectorInfos();
-        for (set<InPullFactory::ConnectorInfo>::const_iterator it
+        set<InFactory::ConnectorInfo> infos = getInFactory().getConnectorInfos();
+        for (set<InFactory::ConnectorInfo>::const_iterator it
                  = infos.begin(); it != infos.end(); ++it) {
-            inPullTransports.insert(it->getName());
-            result.insert(it->getName());
-        }
-    }
-    set<string> inPushTransports;
-    {
-        set<InPushFactory::ConnectorInfo> infos = getInPushFactory().getConnectorInfos();
-        for (set<InPushFactory::ConnectorInfo>::const_iterator it
-                 = infos.begin(); it != infos.end(); ++it) {
-            inPushTransports.insert(it->getName());
+            inTransports.insert(it->getName());
             result.insert(it->getName());
         }
     }
@@ -186,11 +147,8 @@ set<string> getAvailableTransports(unsigned int requiredDirections) {
         }
     }
 
-    if (requiredDirections & DIRECTION_IN_PULL) {
-        result = intersection()(result, inPullTransports);
-    }
-    if (requiredDirections & DIRECTION_IN_PUSH) {
-        result = intersection()(result, inPushTransports);
+    if (requiredDirections & DIRECTION_IN) {
+        result = intersection()(result, inTransports);
     }
     if (requiredDirections & DIRECTION_OUT) {
         result = intersection()(result, outTransports);
@@ -205,16 +163,9 @@ bool isAvailable(const string& transportName,
         throw invalid_argument("At least one required direction has to be specified.");
     }
 
-    if (requiredDirections & DIRECTION_IN_PULL) {
+    if (requiredDirections & DIRECTION_IN) {
         try {
-            getInPullFactory().getConnectorInfo(transportName);
-        } catch (const rsc::runtime::NoSuchObject&) {
-            return false;
-        }
-    }
-    if (requiredDirections & DIRECTION_IN_PUSH) {
-        try {
-            getInPushFactory().getConnectorInfo(transportName);
+            getInFactory().getConnectorInfo(transportName);
         } catch (const rsc::runtime::NoSuchObject&) {
             return false;
         }
@@ -233,20 +184,9 @@ bool isRemote(const string& transportName) {
     bool remote = false;
     bool validResult = false;
     try {
-        InPullFactory& factory = getInPullFactory();
-        InPullFactory::ConnectorInfo info
+        InFactory& factory = getInFactory();
+        InFactory::ConnectorInfo info
             = factory.getConnectorInfo(transportName);
-        remote = info.isRemote();
-        validResult = true;
-    } catch (const rsc::runtime::NoSuchObject&) {
-    }
-    try {
-        InPushFactory& factory = getInPushFactory();
-        InPushFactory::ConnectorInfo info
-            = factory.getConnectorInfo(transportName);
-        if (validResult && (remote != info.isRemote())) {
-            throw std::logic_error("connectors of one transport disagree about remoteness.");
-        }
         remote = info.isRemote();
         validResult = true;
     } catch (const rsc::runtime::NoSuchObject&) {

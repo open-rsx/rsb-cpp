@@ -2,7 +2,7 @@
  *
  * This file is part of the RSB project
  *
- * Copyright (C) 2012, 2013 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2012, 2013, 2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -40,6 +40,19 @@ using namespace rsc::runtime;
 namespace rsb {
 namespace transport {
 namespace socket {
+
+transport::InConnector* InConnector::create(const Properties& args) {
+    LoggerPtr logger = Logger::getLogger("rsb.transport.socket.InConnector");
+    RSCDEBUG(logger, "Creating InConnector with properties " << args);
+
+    return new InConnector(getDefaultFactory(),
+                           args.get<ConverterSelectionStrategyPtr>("converters"),
+                           args.get<string>                       ("host",       DEFAULT_HOST),
+                           args.getAs<unsigned int>               ("port",       DEFAULT_PORT),
+                           args.getAs<Server>                     ("server",     SERVER_AUTO),
+                           args.getAs<bool>                       ("tcpnodelay", true),
+                           args.getAs<bool>                       ("wait",       true));
+}
 
 InConnector::InConnector(FactoryPtr                    factory,
                          ConverterSelectionStrategyPtr converters,
@@ -85,6 +98,44 @@ void InConnector::setQualityOfServiceSpecs(const QualityOfServiceSpec& /*specs*/
 
 void InConnector::printContents(ostream& stream) const {
     stream << "scope = " << getScope();
+}
+
+void InConnector::setScope(const Scope& scope) {
+    ConnectorBase::setScope(scope);
+}
+
+void InConnector::handle(EventPtr busEvent) {
+    if (!this->active) {
+        throw std::runtime_error("Cannot handle events when not active");
+    }
+
+    // busEvent is an intermediate object. The deserialization of the
+    // payload still has to be performed.
+    EventPtr event(new Event(*busEvent));
+
+    event->mutableMetaData().setReceiveTime();
+
+    // Extract the serialized data and wire-schema from the
+    // intermediate event.
+    boost::shared_ptr<string> wireData = static_pointer_cast<string>(event->getData());
+    string wireSchema = event->getMetaData().getUserInfo("rsb.wire-schema");
+
+    // Apply the configured converter.
+    AnnotatedData d
+        = getConverter(wireSchema)->deserialize(wireSchema, *wireData);
+    event->setData(d.second);
+    event->setType(d.first);
+
+    // Dispatch the final result to all handlers (typically a single
+    // object implementing the EventReceivingStrategy interface).
+    for (HandlerList::iterator it = this->handlers.begin(); it
+             != this->handlers.end(); ++it) {
+        (*it)->handle(event);
+    }
+}
+
+const std::string InConnector::getTransportURL() const {
+    return ConnectorBase::getTransportURL();
 }
 
 }

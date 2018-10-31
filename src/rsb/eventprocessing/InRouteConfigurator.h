@@ -3,7 +3,7 @@
  * This file is a part of the RSB project
  *
  * Copyright (C) 2010 by Sebastian Wrede <swrede at techfak dot uni-bielefeld dot de>
- *               2011 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
+ * Copyright (C) 2011-2018 Jan Moringen <jmoringe@techfak.uni-bielefeld.de>
  *
  * This file may be licensed under the terms of the
  * GNU Lesser General Public License Version 3 (the ``LGPL''),
@@ -36,16 +36,21 @@
 
 #include <rsc/runtime/Printable.h>
 
-#include "rsb/rsbexports.h"
 #include "../ParticipantConfig.h"
+
+#include "rsb/rsbexports.h"
 
 namespace rsb {
 
 class QualityOfServiceSpec;
 
+class Scope;
+
 class Event;
 typedef boost::shared_ptr<Event> EventPtr;
-class Scope;
+
+class Handler;
+typedef boost::shared_ptr<Handler> HandlerPtr;
 
 namespace filter {
 class Filter;
@@ -63,12 +68,15 @@ class EventReceivingStrategy;
 typedef boost::shared_ptr<EventReceivingStrategy> EventReceivingStrategyPtr;
 
 /**
- * A class responsible of configuring the route that processes incoming events
- * from one or more InConnector instances in one Listener. This responsibility
- * includes updates to the route from adding or removing Filter or Handler
+ * A class responsible of configuring the route that processes
+ * incoming events from one or more @ref rsb::transport::InConnector
  * instances.
  *
+ * This responsibility includes updates to the transport and filter
+ * layers.
+ *
  * @author swrede
+ * @author jmoringe
  */
 class RSB_EXPORT InRouteConfigurator: public virtual rsc::runtime::Printable,
                                       private boost::noncopyable {
@@ -87,8 +95,6 @@ public:
     virtual void activate();
     virtual void deactivate();
 
-    const ParticipantConfig::EventProcessingStrategy& getReceivingStrategyConfig() const;
-
     EventReceivingStrategyPtr getEventReceivingStrategy() const;
 
     ConnectorSet getConnectors();
@@ -98,6 +104,33 @@ public:
 
     void filterAdded(filter::FilterPtr filter);
     void filterRemoved(filter::FilterPtr filter);
+
+    /**
+     * Adds a new handler that will be notified about received events.
+     *
+     * @param handler the handler to add
+     * @param wait if set to @c true, this call will return only after the
+     *             handler has been completely installed and will receive the
+     *             next available event
+     */
+    void handlerAdded(rsb::HandlerPtr handler, const bool& wait);
+
+    /**
+     * Removes a previously registered handle.
+     *
+     * @param handler handler to remove
+     * @param wait if set to @c true, this call will return only after the
+     *             handler has been completely removed and will not be notified
+     *             anymore
+     */
+    void handlerRemoved(rsb::HandlerPtr handler, const bool& wait);
+
+    /**
+     * Sets the desired error strategy to use.
+     *
+     * @param strategy the strategy to use
+     */
+    void setErrorStrategy(const ParticipantConfig::ErrorStrategy& strategy);
 
     /**
      * Define the desired quality of service specifications for published
@@ -111,8 +144,6 @@ private:
 
     class Impl;
     boost::scoped_ptr<Impl> d;
-
-    virtual EventReceivingStrategyPtr createEventReceivingStrategy() = 0;
 };
 
 typedef boost::shared_ptr<InRouteConfigurator> InRouteConfiguratorPtr;
