@@ -4,6 +4,8 @@
 
 This repository contains the C++ implementation of the [Robotics Service Bus][rsb] middleware.
 
+**The full documentation for RSB can be found [here][rsb-doc].**
+
 # Dependencies
 
 * [CMake][cmake] build system
