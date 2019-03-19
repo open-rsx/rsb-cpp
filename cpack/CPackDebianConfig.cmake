@@ -31,7 +31,7 @@ set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Robotics Service Bus (C++ Implementation)
 set(CPACK_DEBIAN_PACKAGE_PRIORITY    "optional")
 set(CPACK_DEBIAN_PACKAGE_SECTION     "devel")
 #SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE  "${CMAKE_SYSTEM_PROCESSOR}") # Debian uses different names here
-set(CPACK_DEBIAN_PACKAGE_DEPENDS     "libc6, libprotoc-dev, libboost-regex-dev, librsc${VERSION_SUFFIX}")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS     "libc6, libprotoc-dev, libboost-regex-dev, libboost-date-time-dev, libboost-program-options-dev, libboost-system-dev, librsc${VERSION_SUFFIX}")
 set(CPACK_DEBIAN_PACKAGE_SUGGESTS    "doxygen, lcov, cppcheck, sloccount, protobuf-compiler")
 # build dependencies protobuf-compiler, rsbprotocol
 
